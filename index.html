@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardedVeins — Web Design &amp; Development</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'vv-cyan':    '#00E5FF',
+            'vv-pink':    '#FF2D78',
+            'vv-gold':    '#FFD700',
+            'vv-base':    '#070910',
+            'vv-surface': '#0f1219',
+            'vv-raised':  '#161b27',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Grain overlay ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    /* ── Gradient text ── */
+    .grad-cyan-pink {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grad-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, #FF8C00 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+
+    /* ── Buttons ── */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 2px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    .btn-cta {
+      background: linear-gradient(135deg, #FF2D78, #c9185e);
+      border: 1px solid transparent;
+      color: #fff;
+      font-size: 14px;
+      padding: 13px 32px;
+    }
+    .btn-cta:hover {
+      box-shadow: 0 0 28px rgba(255,45,120,0.45), 0 8px 24px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    .btn-cta:focus-visible { outline-color: rgba(255,45,120,0.6); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding: 100px 28px 80px;
+      background:
+        radial-gradient(ellipse 70% 55% at 85% 15%, rgba(0,229,255,0.07) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 15% 85%, rgba(255,45,120,0.06) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 50% 50%, rgba(22,27,39,0.7) 0%, transparent 80%),
+        var(--base);
+    }
+    /* Grid lines */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+    }
+
+    .hero-orb {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; will-change: opacity;
+      animation: pulse-orb 6s ease-in-out infinite;
+    }
+
+    @keyframes pulse-orb {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50%       { opacity: 1;   transform: scale(1.06); }
+    }
+
+    /* scan line */
+    .scan-line {
+      position: absolute; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(0,229,255,0.25) 40%, rgba(0,229,255,0.35) 50%, rgba(0,229,255,0.25) 60%, transparent 100%);
+      animation: scan 9s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes scan {
+      0%   { top: -2px; opacity: 0; }
+      5%   { opacity: 1; }
+      95%  { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    /* floating deco */
+    .float-a { animation: float 7s ease-in-out infinite; }
+    .float-b { animation: float 9s ease-in-out infinite 2s; }
+    .float-c { animation: float 8s ease-in-out infinite 1s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-14px); }
+    }
+
+    /* badge */
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,229,255,0.07);
+      border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 999px;
+      padding: 5px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; color: rgba(0,229,255,0.88);
+      letter-spacing: 0.04em;
+    }
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--cyan);
+      animation: blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.25; }
+    }
+
+    /* logo card in hero */
+    .logo-card {
+      display: inline-flex;
+      background: rgba(255,255,255,0.95);
+      border-radius: 14px;
+      padding: 16px 36px;
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,0.35),
+        0 0 32px rgba(0,229,255,0.18),
+        0 12px 40px rgba(0,0,0,0.45);
+    }
+    .logo-card img { height: 90px; width: auto; display: block; }
+
+    /* logo in nav */
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: rgba(255,255,255,0.92);
+      border-radius: 7px;
+      padding: 4px 10px;
+      box-shadow: 0 0 0 1px rgba(0,229,255,0.2);
+    }
+
+    /* ── Stats ── */
+    .stats-wrap {
+      background: var(--surface);
+      border-top: 1px solid rgba(0,229,255,0.07);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      padding: 52px 28px;
+    }
+    .stat-card {
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.09);
+      border-radius: 14px;
+      padding: 28px 20px;
+      text-align: center;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .stat-card:hover {
+      border-color: rgba(0,229,255,0.28);
+      box-shadow: 0 0 24px rgba(0,229,255,0.07), inset 0 1px 0 rgba(0,229,255,0.08);
+    }
+    .stat-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(30px,4vw,46px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .stat-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(200,212,232,0.45);
+    }
+
+    /* ── Section tag ── */
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    /* ── Code block ── */
+    .code-block {
+      background: #080b12;
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 14px;
+      overflow: hidden;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; line-height: 1.75;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.06), inset 0 1px 0 rgba(0,229,255,0.06);
+    }
+    .code-header {
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+      padding: 11px 18px;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .code-body { padding: 24px 26px; overflow-x: auto; }
+    .code-body pre { margin: 0; white-space: pre; }
+    .kw  { color: #FF2D78; }
+    .ty  { color: #00E5FF; }
+    .str { color: #FFD700; }
+    .cm  { color: rgba(200,212,232,0.3); font-style: italic; }
+    .pu  { color: rgba(200,212,232,0.5); }
+    .nu  { color: #b5cea8; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(0,229,255,0.08);
+      border-radius: 16px; padding: 32px;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                  border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0,229,255,0.22);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 20px rgba(0,229,255,0.06);
+    }
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 20px;
+    }
+    .icon-cyan { background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.14); }
+    .icon-pink { background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.14); }
+    .icon-gold { background: rgba(255,215,0,0.08);  border: 1px solid rgba(255,215,0,0.14); }
+    .card h3 {
+      font-size: 17px; font-weight: 700; color: var(--text-1);
+      margin-bottom: 12px; letter-spacing: -0.02em;
+    }
+    .card p { font-size: 14px; line-height: 1.78; color: var(--text-2); }
+
+    /* ── Testimonials ── */
+    .tcard {
+      background: var(--surface);
+      border: 1px solid rgba(0,229,255,0.08);
+      border-radius: 16px; padding: 32px;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                  border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .tcard:hover {
+      transform: translateY(-5px);
+      border-color: rgba(0,229,255,0.2);
+      box-shadow: 0 14px 48px rgba(0,0,0,0.45), 0 0 24px rgba(0,229,255,0.05);
+    }
+    .tcard .quote { font-size: 52px; line-height: 1; margin-bottom: 12px; }
+    .tcard p { font-size: 14.5px; line-height: 1.75; color: rgba(200,212,232,0.72); margin-bottom: 26px; }
+    .avatar {
+      width: 42px; height: 42px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 13px; flex-shrink: 0;
+    }
+
+    /* ── CTA section ── */
+    .cta-box {
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 24px; padding: 80px 60px;
+      text-align: center; position: relative; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,229,255,0.08);
+    }
+    .cta-box .orb1 {
+      position: absolute; top: -100px; right: -100px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,255,0.1), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box .orb2 {
+      position: absolute; bottom: -80px; left: -80px;
+      width: 260px; height: 260px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,45,120,0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── Contact Form ── */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
+    .contact-input, .contact-textarea, .contact-select {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--text-1);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .contact-input::placeholder, .contact-textarea::placeholder {
+      color: rgba(200,212,232,0.3);
+    }
+    .contact-input:focus, .contact-textarea:focus, .contact-select:focus {
+      border-color: rgba(0,229,255,0.38);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+    }
+    .contact-textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.65;
+    }
+    .contact-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(0%2C229%2C255%2C0.5)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      cursor: pointer;
+    }
+    .contact-select option { background: #0f1219; color: var(--text-1); }
+    .contact-info-card {
+      background: rgba(0,229,255,0.04);
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .contact-info-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+
+    /* ── Footer ── */
+    .footer-link {
+      font-size: 14px; color: rgba(200,212,232,0.48);
+      text-decoration: none; display: block; margin-bottom: 12px;
+      transition: color 0.2s ease;
+    }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-col-head {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 20px;
+    }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(200,212,232,0.48);
+      text-decoration: none; cursor: pointer;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .social-btn:hover {
+      border-color: rgba(0,229,255,0.4);
+      color: var(--cyan);
+      background: rgba(0,229,255,0.06);
+    }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
+
+    /* ── Selection ── */
+    ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
+
+    /* ── Responsive ── */
+    .hero-content { max-width: 740px; text-align: center; position: relative; z-index: 1; }
+
+    .stats-grid { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .tcard-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 52px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    }
+    @media (max-width: 860px) {
+      .features-grid { grid-template-columns: repeat(2,1fr); }
+      .tcard-grid    { grid-template-columns: 1fr; }
+      .stats-grid    { grid-template-columns: repeat(2,1fr); }
+      .nav-links     { display: none; }
+    }
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .stats-grid    { grid-template-columns: repeat(2,1fr); }
+      .cta-box       { padding: 52px 28px; }
+      .footer-grid   { grid-template-columns: 1fr; gap: 36px; }
+      .logo-card img { height: 64px; }
+      .logo-card     { padding: 14px 24px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ────────────────────── NAV ────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" aria-label="VardedVeins Home">
+      <div class="logo-nav-wrap">
+        <img class="nav-logo" src="brand_assets/Varded Veins Real.png" alt="VardedVeins" />
+      </div>
+    </a>
+
+    <div class="nav-links">
+      <a href="#services"    class="nav-link">Services</a>
+      <a href="#why-us"      class="nav-link">Why Us</a>
+      <a href="#results"     class="nav-link">Results</a>
+      <a href="#contact"     class="nav-link">Contact</a>
+    </div>
+
+    <a href="#contact" class="btn btn-primary">
+      Get a Quote <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</nav>
+
+
+<!-- ────────────────────── HERO ────────────────────── -->
+<section class="hero">
+  <div class="scan-line" aria-hidden="true"></div>
+
+  <!-- Background orbs -->
+  <div class="hero-orb" aria-hidden="true" style="top:-180px;right:-160px;width:520px;height:520px;background:radial-gradient(circle,rgba(0,229,255,0.065),transparent 70%);"></div>
+  <div class="hero-orb" aria-hidden="true" style="bottom:-140px;left:-120px;width:440px;height:440px;background:radial-gradient(circle,rgba(255,45,120,0.055),transparent 70%);animation-delay:3s;"></div>
+
+  <!-- Floating code decorations (desktop only) -->
+  <div class="float-a" aria-hidden="true" style="position:absolute;top:16%;left:4%;font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(0,229,255,0.13);user-select:none;line-height:1.7;white-space:nowrap;">
+    <span style="color:rgba(255,45,120,0.2);">const</span> site <span style="color:rgba(200,212,232,0.15);">=</span> <span style="color:rgba(255,215,0,0.18);">'YourBrand'</span>
+  </div>
+  <div class="float-b" aria-hidden="true" style="position:absolute;top:22%;right:4%;font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,45,120,0.13);user-select:none;">
+    &lt;Launch /&gt;
+  </div>
+  <div class="float-c" aria-hidden="true" style="position:absolute;bottom:18%;left:5%;font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,215,0,0.12);user-select:none;">
+    npm run deploy
+  </div>
+  <div aria-hidden="true" style="position:absolute;bottom:22%;right:5%;font-family:'JetBrains Mono',monospace;font-size:52px;color:rgba(0,229,255,0.055);user-select:none;line-height:1;">{ }</div>
+
+  <div class="hero-content">
+    <!-- Badge -->
+    <div style="display:flex;justify-content:center;margin-bottom:32px;">
+      <span class="badge">
+        <span class="badge-dot"></span>
+        Web Design &amp; Development · Now Taking Clients
+      </span>
+    </div>
+
+    <!-- Logo -->
+    <div style="display:flex;justify-content:center;margin-bottom:44px;">
+      <div class="logo-card">
+        <img src="brand_assets/Varded Veins Real.png" alt="VardedVeins logo" />
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <h1 style="font-size:clamp(34px,6vw,70px);font-weight:800;line-height:1.08;margin-bottom:24px;color:var(--text-1);">
+      Websites that <span class="grad-cyan-pink">convert</span>,<br>built to last
+    </h1>
+
+    <!-- Sub -->
+    <p style="font-size:clamp(15px,2.2vw,19px);line-height:1.72;color:var(--text-2);max-width:520px;margin:0 auto 48px;">
+      VardedVeins crafts high-performance websites for businesses serious about growth. Beautiful design, blazing speed, and code that scales.
+    </p>
+
+    <!-- CTAs -->
+    <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
+      <a href="#contact" class="btn btn-cta">Get a Free Quote <span aria-hidden="true">→</span></a>
+      <a href="#results" class="btn btn-ghost" style="font-size:13.5px;padding:13px 28px;">See Our Work</a>
+    </div>
+
+    <!-- Social proof -->
+    <div style="margin-top:56px;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;">
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#00E5FF,#0070a0);border:2px solid var(--base);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#070910;margin-right:-8px;">M</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FF2D78,#9e1144);border:2px solid var(--base);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-right:-8px;">P</div>
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#b38a00);border:2px solid var(--base);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#070910;">D</div>
+        </div>
+        <span style="font-size:13px;color:rgba(200,212,232,0.55);margin-left:4px;">80+ clients served</span>
+      </div>
+      <div style="width:1px;height:18px;background:rgba(255,255,255,0.1);"></div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="color:var(--gold);font-size:13px;">★★★★★</span>
+        <span style="font-size:13px;color:rgba(200,212,232,0.5);">5-star rated</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ────────────────────── STATS ────────────────────── -->
+<section class="stats-wrap">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--cyan);">80+</div>
+      <div class="stat-label">Sites Launched</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--pink);">97%</div>
+      <div class="stat-label">Client Satisfaction</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--gold);">1.8s</div>
+      <div class="stat-label">Avg Load Speed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:#00E5FF;">40+</div>
+      <div class="stat-label">Industries Served</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ────────────────────── ABOUT / WHY ────────────────────── -->
+<section id="why-us" style="padding:120px 28px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="about-grid">
+
+      <!-- Text -->
+      <div>
+        <p class="sec-tag">// our approach</p>
+        <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:24px;color:var(--text-1);">
+          Built to perform,<br>designed to convert
+        </h2>
+        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:20px;">
+          In today's market, your website is your most important sales tool. A slow, outdated, or hard-to-navigate site doesn't just look bad — it actively costs you customers. VardedVeins builds sites that work as hard as you do.
+        </p>
+        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:36px;">
+          We combine technical excellence with sharp design thinking. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion</code>. From landing pages to full web applications, we deliver results.
+        </p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="#contact" class="btn btn-primary">Start Your Project</a>
+          <a href="#services" class="btn btn-ghost">See Services</a>
+        </div>
+      </div>
+
+      <!-- Code block -->
+      <div class="code-block">
+        <div class="code-header">
+          <div class="dot" style="background:#FF5F57;"></div>
+          <div class="dot" style="background:#FFBD2E;"></div>
+          <div class="dot" style="background:#28CA41;"></div>
+          <span style="margin-left:8px;font-size:11px;color:rgba(255,255,255,0.28);">website.ts</span>
+        </div>
+        <div class="code-body">
+<pre><span class="kw">interface</span> <span class="ty">Website</span> <span class="pu">{</span>
+  design<span class="pu">:</span>      <span class="str">'pixel-perfect'</span><span class="pu">;</span>
+  performance<span class="pu">:</span> <span class="str">'blazing-fast'</span><span class="pu">;</span>
+  seo<span class="pu">:</span>         <span class="str">'optimized'</span><span class="pu">;</span>
+  security<span class="pu">:</span>    <span class="str">'enterprise-grade'</span><span class="pu">;</span>
+  build<span class="pu">():</span> <span class="ty">Promise</span><span class="pu">&lt;</span><span class="ty">Launch</span><span class="pu">&gt;;</span>
+<span class="pu">}</span>
+
+<span class="kw">const</span> YourSite<span class="pu">:</span> <span class="ty">Website</span> <span class="pu">= {</span>
+  design<span class="pu">:</span>      <span class="str">'pixel-perfect'</span><span class="pu">,</span>
+  performance<span class="pu">:</span> <span class="str">'blazing-fast'</span><span class="pu">,</span>
+  seo<span class="pu">:</span>         <span class="str">'optimized'</span><span class="pu">,</span>
+  security<span class="pu">:</span>    <span class="str">'enterprise-grade'</span><span class="pu">,</span>
+  build<span class="pu">:</span> <span class="kw">async</span> <span class="pu">() =&gt; {</span>
+    <span class="cm">// your vision, our code</span>
+    <span class="kw">return</span> <span class="ty">Launch</span><span class="pu">.</span>deploy<span class="pu">();</span>
+  <span class="pu">}</span>
+<span class="pu">};</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ────────────────────── SERVICES / FEATURES ────────────────────── -->
+<section id="services" style="padding:100px 28px;">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:68px;">
+      <p class="sec-tag">// what we deliver</p>
+      <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
+        Every site comes with<br><span class="grad-cyan-pink">these by default</span>
+      </h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="card">
+        <div class="card-icon icon-cyan">📱</div>
+        <h3>Mobile-First Design</h3>
+        <p>Every site we build starts mobile and scales up. Fully responsive across all devices and screen sizes — your visitors get a flawless experience on phone, tablet, or desktop.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-gold">⚡</div>
+        <h3>Lightning-Fast Loading</h3>
+        <p>Speed is a conversion factor. We optimize every asset, lazy-load resources, and write efficient code so your site loads in under 2 seconds. Faster sites rank higher and sell more.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-pink">🔍</div>
+        <h3>SEO-Optimized Structure</h3>
+        <p>Built for search engines from day one. Semantic HTML, structured data, optimized meta tags, and content hierarchy designed to get you found by the people actively searching for you.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-cyan">🎯</div>
+        <h3>Strategic CTAs &amp; UX</h3>
+        <p>Intuitive navigation, clear visual hierarchy, and action-oriented calls-to-action placed with intent. We design user journeys that guide visitors toward conversion — every time.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-pink">🔒</div>
+        <h3>Security &amp; Privacy</h3>
+        <p>HTTPS by default, secure form handling, GDPR-compliant privacy setups, and WCAG accessibility standards — your site protects your users and earns their trust from first load.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon icon-gold">📊</div>
+        <h3>Analytics &amp; Optimization</h3>
+        <p>We set up tracking, monitor performance, and provide ongoing insights. Know exactly who's visiting, what they're doing, and where to improve — with data-backed continuous optimization.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ────────────────────── RESULTS / TESTIMONIALS ────────────────────── -->
+<section id="results" style="padding:100px 28px;">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:68px;">
+      <p class="sec-tag">// client results</p>
+      <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
+        Real businesses,<br><span class="grad-gold">real results</span>
+      </h2>
+    </div>
+
+    <div class="tcard-grid">
+
+      <div class="tcard">
+        <div class="quote" style="color:rgba(0,229,255,0.55);">"</div>
+        <p>VardedVeins transformed our online presence. Our new site loads twice as fast, and we've seen a 40% increase in enquiries since launch. The branding is sharp and consistent throughout.</p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="avatar" style="background:linear-gradient(135deg,#00E5FF,#005580);">MR</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;color:var(--text-1);">Marcus R.</div>
+            <div style="font-size:12px;color:rgba(200,212,232,0.4);">Restaurant Owner</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard" style="background:rgba(255,45,120,0.04);border-color:rgba(255,45,120,0.1);">
+        <div class="quote" style="color:rgba(255,45,120,0.55);">"</div>
+        <p>They nailed the brief on the first round. Beautiful design, perfect on mobile, and the SEO work means we're ranking on page one for our key terms. Incredible team to work with.</p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="avatar" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;">PS</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;color:var(--text-1);">Priya S.</div>
+            <div style="font-size:12px;color:rgba(200,212,232,0.4);">E-Commerce Founder</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tcard" style="background:rgba(255,215,0,0.03);border-color:rgba(255,215,0,0.09);">
+        <div class="quote" style="color:rgba(255,215,0,0.55);">"</div>
+        <p>I was skeptical about investing in a professional site, but the ROI has been undeniable. More traffic, more leads, better trust signals — our brand finally looks the part it deserves.</p>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="avatar" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;">DW</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;color:var(--text-1);">Daniel W.</div>
+            <div style="font-size:12px;color:rgba(200,212,232,0.4);">Marketing Consultant</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ────────────────────── CTA ────────────────────── -->
+<section style="padding:20px 28px 80px;">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="cta-box">
+      <div class="orb1" aria-hidden="true"></div>
+      <div class="orb2" aria-hidden="true"></div>
+      <div style="position:relative;z-index:1;">
+        <p class="sec-tag" style="margin-bottom:18px;">// ready to launch?</p>
+        <h2 style="font-size:clamp(28px,5vw,54px);font-weight:800;line-height:1.08;margin-bottom:20px;color:var(--text-1);">
+          Your business deserves<br><span class="grad-cyan-pink">a website that works</span>
+        </h2>
+        <p style="font-size:16.5px;line-height:1.72;color:var(--text-2);max-width:480px;margin:0 auto 44px;">
+          Join 80+ businesses who trust VardedVeins to power their digital presence. Let's build something that drives real growth.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="#contact" class="btn btn-cta" style="font-size:14.5px;padding:14px 36px;">
+            Get a Free Quote <span aria-hidden="true">→</span>
+          </a>
+          <a href="#services" class="btn btn-ghost" style="font-size:14px;padding:14px 28px;">
+            View Services
+          </a>
+        </div>
+        <p style="margin-top:22px;font-size:12px;color:rgba(200,212,232,0.3);">No commitment required &nbsp;·&nbsp; Discovery call is always free</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ────────────────────── CONTACT ────────────────────── -->
+<section id="contact" style="padding:100px 28px 120px;">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div class="contact-grid">
+
+      <!-- Info -->
+      <div>
+        <p class="sec-tag">// contact us</p>
+        <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:20px;color:var(--text-1);">
+          Let's build your<br><span class="grad-cyan-pink">website</span>
+        </h2>
+        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:44px;">
+          Tell us about your project. We'll get back to you within 24 hours with a clear plan and honest pricing — no jargon, no pressure.
+        </p>
+
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="contact-info-card">
+            <div class="contact-info-icon icon-cyan">✉️</div>
+            <div>
+              <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Email Us</div>
+              <div style="font-size:14.5px;color:var(--text-1);font-family:'JetBrains Mono',monospace;">support@vardedveins.com</div>
+            </div>
+          </div>
+          <div class="contact-info-card">
+            <div class="contact-info-icon icon-gold">⏱️</div>
+            <div>
+              <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Response Time</div>
+              <div style="font-size:14.5px;color:var(--text-1);">Within 24 hours, Mon–Sun</div>
+            </div>
+          </div>
+          <div class="contact-info-card">
+            <div class="contact-info-icon icon-pink">🚀</div>
+            <div>
+              <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Typical Timeline</div>
+              <div style="font-size:14.5px;color:var(--text-1);">1–2 weeks from kickoff to launch</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div style="background:var(--surface);border:1px solid rgba(0,229,255,0.1);border-radius:20px;padding:44px;">
+        <form onsubmit="return false;" style="display:flex;flex-direction:column;gap:20px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Your Name</label>
+              <input class="contact-input" type="text" placeholder="Jane Smith" autocomplete="name" />
+            </div>
+            <div>
+              <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Email Address</label>
+              <input class="contact-input" type="email" placeholder="jane@company.com" autocomplete="email" />
+            </div>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Project Type</label>
+            <select class="contact-select">
+              <option value="" disabled selected>Select a service…</option>
+              <option>New Website — Business / Brand</option>
+              <option>New Website — E-Commerce Store</option>
+              <option>Landing Page / Campaign Site</option>
+              <option>Website Redesign</option>
+              <option>SEO &amp; Performance Audit</option>
+              <option>Ongoing Maintenance &amp; Support</option>
+              <option>Other / Not Sure Yet</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Tell Us About Your Project</label>
+            <textarea class="contact-textarea" placeholder="What does your business do? What problems does your current site have? What does success look like for you?"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-cta" style="width:100%;justify-content:center;font-size:14.5px;padding:15px 32px;margin-top:4px;">
+            Send Message <span aria-hidden="true">→</span>
+          </button>
+
+          <p style="text-align:center;font-size:12px;color:rgba(200,212,232,0.28);">No spam, ever &nbsp;·&nbsp; We'll respond within 24 hours</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ────────────────────── FOOTER ────────────────────── -->
+<footer style="border-top:1px solid rgba(0,229,255,0.07);padding:64px 28px 40px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div>
+        <div class="logo-nav-wrap" style="display:inline-flex;margin-bottom:20px;">
+          <img src="brand_assets/Varded Veins Real.png" alt="VardedVeins" style="height:28px;width:auto;" />
+        </div>
+        <p style="font-size:13.5px;line-height:1.75;color:rgba(200,212,232,0.42);max-width:240px;margin-bottom:26px;">
+          High-performance websites for businesses serious about growth. Design, development, and results.
+        </p>
+        <div style="display:flex;gap:10px;">
+          <a href="#" class="social-btn" aria-label="Twitter/X">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 6.8c1.02.005 2.05.138 3.01.404 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.69.82.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <a href="#" class="social-btn" aria-label="Discord">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.32 4.37a19.79 19.79 0 0 0-4.89-1.52.07.07 0 0 0-.08.04 13.7 13.7 0 0 0-.6 1.25 18.27 18.27 0 0 0-5.49 0 12.64 12.64 0 0 0-.62-1.25.08.08 0 0 0-.08-.04A19.74 19.74 0 0 0 3.68 4.37a.07.07 0 0 0-.03.03C.53 9.05-.32 13.58.1 18.06a.08.08 0 0 0 .03.05 19.9 19.9 0 0 0 5.99 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.89.08.08 0 0 1-.01-.13c.13-.1.25-.2.37-.29a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08.01c.12.1.25.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.64-1.87.89a.08.08 0 0 0-.04.11c.36.7.78 1.36 1.23 1.99a.07.07 0 0 0 .08.03 19.84 19.84 0 0 0 6-3.03.08.08 0 0 0 .03-.05c.5-5.18-.84-9.67-3.55-13.66a.06.06 0 0 0-.03-.03z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div>
+        <p class="footer-col-head">Services</p>
+        <a href="#" class="footer-link">Web Design</a>
+        <a href="#" class="footer-link">E-Commerce</a>
+        <a href="#" class="footer-link">Landing Pages</a>
+        <a href="#" class="footer-link">SEO &amp; Performance</a>
+        <a href="#" class="footer-link">Maintenance</a>
+      </div>
+
+      <!-- Company -->
+      <div>
+        <p class="footer-col-head">Company</p>
+        <a href="#" class="footer-link">About Us</a>
+        <a href="#" class="footer-link">Portfolio</a>
+        <a href="#" class="footer-link">Blog</a>
+        <a href="#" class="footer-link">Pricing</a>
+        <a href="#contact" class="footer-link">Contact</a>
+      </div>
+
+      <!-- Legal -->
+      <div>
+        <p class="footer-col-head">Legal</p>
+        <a href="#" class="footer-link">Privacy Policy</a>
+        <a href="#" class="footer-link">Terms of Service</a>
+        <a href="#" class="footer-link">Cookie Policy</a>
+        <a href="#" class="footer-link">Accessibility</a>
+        <a href="#" class="footer-link">WCAG Compliance</a>
+      </div>
+
+    </div>
+
+    <div class="divider" style="margin-bottom:28px;max-width:100%;"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
+      <p style="font-size:12.5px;color:rgba(200,212,232,0.3);">© 2025 VardedVeins. All rights reserved.</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(200,212,232,0.22);">Built with <span style="color:var(--pink);">♥</span> by VardedVeins</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
