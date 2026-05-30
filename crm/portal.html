@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb — My Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <script src="/encryption-config.js"></script>
+  <style>
+    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.1);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html,body{min-height:100%;}
+    body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+
+    /* Top nav */
+    .topnav{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+    .topnav img{height:26px;border-radius:6px;}
+    .topnav-right{display:flex;align-items:center;gap:14px;}
+    .portal-user{font-size:12px;color:var(--text-2);}
+    .btn{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s;}
+    .btn:hover{opacity:.8;}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2);}
+    .btn-ghost:hover{color:var(--text-1);}
+    .btn-cyan{background:var(--cyan);color:#000;}
+
+    /* Page tabs */
+    .page-tabs{display:flex;gap:0;padding:0 36px;border-bottom:1px solid var(--border);background:var(--surface);}
+    .ptab{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+    .ptab:hover{color:var(--text-1);}.ptab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+    /* Content */
+    .portal-body{max-width:820px;margin:0 auto;padding:36px 24px;}
+    .section-title{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;letter-spacing:-0.02em;color:var(--cyan);margin-bottom:16px;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px 24px;margin-bottom:16px;}
+    .info-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
+    .info-label{color:var(--text-2);min-width:160px;flex-shrink:0;}
+    .info-value{color:var(--text-1);font-weight:500;word-break:break-all;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;}
+    .badge-active{background:rgba(0,229,255,0.12);color:var(--cyan);}
+    .badge-pending{background:rgba(255,215,0,0.15);color:var(--gold);}
+    .badge-paid{background:rgba(34,197,94,0.15);color:#22c55e;}
+    .badge-overdue{background:rgba(255,45,120,0.15);color:var(--pink);}
+    .badge-yours{background:rgba(34,197,94,0.12);color:#22c55e;}
+    .badge-transfer{background:rgba(255,215,0,0.12);color:var(--gold);}
+
+    /* Help tooltips */
+    .help-tip{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;opacity:0.65;padding:0;}
+    .help-tip:hover{opacity:1;}
+    .help-panel{background:var(--raised);border-left:2px solid rgba(0,229,255,0.25);padding:10px 14px;margin-top:6px;font-size:12px;line-height:1.6;color:var(--text-2);border-radius:0 6px 6px 0;display:none;}
+    .help-panel.open{display:block;}
+
+    /* Accordion */
+    .accordion{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:14px;}
+    .accordion-header{padding:14px 18px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;background:var(--raised);transition:background .15s;}
+    .accordion-header:hover{background:rgba(0,229,255,0.05);}
+    .accordion-header svg{transition:transform .2s;}
+    .accordion-header.open svg{transform:rotate(180deg);}
+    .accordion-body{padding:0;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;}
+    .accordion-body.open{max-height:800px;padding:18px;}
+
+    /* Fields */
+    label{display:block;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:5px;}
+    input[type=text],input[type=email],input[type=password],input[type=url],select{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;transition:border-color .2s;font-family:'Inter',sans-serif;}
+    input:focus,select:focus{border-color:rgba(0,229,255,0.4);}select option{background:var(--raised);}
+    .field-group{margin-bottom:14px;}
+    .cred-row{display:flex;align-items:center;gap:8px;}
+    .cred-row input{flex:1;}
+    .icon-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:8px 11px;cursor:pointer;color:var(--text-2);transition:color .15s,border-color .15s;font-size:13px;}
+    .icon-btn:hover{color:var(--cyan);border-color:rgba(0,229,255,0.3);}
+    .enc-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--cyan);background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);border-radius:4px;padding:3px 8px;margin-top:6px;}
+    .divider{height:1px;background:var(--border);margin:16px 0;}
+
+    /* Provider card */
+    .provider-card{background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+    .provider-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+    .provider-name{font-weight:600;font-size:14px;}
+    .access-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(0,229,255,0.1);color:var(--cyan);font-weight:600;}
+    .provider-edit-form{padding-top:10px;border-top:1px solid var(--border);margin-top:10px;}
+    .empty{color:var(--text-2);font-size:13px;text-align:center;padding:24px 0;}
+    .tab-panel{display:none;}.tab-panel.active{display:block;}
+
+    /* Social cards */
+    .social-card{background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+    .social-title{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:10px;}
+
+    .note-box{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text-2);line-height:1.6;margin-top:10px;}
+  </style>
+</head>
+<body>
+
+<!-- Top nav -->
+<nav class="topnav">
+  <a href="/index.html"><img src="/brand_assets/VardWeb.png" alt="VardWeb" /></a>
+  <div class="topnav-right">
+    <span class="portal-user" id="portalUser">Loading…</span>
+    <a href="/crm/portal-cms.html" class="btn btn-cyan">Edit My Site →</a>
+    <button class="btn btn-ghost" id="logoutBtn">Sign Out</button>
+  </div>
+</nav>
+
+<!-- Suspension banner (hidden until JS shows it) -->
+<div id="suspensionBanner" style="display:none;background:rgba(255,45,120,0.1);border-bottom:1px solid rgba(255,45,120,0.35);padding:14px 36px;">
+  <div style="max-width:820px;margin:0 auto;display:flex;align-items:flex-start;gap:14px;">
+    <span style="font-size:18px;flex-shrink:0;">⛔</span>
+    <div>
+      <div style="font-size:14px;font-weight:700;color:var(--pink);margin-bottom:4px;">Your site is currently suspended</div>
+      <div style="font-size:13px;color:rgba(255,100,130,0.85);line-height:1.6;">
+        Access to your site and content editor has been paused — this is usually due to an outstanding payment or a billing issue.
+        Please resolve any overdue invoices in the <strong>Billing</strong> tab below and contact
+        <a href="mailto:support@vardweb.com" style="color:var(--pink);">support@vardweb.com</a> once payment is complete.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="page-tabs">
+  <div class="ptab active" data-tab="site">My Site</div>
+  <div class="ptab" data-tab="billing">Billing</div>
+  <div class="ptab" data-tab="domain">Domain & Hosting</div>
+  <div class="ptab" data-tab="social">Social Links</div>
+  <div class="ptab" data-tab="seo">SEO Reports</div>
+</div>
+
+<div class="portal-body">
+  <!-- My Site -->
+  <div class="tab-panel active" id="panel-site">
+    <div class="section-title">My site</div>
+    <div id="siteContent"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- Billing -->
+  <div class="tab-panel" id="panel-billing">
+    <div class="section-title">Billing & invoices</div>
+    <div id="billingContent"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- Domain & Hosting -->
+  <div class="tab-panel" id="panel-domain">
+    <div class="section-title">Domain & hosting</div>
+    <div id="domainContent"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- Social Links -->
+  <div class="tab-panel" id="panel-social">
+    <div class="section-title">Social links</div>
+    <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Add only the platforms you use. Changes sync to your live site automatically — no developer needed.</p>
+    <div id="socialContent"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- SEO Reports -->
+  <div class="tab-panel" id="panel-seo">
+    <div class="section-title">SEO reports</div>
+    <div id="seoContent"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  import { encrypt, decrypt } from './_crypto.js';
+
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-client-auth' } });
+
+  /* Auth */
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  const { data: profile } = await sb.from('user_profiles').select('*, clients(*)').eq('id', session.user.id).single();
+  if (!profile) { window.location.href = '/crm/login.html'; }
+  if (profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
+
+  const clientId = profile.client_id;
+  const clientName = profile.clients?.business_name || 'My Account';
+  document.getElementById('portalUser').textContent = profile.full_name || clientName;
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html?signedout=1'; });
+
+  /* Help tooltips */
+  document.addEventListener('click', e => {
+    const tip = e.target.closest('.help-tip');
+    if (!tip) return;
+    document.getElementById('help-' + tip.dataset.help)?.classList.toggle('open');
+  });
+
+  /* Tabs */
+  const loadedTabs = new Set(['site']);
+  document.querySelectorAll('.ptab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab.dataset.tab));
+      if (!loadedTabs.has(tab.dataset.tab)) {
+        loadedTabs.add(tab.dataset.tab);
+        await loaders[tab.dataset.tab]?.();
+      }
+    });
+  });
+
+  /* ── My Site ── */
+  const { data: allSitesRaw } = await sb.from('sites').select('*').eq('client_id', clientId).order('created_at', { ascending: false });
+  let allSites = allSitesRaw || [];
+
+  // For sites in a shared domain group, show only the primary site — hide alias sites
+  const _groupIds = [...new Set(allSites.map(s => s.domain_group_id).filter(Boolean))];
+  if (_groupIds.length) {
+    const { data: _groups } = await sb.from('domain_groups').select('id, content_mode').in('id', _groupIds);
+    const _sharedIds = new Set((_groups || []).filter(g => g.content_mode === 'shared').map(g => g.id));
+    if (_sharedIds.size) {
+      const _sharedSiteIds = allSites.filter(s => s.domain_group_id && _sharedIds.has(s.domain_group_id)).map(s => s.id);
+      if (_sharedSiteIds.length) {
+        const { data: _primDomains } = await sb.from('domains').select('site_id').in('site_id', _sharedSiteIds).eq('is_primary', true);
+        const _primSiteIds = new Set((_primDomains || []).map(d => d.site_id));
+        // Per group, keep the marked primary or the first encountered if none marked
+        const _keepIds = new Set();
+        const _seenGroups = new Set();
+        for (const s of allSites) {
+          if (!s.domain_group_id || !_sharedIds.has(s.domain_group_id)) continue;
+          if (_seenGroups.has(s.domain_group_id)) continue;
+          const _gs = allSites.filter(x => x.domain_group_id === s.domain_group_id);
+          const _prim = _gs.find(x => _primSiteIds.has(x.id));
+          _keepIds.add(_prim ? _prim.id : _gs[0].id);
+          _seenGroups.add(s.domain_group_id);
+        }
+        allSites = allSites.filter(s => !s.domain_group_id || !_sharedIds.has(s.domain_group_id) || _keepIds.has(s.id));
+      }
+    }
+  }
+
+  let activeSite = allSites?.[0] ?? null;
+
+  const phaseLabels = { discovery: 'Discovery & Audit', design: 'Design', build: 'In Development', review: 'Client Review', launched: 'Launched' };
+  const originLabels = { shopify: 'Shopify', wix: 'Wix', woocommerce: 'WooCommerce', squarespace: 'Squarespace', custom: 'Custom Platform', new: 'New Build' };
+  const phaseOrder = ['discovery', 'design', 'build', 'review', 'launched'];
+
+  function updateSuspensionBanner(s) {
+    const banner = document.getElementById('suspensionBanner');
+    const cmsBtn = document.getElementById('cmsEditorLink');
+    const suspended = s?.status === 'suspended';
+    banner.style.display = suspended ? 'block' : 'none';
+    if (cmsBtn) {
+      cmsBtn.style.opacity = suspended ? '0.35' : '';
+      cmsBtn.style.pointerEvents = suspended ? 'none' : '';
+      cmsBtn.title = suspended ? 'Site is suspended — contact VardWeb to restore access' : '';
+    }
+  }
+
+  function renderSiteCard(s) {
+    const siteEl = document.getElementById('siteContent');
+    const phase = s.migration_phase;
+    const origin = s.platform_origin;
+    const inProgress = phase && phase !== 'launched';
+    const isLaunched = phase === 'launched';
+
+    if (inProgress) {
+      const progressStrip = phaseOrder.map(p => {
+        const isCurrent = p === phase;
+        const isPast = phaseOrder.indexOf(p) < phaseOrder.indexOf(phase);
+        const color = isCurrent ? 'var(--cyan)' : isPast ? 'rgba(0,229,255,0.35)' : 'var(--text-2)';
+        const weight = isCurrent ? '700' : '400';
+        return `<span style="color:${color};font-weight:${weight};font-size:12px;">${phaseLabels[p]}${p !== 'launched' ? ' <span style="color:rgba(255,255,255,0.2);margin:0 6px;">→</span>' : ''}</span>`;
+      }).join('');
+      siteEl.innerHTML += `
+        <div class="card" style="border-color:rgba(0,229,255,0.2);">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);margin-bottom:14px;">Migration Progress</div>
+          <div style="margin-bottom:18px;line-height:2;">${progressStrip}</div>
+          <div class="info-row"><span class="info-label">Domain</span><span class="info-value"><a href="https://${s.domain_name}" target="_blank" style="color:var(--cyan);">${s.domain_name}</a></span></div>
+          <div class="info-row"><span class="info-label">Current Platform</span><span class="info-value">${originLabels[origin] || origin || '—'}</span></div>
+          <div class="info-row"><span class="info-label">Current Phase</span><span class="info-value" style="color:var(--cyan);font-weight:600;">${phaseLabels[phase] || phase}</span></div>
+        </div>
+        <div style="background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:10px;padding:16px 20px;font-size:13px;color:var(--text-2);line-height:1.7;">
+          Your current <strong style="color:var(--text-1);">${originLabels[origin] || 'existing'} site</strong> remains live while VardWeb builds your new site.
+          Once it passes your review, we'll migrate everything over and you'll be able to edit your content here.
+          Questions? <a href="mailto:support@vardweb.com" style="color:var(--cyan);">Contact VardWeb</a>.
+        </div>`;
+    } else {
+      let migratedBadge = '';
+      if (isLaunched && origin && origin !== 'new') {
+        migratedBadge = `<div style="display:inline-block;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;color:var(--gold);margin-bottom:12px;">✓ Migrated from ${originLabels[origin] || origin}</div>`;
+      }
+      siteEl.innerHTML += `
+        <div class="card">
+          ${migratedBadge}
+          <div class="info-row"><span class="info-label">Domain</span><span class="info-value"><a href="https://${s.domain_name}" target="_blank" style="color:var(--cyan);">${s.domain_name}</a></span></div>
+          <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="badge badge-${s.status === 'suspended' ? 'overdue' : 'active'}">${s.status}</span></span></div>
+          <div class="info-row"><span class="info-label">Platform</span><span class="info-value">${s.cms_type || 'VardWeb CMS'}</span></div>
+          <div class="info-row"><span class="info-label">Live Since</span><span class="info-value">${new Date(s.created_at).toLocaleDateString()}</span></div>
+        </div>
+        <a id="cmsEditorLink" href="/crm/portal-cms.html?site=${s.id}" class="btn btn-cyan" style="margin-top:4px;">Edit Site Content →</a>`;
+    }
+  }
+
+  function renderSiteSelector() {
+    const el = document.getElementById('siteContent');
+    if (!allSites?.length) { el.innerHTML = '<div class="empty">No site on record yet. Contact VardWeb to get started.</div>'; return; }
+    let html = '';
+    if (allSites.length > 1) {
+      html += `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">` +
+        allSites.map(s =>
+          `<button class="site-pill" data-sid="${s.id}" style="padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid ${s.id===activeSite.id?'var(--cyan)':'var(--border)'};background:${s.id===activeSite.id?'rgba(0,229,255,0.1)':'transparent'};color:${s.id===activeSite.id?'var(--cyan)':'var(--text-2)'};">${s.domain_name||'Site'}</button>`
+        ).join('') + `</div>`;
+    }
+    el.innerHTML = html;
+    renderSiteCard(activeSite);
+    updateSuspensionBanner(activeSite);
+    el.querySelectorAll('.site-pill').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        activeSite = allSites.find(s => s.id === btn.dataset.sid);
+        ['domain','social'].forEach(t => loadedTabs.delete(t));
+        renderSiteSelector();
+        const activeTab = document.querySelector('.ptab.active')?.dataset.tab;
+        if (activeTab && loaders[activeTab]) await loaders[activeTab]();
+      });
+    });
+  }
+
+  renderSiteSelector();
+
+  const loaders = {
+    billing: loadBilling,
+    domain: loadDomain,
+    social: loadSocial,
+    seo: loadSeo,
+  };
+
+  /* ── Billing ── */
+  async function loadBilling() {
+    const el = document.getElementById('billingContent');
+    const [{ data: lease }, { data: invoices }] = await Promise.all([
+      sb.from('leases').select('*').eq('client_id', clientId).eq('status', 'active').single(),
+      sb.from('invoices').select('*').eq('client_id', clientId).order('created_at', { ascending: false }),
+    ]);
+
+    let html = '';
+
+    /* Overdue invoice warning banner */
+    const hasOverdue = (invoices || []).some(i => i.status === 'overdue');
+    if (hasOverdue) {
+      const overdueTotal = (invoices || [])
+        .filter(i => i.status === 'overdue')
+        .reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
+      html += `<div style="background:rgba(255,45,120,0.08);border:1px solid rgba(255,45,120,0.3);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px;">
+        <span style="font-size:18px;flex-shrink:0;">⚠️</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--pink);margin-bottom:4px;">Overdue balance: $${overdueTotal.toFixed(2)}</div>
+          <div style="font-size:12px;color:rgba(255,100,130,0.85);line-height:1.6;">
+            You have an outstanding overdue invoice. Please pay as soon as possible to avoid service interruption.
+            If you believe this is an error, contact
+            <a href="mailto:support@vardweb.com" style="color:var(--pink);">support@vardweb.com</a>.
+            <button class="help-tip" data-help="overdue-warn"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
+          </div>
+          <div class="help-panel" id="help-overdue-warn">Overdue invoices may result in your site being suspended until payment is received. Use the Pay Now button on the invoice below to settle your balance.</div>
+        </div>
+      </div>`;
+    }
+
+    if (lease) {
+      /* Next payment countdown */
+      const renewalDate = lease.renewal_date ? new Date(lease.renewal_date) : null;
+      const daysUntil   = renewalDate ? Math.ceil((renewalDate - new Date()) / 86400000) : null;
+      const renewColor  = daysUntil === null ? 'var(--text-2)' : daysUntil <= 3 ? 'var(--pink)' : daysUntil <= 7 ? 'var(--gold)' : '#22c55e';
+      const renewLabel  = daysUntil === null ? '—'
+        : daysUntil < 0  ? `Overdue by ${Math.abs(daysUntil)} day${Math.abs(daysUntil) !== 1 ? 's' : ''}`
+        : daysUntil === 0 ? 'Due today'
+        : `In ${daysUntil} day${daysUntil !== 1 ? 's' : ''} (${lease.renewal_date})`;
+
+      if (daysUntil !== null && daysUntil <= 7) {
+        html += `<div style="background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.25);border-radius:10px;padding:12px 18px;margin-bottom:16px;font-size:13px;color:var(--gold);">
+          <strong>Payment reminder:</strong> Your next charge of <strong>$${parseFloat(lease.recurring_rate || 0).toFixed(2)}</strong> is due <strong>${renewLabel.toLowerCase()}</strong>.
+          Make sure your payment method is up to date.
+        </div>`;
+      }
+
+      html += `<div class="card">
+        <div style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:12px;">Current Plan <button class="help-tip" data-help="plan"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div>
+        <div class="help-panel" id="help-plan">Your plan covers the ongoing hosting, maintenance, and support VardWeb provides. The recurring fee keeps your site live and up to date.</div>
+        <div class="info-row"><span class="info-label">Plan</span><span class="info-value">${lease.plan_name || '—'}</span></div>
+        <div class="info-row"><span class="info-label">Flat Rate <button class="help-tip" data-help="flat-rate"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">$${parseFloat(lease.flat_rate || 0).toFixed(2)} (one-time build)</span></div>
+        <div class="help-panel" id="help-flat-rate">This is a one-time payment for building your website. It's charged at the start of your project and doesn't repeat.</div>
+        <div class="info-row"><span class="info-label">Recurring <button class="help-tip" data-help="recurring"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">$${parseFloat(lease.recurring_rate || 0).toFixed(2)}/${lease.billing_cycle || 'mo'}</span></div>
+        <div class="help-panel" id="help-recurring">This is your ongoing fee. It covers hosting, maintenance, and continued support from VardWeb — billed ${lease.billing_cycle === 'yearly' ? 'once per year' : 'monthly'}.</div>
+        <div class="info-row">
+          <span class="info-label">Next Charge <button class="help-tip" data-help="next-charge"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span>
+          <span class="info-value" style="color:${renewColor};font-weight:600;">${renewLabel}</span>
+        </div>
+        <div class="help-panel" id="help-next-charge">This is when your next recurring payment of $${parseFloat(lease.recurring_rate || 0).toFixed(2)} will be due. Make sure your payment details are current so your site stays live without interruption.</div>
+        <div class="info-row">
+          <span class="info-label">Amount Due <button class="help-tip" data-help="amount-due"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span>
+          <span class="info-value">$${parseFloat(lease.recurring_rate || 0).toFixed(2)} / ${lease.billing_cycle === 'yearly' ? 'year' : 'month'}</span>
+        </div>
+        <div class="help-panel" id="help-amount-due">Your recurring service fee. This amount is charged each ${lease.billing_cycle === 'yearly' ? 'year' : 'month'} to keep your site live, maintained, and supported by VardWeb.</div>
+        <div class="info-row"><span class="info-label">Contract</span><span class="info-value">${lease.contract_accepted ? `<span style="color:#22c55e;">✓ Accepted${lease.contract_accepted_at ? ' · ' + new Date(lease.contract_accepted_at).toLocaleDateString() : ''}</span>` : '<span style="color:var(--gold);">Pending your acceptance</span>'}</span></div>
+      </div>`;
+
+      /* Contract acceptance widget — shown only when not yet accepted */
+      if (!lease.contract_accepted) {
+        html += `<div class="card" style="border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.04);margin-top:0;">
+          <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;">Contract Acceptance Required</div>
+          <p style="font-size:13px;color:var(--text-2);line-height:1.7;margin-bottom:16px;">
+            To activate your <strong style="color:var(--text-1);">${lease.plan_name || 'plan'}</strong>, please review and accept your service agreement with VardWeb.
+            By accepting, you acknowledge the terms for your plan at
+            <strong style="color:var(--text-1);">$${parseFloat(lease.recurring_rate || 0).toFixed(2)}/${lease.billing_cycle || 'month'}</strong>.
+          </p>
+          <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:16px;">
+            <input type="checkbox" id="contractCheckbox" style="margin-top:3px;accent-color:var(--cyan);width:15px;height:15px;flex-shrink:0;" />
+            <span style="font-size:13px;color:var(--text-2);line-height:1.6;">
+              I have read and agree to VardWeb's
+              <a href="/terms.html" target="_blank" style="color:var(--cyan);">Terms of Service</a>
+              and the service terms for my current plan.
+            </span>
+          </label>
+          <button id="acceptContractBtn" disabled
+            style="background:var(--cyan);border:none;color:#000;font-size:13px;font-weight:700;padding:10px 24px;border-radius:8px;cursor:not-allowed;opacity:0.4;">
+            Accept &amp; Confirm
+          </button>
+          <div id="contractMsg" style="margin-top:10px;font-size:12px;"></div>
+        </div>`;
+      }
+    } else {
+      html += '<div class="empty">No active plan on record. Contact VardWeb to get started.</div>';
+    }
+
+    if (invoices?.length) {
+      html += `<div class="section-title" style="margin-top:24px;">Invoice history</div>`;
+      const todayStr = new Date().toISOString().slice(0, 10);
+      html += invoices.map(inv => {
+        const hasExpiry = !!inv.expires_at;
+        const isExpired = hasExpiry && inv.expires_at < todayStr;
+        const expiryLine = hasExpiry && inv.status !== 'paid'
+          ? `<div style="font-size:11px;margin-top:3px;color:${isExpired ? 'var(--pink)' : 'var(--gold)'};">${isExpired ? '⚠ Access expired' : `⏱ Access valid until ${inv.expires_at}`}</div>`
+          : '';
+        return `<div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;${inv.status === 'overdue' ? 'border-color:rgba(255,45,120,0.3);' : ''}">
+          <div>
+            <div style="font-weight:600;font-size:13px;">$${parseFloat(inv.amount).toFixed(2)} — ${inv.invoice_type === 'flat_rate' ? 'One-time' : 'Recurring'}</div>
+            <div style="font-size:11px;color:var(--text-2);margin-top:2px;">
+              Due: ${inv.due_date || '—'}${inv.paid_date ? ' · Paid: ' + inv.paid_date : ''}
+              ${inv.status === 'overdue' ? `<span style="color:var(--pink);margin-left:6px;">— overdue</span>` : ''}
+            </div>
+            ${expiryLine}
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="badge badge-${inv.status}">${inv.status}</span>
+            ${inv.status !== 'paid' && inv.stripe_checkout_url ? `<a href="${inv.stripe_checkout_url}" target="_blank" class="btn btn-cyan" style="padding:6px 14px;font-size:12px;" title="Secure Stripe checkout — VardWeb never sees your card details">Pay Now</a>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    } else if (!lease) {
+      html += '<div class="empty">No invoices on record.</div>';
+    }
+
+    el.innerHTML = html;
+
+    /* Contract checkbox interaction */
+    const checkbox  = document.getElementById('contractCheckbox');
+    const acceptBtn = document.getElementById('acceptContractBtn');
+    if (checkbox && acceptBtn && lease) {
+      checkbox.addEventListener('change', () => {
+        acceptBtn.disabled = !checkbox.checked;
+        acceptBtn.style.opacity    = checkbox.checked ? '1'       : '0.4';
+        acceptBtn.style.cursor     = checkbox.checked ? 'pointer' : 'not-allowed';
+      });
+      acceptBtn.addEventListener('click', async () => {
+        if (acceptBtn.disabled) return;
+        acceptBtn.textContent = 'Saving…'; acceptBtn.disabled = true;
+        const msg = document.getElementById('contractMsg');
+        const { error } = await sb.rpc('accept_contract', { p_lease_id: lease.id });
+        if (error) {
+          msg.textContent = '⚠ Could not save — please contact VardWeb at support@vardweb.com.';
+          msg.style.color = 'var(--pink)';
+          acceptBtn.textContent = 'Accept & Confirm';
+          acceptBtn.disabled = false;
+          acceptBtn.style.opacity = '1';
+          acceptBtn.style.cursor = 'pointer';
+        } else {
+          msg.innerHTML = '✓ Contract accepted — thank you! Your acceptance has been recorded.';
+          msg.style.color = '#22c55e';
+          msg.style.fontWeight = '600';
+          setTimeout(() => loadBilling(), 2200);
+        }
+      });
+    }
+  }
+
+  /* ── Domain & Hosting ── */
+  async function loadDomain() {
+    const el = document.getElementById('domainContent');
+    if (!activeSite) { el.innerHTML = '<div class="empty">No site on record.</div>'; return; }
+
+    const [{ data: domainRows }, { data: hosting }] = await Promise.all([
+      sb.from('domains').select('*').eq('site_id', activeSite.id).order('is_primary', { ascending: false }),
+      sb.from('hosting_access').select('*').eq('site_id', activeSite.id).eq('visible_to_client', true),
+    ]);
+    const domain = domainRows?.[0] ?? null;
+    const aliasDomains = (domainRows || []).slice(1);
+
+    let html = '';
+
+    /* Domain card */
+    if (domain) {
+      const owned = domain.transfer_status === 'transferred' || domain.owned_by === 'client';
+      const badge = owned ? `<span class="badge badge-yours">You Own This Domain</span>` : `<span class="badge badge-transfer">Managed by VardWeb — Transfer Pending</span>`;
+      const expiry = domain.expiry_date ? new Date(domain.expiry_date) : null;
+      const daysLeft = expiry ? Math.ceil((expiry - new Date()) / 86400000) : null;
+
+      html += `<div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-size:14px;font-weight:700;">${domain.domain_name}</span>${badge}
+        </div>
+        ${!owned ? `<div class="note-box" style="margin-bottom:14px;">VardWeb purchased this domain on your behalf. Once your final payment is received, ownership will be transferred fully to you. <button class="help-tip" data-help="transfer"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button><div class="help-panel" id="help-transfer">Domain transfer is the process of moving the domain registration from VardWeb's name into yours. It's a routine process that typically takes 5–7 days after payment is confirmed.</div></div>` : ''}
+        <div class="info-row"><span class="info-label">Registrar <button class="help-tip" data-help="registrar"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">${domain.registrar || '—'}</span></div>
+        <div class="help-panel" id="help-registrar">The company where your domain was purchased and registered. Think of it as the place that holds the rights to your domain name.</div>
+        <div class="info-row"><span class="info-label">DNS Provider <button class="help-tip" data-help="dns"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">${domain.dns_provider || '—'}</span></div>
+        <div class="help-panel" id="help-dns">The service that points your domain to your website's actual server. VardWeb manages this — you don't need to do anything here.</div>
+        <div class="info-row"><span class="info-label">Renews</span><span class="info-value">${domain.expiry_date ? domain.expiry_date + (daysLeft !== null ? ` (${daysLeft} days away)` : '') : '—'} <button class="help-tip" data-help="renew"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span></div>
+        <div class="help-panel" id="help-renew">If this date passes without renewal, your domain goes offline. VardWeb monitors renewals on your behalf when auto-renew is enabled.</div>
+
+        <!-- Credentials accordion -->
+        <div class="accordion" style="margin-top:16px;">
+          <div class="accordion-header" id="credAccordionHeader">
+            Provide Your Domain Credentials <button class="help-tip" data-help="cred-why"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="help-panel" id="help-cred-why" style="border-radius:0;border-left:none;border-bottom:1px solid var(--border);padding:10px 18px;">Sharing your registrar login lets VardWeb manage DNS settings, renewals, and any technical changes on your behalf — so you never have to log in yourself. Your password is encrypted and only visible to you and VardWeb.</div>
+          <div class="accordion-body" id="credAccordionBody">
+            <div class="field-group">
+              <label>Registrar Login URL <button class="help-tip" data-help="reg-url"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+              <div class="help-panel" id="help-reg-url">The website address where you log in to manage your domain (e.g. namecheap.com/myaccount).</div>
+              <input type="url" id="reg-url" value="${domain.registrar_login_url || ''}" placeholder="https://namecheap.com/myaccount" />
+            </div>
+            <div class="field-group">
+              <label>Login Email / Username</label>
+              <input type="email" id="reg-email" value="${domain.registrar_login_email || ''}" placeholder="your@email.com" />
+            </div>
+            <div class="field-group">
+              <label>Password <button class="help-tip" data-help="reg-pw"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+              <div class="help-panel" id="help-reg-pw">Your password is encrypted using AES-256-GCM before it is saved — the same standard used by enterprise security systems. VardWeb never stores your password in plain text.</div>
+              <div class="cred-row">
+                <input type="password" id="reg-pw" placeholder="••••••••" />
+                <button class="icon-btn" id="toggleRegPw">👁</button>
+              </div>
+              <div class="enc-badge">🔒 AES-256-GCM · GPG-equivalent encryption · Zero plaintext stored</div>
+            </div>
+            <button class="btn btn-cyan" id="saveRegCreds" style="margin-top:6px;">Save Credentials</button>
+          </div>
+        </div>
+      </div>`;
+
+      /* Alias domains (read-only) */
+      if (aliasDomains.length) {
+        html += `<div style="margin-top:10px;padding:12px 16px;background:var(--raised);border:1px solid var(--border);border-radius:10px;">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px;">Also resolves from</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${aliasDomains.map(a => `<span style="padding:4px 12px;border-radius:20px;border:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-1);">
+              ${a.domain_name}${a.region_label ? ` <span style="font-size:10px;font-weight:400;color:var(--text-2);">${a.region_label}</span>` : ''}${a.region_code ? ` <span style="font-size:10px;color:var(--cyan);">[${a.region_code}]</span>` : ''}
+            </span>`).join('')}
+          </div>
+        </div>`;
+      }
+    } else if (activeSite?.domain_name) {
+      html += `<div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+          <span style="font-size:14px;font-weight:700;">${activeSite.domain_name}</span>
+          <span class="badge badge-transfer">Details pending — VardWeb is updating this record</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.7;">
+          Full registrar and DNS details will appear here once VardWeb has finished adding your domain information.
+          Questions? <a href="mailto:support@vardweb.com" style="color:var(--cyan);">Contact VardWeb</a>.
+        </div>
+      </div>`;
+    } else {
+      html += '<div class="empty">No domain record on file. Contact VardWeb to add your domain.</div>';
+    }
+
+    /* Hosting */
+    html += `<div class="section-title" style="margin-top:24px;">Hosting access</div>`;
+    if (!hosting?.length) {
+      html += `<div class="note-box">No hosting access shared yet. If your website is managed through a hosting platform, sharing access below allows VardWeb to deploy updates, fix issues, and manage your site without needing to contact you each time. <a href="#addHosting" style="color:var(--cyan);">Add a provider below →</a></div>`;
+    } else {
+      for (const h of hosting) {
+        let plain = '';
+        try { plain = await decrypt(h.login_password || ''); } catch {}
+        html += `<div class="provider-card" data-hid="${h.id}" data-plain="${plain.replace(/"/g,'&quot;')}">
+          <div class="provider-header">
+            <span class="provider-name">${h.provider_name}</span>
+            <span class="access-badge">${h.access_type || 'login'} <button class="help-tip" data-help="access-type-${h.id}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span>
+            <span style="margin-left:auto;display:flex;gap:6px;">
+              <button class="icon-btn h-edit" data-hid="${h.id}"
+                      data-name="${h.provider_name.replace(/"/g,'&quot;')}"
+                      data-url="${(h.provider_url||'').replace(/"/g,'&quot;')}"
+                      data-type="${h.access_type||'shared_login'}"
+                      data-email="${(h.login_email||'').replace(/"/g,'&quot;')}"
+                      data-note="${(h.login_note||'').replace(/"/g,'&quot;')}"
+                      title="Edit" style="font-size:12px;">✏</button>
+              <button class="icon-btn h-delete" data-hid="${h.id}" title="Delete"
+                      style="font-size:12px;color:var(--pink);border-color:rgba(255,45,120,0.2);">✕</button>
+            </span>
+          </div>
+          <div class="help-panel" id="help-access-type-${h.id}">Access type shows how VardWeb connects to your hosting. "Team Invite" means they have their own login. "Shared Login" means you shared your credentials. "API Key" is a technical access code — no password sharing needed.</div>
+          <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">Login</span><span>${h.login_email || '—'}</span></div>
+          <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">Password</span>
+            <span style="display:flex;align-items:center;gap:6px;">
+              <span class="h-pw-disp">••••••••</span>
+              <button class="icon-btn h-pw-tog" data-plain="${plain.replace(/"/g,'&quot;')}">👁</button>
+              <button class="icon-btn h-pw-cpy" data-val="${plain.replace(/"/g,'&quot;')}">⧉</button>
+            </span>
+          </div>
+          ${h.login_note ? `<div style="font-size:11px;color:var(--text-2);margin-top:4px;"><strong>Note:</strong> ${h.login_note}</div>` : ''}
+          <div class="enc-badge">🔒 AES-256-GCM encrypted</div>
+        </div>`;
+      }
+    }
+
+    /* Add hosting */
+    html += `<div id="addHosting" style="margin-top:16px;">
+      <div class="accordion">
+        <div class="accordion-header" id="addHostingHeader">+ Add a Hosting Provider
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="accordion-body" id="addHostingBody">
+          <div class="note-box" style="margin-bottom:14px;">Sharing your hosting login lets VardWeb manage your site on your behalf. Your password is encrypted before being saved. <button class="help-tip" data-help="host-why"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
+          <div class="help-panel" id="help-host-why">Hosting is where your website's files live. If VardWeb has access, they can deploy updates, fix issues, and keep your site running — without calling you every time.</div></div>
+          <div class="field-group"><label>Provider Name <button class="help-tip" data-help="host-name"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-host-name">The service your website is hosted on (e.g. Cloudflare, Netlify, SiteGround, cPanel). If unsure, ask VardWeb.</div>
+          <input type="text" id="nh-name" placeholder="e.g. Cloudflare, Netlify, cPanel" /></div>
+          <div class="field-group"><label>Login URL</label><input type="url" id="nh-url" placeholder="https://…" /></div>
+          <div class="field-group">
+            <label>Access Type <button class="help-tip" data-help="host-access"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+            <div class="help-panel" id="help-host-access">Team Invite = you've added VardWeb as a team member (safest, recommended). Shared Login = sharing your own credentials. API Key = a special code, no password sharing. cPanel = a web hosting control panel.</div>
+            <select id="nh-type"><option value="shared_login">Shared Login</option><option value="team_invite">Team Invite</option><option value="api_key">API Key</option><option value="cpanel">cPanel</option></select>
+          </div>
+          <div class="field-group"><label>Login Email / Username</label><input type="email" id="nh-email" placeholder="your@email.com" /></div>
+          <div class="field-group">
+            <label>Password or Key <button class="help-tip" data-help="host-pw"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+            <div class="help-panel" id="help-host-pw">Your password is encrypted using AES-256-GCM before being saved — never stored in plain text.</div>
+            <div class="cred-row">
+              <input type="password" id="nh-pw" placeholder="••••••••" />
+              <button class="icon-btn" id="toggleNewHostPw">👁</button>
+            </div>
+            <div class="enc-badge">🔒 AES-256-GCM · Zero plaintext stored</div>
+          </div>
+          <div class="field-group"><label>Note (optional)</label><input type="text" id="nh-note" placeholder="e.g. 2FA is on my phone" /></div>
+          <button class="btn btn-cyan" id="saveNewHosting">Save Hosting Access</button>
+        </div>
+      </div>
+    </div>`;
+
+    function hostingEditFormHTML(hid, name, url, type, email, plain, note) {
+      const sel = v => t => `<option value="${v}"${type===v?' selected':''}>${t}</option>`;
+      return `<div class="provider-edit-form">
+        <div class="field-group"><label>Provider Name</label>
+          <input type="text" class="he-name" value="${name}" placeholder="e.g. Cloudflare, Netlify" />
+        </div>
+        <div class="field-group"><label>Login URL</label>
+          <input type="url" class="he-url" value="${url}" placeholder="https://…" />
+        </div>
+        <div class="field-group"><label>Access Type</label>
+          <select class="he-type">${sel('shared_login')('Shared Login')}${sel('team_invite')('Team Invite')}${sel('api_key')('API Key')}${sel('cpanel')('cPanel')}</select>
+        </div>
+        <div class="field-group"><label>Login Email / Username</label>
+          <input type="email" class="he-email" value="${email}" placeholder="your@email.com" />
+        </div>
+        <div class="field-group"><label>Password or Key</label>
+          <div class="cred-row">
+            <input type="password" class="he-pw" value="${plain.replace(/"/g,'&quot;')}" placeholder="••••••••" />
+            <button class="icon-btn he-pw-tog" type="button">👁</button>
+          </div>
+          <div class="enc-badge">🔒 AES-256-GCM · Zero plaintext stored</div>
+        </div>
+        <div class="field-group"><label>Note (optional)</label>
+          <input type="text" class="he-note" value="${note}" placeholder="e.g. 2FA is on my phone" />
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <button class="btn btn-cyan he-save" data-hid="${hid}" style="flex:1;font-size:12px;padding:8px 12px;">Save</button>
+          <button class="btn he-cancel" style="font-size:12px;padding:8px 12px;background:transparent;border:1px solid var(--border);color:var(--text-2);">Cancel</button>
+        </div>
+      </div>`;
+    }
+
+    el.innerHTML = html;
+
+    /* Accordion toggles */
+    ['credAccordionHeader','addHostingHeader'].forEach(hid => {
+      const header = document.getElementById(hid);
+      const bodyId = hid.replace('Header','Body');
+      header?.addEventListener('click', () => {
+        header.classList.toggle('open');
+        document.getElementById(bodyId)?.classList.toggle('open');
+      });
+    });
+
+    /* Toggle passwords */
+    document.querySelectorAll('.h-pw-tog').forEach(btn => {
+      const sibling = btn.previousElementSibling;
+      btn.addEventListener('click', () => {
+        const showing = btn.dataset.show === '1';
+        sibling.textContent = showing ? '••••••••' : btn.dataset.plain;
+        btn.dataset.show = showing ? '0' : '1';
+      });
+    });
+    document.querySelectorAll('.h-pw-cpy').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(btn.dataset.val);
+        btn.textContent = '✓'; setTimeout(() => btn.textContent = '⧉', 1500);
+      });
+    });
+
+    /* Edit hosting provider */
+    document.querySelectorAll('.h-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.provider-card');
+
+        // Toggle close if form is already open
+        if (card.querySelector('.provider-edit-form')) {
+          card.querySelector('.provider-edit-form').remove();
+          if (card._readFragment) card.appendChild(card._readFragment);
+          return;
+        }
+
+        const plain  = card.dataset.plain || '';
+        const header = card.querySelector('.provider-header');
+
+        // Move read-view nodes into a fragment — preserves their event listeners
+        const frag = document.createDocumentFragment();
+        while (header.nextSibling) frag.appendChild(header.nextSibling);
+        card._readFragment = frag;
+
+        const div = document.createElement('div');
+        div.innerHTML = hostingEditFormHTML(btn.dataset.hid, btn.dataset.name,
+          btn.dataset.url, btn.dataset.type, btn.dataset.email, plain, btn.dataset.note);
+        card.appendChild(div.firstElementChild);
+
+        card.querySelector('.he-pw-tog').addEventListener('click', () => {
+          const inp = card.querySelector('.he-pw');
+          inp.type = inp.type === 'password' ? 'text' : 'password';
+        });
+        card.querySelector('.he-cancel').addEventListener('click', () => {
+          card.querySelector('.provider-edit-form').remove();
+          if (card._readFragment) card.appendChild(card._readFragment);
+        });
+        card.querySelector('.he-save').addEventListener('click', async () => {
+          const saveBtn = card.querySelector('.he-save');
+          const newName = card.querySelector('.he-name').value.trim();
+          if (!newName) { alert('Provider name is required.'); return; }
+          const pw  = card.querySelector('.he-pw').value;
+          const enc = pw ? await encrypt(pw) : null;
+          saveBtn.textContent = 'Saving…'; saveBtn.disabled = true;
+          const { error } = await sb.from('hosting_access').update({
+            provider_name: newName,
+            provider_url:  card.querySelector('.he-url').value.trim() || null,
+            access_type:   card.querySelector('.he-type').value,
+            login_email:   card.querySelector('.he-email').value.trim() || null,
+            login_password: enc,
+            login_note:    card.querySelector('.he-note').value.trim() || null,
+            credentials_submitted_by: 'client',
+            credentials_submitted_at: new Date().toISOString(),
+          }).eq('id', btn.dataset.hid).eq('site_id', activeSite.id);
+          if (error) { saveBtn.textContent = '⚠ Error — try again'; saveBtn.style.background = 'var(--pink)'; saveBtn.disabled = false; }
+          else { saveBtn.textContent = 'Saved ✓'; setTimeout(() => loadDomain(), 1000); }
+        });
+      });
+    });
+
+    /* Delete hosting provider */
+    document.querySelectorAll('.h-delete').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Remove this hosting provider?')) return;
+        const card = btn.closest('.provider-card');
+        btn.textContent = '…'; btn.disabled = true;
+        const { error } = await sb.from('hosting_access')
+          .delete().eq('id', btn.dataset.hid).eq('site_id', activeSite.id);
+        if (error) { btn.textContent = '✕'; btn.disabled = false; alert('Delete failed — please try again.'); }
+        else { card.remove(); }
+      });
+    });
+
+    /* Registrar password reveal */
+    document.getElementById('toggleRegPw')?.addEventListener('click', () => {
+      const inp = document.getElementById('reg-pw');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+
+    /* Pre-fill existing registrar password */
+    if (domain?.registrar_login_password) {
+      try {
+        const plain = await decrypt(domain.registrar_login_password);
+        document.getElementById('reg-pw').value = plain;
+      } catch {}
+    }
+
+    /* Save registrar creds */
+    document.getElementById('saveRegCreds')?.addEventListener('click', async () => {
+      const pw = document.getElementById('reg-pw').value;
+      const enc = pw ? await encrypt(pw) : domain?.registrar_login_password || null;
+      await sb.from('domains').upsert({
+        id: domain?.id,
+        site_id: activeSite.id, client_id: clientId,
+        domain_name: domain?.domain_name || activeSite.domain_name,
+        registrar_login_url:   document.getElementById('reg-url').value.trim() || null,
+        registrar_login_email: document.getElementById('reg-email').value.trim() || null,
+        registrar_login_password: enc,
+        credentials_submitted_by: 'client',
+        credentials_submitted_at: new Date().toISOString(),
+      });
+      const btn = document.getElementById('saveRegCreds');
+      btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save Credentials', 1800);
+    });
+
+    /* Toggle new hosting password */
+    document.getElementById('toggleNewHostPw')?.addEventListener('click', () => {
+      const inp = document.getElementById('nh-pw');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+
+    /* Save new hosting */
+    document.getElementById('saveNewHosting')?.addEventListener('click', async () => {
+      const name = document.getElementById('nh-name').value.trim();
+      const pw   = document.getElementById('nh-pw').value;
+      if (!name) return alert('Provider name is required.');
+      const enc = pw ? await encrypt(pw) : null;
+      await sb.from('hosting_access').insert({
+        site_id: activeSite.id, client_id: clientId,
+        provider_name: name,
+        provider_url: document.getElementById('nh-url').value.trim() || null,
+        access_type: document.getElementById('nh-type').value,
+        login_email: document.getElementById('nh-email').value.trim() || null,
+        login_password: enc,
+        login_note: document.getElementById('nh-note').value.trim() || null,
+        credentials_submitted_by: 'client',
+        credentials_submitted_at: new Date().toISOString(),
+        visible_to_client: true,
+      });
+      await loadDomain();
+    });
+  }
+
+  /* ── Social ── */
+  async function loadSocial() {
+    const el = document.getElementById('socialContent');
+    if (!activeSite) { el.innerHTML = '<div class="empty">No site on record.</div>'; return; }
+    const siteId = activeSite.id;
+    const { data: links } = await sb.from('social_links').select('*').eq('site_id', siteId).order('updated_at');
+
+    function cardHTML(l) {
+      const p = l.platform || '';
+      return `<div class="social-card" data-orig-platform="${p}">
+        <input type="text" class="s-name" value="${p}" placeholder="Platform (e.g. instagram)"
+          style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:4px 0 8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:12px;outline:none;" />
+        <div class="field-group" style="margin-bottom:8px;">
+          <label style="font-size:10px;">Handle</label>
+          <input type="text" class="s-handle" value="${l.account_handle || ''}" placeholder="@handle" style="padding:8px 11px;font-size:12px;" />
+        </div>
+        <div class="field-group" style="margin-bottom:8px;">
+          <label style="font-size:10px;">Profile URL</label>
+          <input type="text" class="s-url" value="${l.account_url || ''}" placeholder="https://…" style="padding:8px 11px;font-size:12px;" />
+        </div>
+        <div class="field-group" style="margin-bottom:12px;">
+          <label style="font-size:10px;">Display Label <span style="font-weight:400;color:var(--text-2);text-transform:none;letter-spacing:0;">(optional)</span></label>
+          <input type="text" class="s-label" value="${l.display_label || ''}" placeholder="e.g. Follow us" style="padding:8px 11px;font-size:12px;" />
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-cyan s-save" style="flex:1;font-size:11px;padding:7px 10px;" data-site="${siteId}" data-client="${clientId}">Save</button>
+          <button class="icon-btn s-delete" style="font-size:13px;padding:7px 10px;" data-site="${siteId}">✕</button>
+        </div>
+      </div>`;
+    }
+
+    function wireSave(btn) {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('[data-orig-platform]');
+        const orig = card.dataset.origPlatform;
+        const name = card.querySelector('.s-name').value.trim().toLowerCase().replace(/\s+/g,'_');
+        if (!name) { alert('Platform name is required.'); return; }
+        const handle = card.querySelector('.s-handle').value.trim();
+        const url    = card.querySelector('.s-url').value.trim();
+        const label  = card.querySelector('.s-label').value.trim();
+        if (orig && orig !== name) {
+          await sb.from('social_links').delete().eq('site_id', btn.dataset.site).eq('platform', orig);
+        }
+        await sb.from('social_links').upsert(
+          { site_id: btn.dataset.site, client_id: btn.dataset.client, platform: name, account_handle: handle, account_url: url, display_label: label, updated_at: new Date().toISOString() },
+          { onConflict: 'site_id,platform' }
+        );
+        card.dataset.origPlatform = name;
+        btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save', 1800);
+      });
+    }
+
+    function wireDelete(btn) {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('[data-orig-platform]');
+        const orig = card.dataset.origPlatform;
+        if (!orig) { card.remove(); return; }
+        if (!confirm(`Remove "${orig}"?`)) return;
+        await sb.from('social_links').delete().eq('site_id', btn.dataset.site).eq('platform', orig);
+        card.remove();
+      });
+    }
+
+    function addCard() {
+      const grid = document.getElementById('socialGrid');
+      const tmp = document.createElement('div');
+      tmp.innerHTML = cardHTML({ platform: '', account_handle: '', account_url: '', display_label: '' });
+      const card = tmp.firstElementChild;
+      grid.appendChild(card);
+      card.querySelectorAll('.s-save').forEach(wireSave);
+      card.querySelectorAll('.s-delete').forEach(wireDelete);
+      card.querySelector('.s-name').focus();
+    }
+
+    el.innerHTML = `
+      <div id="socialGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:14px;">
+        ${(links || []).map(l => cardHTML(l)).join('')}
+      </div>
+      <button class="btn btn-ghost" id="addSocialBtn" style="font-size:12px;padding:8px 16px;">+ Add Platform</button>`;
+
+    el.querySelectorAll('.s-save').forEach(wireSave);
+    el.querySelectorAll('.s-delete').forEach(wireDelete);
+    document.getElementById('addSocialBtn').addEventListener('click', addCard);
+  }
+
+  /* ── SEO Reports ── */
+  async function loadSeo() {
+    const el = document.getElementById('seoContent');
+    const { data: reports } = await sb.from('seo_reports').select('*').eq('client_id', clientId).order('generated_at', { ascending: false });
+    if (!reports?.length) { el.innerHTML = '<div class="empty">No SEO reports yet. VardWeb will generate your first report soon.</div>'; return; }
+    el.innerHTML = reports.map(r => {
+      const m = r.report_data || {};
+      return `<div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font-weight:600;">${new Date(r.generated_at).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;font-size:12px;">
+          <div><div style="color:var(--text-2);">Mobile <button class="help-tip" data-help="rpt-mobile"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div><div class="help-panel" id="help-rpt-mobile">A score out of 100 for how fast your site loads on a phone. Above 90 is excellent.</div><div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--cyan);">${m.performance?.mobile ?? '—'}</div></div>
+          <div><div style="color:var(--text-2);">Desktop</div><div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--gold);">${m.performance?.desktop ?? '—'}</div></div>
+          <div><div style="color:var(--text-2);">SEO <button class="help-tip" data-help="rpt-seo"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div><div class="help-panel" id="help-rpt-seo">How well your site is set up to appear in Google search results. Higher is better.</div><div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--gold);">${m.seo?.score ?? '—'}</div></div>
+          <div><div style="color:var(--text-2);">Accessibility <button class="help-tip" data-help="rpt-a11y"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div><div class="help-panel" id="help-rpt-a11y">How usable your site is for people with disabilities. A score of 90+ meets professional standards.</div><div style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:#22c55e;">${m.accessibility?.score ?? '—'}</div></div>
+        </div>
+        ${m.accessibility?.wcag ? `<div style="margin-top:10px;font-size:11px;color:var(--text-2);">WCAG Level: <span style="color:var(--cyan);font-weight:600;">${m.accessibility.wcag}</span></div>` : ''}
+      </div>`;
+    }).join('');
+  }
+</script>
+</body>
+</html>

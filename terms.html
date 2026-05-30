@@ -1,0 +1,816 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — VardWeb</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    .grad-cyan-pink {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; position: relative; padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu {
+      position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(200,212,232,0.15);
+      color: rgba(200,212,232,0.58);
+    }
+    .btn-ghost:hover {
+      color: var(--text-1);
+      border-color: rgba(200,212,232,0.3);
+    }
+
+    /* Section tag */
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+
+    /* Policy card */
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid rgba(0,229,255,0.08);
+      border-radius: 18px;
+      padding: 36px 40px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .policy-card:hover {
+      border-color: rgba(0,229,255,0.18);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.04);
+    }
+    .policy-card h3 {
+      font-size: 18px; font-weight: 700; color: var(--text-1);
+      margin-bottom: 14px; letter-spacing: -0.02em;
+    }
+    .policy-card p, .policy-card li {
+      font-size: 14.5px; line-height: 1.85; color: var(--text-2);
+    }
+    .policy-card ul {
+      list-style: none; padding: 0; margin-top: 12px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .policy-card li {
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .policy-card li::before {
+      content: '—';
+      color: var(--cyan);
+      opacity: 0.6;
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .policy-card .sub-label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(200,212,232,0.38);
+      margin-bottom: 8px;
+    }
+    .policy-card .sub-section {
+      padding: 18px 20px;
+      background: rgba(0,229,255,0.03);
+      border: 1px solid rgba(0,229,255,0.07);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+    .policy-card .sub-section + .sub-section { margin-top: 10px; }
+    .policy-card .sub-section h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; font-weight: 700;
+      color: var(--cyan); margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    /* Rights chips */
+    .rights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    @media (max-width: 600px) { .rights-grid { grid-template-columns: 1fr; } }
+    .rights-chip {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(0,229,255,0.04);
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 12px; padding: 14px 18px;
+    }
+    .rights-chip-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.12);
+    }
+    .rights-chip-text {
+      font-size: 13.5px; color: var(--text-2); line-height: 1.45;
+    }
+
+    /* Highlight banner */
+    .no-share-banner {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,215,0,0.05);
+      border: 1px solid rgba(255,215,0,0.15);
+      border-radius: 14px; padding: 20px 24px;
+      margin-bottom: 0;
+    }
+    .no-share-icon { font-size: 28px; flex-shrink: 0; }
+    .no-share-banner p { font-size: 14.5px; line-height: 1.7; color: var(--text-2); }
+    .no-share-banner strong { color: #FFD700; font-weight: 600; }
+
+    /* Warning banner (pink variant) */
+    .warn-banner {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,45,120,0.05);
+      border: 1px solid rgba(255,45,120,0.18);
+      border-radius: 14px; padding: 20px 24px;
+      margin-top: 16px;
+    }
+    .warn-banner p { font-size: 14.5px; line-height: 1.7; color: var(--text-2); }
+    .warn-banner strong { color: var(--pink); font-weight: 600; }
+
+    /* Footer */
+    .site-footer {
+      background: var(--surface);
+      border-top: 1px solid rgba(0,229,255,0.07);
+      padding: 52px 28px 36px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 28px; text-align: center;
+    }
+    .footer-links-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+    }
+    .footer-pill {
+      background: rgba(200,212,232,0.035);
+      border: 1px solid rgba(200,212,232,0.08);
+      border-radius: 9999px; padding: 10px 20px;
+      font-size: 13px; color: rgba(200,212,232,0.5);
+      text-decoration: none; font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .footer-pill:hover {
+      color: #C8D4E8;
+      border-color: rgba(200,212,232,0.2);
+      background: rgba(200,212,232,0.07);
+    }
+    .footer-copy {
+      color: rgba(200,212,232,0.28); font-size: 11px;
+      font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .policy-card { padding: 28px 24px; }
+    }
+  </style>
+  <script src="/supabase-config.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="VardWeb Home">
+      <div class="logo-nav-wrap">
+        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+      </div>
+    </a>
+    <div class="nav-links">
+      <div class="nav-dropdown">
+        <a href="index.html" class="nav-link nav-dropdown-trigger">
+          Home <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu">
+          <a href="index.html#why-us"   class="dropdown-item">Why Us</a>
+          <a href="index.html#services" class="dropdown-item">Services</a>
+          <a href="index.html#results"  class="dropdown-item">Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item">Roadmap</a>
+        </div>
+      </div>
+      <a href="faq.html"            class="nav-link">FAQ</a>
+      <a href="about.html"          class="nav-link">About</a>
+      <a href="contact.html"        class="nav-link">Contact</a>
+    </div>
+    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
+      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+        <circle cx="10" cy="5.5" r="4.5"/>
+        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+      </svg>
+      Login
+    </a>
+    <a href="contact.html" class="btn btn-primary">
+      Get a Quote <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section style="
+  padding: 160px 28px 90px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,229,255,0.06) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255,45,120,0.05) 0%, transparent 65%),
+    var(--base);
+  position: relative; overflow: hidden;
+">
+  <div style="
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+  "></div>
+
+  <div style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
+    <p class="sec-tag" style="margin-bottom: 20px;">// legal &amp; agreements</p>
+    <h1 style="
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 900; line-height: 1.04;
+      color: var(--text-1); margin-bottom: 22px;
+    ">
+      Terms of<br><span class="grad-cyan-pink">Service</span>
+    </h1>
+    <p style="font-size: 17px; color: var(--text-2); line-height: 1.75; max-width: 540px; margin: 0 auto 32px;">
+      Plain-English terms for working together. What we deliver, what we need from you,
+      how payment works, and how we protect both parties.
+    </p>
+    <div style="
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,229,255,0.07);
+      border: 1px solid rgba(0,229,255,0.18);
+      border-radius: 999px; padding: 6px 18px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: rgba(0,229,255,0.75); letter-spacing: 0.06em;
+    ">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
+      Last updated: May 2026
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT ── -->
+<section style="padding: 80px 28px 100px;">
+  <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+
+    <!-- 01 — Agreement -->
+    <div class="policy-card">
+      <p class="sec-tag">// 01 — acceptance of terms</p>
+      <h3>Using our services means you agree.</h3>
+      <p style="margin-bottom: 16px;">
+        These Terms of Service ("Terms") govern your access to and use of VardWeb's website at
+        <a href="https://vardweb.ca" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.ca</a>
+        and
+        <a href="https://vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.com</a>,
+        as well as any services, projects, proposals, or agreements entered into with VardWeb ("we," "us," "our").
+        By visiting either website, submitting an inquiry, signing a proposal, or engaging our services in any form,
+        you ("you," "the client") acknowledge that you have read, understood, and agree to be bound by these Terms
+        in full.
+      </p>
+      <p>
+        If you are entering into these Terms on behalf of a company or other legal entity, you represent that you
+        have the authority to bind that entity. If you do not agree to any part of these Terms, you must not engage
+        our services.
+      </p>
+    </div>
+
+    <!-- 02 — Services -->
+    <div class="policy-card">
+      <p class="sec-tag">// 02 — services we provide</p>
+      <h3>What VardWeb builds and maintains.</h3>
+      <p style="margin-bottom: 4px;">VardWeb offers custom web design, development, and digital services. The specific scope of work for any engagement is defined in a written proposal or statement of work agreed upon by both parties. Our services may include, but are not limited to:</p>
+      <ul>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Custom website design &amp; development</strong> — responsive, bespoke sites built to your brand and business requirements.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Content Management System (CMS) implementation</strong> — allowing you to update your own site content without developer involvement.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Domain &amp; hosting facilitation</strong> — assistance registering, configuring, and managing domains and third-party hosting providers on your behalf.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Ongoing maintenance &amp; support plans</strong> — recurring service agreements covering updates, security monitoring, and technical support as specified in your plan.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">SEO reporting &amp; recommendations</strong> — performance audits, accessibility reviews, and actionable reports. We do not guarantee specific search engine rankings.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Client portal &amp; CRM access</strong> — a secure portal through which you can view project details, invoices, and manage your site content.</span></li>
+      </ul>
+      <p style="margin-top: 16px;">
+        VardWeb reserves the right to decline, modify, or discontinue any service offering at any time.
+        Changes to an agreed scope of work require written consent from both parties and may be subject to
+        additional fees.
+      </p>
+    </div>
+
+    <!-- 03 — Client Obligations -->
+    <div class="policy-card">
+      <p class="sec-tag">// 03 — your responsibilities</p>
+      <h3>What we need from you to deliver great work.</h3>
+      <p style="margin-bottom: 4px;">A successful project is a two-way effort. By engaging our services, you agree to the following obligations:</p>
+
+      <div class="sub-section">
+        <h4>Providing Content &amp; Materials</h4>
+        <p>You are responsible for supplying all text, images, logos, brand assets, and other content required for your project by the dates agreed upon. VardWeb is not liable for project delays caused by late or incomplete content delivery from your side. Placeholder content may be used in the interim, and replacing it is your responsibility unless otherwise agreed.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Timely Approvals &amp; Feedback</h4>
+        <p>You agree to review deliverables and provide written feedback or approval within a reasonable timeframe as specified in your proposal (typically 5–7 business days). Prolonged silence or non-response does not constitute approval. If a project remains idle due to client non-response for 30 or more consecutive days, VardWeb reserves the right to treat the project as abandoned, retain any deposits paid, and invoice for all work completed to date.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Accurate Information</h4>
+        <p>You represent that all information, content, and materials you provide are accurate, lawful, and do not infringe on the intellectual property, privacy, or other rights of any third party. You are solely responsible for the legality and accuracy of all content you supply or approve for publication on your website.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Account &amp; Credential Security</h4>
+        <p>If you are provided access to a VardWeb client portal, CMS, or any third-party account on your behalf, you are responsible for maintaining the confidentiality of your login credentials. You agree to notify VardWeb immediately of any unauthorized access or suspected breach. VardWeb is not liable for losses resulting from credentials that were compromised on your end.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Compliance</h4>
+        <p>You are responsible for ensuring your website and its content comply with all applicable laws and regulations in your jurisdiction, including but not limited to consumer protection laws, advertising standards, privacy regulations, and accessibility requirements beyond any baseline VardWeb implements as part of your project scope.</p>
+      </div>
+    </div>
+
+    <!-- 04 — Payment Terms -->
+    <div class="policy-card">
+      <p class="sec-tag">// 04 — payment terms</p>
+      <h3>Clear pricing. No surprises.</h3>
+      <p style="margin-bottom: 4px;">All fees are quoted and invoiced in Canadian Dollars (CAD) unless explicitly stated otherwise in a written proposal.</p>
+
+      <div class="sub-section">
+        <h4>Deposits</h4>
+        <p>A deposit — typically 50% of the total project fee, unless otherwise stated in writing — is due before any work commences. Work will not begin until the deposit is received and cleared. Deposits are non-refundable once work has started, as they compensate VardWeb for time allocated and resources committed to your project.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Milestone &amp; Final Payments</h4>
+        <p>Remaining balances are due according to the payment schedule in your proposal. For projects with milestone payments, each phase will not proceed until the corresponding milestone payment is received. Final deliverables — including website launch, file transfers, and domain access — will not be released until all outstanding balances are paid in full.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Recurring Fees</h4>
+        <p>Ongoing maintenance plans, hosting facilitation, and any other recurring services are billed monthly or annually as agreed. Failure to pay a recurring invoice within 14 days of the due date may result in suspension of services, including but not limited to CMS access, portal access, and site maintenance. Services suspended due to non-payment may be reinstated upon payment of all outstanding amounts plus a reinstatement fee.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Late Payments</h4>
+        <p>Invoices not paid within 30 days of the due date may be subject to a late fee of 2% per month on the outstanding balance, compounded monthly, in accordance with applicable Canadian law. VardWeb also reserves the right to pause all active work on any project until overdue balances are settled.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Payment Processing</h4>
+        <p>Payments are processed via Stripe. VardWeb does not store, handle, or have access to your credit card details at any point. Payment processing is governed entirely by Stripe's terms of service and privacy policy. Chargebacks initiated without prior good-faith attempt to resolve a dispute directly with VardWeb will be contested and may result in immediate termination of services and recovery of all outstanding fees through legal means.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Scope Changes &amp; Additional Work</h4>
+        <p>Any work requested that falls outside the agreed project scope — including additional pages, features, integrations, or design revisions beyond the number included in your proposal — will be quoted separately and invoiced before the additional work begins. Requests are only considered approved once confirmed in writing by both parties.</p>
+      </div>
+    </div>
+
+    <!-- 05 — Intellectual Property -->
+    <div class="policy-card">
+      <p class="sec-tag">// 05 — intellectual property</p>
+      <h3>Who owns what, and when.</h3>
+
+      <div class="sub-section">
+        <h4>Client Ownership Upon Full Payment</h4>
+        <p>Upon receipt of full payment for a completed project, VardWeb assigns to you all rights, title, and interest in the custom visual design and bespoke written code created specifically for your project. You own your website design and the unique source code we write for you, outright.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>VardWeb Retained Rights</h4>
+        <p>VardWeb retains all rights to its underlying frameworks, development tools, libraries, boilerplate code, processes, methodologies, and any pre-existing intellectual property used in the delivery of your project. These elements may be reused in other projects. You receive a perpetual, non-exclusive licence to use them as part of your delivered website, but do not own them outright.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Third-Party Assets &amp; Licences</h4>
+        <p>Any third-party fonts, icons, stock images, plugins, or software included in your project remain subject to their respective licences. VardWeb will use commercially licensed or open-source assets where applicable and will inform you of any assets that require a separate licence in your name. You are responsible for maintaining any such licences after project handoff.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Client Content</h4>
+        <p>All text, images, logos, and other materials you supply remain your property. By providing them to VardWeb, you grant us a limited licence to use, reproduce, and display them solely for the purpose of completing your project.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Portfolio Rights</h4>
+        <p>Unless you expressly request otherwise in writing before project launch, VardWeb reserves the right to display your completed project — including screenshots, live links, and project descriptions — in our portfolio, website, and marketing materials.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Work in Progress</h4>
+        <p>Until full payment is received, all work in progress — including design mockups, source code, and deliverables — remains the intellectual property of VardWeb. No partial ownership is transferred at any intermediate stage.</p>
+      </div>
+    </div>
+
+    <!-- 06 — Timelines & Scope -->
+    <div class="policy-card">
+      <p class="sec-tag">// 06 — timelines &amp; project scope</p>
+      <h3>Realistic expectations on both sides.</h3>
+      <p style="margin-bottom: 16px;">
+        Any project timeline provided in a proposal is an estimate based on information available at the time
+        of quoting. Timelines are subject to change based on scope adjustments, client feedback cycles,
+        third-party dependencies, or other factors outside VardWeb's direct control.
+      </p>
+      <ul>
+        <li><span>Timelines begin from the date the deposit is received and required project materials (content, assets, brand guidelines) are delivered by the client — not from the date of proposal acceptance alone.</span></li>
+        <li><span>Delays caused by late client approvals, missing content, or scope changes will extend the project timeline accordingly and do not constitute a breach by VardWeb.</span></li>
+        <li><span>Rush requests — projects requiring accelerated turnaround outside standard scheduling — may be accommodated at VardWeb's discretion and are subject to a rush surcharge, agreed in writing in advance.</span></li>
+        <li><span>VardWeb will notify you promptly of any delays on our end and provide a revised delivery estimate.</span></li>
+        <li><span>Projects abandoned by the client (see Section 03) may be reinitiated at VardWeb's discretion, subject to a project restart fee and revised timeline.</span></li>
+      </ul>
+    </div>
+
+    <!-- 07 — Hosting & Third-Party Services -->
+    <div class="policy-card">
+      <p class="sec-tag">// 07 — hosting &amp; third-party services</p>
+      <h3>We don't control the infrastructure. Here's what that means.</h3>
+      <p style="margin-bottom: 4px;">VardWeb designs and builds websites but does not own or operate the hosting infrastructure, domain registrars, payment processors, or analytics platforms used in connection with your project. The following applies to all third-party services:</p>
+
+      <div class="sub-section">
+        <h4>Hosting Providers</h4>
+        <p>Your website may be hosted on third-party platforms such as Cloudflare Pages, Netlify, Vercel, SiteGround, or others. VardWeb facilitates setup and configuration but is not responsible for downtime, data loss, performance degradation, or service discontinuation by these providers. Your use of any hosting platform is also governed by that platform's own terms of service.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Domain Registration</h4>
+        <p>Domains registered on your behalf are registered in your name and at your expense unless otherwise agreed. VardWeb is not responsible for domain expiry, lapse of registration, or any loss of a domain name that arises from failure to renew, inaccurate registrant information, or actions by the registrar. You are responsible for keeping your domain registration details current.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Supabase, Stripe &amp; Analytics</h4>
+        <p>VardWeb projects may incorporate services including Supabase (database &amp; authentication), Stripe (payment processing), Google Analytics, and Microsoft Clarity. Each of these services operates under its own terms of service and privacy policy. VardWeb is not liable for outages, data breaches, policy changes, or any other failures originating from these third-party platforms.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Email Delivery</h4>
+        <p>Contact forms and notification emails may be routed through third-party email delivery services (e.g. EmailJS, SendGrid). VardWeb does not guarantee delivery of any automated email and is not responsible for messages that are filtered as spam, delayed, or lost due to issues with email providers or recipient email settings.</p>
+      </div>
+    </div>
+
+    <!-- 08 — Limitation of Liability -->
+    <div class="policy-card" style="border-color: rgba(255,45,120,0.12);">
+      <p class="sec-tag" style="color: var(--pink);">// 08 — limitation of liability</p>
+      <h3>The legal caps on what we owe.</h3>
+      <p style="margin-bottom: 16px;">
+        To the maximum extent permitted by applicable law, VardWeb's total cumulative liability to you for any
+        and all claims arising out of or related to these Terms or the services provided — whether in contract,
+        tort, negligence, or otherwise — shall not exceed the total fees paid by you to VardWeb in the three
+        (3) months immediately preceding the event giving rise to the claim.
+      </p>
+
+      <div class="warn-banner">
+        <div class="no-share-icon">⚠️</div>
+        <p>
+          <strong>In no event shall VardWeb be liable for any indirect, incidental, consequential, special, exemplary, or punitive damages</strong> — including but not limited to lost profits, lost revenue, loss of data, loss of goodwill, business interruption, or the cost of substitute services — even if VardWeb has been advised of the possibility of such damages.
+        </p>
+      </div>
+
+      <p style="margin-top: 16px;">Specific exclusions from liability include, but are not limited to:</p>
+      <ul>
+        <li><span>Downtime, outages, or data loss caused by third-party hosting providers, DNS providers, or any other infrastructure not directly operated by VardWeb.</span></li>
+        <li><span>Security breaches, hacks, malware infections, or unauthorized access that occur after project delivery, particularly where the client has modified the site, installed third-party plugins, or failed to maintain software updates.</span></li>
+        <li><span>Loss of search engine rankings, organic traffic, or any other business metric, whether or not VardWeb provided SEO recommendations in connection with the project.</span></li>
+        <li><span>Business losses, lost opportunities, or revenue shortfalls arising from website downtime, poor performance, or design decisions.</span></li>
+        <li><span>Errors, omissions, or inaccuracies in content supplied by the client that is published on the delivered website.</span></li>
+        <li><span>Actions, failures, or policy changes by any third-party service integrated into your project (Stripe, Supabase, Google, Cloudflare, etc.).</span></li>
+      </ul>
+    </div>
+
+    <!-- 09 — Warranty Disclaimer -->
+    <div class="policy-card">
+      <p class="sec-tag">// 09 — warranty disclaimer</p>
+      <h3>What we promise — and what we don't.</h3>
+      <p style="margin-bottom: 16px;">
+        VardWeb warrants that all work delivered will be completed with reasonable skill, care, and professionalism,
+        consistent with industry standards for web design and development. We stand behind the quality of our work.
+      </p>
+      <p style="margin-bottom: 16px;">
+        However, to the fullest extent permitted by law, all services are provided <strong style="color: var(--text-1); font-weight: 600;">"as is"</strong> and
+        <strong style="color: var(--text-1); font-weight: 600;">"as available"</strong> without warranty of any kind, express or implied, including but not limited to:
+      </p>
+      <ul>
+        <li><span>Any implied warranty of merchantability, fitness for a particular purpose, or non-infringement.</span></li>
+        <li><span>That the delivered website will be free of all bugs, errors, or interruptions at all times.</span></li>
+        <li><span>That the website will achieve specific business outcomes, conversion rates, revenue targets, or search engine rankings.</span></li>
+        <li><span>That the website will remain functional without change as browsers, operating systems, or web standards evolve after delivery — ongoing compatibility updates are covered under maintenance plans only.</span></li>
+      </ul>
+      <p style="margin-top: 16px;">
+        VardWeb will correct any defects in delivered code that are reported within <strong style="color: var(--text-1); font-weight: 600;">30 days of project launch</strong>
+        at no additional charge, provided the defect arises directly from our implementation and has not been
+        caused by client modifications, third-party plugin conflicts, or hosting environment changes.
+        After this period, bug fixes are covered under an active maintenance plan or quoted as additional work.
+      </p>
+    </div>
+
+    <!-- 10 — Indemnification -->
+    <div class="policy-card">
+      <p class="sec-tag">// 10 — indemnification</p>
+      <h3>You're responsible for what you bring to the project.</h3>
+      <p style="margin-bottom: 16px;">
+        You agree to indemnify, defend, and hold harmless VardWeb and its team from and against any claims,
+        damages, losses, liabilities, costs, and expenses (including reasonable legal fees) arising out of or
+        related to:
+      </p>
+      <ul>
+        <li><span>Content, materials, or instructions you provide that infringe on the intellectual property, privacy, or other rights of a third party.</span></li>
+        <li><span>Your violation of any applicable law or regulation in connection with your website or business.</span></li>
+        <li><span>False or misleading claims made on your website that were approved by you and published at your direction.</span></li>
+        <li><span>Your breach of any obligation under these Terms.</span></li>
+        <li><span>Any modifications you or a third party make to the delivered website after project handoff.</span></li>
+      </ul>
+    </div>
+
+    <!-- 11 — Termination -->
+    <div class="policy-card">
+      <p class="sec-tag">// 11 — termination</p>
+      <h3>How an engagement ends.</h3>
+
+      <div class="sub-section">
+        <h4>Termination by Client</h4>
+        <p>You may terminate an active project at any time by providing written notice to VardWeb. In such cases, all deposits paid are non-refundable. You will be invoiced for all work completed up to the date of termination notice, calculated at an hourly rate consistent with the project's original fee structure. Any outstanding balance is due within 14 days of the termination invoice.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Termination by VardWeb</h4>
+        <p>VardWeb reserves the right to terminate any engagement immediately and without prior notice if: (a) you breach any material term of these Terms and fail to remedy that breach within 7 days of written notice; (b) any payment is more than 30 days overdue; (c) you engage in abusive, threatening, or unlawful conduct toward VardWeb staff; or (d) fulfilling the engagement would require VardWeb to violate any applicable law. In such cases, all work completed to date will be invoiced and deposits retained.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Effect of Termination</h4>
+        <p>Upon termination, any licences granted under these Terms are immediately revoked. VardWeb is not obligated to transfer any work product until all outstanding balances are settled in full. Sections 05 (Intellectual Property), 08 (Limitation of Liability), 09 (Warranty Disclaimer), 10 (Indemnification), and 13 (Governing Law) survive termination.</p>
+      </div>
+    </div>
+
+    <!-- 12 — Confidentiality -->
+    <div class="policy-card">
+      <p class="sec-tag">// 12 — confidentiality</p>
+      <h3>We respect what you share with us.</h3>
+      <p style="margin-bottom: 16px;">
+        Both parties may share confidential information — business strategies, login credentials, unreleased
+        product details, proprietary processes — in the course of a project engagement. Each party agrees to:
+      </p>
+      <ul>
+        <li><span>Hold the other party's confidential information in strict confidence and not disclose it to any third party without prior written consent.</span></li>
+        <li><span>Use confidential information solely for the purpose of delivering or receiving the services under these Terms.</span></li>
+        <li><span>Apply reasonable security measures to protect confidential information, no less rigorous than those applied to their own confidential information.</span></li>
+      </ul>
+      <p style="margin-top: 16px;">
+        This obligation does not apply to information that is or becomes publicly known through no fault of the
+        receiving party, is independently developed by the receiving party without reference to the confidential
+        information, or is required to be disclosed by law or court order. The confidentiality obligation survives
+        termination of the engagement for a period of three (3) years.
+      </p>
+    </div>
+
+    <!-- 13 — Governing Law -->
+    <div class="policy-card">
+      <p class="sec-tag">// 13 — governing law &amp; disputes</p>
+      <h3>Canadian law. Disputes resolved fairly.</h3>
+      <p style="margin-bottom: 16px;">
+        These Terms are governed by and construed in accordance with the laws of Canada and the Province of
+        Ontario, without regard to conflict of law principles. Any legal action or proceeding arising under
+        or relating to these Terms shall be brought exclusively in the courts of Ontario, Canada, and both
+        parties irrevocably consent to the personal jurisdiction of those courts.
+      </p>
+
+      <div class="sub-section">
+        <h4>Dispute Resolution</h4>
+        <p>Before initiating any formal legal proceeding, both parties agree to first attempt to resolve any dispute through good-faith negotiation. If the matter cannot be resolved within 30 days of written notice of the dispute, either party may pursue resolution through binding arbitration administered under the Arbitration Act (Ontario), with a single arbitrator agreed upon by both parties. The arbitrator's decision shall be final and binding.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>No Class Actions</h4>
+        <p>All disputes must be brought on an individual basis. You waive any right to participate in a class action, consolidated proceeding, or representative action against VardWeb.</p>
+      </div>
+    </div>
+
+    <!-- 14 — Miscellaneous -->
+    <div class="policy-card">
+      <p class="sec-tag">// 14 — miscellaneous</p>
+      <h3>The fine print that actually matters.</h3>
+
+      <div class="sub-section">
+        <h4>Entire Agreement</h4>
+        <p>These Terms, together with any written proposal, statement of work, or service agreement signed by both parties, constitute the entire agreement between you and VardWeb with respect to the subject matter herein and supersede all prior discussions, representations, and agreements, whether written or oral.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Severability</h4>
+        <p>If any provision of these Terms is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, that provision shall be modified to the minimum extent necessary to make it enforceable, and the remaining provisions shall continue in full force and effect.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>No Waiver</h4>
+        <p>VardWeb's failure to enforce any right or provision of these Terms on one occasion does not constitute a waiver of that right or provision on any future occasion.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Force Majeure</h4>
+        <p>VardWeb shall not be liable for any delay or failure to perform resulting from causes outside our reasonable control, including but not limited to natural disasters, infrastructure outages, internet disruptions, pandemics, labour disputes, or actions by government authorities.</p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Updates to These Terms</h4>
+        <p>VardWeb reserves the right to update these Terms at any time. Changes will be published on this page with an updated "Last updated" date. For active project engagements, any material changes to these Terms will be communicated to you by email. Continued use of our services after changes are published constitutes acceptance of the revised Terms.</p>
+      </div>
+    </div>
+
+    <!-- 15 — Contact -->
+    <div class="policy-card" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
+      <p class="sec-tag">// 15 — questions &amp; contact</p>
+      <h3>Something unclear? Let's talk.</h3>
+      <p style="margin-bottom: 20px;">
+        If you have any questions about these Terms, want to discuss a specific clause before engaging our
+        services, or need to raise a concern about an active project, reach out directly.
+        We respond promptly and without friction.
+      </p>
+      <a href="contact.html" class="btn btn-primary" style="font-size: 13px;">
+        Contact Us →
+      </a>
+      <p style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(0,229,255,0.55);">
+        support@vardweb.ca
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="logo-nav-wrap" style="padding: 6px 14px;">
+      <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height: 30px; width: auto; display: block;" />
+    </div>
+    <div class="footer-links-row">
+      <a href="index.html"          class="footer-pill">Home</a>
+      <a href="index.html#services" class="footer-pill">Services</a>
+      <a href="index.html#results"  class="footer-pill">Results</a>
+      <a href="index.html#roadmap"  class="footer-pill">Roadmap</a>
+      <a href="contact.html"        class="footer-pill">Contact</a>
+      <a href="privacy.html"        class="footer-pill">Privacy Policy</a>
+      <a href="terms.html"          class="footer-pill" style="color: var(--cyan); border-color: rgba(0,229,255,0.2);">Terms of Service</a>
+    </div>
+    <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

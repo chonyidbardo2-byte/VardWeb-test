@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Real Cost of a Slow Website — VardWeb Blog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --cyan: #00E5FF; --pink: #FF2D78; --gold: #FFD700;
+      --base: #070910; --surface: #0f1219; --raised: #161b27;
+      --text-1: #eef0f8; --text-2: rgba(200,212,232,0.62);
+      --green: #27C93F;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.7; }
+    body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 300px; opacity: 0.036; pointer-events: none; z-index: 9999; }
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+    .grad-green { background: linear-gradient(135deg, var(--green) 0%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(7,9,16,0.78); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid rgba(0,229,255,0.07); height: 64px; display: flex; align-items: center; }
+    .nav-inner { max-width: 1200px; width: 100%; margin: 0 auto; padding: 0 28px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link { font-size: 13.5px; font-weight: 500; color: rgba(200,212,232,0.58); text-decoration: none; position: relative; padding-bottom: 2px; transition: color 0.2s ease; }
+    .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px; background: var(--cyan); transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron, .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(-6px); background: rgba(15,18,25,0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(0,229,255,0.12); border-radius: 14px; padding: 14px 8px 8px; min-width: 152px; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 200; box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+    .nav-dropdown:hover .dropdown-menu, .nav-dropdown:focus-within .dropdown-menu { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+    .dropdown-item { display: block; padding: 9px 14px; font-size: 13px; font-weight: 500; color: rgba(200,212,232,0.58); text-decoration: none; border-radius: 8px; font-family: 'Inter', sans-serif; transition: color 0.2s ease, background 0.2s ease; white-space: nowrap; }
+    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .logo-nav-wrap { display: inline-flex; background: #ffffff; border-radius: 8px; padding: 4px 10px; }
+    .btn { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; border: none; cursor: pointer; padding: 9px 22px; border-radius: 8px; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease; }
+    .btn:active { transform: translateY(0) !important; }
+    .btn-primary { background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07)); border: 1px solid rgba(0,229,255,0.38); color: var(--cyan); }
+    .btn-primary:hover { background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12)); box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35); transform: translateY(-2px); }
+
+    /* Article */
+    .article-body { max-width: 720px; margin: 0 auto; }
+    .article-body h2 { font-size: 22px; font-weight: 800; color: var(--text-1); margin: 52px 0 18px; padding-top: 8px; border-top: 1px solid rgba(39,201,63,0.1); }
+    .article-body h2:first-child { margin-top: 0; border-top: none; }
+    .article-body p { font-size: 16px; line-height: 1.85; color: var(--text-2); margin-bottom: 20px; }
+    .article-body p strong { color: var(--text-1); font-weight: 600; }
+    .article-body ul { margin: 0 0 20px 0; padding-left: 0; list-style: none; }
+    .article-body ul li { font-size: 15.5px; line-height: 1.8; color: var(--text-2); padding: 8px 0 8px 24px; position: relative; border-bottom: 1px solid rgba(39,201,63,0.05); }
+    .article-body ul li:last-child { border-bottom: none; }
+    .article-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; top: 10px; }
+
+    /* Speed data table */
+    .speed-table { width: 100%; border-collapse: collapse; margin: 32px 0; font-family: 'JetBrains Mono', monospace; }
+    .speed-table th { font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(200,212,232,0.45); padding: 10px 16px; border-bottom: 1px solid rgba(39,201,63,0.12); text-align: left; }
+    .speed-table td { font-size: 14px; padding: 14px 16px; border-bottom: 1px solid rgba(39,201,63,0.06); color: var(--text-2); }
+    .speed-table tr:last-child td { border-bottom: none; }
+    .speed-table .val { color: var(--green); font-weight: 700; font-size: 16px; }
+    .speed-table .bad { color: var(--pink); }
+
+    .stat-callout { background: var(--surface); border: 1px solid rgba(39,201,63,0.15); border-left: 3px solid var(--green); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0; }
+    .stat-callout .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 900; color: var(--green); line-height: 1; margin-bottom: 6px; }
+    .stat-callout .stat-desc { font-size: 14px; color: var(--text-2); line-height: 1.6; }
+
+    .callout-box { background: rgba(39,201,63,0.04); border: 1px solid rgba(39,201,63,0.12); border-radius: 14px; padding: 24px 28px; margin: 32px 0; }
+    .callout-box p { margin-bottom: 0; font-size: 15px; }
+
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent); margin: 0 auto; max-width: 1200px; }
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 52px 28px 36px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 28px; text-align: center; }
+    .footer-links-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .footer-pill { background: rgba(200,212,232,0.035); border: 1px solid rgba(200,212,232,0.08); border-radius: 9999px; padding: 10px 20px; font-size: 13px; color: rgba(200,212,232,0.5); text-decoration: none; font-family: 'Inter', sans-serif; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
+    .footer-pill:hover { color: #C8D4E8; border-color: rgba(200,212,232,0.2); background: rgba(200,212,232,0.07); }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
+    @media (max-width: 768px) { .nav-links { display: none; } .speed-table { font-size: 12px; } .speed-table td, .speed-table th { padding: 10px 10px; } }
+      .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+  </style>
+  <script src="/supabase-config.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="VardWeb Home">
+      <div class="logo-nav-wrap">
+        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+      </div>
+    </a>
+    <div class="nav-links">
+      <div class="nav-dropdown">
+        <a href="index.html" class="nav-link nav-dropdown-trigger">
+          Home <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu">
+          <a href="index.html#why-us"   class="dropdown-item">Why Us</a>
+          <a href="index.html#services" class="dropdown-item">Services</a>
+          <a href="index.html#results"  class="dropdown-item">Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item">Roadmap</a>
+        </div>
+      </div>
+      <a href="faq.html"      class="nav-link">FAQ</a>
+      <a href="blog.html"     class="nav-link active">Blog</a>
+      <a href="our-work.html" class="nav-link">Our Work</a>
+      <a href="about.html"    class="nav-link">About</a>
+      <a href="contact.html"  class="nav-link">Contact</a>
+    </div>
+    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
+      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+        <circle cx="10" cy="5.5" r="4.5"/>
+        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+      </svg>
+      Login
+    </a>
+    <a href="contact.html" class="btn btn-primary">
+      Get a Quote <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ── POST HERO ── -->
+<header style="
+  padding: 140px 28px 72px;
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 0%, rgba(39,201,63,0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 80% 100%, rgba(0,229,255,0.04) 0%, transparent 65%),
+    var(--base);
+  position: relative; overflow: hidden;
+">
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(39,201,63,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(39,201,63,0.02) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;"></div>
+  <div style="max-width: 720px; margin: 0 auto; position: relative; z-index: 1;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+      <a href="blog.html" style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cyan);text-decoration:none;">← Blog</a>
+      <span style="color:rgba(0,229,255,0.25);">/</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:rgba(39,201,63,0.07);border:1px solid rgba(39,201,63,0.2);border-radius:6px;padding:4px 10px;color:#27C93F;">Performance</span>
+    </div>
+    <h1 style="font-size:clamp(28px,5vw,50px);font-weight:900;line-height:1.1;color:var(--text-1);margin-bottom:22px;">
+      The Real Cost of a Slow Website<br><span class="grad-green">(And How to Fix It)</span>
+    </h1>
+    <p style="font-size:17px;color:var(--text-2);line-height:1.75;margin-bottom:28px;">
+      Every extra second your site takes to load costs you conversions, SEO rankings, and real revenue.
+      Here are the numbers — and what you can actually do about it.
+    </p>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,rgba(39,201,63,0.2),rgba(0,229,255,0.15));border:1px solid rgba(39,201,63,0.2);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#27C93F;">V</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text-1);font-family:'Plus Jakarta Sans',sans-serif;">VardWeb Team</div>
+          <div style="font-size:11.5px;color:var(--text-2);">Mar 12, 2026</div>
+        </div>
+      </div>
+      <div style="width:1px;height:28px;background:rgba(39,201,63,0.15);"></div>
+      <span style="font-size:12px;color:rgba(200,212,232,0.4);font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;">5 min read</span>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ── ARTICLE ── -->
+<article style="padding: 72px 28px 100px;">
+  <div class="article-body">
+
+    <p>
+      Website speed is one of those things that sounds like a technical concern — something to hand
+      off to a developer and forget about. It's not. Slow load times are a silent killer of revenue,
+      and the data behind this is about as unambiguous as it gets.
+    </p>
+
+    <div class="stat-callout">
+      <div class="stat-num">7%</div>
+      <div class="stat-desc">Revenue loss per additional second of load time. For a business doing $500K/year online, 1 extra second costs $35,000 annually — silently, invisibly.</div>
+    </div>
+
+    <h2>What the Data Actually Says</h2>
+
+    <p>
+      These aren't theoretical numbers. They come from massive studies across real e-commerce and
+      service businesses. The relationship between speed and conversion is not linear — it compounds.
+    </p>
+
+    <!-- Speed comparison table -->
+    <table class="speed-table">
+      <thead>
+        <tr>
+          <th>Load Time</th>
+          <th>Conversion Impact</th>
+          <th>User Behavior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="val">1s</span></td>
+          <td>Baseline</td>
+          <td style="color:rgba(39,201,63,0.7);">Optimal experience</td>
+        </tr>
+        <tr>
+          <td><span class="val" style="color:var(--gold);">2–3s</span></td>
+          <td>−7% to −11%</td>
+          <td>Noticeably slower, some drop-off</td>
+        </tr>
+        <tr>
+          <td><span class="val bad">5s</span></td>
+          <td>−38% conversion rate</td>
+          <td>53% of mobile users abandon</td>
+        </tr>
+        <tr>
+          <td><span class="val bad">10s+</span></td>
+          <td>Catastrophic</td>
+          <td>Most users have left — and won't return</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Google found that <strong>53% of mobile visitors leave a page that takes longer than 3 seconds to load.</strong>
+      Not 3 minutes. 3 seconds. And those people don't give you a second chance — 79% of users who
+      experience a performance problem say they're less likely to buy from that site again.
+    </p>
+
+    <h2>It's Not Just Conversions — It's Your SEO</h2>
+
+    <p>
+      In 2021, Google made page speed a direct ranking factor through Core Web Vitals — three
+      specific performance metrics that affect where you appear in search results. A slow website
+      doesn't just lose the customers who visit. It loses the customers who would have found you
+      in the first place.
+    </p>
+
+    <p>The three Core Web Vitals you need to know:</p>
+
+    <ul>
+      <li><strong>LCP (Largest Contentful Paint)</strong> — How quickly your main content loads. Target: under 2.5 seconds.</li>
+      <li><strong>FID / INP (Interaction to Next Paint)</strong> — How responsive your site is to clicks and taps. Target: under 200ms.</li>
+      <li><strong>CLS (Cumulative Layout Shift)</strong> — How stable your page is while loading. Target: under 0.1. This is what causes buttons to move right as you're about to click them.</li>
+    </ul>
+
+    <div class="callout-box">
+      <p>
+        <strong style="color:var(--text-1);">Poor Core Web Vitals scores actively push you down in Google rankings.</strong>
+        Two sites with identical content and backlinks — the faster one wins.
+        Performance is an SEO strategy.
+      </p>
+    </div>
+
+    <h2>What Makes Websites Slow</h2>
+
+    <p>The culprits are consistent across almost every slow website we've audited:</p>
+
+    <ul>
+      <li><strong>Unoptimized images.</strong> A 4MB JPEG hero image where a 120KB WebP would do. This alone can account for 60–70% of a page's load time.</li>
+      <li><strong>Render-blocking JavaScript.</strong> Scripts loading synchronously in the head that prevent the page from rendering until they're done.</li>
+      <li><strong>Cheap or shared hosting.</strong> Server response time above 200ms before a single byte reaches the browser. The foundation matters.</li>
+      <li><strong>Too many third-party scripts.</strong> Chat widgets, analytics tags, social embeds, marketing pixels — each one is a network round-trip adding latency.</li>
+      <li><strong>No CDN.</strong> Serving all assets from a single geographic server means users on the other side of the country (or world) pay a latency tax on every request.</li>
+      <li><strong>DIY platform overhead.</strong> Website builders often add significant performance overhead. There's a reason custom-built sites routinely score 20–30 points higher on PageSpeed.</li>
+    </ul>
+
+    <h2>How to Actually Fix It</h2>
+
+    <p>
+      The good news: for most businesses, the biggest performance gains come from a small number
+      of high-leverage changes:
+    </p>
+
+    <ul>
+      <li><strong>Audit first.</strong> Run your site through Google PageSpeed Insights and GTmetrix. They'll tell you exactly what's hurting you, ranked by impact.</li>
+      <li><strong>Convert all images to WebP and implement lazy loading.</strong> This is almost always the single highest-impact change.</li>
+      <li><strong>Move to quality hosting or a CDN.</strong> Cloudflare, Vercel, and similar platforms provide dramatic speed improvements, often for free.</li>
+      <li><strong>Defer or eliminate non-critical JavaScript.</strong> If a script doesn't need to load before the page is visible, it shouldn't.</li>
+      <li><strong>Consider a rebuild.</strong> If your site is on an aging platform with deep performance debt, sometimes the most cost-effective answer is to start clean — and build it right.</li>
+    </ul>
+
+    <div class="stat-callout">
+      <div class="stat-num">3x</div>
+      <div class="stat-desc">Better conversion rate for sites loading in under 1 second vs. sites loading in 5 seconds. The same traffic, radically different revenue.</div>
+    </div>
+
+    <h2>What We Do Differently</h2>
+
+    <p>
+      Performance isn't a feature we add at the end of a project — it's a constraint we design and
+      build within from the first line of code. Every site we ship has been tested on PageSpeed,
+      optimized for Core Web Vitals, and confirmed to load under 2 seconds on a standard mobile connection.
+    </p>
+
+    <p>
+      We've helped clients go from PageSpeed scores in the 30s to scores above 95 — and watched
+      their organic rankings, conversion rates, and revenue improve directly as a result.
+      The relationship is real, it's measurable, and it compounds over time.
+    </p>
+
+    <!-- CTA -->
+    <div style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(39,201,63,0.15); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(39,201,63,0.04) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="position:relative;z-index:1;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#27C93F;margin-bottom:14px;">// get your score</div>
+        <h3 style="font-size:24px;font-weight:900;color:var(--text-1);margin-bottom:12px;letter-spacing:-0.02em;">Is Your Website Costing You Revenue?</h3>
+        <p style="font-size:14.5px;color:var(--text-2);max-width:420px;margin:0 auto 28px;line-height:1.75;">
+          We'll audit your current site's performance and show you exactly what it's costing you — for free.
+        </p>
+        <a href="contact.html" class="btn btn-primary" style="font-size:14px;padding:12px 30px;">
+          Get a Free Performance Audit →
+        </a>
+      </div>
+    </div>
+
+    <div style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
+      <a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;opacity:0.7;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
+        ← Back to All Posts
+      </a>
+    </div>
+
+  </div>
+</article>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="logo-nav-wrap">
+      <img style="height:28px;width:auto;display:block;" src="brand_assets/VardWeb.png" alt="VardWeb" />
+    </div>
+    <div class="footer-links-row">
+      <a href="index.html"    class="footer-pill">Home</a>
+      <a href="faq.html"      class="footer-pill">FAQ</a>
+      <a href="blog.html"     class="footer-pill" style="color:var(--cyan);border-color:rgba(0,229,255,0.2);">Blog</a>
+      <a href="our-work.html" class="footer-pill">Our Work</a>
+      <a href="about.html"    class="footer-pill">About</a>
+      <a href="contact.html"  class="footer-pill">Contact</a>
+      <a href="privacy.html"  class="footer-pill">Privacy Policy</a>
+    </div>
+    <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+  </div>
+</footer>
+
+</body>
+</html>

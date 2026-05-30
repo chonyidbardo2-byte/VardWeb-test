@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb CRM — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="/supabase-config.js"></script>
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+      --sidebar: 220px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; display: flex; }
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px; opacity: 0.036; pointer-events: none; z-index: 9999;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar); flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 100; padding: 24px 0;
+    }
+    .sidebar-logo { padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo img { height: 28px; border-radius: 6px; }
+    .sidebar-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-2);
+      padding: 20px 20px 8px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; color: var(--text-2);
+      text-decoration: none; font-size: 13px; font-weight: 500;
+      border-left: 2px solid transparent;
+      transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    .nav-item:hover { color: var(--text-1); background: rgba(0,229,255,0.04); }
+    .nav-item.active { color: var(--cyan); border-left-color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .nav-item svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .sidebar-bottom { margin-top: auto; padding: 0 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+    .btn-logout {
+      width: 100%; padding: 9px 12px; border-radius: 8px;
+      background: rgba(255,45,120,0.1); border: 1px solid rgba(255,45,120,0.2);
+      color: #ff7eb3; font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-logout:hover { background: rgba(255,45,120,0.18); }
+
+    /* ── Main ── */
+    .main { margin-left: var(--sidebar); flex: 1; padding: 32px 36px; min-height: 100vh; overflow-y: auto; }
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; letter-spacing: -0.03em; }
+    .page-header p { color: var(--text-2); font-size: 13px; margin-top: 4px; }
+
+    /* ── KPI cards ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .kpi {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px 22px;
+    }
+    .kpi-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; }
+    .kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; }
+    .kpi-value.cyan { color: var(--cyan); }
+    .kpi-value.pink { color: var(--pink); }
+    .kpi-value.gold { color: var(--gold); }
+    .kpi-value.green { color: #22c55e; }
+    .kpi-sub { font-size: 11px; color: var(--text-2); margin-top: 4px; }
+
+    /* ── Panels ── */
+    .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 28px; }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px 24px;
+    }
+    .panel-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      color: var(--text-2); letter-spacing: 0.04em; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-title a { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--cyan); text-decoration: none; font-weight: 500; }
+    .panel-title a:hover { opacity: 0.75; }
+    .client-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+    }
+    .client-row:last-child { border-bottom: none; }
+    .client-name { font-size: 13px; font-weight: 500; }
+    .client-meta { font-size: 11px; color: var(--text-2); margin-top: 1px; }
+    .client-row a { font-size: 11px; color: var(--cyan); text-decoration: none; }
+    .client-row a:hover { opacity: 0.7; }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 20px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .badge-pending  { background: rgba(255,215,0,0.15);  color: var(--gold); }
+    .badge-paid     { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .badge-overdue  { background: rgba(255,45,120,0.15); color: var(--pink); }
+    .badge-active   { background: rgba(0,229,255,0.12);  color: var(--cyan); }
+    .badge-warning  { background: rgba(255,165,0,0.15);  color: orange; }
+    .empty { color: var(--text-2); font-size: 13px; text-align: center; padding: 24px 0; }
+
+    /* ── Quick actions ── */
+    .actions { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+    .btn-action {
+      padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      cursor: pointer; text-decoration: none; border: none;
+      display: inline-flex; align-items: center; gap: 7px;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .btn-action:hover { opacity: 0.82; transform: translateY(-1px); }
+    .btn-cyan  { background: var(--cyan);  color: #000; }
+    .btn-pink  { background: rgba(255,45,120,0.15); border: 1px solid rgba(255,45,120,0.3); color: var(--pink); }
+    .btn-gold  { background: rgba(255,215,0,0.12);  border: 1px solid rgba(255,215,0,0.25); color: var(--gold); }
+
+    /* ── Chart panel ── */
+    .chart-wrap { height: 180px; display: flex; align-items: center; justify-content: center; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="/brand_assets/VardWeb.png" alt="VardWeb" />
+  </div>
+  <div class="sidebar-label">Admin</div>
+  <a href="/crm/dashboard.html" class="nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </a>
+  <a href="/crm/clients.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Clients
+  </a>
+  <a href="/crm/invoices.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Invoices
+  </a>
+  <a href="/crm/cms-editor.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    CMS Editor
+  </a>
+  <a href="/crm/seo-tool.html" class="nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    SEO Tool
+  </a>
+  <div class="sidebar-bottom">
+    <button class="btn-logout" id="logoutBtn">Sign Out</button>
+  </div>
+</aside>
+
+<!-- Main content -->
+<main class="main">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p id="greetingLine">Loading…</p>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="actions">
+    <a href="/crm/clients.html?new=1" class="btn-action btn-cyan">+ New Client</a>
+    <a href="/crm/invoices.html?new=1" class="btn-action btn-pink">+ New Invoice</a>
+    <a href="/crm/seo-tool.html" class="btn-action btn-gold">Generate SEO Report</a>
+  </div>
+
+  <!-- KPI cards -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-label">Total Clients</div>
+      <div class="kpi-value cyan" id="kpiClients">—</div>
+      <div class="kpi-sub">All time</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Active Sites</div>
+      <div class="kpi-value green" id="kpiSites">—</div>
+      <div class="kpi-sub">Status: active</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Monthly Recurring Revenue</div>
+      <div class="kpi-value gold" id="kpiMrr">—</div>
+      <div class="kpi-sub">Active leases</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Outstanding Invoices</div>
+      <div class="kpi-value pink" id="kpiOutstanding">—</div>
+      <div class="kpi-sub">Pending + overdue</div>
+    </div>
+  </div>
+
+  <!-- Panels -->
+  <div class="panels">
+    <!-- Recent clients -->
+    <div class="panel">
+      <div class="panel-title">
+        Recent Clients
+        <a href="/crm/clients.html">View all →</a>
+      </div>
+      <div id="recentClients"><div class="empty">Loading…</div></div>
+    </div>
+
+    <!-- Invoice status chart -->
+    <div class="panel">
+      <div class="panel-title">Invoice Status</div>
+      <div class="chart-wrap">
+        <canvas id="invoiceChart" width="160" height="160" style="max-width:160px;max-height:160px;"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Renewals -->
+  <div class="panel" style="margin-bottom:20px;">
+    <div class="panel-title">
+      Upcoming Renewals (next 30 days)
+      <a href="/crm/clients.html">Manage →</a>
+    </div>
+    <div id="renewalsList"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- Action Required -->
+  <div class="panel" id="actionPanel" style="display:none;border-color:rgba(255,45,120,0.3);">
+    <div class="panel-title" style="color:var(--pink);">
+      ⚠ Action Required
+      <a href="/crm/clients.html" style="color:var(--pink);">View clients →</a>
+    </div>
+    <div id="actionList"><div class="empty">Loading…</div></div>
+  </div>
+</main>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-admin-auth' } });
+
+  /* Auth guard */
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  const { data: profile } = await sb.from('user_profiles').select('*').eq('id', session.user.id).single();
+  if (profile?.role !== 'admin') { window.location.href = '/crm/portal.html'; }
+
+  document.getElementById('greetingLine').textContent =
+    `Welcome back${profile?.full_name ? ', ' + profile.full_name : ''}. Here's your overview.`;
+
+  /* Logout */
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+    window.location.href = '/crm/login.html?signedout=1';
+  });
+
+  /* ── Auto-flip past-due invoices to overdue ── */
+  await sb.rpc('mark_overdue_invoices').catch(() => {});
+
+  /* ── Load KPIs ── */
+  const [
+    { count: clientCount },
+    { count: siteCount },
+    { data: leases },
+    { data: invoices },
+  ] = await Promise.all([
+    sb.from('clients').select('*', { count: 'exact', head: true }),
+    sb.from('sites').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+    sb.from('leases').select('recurring_rate, billing_cycle').eq('status', 'active'),
+    sb.from('invoices').select('status, amount'),
+  ]);
+
+  document.getElementById('kpiClients').textContent = clientCount ?? '—';
+  document.getElementById('kpiSites').textContent   = siteCount ?? '—';
+
+  const mrr = (leases || []).reduce((sum, l) => {
+    const rate = parseFloat(l.recurring_rate) || 0;
+    return sum + (l.billing_cycle === 'yearly' ? rate / 12 : rate);
+  }, 0);
+  document.getElementById('kpiMrr').textContent = `$${mrr.toFixed(0)}`;
+
+  const outstanding = (invoices || []).filter(i => i.status === 'pending' || i.status === 'overdue')
+    .reduce((s, i) => s + (parseFloat(i.amount) || 0), 0);
+  document.getElementById('kpiOutstanding').textContent = `$${outstanding.toFixed(0)}`;
+
+  /* ── Invoice chart ── */
+  const paid    = (invoices || []).filter(i => i.status === 'paid').length;
+  const pending = (invoices || []).filter(i => i.status === 'pending').length;
+  const overdue = (invoices || []).filter(i => i.status === 'overdue').length;
+
+  new Chart(document.getElementById('invoiceChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Paid', 'Pending', 'Overdue'],
+      datasets: [{ data: [paid || 0, pending || 0, overdue || 0],
+        backgroundColor: ['#22c55e', '#FFD700', '#FF2D78'],
+        borderWidth: 0, hoverOffset: 6 }]
+    },
+    options: {
+      cutout: '68%', plugins: { legend: { display: false } },
+      responsive: false,
+    }
+  });
+
+  /* ── Recent clients ── */
+  const { data: recentClients } = await sb.from('clients')
+    .select('id, business_name, contact_email, created_at')
+    .order('created_at', { ascending: false }).limit(5);
+
+  const rcEl = document.getElementById('recentClients');
+  if (!recentClients?.length) {
+    rcEl.innerHTML = '<div class="empty">No clients yet. <a href="/crm/clients.html?new=1" style="color:var(--cyan);">Add one →</a></div>';
+  } else {
+    rcEl.innerHTML = recentClients.map(c => `
+      <div class="client-row">
+        <div>
+          <div class="client-name">${c.business_name}</div>
+          <div class="client-meta">${c.contact_email}</div>
+        </div>
+        <a href="/crm/clients.html?id=${c.id}">View →</a>
+      </div>`).join('');
+  }
+
+  /* ── Action Required (overdue invoices + suspended sites) ── */
+  const [
+    { data: overdueInvoices },
+    { data: suspendedSites },
+  ] = await Promise.all([
+    sb.from('invoices').select('amount, clients(id, business_name)').eq('status', 'overdue'),
+    sb.from('sites').select('domain_name, clients(id, business_name)').eq('status', 'suspended'),
+  ]);
+
+  const actionItems = [];
+  (overdueInvoices || []).forEach(inv => {
+    if (inv.clients) actionItems.push({ type: 'overdue', label: inv.clients.business_name, detail: `Overdue invoice: $${parseFloat(inv.amount).toFixed(2)}`, id: inv.clients.id });
+  });
+  (suspendedSites || []).forEach(s => {
+    if (s.clients) actionItems.push({ type: 'suspended', label: s.clients.business_name, detail: `Site suspended: ${s.domain_name}`, id: s.clients.id });
+  });
+
+  if (actionItems.length) {
+    document.getElementById('actionPanel').style.display = 'block';
+    document.getElementById('actionList').innerHTML = actionItems.map(item => `
+      <div class="client-row">
+        <div>
+          <div class="client-name">${item.label}</div>
+          <div class="client-meta" style="color:${item.type === 'suspended' ? 'var(--pink)' : 'var(--gold)'};">${item.detail}</div>
+        </div>
+        <a href="/crm/clients.html?id=${item.id}" style="color:var(--pink);">Resolve →</a>
+      </div>`).join('');
+  }
+
+  /* ── Renewals ── */
+  const today     = new Date();
+  const in30      = new Date(); in30.setDate(today.getDate() + 30);
+  const { data: renewals } = await sb.from('leases')
+    .select('id, plan_name, renewal_date, clients(business_name)')
+    .eq('status', 'active')
+    .gte('renewal_date', today.toISOString().slice(0, 10))
+    .lte('renewal_date', in30.toISOString().slice(0, 10))
+    .order('renewal_date', { ascending: true });
+
+  const rnEl = document.getElementById('renewalsList');
+  if (!renewals?.length) {
+    rnEl.innerHTML = '<div class="empty">No renewals in the next 30 days.</div>';
+  } else {
+    rnEl.innerHTML = renewals.map(r => {
+      const days = Math.ceil((new Date(r.renewal_date) - today) / 86400000);
+      return `
+        <div class="client-row">
+          <div>
+            <div class="client-name">${r.clients?.business_name ?? '—'}</div>
+            <div class="client-meta">${r.plan_name ?? 'Plan'} — renews ${r.renewal_date}</div>
+          </div>
+          <span class="badge ${days <= 7 ? 'badge-overdue' : 'badge-warning'}">${days}d</span>
+        </div>`;
+    }).join('');
+  }
+</script>
+</body>
+</html>
