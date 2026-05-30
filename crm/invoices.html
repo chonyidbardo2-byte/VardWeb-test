@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb CRM — Invoices</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <style>
+    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.1);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);--sidebar:220px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html,body{height:100%;}
+    body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;display:flex;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+    .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;padding:24px 0;}
+    .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid var(--border);}.sidebar-logo img{height:28px;border-radius:6px;}
+    .sidebar-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);padding:20px 20px 8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-2);text-decoration:none;font-size:13px;font-weight:500;border-left:2px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+    .nav-item:hover{color:var(--text-1);background:rgba(0,229,255,0.04);}.nav-item.active{color:var(--cyan);border-left-color:var(--cyan);background:rgba(0,229,255,0.06);}
+    .nav-item svg{width:15px;height:15px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:9px 12px;border-radius:8px;background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.2);color:#ff7eb3;font-size:12px;font-weight:600;cursor:pointer;}
+    .main{margin-left:var(--sidebar);flex:1;padding:32px 36px;min-height:100vh;}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+    .page-header h1{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-0.03em;}
+    .filter-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+    .ftab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+    .ftab:hover{color:var(--text-1);}.ftab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+    .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{padding:12px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);border-bottom:1px solid var(--border);}
+    tbody tr{border-bottom:1px solid var(--border);}.tbody tr:last-child{border-bottom:none;}
+    td{padding:13px 16px;font-size:13px;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;}
+    .badge-pending{background:rgba(255,215,0,0.15);color:var(--gold);}
+    .badge-paid{background:rgba(34,197,94,0.15);color:#22c55e;}
+    .badge-overdue{background:rgba(255,45,120,0.15);color:var(--pink);}
+    .btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s;text-decoration:none;}
+    .btn:hover{opacity:.8;}
+    .btn-cyan{background:var(--cyan);color:#000;}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2);}
+    .btn-ghost:hover{color:var(--text-1);border-color:rgba(0,229,255,0.3);}
+    .btn-sm{padding:6px 12px;font-size:11px;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 36px;width:100%;max-width:480px;transform:translateY(12px);transition:transform .2s;}
+    .modal-overlay.open .modal{transform:translateY(0);}
+    .modal h2{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:22px;}
+    .field-group{margin-bottom:18px;}
+    label{display:block;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px;}
+    .help-tip{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;opacity:0.65;padding:0;}
+    .help-tip:hover{opacity:1;}
+    .help-panel{background:var(--raised);border-left:2px solid rgba(0,229,255,0.25);padding:10px 14px;margin-top:6px;font-size:12px;line-height:1.6;color:var(--text-2);border-radius:0 6px 6px 0;display:none;}
+    .help-panel.open{display:block;}
+    input,select{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;transition:border-color .2s;}
+    input:focus,select:focus{border-color:rgba(0,229,255,0.4);}
+    select option{background:var(--raised);}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+    .empty{color:var(--text-2);font-size:13px;text-align:center;padding:24px 0;}
+    .url-box{background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;font-size:12px;word-break:break-all;color:var(--cyan);margin-top:8px;}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="/brand_assets/VardWeb.png" alt="VardWeb" /></div>
+  <div class="sidebar-label">Admin</div>
+  <a href="/crm/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="/crm/clients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clients</a>
+  <a href="/crm/invoices.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Invoices</a>
+  <a href="/crm/cms-editor.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>CMS Editor</a>
+  <a href="/crm/seo-tool.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>SEO Tool</a>
+  <div class="sidebar-bottom"><button class="btn-logout" id="logoutBtn">Sign Out</button></div>
+</aside>
+
+<main class="main">
+  <div class="page-header">
+    <h1>Invoices</h1>
+    <button class="btn btn-cyan" id="newInvBtn">+ New Invoice</button>
+  </div>
+
+  <div class="filter-tabs">
+    <div class="ftab active" data-filter="all">All</div>
+    <div class="ftab" data-filter="pending">Pending</div>
+    <div class="ftab" data-filter="paid">Paid</div>
+    <div class="ftab" data-filter="overdue">Overdue</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Client</th>
+          <th>Amount</th>
+          <th>Type</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="invBody"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- New Invoice Modal -->
+<div class="modal-overlay" id="newInvModal">
+  <div class="modal">
+    <h2>New Invoice</h2>
+    <div class="field-group">
+      <label>Client <button class="help-tip" data-help="inv-client"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+      <div class="help-panel" id="help-inv-client">Select the client this invoice belongs to. The invoice will link to their account and appear in their portal.</div>
+      <select id="inv-client"></select>
+    </div>
+    <div class="field-group">
+      <label>Lease <button class="help-tip" data-help="inv-lease"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+      <div class="help-panel" id="help-inv-lease">Link this invoice to a specific lease so it tracks against the right service plan.</div>
+      <select id="inv-lease"><option value="">— Select client first —</option></select>
+    </div>
+    <div class="field-group">
+      <label>Invoice Type <button class="help-tip" data-help="inv-type"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+      <div class="help-panel" id="help-inv-type">Flat Rate = one-time build payment. Recurring = monthly or yearly service fee.</div>
+      <select id="inv-type">
+        <option value="flat_rate">Flat Rate (one-time)</option>
+        <option value="recurring">Recurring</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>Amount ($)</label>
+      <input type="text" id="inv-amount" placeholder="500.00" />
+    </div>
+    <div class="field-group">
+      <label>Due Date</label>
+      <input type="text" id="inv-due" placeholder="YYYY-MM-DD" />
+    </div>
+    <div class="field-group">
+      <label>Valid For (days) <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.6;font-size:10px;">— optional, for trial/preview access</span></label>
+      <input type="number" id="inv-valid-days" min="1" placeholder="e.g. 30 — client loses access after this many days" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelInv">Cancel</button>
+      <button class="btn btn-cyan" id="saveInv">Create Invoice</button>
+    </div>
+  </div>
+</div>
+
+<!-- Send Invoice Modal (Stripe URL) -->
+<div class="modal-overlay" id="stripeModal">
+  <div class="modal">
+    <h2>Send Invoice</h2>
+    <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">A Stripe Checkout link will be generated. Copy and send it to your client via email or message.</p>
+    <div id="stripeStatus" style="font-size:13px;color:var(--text-2);">Generating link…</div>
+    <div class="url-box" id="stripeUrl" style="display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelStripe">Close</button>
+      <button class="btn btn-cyan" id="copyStripeUrl" style="display:none;">Copy Link</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-admin-auth' } });
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  const { data: myProfile } = await sb.from('user_profiles').select('role').eq('id', session.user.id).single();
+  if (myProfile?.role !== 'admin') window.location.href = '/crm/portal.html';
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html'; });
+
+  /* Help tooltips */
+  document.addEventListener('click', e => {
+    const tip = e.target.closest('.help-tip');
+    if (!tip) return;
+    document.getElementById('help-' + tip.dataset.help)?.classList.toggle('open');
+  });
+
+  /* ── Load invoices ── */
+  let allInvoices = [], currentFilter = 'all';
+
+  async function loadInvoices() {
+    const { data } = await sb.from('invoices')
+      .select('*, clients(business_name, contact_email), leases(plan_name)')
+      .order('created_at', { ascending: false });
+    allInvoices = data || [];
+    renderTable();
+  }
+
+  function renderTable() {
+    const filtered = currentFilter === 'all' ? allInvoices : allInvoices.filter(i => i.status === currentFilter);
+    const tbody = document.getElementById('invBody');
+    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">No invoices found.</td></tr>'; return; }
+    const today = new Date().toISOString().slice(0, 10);
+    tbody.innerHTML = filtered.map(inv => {
+      const hasExpiry = !!inv.expires_at;
+      const isExpired = hasExpiry && inv.expires_at < today;
+      const expiryBadge = hasExpiry
+        ? `<div style="margin-top:3px;font-size:10px;color:${isExpired ? 'var(--pink)' : 'var(--gold)'};">${isExpired ? '⚠ Expired' : `⏱ Expires ${inv.expires_at}`}${inv.valid_for_days ? ` (${inv.valid_for_days}d)` : ''}</div>`
+        : '';
+      return `<tr>
+        <td>
+          <div style="font-weight:600;">${inv.clients?.business_name || '—'}</div>
+          <div style="font-size:11px;color:var(--text-2);">${inv.clients?.contact_email || ''}</div>
+        </td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:600;">$${parseFloat(inv.amount).toFixed(2)}</td>
+        <td style="font-size:12px;color:var(--text-2);">${inv.invoice_type === 'flat_rate' ? 'One-time' : 'Recurring'}</td>
+        <td style="font-size:12px;">${inv.due_date || '—'}${expiryBadge}</td>
+        <td><span class="badge badge-${inv.status}">${inv.status}</span></td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${inv.status !== 'paid' ? `<button class="btn btn-cyan btn-sm send-inv" data-id="${inv.id}" data-client="${inv.client_id}" data-amount="${inv.amount}" data-email="${inv.clients?.contact_email || ''}">Send</button>` : ''}
+            ${inv.status === 'pending' ? `<button class="btn btn-ghost btn-sm mark-overdue" data-id="${inv.id}" style="color:var(--pink);border-color:rgba(255,45,120,0.3);">Mark Overdue</button>` : ''}
+            ${inv.status !== 'paid' ? `<button class="btn btn-ghost btn-sm mark-paid" data-id="${inv.id}">Mark Paid</button>` : `<span style="font-size:11px;color:#22c55e;">✓ Paid ${inv.paid_date || ''}</span>`}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    tbody.querySelectorAll('.mark-paid').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        await sb.from('invoices').update({ status: 'paid', paid_date: new Date().toISOString().slice(0,10) }).eq('id', btn.dataset.id);
+        await loadInvoices();
+      });
+    });
+
+    tbody.querySelectorAll('.mark-overdue').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Mark this invoice as overdue?')) return;
+        btn.textContent = '…'; btn.disabled = true;
+        await sb.from('invoices').update({ status: 'overdue' }).eq('id', btn.dataset.id);
+        await loadInvoices();
+      });
+    });
+
+    tbody.querySelectorAll('.send-inv').forEach(btn => {
+      btn.addEventListener('click', () => openStripeModal(btn.dataset.id, btn.dataset.amount, btn.dataset.email));
+    });
+  }
+
+  /* Filter tabs */
+  document.querySelectorAll('.ftab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      renderTable();
+    });
+  });
+
+  /* ── New Invoice Modal ── */
+  const modal = document.getElementById('newInvModal');
+  document.getElementById('newInvBtn').addEventListener('click', async () => {
+    modal.classList.add('open');
+    const { data: clients } = await sb.from('clients').select('id, business_name').order('business_name');
+    const sel = document.getElementById('inv-client');
+    sel.innerHTML = '<option value="">— Select client —</option>' + (clients || []).map(c => `<option value="${c.id}">${c.business_name}</option>`).join('');
+  });
+  document.getElementById('cancelInv').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+  document.getElementById('inv-client').addEventListener('change', async e => {
+    const clientId = e.target.value;
+    const leaseSel = document.getElementById('inv-lease');
+    if (!clientId) { leaseSel.innerHTML = '<option value="">— Select client first —</option>'; return; }
+    const { data: leases } = await sb.from('leases').select('id, plan_name').eq('client_id', clientId);
+    leaseSel.innerHTML = '<option value="">— No specific lease —</option>' + (leases || []).map(l => `<option value="${l.id}">${l.plan_name || 'Unnamed'}</option>`).join('');
+  });
+
+  document.getElementById('saveInv').addEventListener('click', async () => {
+    const clientId = document.getElementById('inv-client').value;
+    const amount   = parseFloat(document.getElementById('inv-amount').value);
+    if (!clientId || !amount) return alert('Client and amount are required.');
+    const validDays = parseInt(document.getElementById('inv-valid-days').value) || null;
+    const expiresAt = validDays
+      ? new Date(Date.now() + validDays * 86400000).toISOString().slice(0, 10)
+      : null;
+    await sb.from('invoices').insert({
+      client_id:    clientId,
+      lease_id:     document.getElementById('inv-lease').value || null,
+      invoice_type: document.getElementById('inv-type').value,
+      amount,
+      due_date:     document.getElementById('inv-due').value || null,
+      valid_for_days: validDays,
+      expires_at:   expiresAt,
+      status:       'pending',
+    });
+    modal.classList.remove('open');
+    await loadInvoices();
+  });
+
+  /* ── Stripe Modal ── */
+  const stripeModal = document.getElementById('stripeModal');
+  document.getElementById('cancelStripe').addEventListener('click', () => stripeModal.classList.remove('open'));
+
+  async function openStripeModal(invoiceId, amount, clientEmail) {
+    stripeModal.classList.add('open');
+    document.getElementById('stripeStatus').textContent = 'Generating Stripe Checkout link…';
+    document.getElementById('stripeUrl').style.display = 'none';
+    document.getElementById('copyStripeUrl').style.display = 'none';
+
+    try {
+      const res = await fetch(`${window.SUPABASE_CONFIG.url}/functions/v1/create-checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${window.SUPABASE_CONFIG.anonKey}` },
+        body: JSON.stringify({ invoice_id: invoiceId, amount: parseFloat(amount), client_email: clientEmail }),
+      });
+      const { checkout_url, error } = await res.json();
+      if (error || !checkout_url) throw new Error(error || 'No URL returned');
+
+      await sb.from('invoices').update({ stripe_checkout_url: checkout_url }).eq('id', invoiceId);
+      document.getElementById('stripeStatus').textContent = 'Link ready — copy and send to client:';
+      document.getElementById('stripeUrl').textContent = checkout_url;
+      document.getElementById('stripeUrl').style.display = 'block';
+      document.getElementById('copyStripeUrl').style.display = 'inline-flex';
+      document.getElementById('copyStripeUrl').onclick = () => {
+        navigator.clipboard.writeText(checkout_url);
+        document.getElementById('copyStripeUrl').textContent = 'Copied ✓';
+        setTimeout(() => document.getElementById('copyStripeUrl').textContent = 'Copy Link', 1800);
+      };
+    } catch (err) {
+      document.getElementById('stripeStatus').textContent = 'Error: ' + err.message + '. Ensure the Supabase Edge Function is deployed.';
+    }
+  }
+
+  await loadInvoices();
+
+  if (new URLSearchParams(location.search).get('new') === '1') {
+    document.getElementById('newInvBtn').click();
+  }
+</script>
+</body>
+</html>
