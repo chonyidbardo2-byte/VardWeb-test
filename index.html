@@ -1,13 +1,15 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VardedVeins — Web Design &amp; Development</title>
+  <title>VardWeb — Web Design &amp; Development</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/node_modules/gsap/dist/gsap.min.js"></script>
+  <script src="/node_modules/gsap/dist/ScrollTrigger.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -44,7 +46,7 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; background: var(--base); }
 
     body {
       background: var(--base);
@@ -115,6 +117,45 @@
     .nav-link:hover { color: #fff; }
     .nav-link:hover::after { width: 100%; }
     .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+
+    /* ── Nav Dropdown ── */
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
 
     /* ── Buttons ── */
     .btn {
@@ -259,10 +300,9 @@
     /* logo in nav */
     .logo-nav-wrap {
       display: inline-flex;
-      background: rgba(255,255,255,0.92);
-      border-radius: 7px;
+      background: #ffffff;
+      border-radius: 8px;
       padding: 4px 10px;
-      box-shadow: 0 0 0 1px rgba(0,229,255,0.2);
     }
 
     /* ── Stats ── */
@@ -499,6 +539,122 @@
     /* ── Selection ── */
     ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
 
+    /* ── Cinematic Hero ── */
+    .film-grain {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 50; opacity: 0.05; mix-blend-mode: overlay;
+      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+    }
+    .bg-grid-theme {
+      background-size: 60px 60px;
+      background-image:
+        linear-gradient(to right, rgba(238,240,248,0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(238,240,248,0.05) 1px, transparent 1px);
+      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+    }
+    .text-3d-matte {
+      color: #eef0f8;
+      text-shadow: 0 10px 30px rgba(238,240,248,0.2), 0 2px 4px rgba(238,240,248,0.1);
+    }
+    .text-silver-matte {
+      background: linear-gradient(180deg, #eef0f8 0%, rgba(238,240,248,0.4) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      transform: translateZ(0);
+      filter: drop-shadow(0px 10px 20px rgba(238,240,248,0.15)) drop-shadow(0px 2px 4px rgba(238,240,248,0.1));
+    }
+    .text-card-silver-matte {
+      background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      transform: translateZ(0);
+      filter: drop-shadow(0px 12px 24px rgba(0,0,0,0.8)) drop-shadow(0px 4px 8px rgba(0,0,0,0.6));
+    }
+    .premium-depth-card {
+      background: linear-gradient(145deg, #162C6D 0%, #0A101D 100%);
+      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.9), 0 20px 40px -20px rgba(0,0,0,0.8),
+        inset 0 1px 2px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.8);
+      border: 1px solid rgba(255,255,255,0.04);
+      position: relative;
+    }
+    .card-sheen {
+      position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 50;
+      background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06) 0%, transparent 40%);
+      mix-blend-mode: screen; transition: opacity 0.3s ease;
+    }
+    .iphone-bezel {
+      background-color: #111;
+      box-shadow: inset 0 0 0 2px #52525B, inset 0 0 0 7px #000,
+        0 40px 80px -15px rgba(0,0,0,0.9), 0 15px 25px -5px rgba(0,0,0,0.7);
+      transform-style: preserve-3d;
+    }
+    .hardware-btn {
+      background: linear-gradient(90deg, #404040 0%, #171717 100%);
+      box-shadow: -2px 0 5px rgba(0,0,0,0.8), inset -1px 0 1px rgba(255,255,255,0.15), inset 1px 0 2px rgba(0,0,0,0.8);
+      border-left: 1px solid rgba(255,255,255,0.05);
+    }
+    .screen-glare { background: linear-gradient(110deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 45%); }
+    .widget-depth {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.05), inset 0 -1px 1px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .floating-ui-badge {
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 25px 50px -12px rgba(0,0,0,0.8),
+        inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 1px rgba(0,0,0,0.5);
+    }
+    .btn-modern-light, .btn-modern-dark {
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .btn-modern-light {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%); color: #0F172A;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.1), 0 12px 24px -4px rgba(0,0,0,0.3),
+        inset 0 1px 1px #fff, inset 0 -3px 6px rgba(0,0,0,0.06);
+    }
+    .btn-modern-light:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 6px 12px -2px rgba(0,0,0,0.15), 0 20px 32px -6px rgba(0,0,0,0.4),
+        inset 0 1px 1px #fff, inset 0 -3px 6px rgba(0,0,0,0.06);
+    }
+    .btn-modern-light:active { transform: translateY(1px); background: linear-gradient(180deg, #F1F5F9 0%, #E2E8F0 100%); }
+    .btn-modern-dark {
+      background: linear-gradient(180deg, #27272A 0%, #18181B 100%); color: #FFFFFF;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.6), 0 12px 24px -4px rgba(0,0,0,0.9),
+        inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -3px 6px rgba(0,0,0,0.8);
+    }
+    .btn-modern-dark:hover {
+      transform: translateY(-3px);
+      background: linear-gradient(180deg, #3F3F46 0%, #27272A 100%);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 6px 12px -2px rgba(0,0,0,0.7), 0 20px 32px -6px rgba(0,0,0,1),
+        inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -3px 6px rgba(0,0,0,0.8);
+    }
+    .btn-modern-dark:active { transform: translateY(1px); background: #18181B; }
+    .btn-modern-light:focus-visible, .btn-modern-dark:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; }
+    .progress-ring {
+      transform: rotate(-90deg); transform-origin: 88px 88px;
+      stroke-dasharray: 402; stroke-dashoffset: 402; stroke-linecap: round;
+    }
+    /* Card inner responsive grid */
+    .card-inner-grid {
+      display: flex; flex-direction: column; justify-content: space-evenly;
+      align-items: center; padding: 1.5rem 1rem; width: 100%; height: 100%;
+    }
+    .card-desc-text { display: block; }
+    .mockup-inner-scale { transform: scale(0.65); display: flex; align-items: center; justify-content: center; position: relative; width: 100%; height: 100%; }
+    @media (min-width: 768px) {
+      .mockup-inner-scale { transform: scale(0.85); }
+    }
+    @media (min-width: 1024px) {
+      .card-inner-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; padding: 0 3rem; }
+      .card-right-text { grid-column: 3; grid-row: 1; justify-content: flex-end !important; }
+      .mockup-scroll-wrapper { grid-column: 2; grid-row: 1; height: 600px !important; }
+      .card-left-text { grid-column: 1; grid-row: 1; text-align: left !important; }
+      .card-left-text .card-desc-text { margin-left: 0 !important; margin-right: 0 !important; }
+      .mockup-inner-scale { transform: scale(1); }
+    }
+
     /* ── Responsive ── */
     .hero-content { max-width: 740px; text-align: center; position: relative; z-index: 1; }
 
@@ -527,7 +683,134 @@
       .logo-card img { height: 64px; }
       .logo-card     { padding: 14px 24px; }
     }
+
+    /* ── Cinematic Footer ── */
+    .cinematic-footer-wrapper {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      --pill-bg-1: rgba(200,212,232,0.035);
+      --pill-bg-2: rgba(200,212,232,0.01);
+      --pill-shadow: rgba(0,0,0,0.5);
+      --pill-highlight: rgba(200,212,232,0.1);
+      --pill-inset-shadow: rgba(7,9,16,0.8);
+      --pill-border: rgba(200,212,232,0.08);
+      --pill-bg-1-hover: rgba(200,212,232,0.08);
+      --pill-bg-2-hover: rgba(200,212,232,0.02);
+      --pill-border-hover: rgba(200,212,232,0.2);
+      --pill-shadow-hover: rgba(0,0,0,0.7);
+      --pill-highlight-hover: rgba(200,212,232,0.2);
+    }
+    @keyframes footer-breathe {
+      0%   { transform: translate(-50%,-50%) scale(1);   opacity: 0.6; }
+      100% { transform: translate(-50%,-50%) scale(1.1); opacity: 1; }
+    }
+    @keyframes footer-scroll-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
+    }
+    .animate-footer-breathe        { animation: footer-breathe         8s ease-in-out infinite alternate; }
+    .animate-footer-scroll-marquee { animation: footer-scroll-marquee 40s linear infinite; }
+    .animate-footer-heartbeat      { animation: footer-heartbeat         2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    .footer-bg-grid {
+      background-size: 60px 60px;
+      background-image:
+        linear-gradient(to right,  rgba(200,212,232,0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(200,212,232,0.03) 1px, transparent 1px);
+      mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+    }
+    .footer-aurora {
+      background: radial-gradient(circle at 50% 50%,
+        rgba(0,229,255,0.12) 0%, rgba(255,45,120,0.08) 40%, transparent 70%);
+    }
+    .footer-glass-pill {
+      background: linear-gradient(145deg, var(--pill-bg-1) 0%, var(--pill-bg-2) 100%);
+      box-shadow: 0 10px 30px -10px var(--pill-shadow),
+        inset 0 1px 1px var(--pill-highlight),
+        inset 0 -1px 2px var(--pill-inset-shadow);
+      border: 1px solid var(--pill-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: background 0.4s cubic-bezier(0.16,1,0.3,1),
+        border-color 0.4s cubic-bezier(0.16,1,0.3,1),
+        box-shadow 0.4s cubic-bezier(0.16,1,0.3,1),
+        color 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .footer-glass-pill:hover {
+      background: linear-gradient(145deg, var(--pill-bg-1-hover) 0%, var(--pill-bg-2-hover) 100%);
+      border-color: var(--pill-border-hover);
+      box-shadow: 0 20px 40px -10px var(--pill-shadow-hover),
+        inset 0 1px 1px var(--pill-highlight-hover);
+      color: #C8D4E8;
+    }
+    .footer-giant-bg-text {
+      font-size: 26vw;
+      line-height: 0.75;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(200,212,232,0.05);
+      background: linear-gradient(180deg, rgba(200,212,232,0.1) 0%, transparent 60%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .footer-text-glow {
+      background: linear-gradient(180deg, #C8D4E8 0%, rgba(200,212,232,0.4) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0px 0px 20px rgba(200,212,232,0.15));
+    }
+
+    /* ── Mobile: hover states triggered by scroll instead of pointer ── */
+    @media (hover: none) {
+      .stat-card.in-view {
+        border-color: rgba(0,229,255,0.28);
+        box-shadow: 0 0 24px rgba(0,229,255,0.07), inset 0 1px 0 rgba(0,229,255,0.08);
+      }
+      .card.in-view {
+        transform: translateY(-5px);
+        border-color: rgba(0,229,255,0.22);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 20px rgba(0,229,255,0.06);
+      }
+      .tcard.in-view {
+        transform: translateY(-5px);
+        border-color: rgba(0,229,255,0.2);
+        box-shadow: 0 14px 48px rgba(0,0,0,0.45), 0 0 24px rgba(0,229,255,0.05);
+      }
+      .btn-primary.in-view {
+        background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+        box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+        transform: translateY(-2px);
+      }
+      .btn-ghost.in-view {
+        border-color: rgba(255,255,255,0.3);
+        color: #fff;
+        background: rgba(255,255,255,0.05);
+        transform: translateY(-2px);
+      }
+      .btn-cta.in-view {
+        box-shadow: 0 0 28px rgba(255,45,120,0.45), 0 8px 24px rgba(0,0,0,0.4);
+        transform: translateY(-2px);
+      }
+      .social-btn.in-view {
+        border-color: rgba(0,229,255,0.4);
+        color: var(--cyan);
+        background: rgba(0,229,255,0.06);
+      }
+      .footer-link.in-view {
+        color: var(--cyan);
+      }
+    }
   </style>
+  <script src="/supabase-config.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
 </head>
 
 <body>
@@ -535,115 +818,206 @@
 <!-- ────────────────────── NAV ────────────────────── -->
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#" aria-label="VardedVeins Home">
+    <a href="#" aria-label="VardWeb Home">
       <div class="logo-nav-wrap">
-        <img class="nav-logo" src="brand_assets/Varded Veins Real.png" alt="VardedVeins" />
+        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
       </div>
     </a>
 
     <div class="nav-links">
-      <a href="#services"    class="nav-link">Services</a>
-      <a href="#why-us"      class="nav-link">Why Us</a>
-      <a href="#results"     class="nav-link">Results</a>
-      <a href="#contact"     class="nav-link">Contact</a>
+      <div class="nav-dropdown">
+        <a href="index.html" class="nav-link nav-dropdown-trigger">
+          Home <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#why-us"   class="dropdown-item">Why Us</a>
+          <a href="#services" class="dropdown-item">Services</a>
+          <a href="#results"  class="dropdown-item">Results</a>
+          <a href="#roadmap"  class="dropdown-item">Roadmap</a>
+        </div>
+      </div>
+      <a href="faq.html"      class="nav-link">FAQ</a>
+      <a href="blog.html"     class="nav-link">Blog</a>
+      <a href="our-work.html" class="nav-link">Our Work</a>
+      <a href="about.html"    class="nav-link">About</a>
+      <a href="contact.html"  class="nav-link">Contact</a>
     </div>
 
-    <a href="#contact" class="btn btn-primary">
+    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
+      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+        <circle cx="10" cy="5.5" r="4.5"/>
+        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+      </svg>
+      Login
+    </a>
+    <a href="contact.html" class="btn btn-primary">
       Get a Quote <span aria-hidden="true">→</span>
     </a>
   </div>
 </nav>
 
 
-<!-- ────────────────────── HERO ────────────────────── -->
-<section class="hero">
-  <div class="scan-line" aria-hidden="true"></div>
+<!-- ────────────────────── CINEMATIC HERO ────────────────────── -->
+<div id="cinematic-hero" style="position:relative;width:100%;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--base);perspective:1500px;">
 
-  <!-- Background orbs -->
-  <div class="hero-orb" aria-hidden="true" style="top:-180px;right:-160px;width:520px;height:520px;background:radial-gradient(circle,rgba(0,229,255,0.065),transparent 70%);"></div>
-  <div class="hero-orb" aria-hidden="true" style="bottom:-140px;left:-120px;width:440px;height:440px;background:radial-gradient(circle,rgba(255,45,120,0.055),transparent 70%);animation-delay:3s;"></div>
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="bg-grid-theme" style="position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0.5;" aria-hidden="true"></div>
 
-  <!-- Floating code decorations (desktop only) -->
-  <div class="float-a" aria-hidden="true" style="position:absolute;top:16%;left:4%;font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(0,229,255,0.13);user-select:none;line-height:1.7;white-space:nowrap;">
-    <span style="color:rgba(255,45,120,0.2);">const</span> site <span style="color:rgba(200,212,232,0.15);">=</span> <span style="color:rgba(255,215,0,0.18);">'YourBrand'</span>
+  <!-- Background layer: taglines -->
+  <div class="hero-text-wrapper" style="position:absolute;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;padding:0 1rem;will-change:transform;">
+    <h1 class="text-track text-3d-matte" style="font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,6rem);font-weight:700;letter-spacing:-0.03em;margin-bottom:8px;">Built to perform,</h1>
+    <h1 class="text-days text-silver-matte" style="font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,6rem);font-weight:800;letter-spacing:-0.05em;">designed to convert.</h1>
   </div>
-  <div class="float-b" aria-hidden="true" style="position:absolute;top:22%;right:4%;font-family:'JetBrains Mono',monospace;font-size:13px;color:rgba(255,45,120,0.13);user-select:none;">
-    &lt;Launch /&gt;
-  </div>
-  <div class="float-c" aria-hidden="true" style="position:absolute;bottom:18%;left:5%;font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(255,215,0,0.12);user-select:none;">
-    npm run deploy
-  </div>
-  <div aria-hidden="true" style="position:absolute;bottom:22%;right:5%;font-family:'JetBrains Mono',monospace;font-size:52px;color:rgba(0,229,255,0.055);user-select:none;line-height:1;">{ }</div>
 
-  <div class="hero-content">
-    <!-- Badge -->
-    <div style="display:flex;justify-content:center;margin-bottom:32px;">
-      <span class="badge">
-        <span class="badge-dot"></span>
-        Web Design &amp; Development · Now Taking Clients
-      </span>
-    </div>
-
-    <!-- Logo -->
-    <div style="display:flex;justify-content:center;margin-bottom:44px;">
-      <div class="logo-card">
-        <img src="brand_assets/Varded Veins Real.png" alt="VardedVeins logo" />
-      </div>
-    </div>
-
-    <!-- Headline -->
-    <h1 style="font-size:clamp(34px,6vw,70px);font-weight:800;line-height:1.08;margin-bottom:24px;color:var(--text-1);">
-      Websites that <span class="grad-cyan-pink">convert</span>,<br>built to last
-    </h1>
-
-    <!-- Sub -->
-    <p style="font-size:clamp(15px,2.2vw,19px);line-height:1.72;color:var(--text-2);max-width:520px;margin:0 auto 48px;">
-      VardedVeins crafts high-performance websites for businesses serious about growth. Beautiful design, blazing speed, and code that scales.
-    </p>
-
-    <!-- CTAs -->
-    <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;">
-      <a href="#contact" class="btn btn-cta">Get a Free Quote <span aria-hidden="true">→</span></a>
-      <a href="#results" class="btn btn-ghost" style="font-size:13.5px;padding:13px 28px;">See Our Work</a>
-    </div>
-
-    <!-- Social proof -->
-    <div style="margin-top:56px;display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <div style="display:flex;">
-          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#00E5FF,#0070a0);border:2px solid var(--base);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#070910;margin-right:-8px;">M</div>
-          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FF2D78,#9e1144);border:2px solid var(--base);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-right:-8px;">P</div>
-          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FFD700,#b38a00);border:2px solid var(--base);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#070910;">D</div>
+  <!-- CTA layer (revealed after scroll) -->
+  <div class="cta-wrapper" style="position:absolute;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;padding:0 28px;pointer-events:auto;will-change:transform;">
+    <div style="max-width:900px;margin:0 auto;width:100%;">
+      <div class="cta-box">
+        <div class="orb1" aria-hidden="true"></div>
+        <div class="orb2" aria-hidden="true"></div>
+        <div style="position:relative;z-index:1;">
+          <p class="sec-tag" style="margin-bottom:18px;">// ready to launch?</p>
+          <h2 style="font-size:clamp(28px,5vw,54px);font-weight:800;line-height:1.08;margin-bottom:20px;color:var(--text-1);">
+            Your business deserves<br><span class="grad-cyan-pink">a website that works</span>
+          </h2>
+          <p style="font-size:16.5px;line-height:1.72;color:var(--text-2);max-width:480px;margin:0 auto 44px;">
+            Join 40+ businesses who trust VardWeb to power their digital presence. Let's build something that drives real growth.
+          </p>
+          <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+            <a href="contact.html" class="btn btn-cta" style="font-size:14.5px;padding:14px 36px;">
+              Get a Free Quote <span aria-hidden="true">→</span>
+            </a>
+            <a href="#services" class="btn btn-ghost" style="font-size:14px;padding:14px 28px;">
+              View Services
+            </a>
+          </div>
+          <p style="margin-top:22px;font-size:12px;color:rgba(200,212,232,0.3);">No commitment required &nbsp;·&nbsp; Discovery call is always free</p>
         </div>
-        <span style="font-size:13px;color:rgba(200,212,232,0.55);margin-left:4px;">80+ clients served</span>
-      </div>
-      <div style="width:1px;height:18px;background:rgba(255,255,255,0.1);"></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="color:var(--gold);font-size:13px;">★★★★★</span>
-        <span style="font-size:13px;color:rgba(200,212,232,0.5);">5-star rated</span>
       </div>
     </div>
   </div>
-</section>
+
+  <!-- Foreground: deep blue physical card -->
+  <div style="position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;perspective:1500px;">
+    <div id="deep-card" class="main-card premium-depth-card" style="position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;pointer-events:auto;width:92vw;height:92vh;border-radius:32px;">
+      <div class="card-sheen" aria-hidden="true"></div>
+
+      <!-- Responsive inner grid -->
+      <div class="card-inner-grid">
+
+        <!-- Brand name: top on mobile, right column on desktop -->
+        <div class="card-right-text" style="display:flex;justify-content:center;align-items:center;z-index:20;width:100%;">
+          <h2 class="text-card-silver-matte" style="font-family:'JetBrains Mono',monospace;font-size:clamp(2.5rem,9vw,8rem);font-weight:900;text-transform:uppercase;letter-spacing:-0.05em;line-height:1;">VardWeb</h2>
+        </div>
+
+        <!-- iPhone mockup: center -->
+        <div class="mockup-scroll-wrapper" style="position:relative;width:100%;height:380px;display:flex;align-items:center;justify-content:center;z-index:10;">
+          <div class="mockup-inner-scale">
+            <!-- iPhone bezel -->
+            <div id="phone-mockup" class="iphone-bezel" style="position:relative;width:280px;height:580px;border-radius:3rem;flex-shrink:0;will-change:transform;">
+              <div class="hardware-btn" style="position:absolute;top:120px;left:-3px;width:3px;height:25px;border-radius:4px 0 0 4px;" aria-hidden="true"></div>
+              <div class="hardware-btn" style="position:absolute;top:160px;left:-3px;width:3px;height:45px;border-radius:4px 0 0 4px;" aria-hidden="true"></div>
+              <div class="hardware-btn" style="position:absolute;top:220px;left:-3px;width:3px;height:45px;border-radius:4px 0 0 4px;" aria-hidden="true"></div>
+              <div class="hardware-btn" style="position:absolute;top:170px;right:-3px;width:3px;height:70px;border-radius:0 4px 4px 0;transform:scaleX(-1);" aria-hidden="true"></div>
+              <!-- Screen -->
+              <div style="position:absolute;inset:7px;background:#050914;border-radius:2.5rem;overflow:hidden;box-shadow:inset 0 0 15px rgba(0,0,0,1);color:white;z-index:10;">
+                <div class="screen-glare" style="position:absolute;inset:0;z-index:40;pointer-events:none;" aria-hidden="true"></div>
+                <!-- Dynamic Island -->
+                <div style="position:absolute;top:5px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#000;border-radius:9999px;z-index:50;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;">
+                  <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.8);animation:blink 2.2s ease-in-out infinite;"></div>
+                </div>
+                <!-- App UI -->
+                <div style="position:relative;width:100%;height:100%;padding:3rem 1.25rem 2rem;display:flex;flex-direction:column;">
+                  <div class="phone-widget" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
+                    <div>
+                      <div style="font-size:10px;color:rgba(200,200,200,0.6);text-transform:uppercase;letter-spacing:0.15em;font-weight:700;margin-bottom:4px;">Today</div>
+                      <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;color:white;">Journey</div>
+                    </div>
+                    <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.05);color:#e5e5e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 12px rgba(0,0,0,0.5);">JS</div>
+                  </div>
+                  <!-- Progress ring -->
+                  <div class="phone-widget" style="position:relative;width:176px;height:176px;margin:0 auto 2rem;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 15px 25px rgba(0,0,0,0.8));">
+                    <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 176 176" aria-hidden="true">
+                      <circle cx="88" cy="88" r="64" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="12"/>
+                      <circle class="progress-ring" cx="88" cy="88" r="64" fill="none" stroke="#3B82F6" stroke-width="12"/>
+                    </svg>
+                    <div style="text-align:center;z-index:10;display:flex;flex-direction:column;align-items:center;">
+                      <span class="counter-val" style="font-size:2.5rem;font-weight:900;letter-spacing:-0.05em;color:white;">0</span>
+                      <span style="font-size:8px;color:rgba(147,197,253,0.5);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-top:2px;">Days Support</span>
+                    </div>
+                  </div>
+                  <!-- Widget cards -->
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <div class="phone-widget widget-depth" style="border-radius:16px;padding:12px;display:flex;align-items:center;">
+                      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(37,99,235,0.05));display:flex;align-items:center;justify-content:center;margin-right:12px;border:1px solid rgba(96,165,250,0.2);">
+                        <svg width="16" height="16" fill="none" stroke="#60A5FA" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      </div>
+                      <div><div style="height:8px;width:80px;background:rgba(200,200,200,0.3);border-radius:4px;margin-bottom:8px;"></div><div style="height:6px;width:48px;background:rgba(100,100,100,0.5);border-radius:4px;"></div></div>
+                    </div>
+                    <div class="phone-widget widget-depth" style="border-radius:16px;padding:12px;display:flex;align-items:center;">
+                      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(5,150,105,0.05));display:flex;align-items:center;justify-content:center;margin-right:12px;border:1px solid rgba(52,211,153,0.2);">
+                        <svg width="16" height="16" fill="none" stroke="#34D399" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                      </div>
+                      <div><div style="height:8px;width:64px;background:rgba(200,200,200,0.3);border-radius:4px;margin-bottom:8px;"></div><div style="height:6px;width:96px;background:rgba(100,100,100,0.5);border-radius:4px;"></div></div>
+                    </div>
+                  </div>
+                  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(255,255,255,0.2);border-radius:9999px;"></div>
+                </div>
+              </div>
+            </div>
+            <!-- Floating badges -->
+            <div class="floating-badge floating-ui-badge" style="position:absolute;top:24px;left:-60px;display:flex;align-items:center;gap:12px;border-radius:16px;padding:12px 16px;z-index:30;">
+              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(180deg,rgba(59,130,246,0.2),rgba(29,78,216,0.1));display:flex;align-items:center;justify-content:center;border:1px solid rgba(96,165,250,0.3);">
+                <span aria-hidden="true" style="font-size:18px;">🔥</span>
+              </div>
+              <div>
+                <div style="color:white;font-size:13px;font-weight:700;letter-spacing:-0.01em;">Quality SEO</div>
+                <div style="color:rgba(147,197,253,0.5);font-size:11px;font-weight:500;">Customers to Clients</div>
+              </div>
+            </div>
+            <div class="floating-badge floating-ui-badge" style="position:absolute;bottom:80px;right:-60px;display:flex;align-items:center;gap:12px;border-radius:16px;padding:12px 16px;z-index:30;">
+              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(180deg,rgba(99,102,241,0.2),rgba(67,56,202,0.1));display:flex;align-items:center;justify-content:center;border:1px solid rgba(129,140,248,0.3);">
+                <span aria-hidden="true" style="font-size:16px;">🤝</span>
+              </div>
+              <div>
+                <div style="color:white;font-size:13px;font-weight:700;letter-spacing:-0.01em;">User-friendly</div>
+                <div style="color:rgba(147,197,253,0.5);font-size:11px;font-weight:500;">Mobile Responsive.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card description: bottom on mobile, left column on desktop -->
+        <div class="card-left-text" style="display:flex;flex-direction:column;justify-content:center;text-align:center;z-index:20;width:100%;padding:0 1rem;">
+          <h3 style="color:white;font-size:clamp(1.1rem,2.5vw,2.25rem);font-weight:700;letter-spacing:-0.02em;margin:0;">Web Design, redefined.</h3>
+          <p class="card-desc-text" style="color:rgba(147,197,253,0.7);font-size:clamp(0.875rem,1.2vw,1rem);font-weight:400;line-height:1.7;max-width:340px;margin:20px auto 0;">
+            <span style="color:white;font-weight:600;">Slow</span>, outdated, or hard-to-navigate site doesn't just look bad — it actively costs you customers. We combine technical excellence to achieve pixel-perfect, blazing-fast, optimized enterprise-grade web apps.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <!-- ────────────────────── STATS ────────────────────── -->
 <section class="stats-wrap">
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-num" style="color:var(--cyan);">80+</div>
+      <div class="stat-num" style="color:var(--cyan);" data-target="40" data-suffix="+">40+</div>
       <div class="stat-label">Sites Launched</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:var(--pink);">97%</div>
+      <div class="stat-num" style="color:var(--pink);" data-target="97" data-suffix="%">97%</div>
       <div class="stat-label">Client Satisfaction</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:var(--gold);">1.8s</div>
+      <div class="stat-num" style="color:var(--gold);" data-target="1.8" data-suffix="s" data-decimals="1">1.8s</div>
       <div class="stat-label">Avg Load Speed</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:#00E5FF;">40+</div>
+      <div class="stat-num" style="color:#00E5FF;" data-target="20" data-suffix="+">20+</div>
       <div class="stat-label">Industries Served</div>
     </div>
   </div>
@@ -657,18 +1031,18 @@
 
       <!-- Text -->
       <div>
-        <p class="sec-tag">// our approach</p>
+        <p class="sec-tag">// seo &amp; performance</p>
         <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:24px;color:var(--text-1);">
-          Built to perform,<br>designed to convert
+          Rank higher,<br>convert better
         </h2>
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:20px;">
-          In today's market, your website is your most important sales tool. A slow, outdated, or hard-to-navigate site doesn't just look bad — it actively costs you customers. VardedVeins builds sites that work as hard as you do.
+          In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion</code>. VardWeb builds sites that work as hard as you do.
         </p>
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:36px;">
-          We combine technical excellence with sharp design thinking. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion</code>. From landing pages to full web applications, we deliver results.
+          From landing pages to full web applications, we deliver results. Clean code, lightning-fast load times, and structured data built to satisfy both search engines and the people using them — so you rank higher and keep visitors once they arrive.
         </p>
         <div style="display:flex;gap:14px;flex-wrap:wrap;">
-          <a href="#contact" class="btn btn-primary">Start Your Project</a>
+          <a href="contact.html" class="btn btn-primary">Start Your Project</a>
           <a href="#services" class="btn btn-ghost">See Services</a>
         </div>
       </div>
@@ -679,27 +1053,10 @@
           <div class="dot" style="background:#FF5F57;"></div>
           <div class="dot" style="background:#FFBD2E;"></div>
           <div class="dot" style="background:#28CA41;"></div>
-          <span style="margin-left:8px;font-size:11px;color:rgba(255,255,255,0.28);">website.ts</span>
+          <span style="margin-left:8px;font-size:11px;color:rgba(255,255,255,0.28);">https://www.yourwebsite.com</span>
         </div>
-        <div class="code-body">
-<pre><span class="kw">interface</span> <span class="ty">Website</span> <span class="pu">{</span>
-  design<span class="pu">:</span>      <span class="str">'pixel-perfect'</span><span class="pu">;</span>
-  performance<span class="pu">:</span> <span class="str">'blazing-fast'</span><span class="pu">;</span>
-  seo<span class="pu">:</span>         <span class="str">'optimized'</span><span class="pu">;</span>
-  security<span class="pu">:</span>    <span class="str">'enterprise-grade'</span><span class="pu">;</span>
-  build<span class="pu">():</span> <span class="ty">Promise</span><span class="pu">&lt;</span><span class="ty">Launch</span><span class="pu">&gt;;</span>
-<span class="pu">}</span>
-
-<span class="kw">const</span> YourSite<span class="pu">:</span> <span class="ty">Website</span> <span class="pu">= {</span>
-  design<span class="pu">:</span>      <span class="str">'pixel-perfect'</span><span class="pu">,</span>
-  performance<span class="pu">:</span> <span class="str">'blazing-fast'</span><span class="pu">,</span>
-  seo<span class="pu">:</span>         <span class="str">'optimized'</span><span class="pu">,</span>
-  security<span class="pu">:</span>    <span class="str">'enterprise-grade'</span><span class="pu">,</span>
-  build<span class="pu">:</span> <span class="kw">async</span> <span class="pu">() =&gt; {</span>
-    <span class="cm">// your vision, our code</span>
-    <span class="kw">return</span> <span class="ty">Launch</span><span class="pu">.</span>deploy<span class="pu">();</span>
-  <span class="pu">}</span>
-<span class="pu">};</span></pre>
+        <div class="code-body" style="padding:0;overflow:hidden;">
+          <canvas id="bento-canvas" style="display:block;width:100%;height:340px;"></canvas>
         </div>
       </div>
 
@@ -775,7 +1132,7 @@
 
       <div class="tcard">
         <div class="quote" style="color:rgba(0,229,255,0.55);">"</div>
-        <p>VardedVeins transformed our online presence. Our new site loads twice as fast, and we've seen a 40% increase in enquiries since launch. The branding is sharp and consistent throughout.</p>
+        <p>VardWeb transformed our online presence. Our new site loads twice as fast, and we've seen a 40% increase in enquiries since launch. The branding is sharp and consistent throughout.</p>
         <div style="display:flex;align-items:center;gap:12px;">
           <div class="avatar" style="background:linear-gradient(135deg,#00E5FF,#005580);">MR</div>
           <div>
@@ -814,189 +1171,762 @@
 </section>
 
 
-<!-- ────────────────────── CTA ────────────────────── -->
-<section style="padding:20px 28px 80px;">
-  <div style="max-width:900px;margin:0 auto;">
-    <div class="cta-box">
-      <div class="orb1" aria-hidden="true"></div>
-      <div class="orb2" aria-hidden="true"></div>
-      <div style="position:relative;z-index:1;">
-        <p class="sec-tag" style="margin-bottom:18px;">// ready to launch?</p>
-        <h2 style="font-size:clamp(28px,5vw,54px);font-weight:800;line-height:1.08;margin-bottom:20px;color:var(--text-1);">
-          Your business deserves<br><span class="grad-cyan-pink">a website that works</span>
-        </h2>
-        <p style="font-size:16.5px;line-height:1.72;color:var(--text-2);max-width:480px;margin:0 auto 44px;">
-          Join 80+ businesses who trust VardedVeins to power their digital presence. Let's build something that drives real growth.
-        </p>
-        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-          <a href="#contact" class="btn btn-cta" style="font-size:14.5px;padding:14px 36px;">
-            Get a Free Quote <span aria-hidden="true">→</span>
-          </a>
-          <a href="#services" class="btn btn-ghost" style="font-size:14px;padding:14px 28px;">
-            View Services
-          </a>
-        </div>
-        <p style="margin-top:22px;font-size:12px;color:rgba(200,212,232,0.3);">No commitment required &nbsp;·&nbsp; Discovery call is always free</p>
+<div class="divider"></div>
+
+<!-- ────────────────────── FEATURE CARDS ────────────────────── -->
+<section id="roadmap" style="padding:80px 28px 100px;">
+  <style>
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    @media (max-width: 1339px) {
+      .feat-grid { grid-template-columns: repeat(2, 1fr); }
+      .feat-card { height: auto; padding: 28px 20px 20px; justify-content: flex-start; }
+      .feat-card-icon { position: relative; top: auto; left: auto; margin: 8px auto 20px; width: 80px; height: 80px; align-self: center; }
+      .feat-card-icon img { width: 80px; height: 80px; }
+      .feat-card:hover .feat-card-icon { transform: scale(1.15) translateY(-6px); }
+      .feat-card-content { width: 100%; }
+    }
+    @media (max-width: 560px)  { .feat-grid { grid-template-columns: 1fr; } }
+
+    .feat-card {
+      position: relative;
+      height: 380px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+      background: rgba(255,255,255,0.02);
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.45s ease;
+    }
+    .feat-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 28px 64px rgba(0,0,0,0.45);
+    }
+    .feat-card-glow {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .feat-card-idx {
+      position: absolute;
+      top: 22px;
+      left: 22px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(200,212,232,0.28);
+      z-index: 2;
+    }
+    .feat-card-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -56px 0 0 -56px;
+      width: 112px;
+      height: 112px;
+      z-index: 3;
+      pointer-events: none;
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .feat-card-icon img { width: 112px; height: 112px; object-fit: contain; }
+    .feat-card:hover .feat-card-icon { transform: scale(1.63) translateY(-18px); }
+    .feat-card-content {
+      position: relative;
+      z-index: 2;
+      background: rgba(7,9,16,0.74);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 14px 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .feat-card-tag {
+      display: inline-block;
+      padding: 3px 11px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin-bottom: 8px;
+    }
+    .feat-card-title {
+      font-size: 14.5px;
+      line-height: 1.58;
+      color: var(--text-1);
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+
+  <div style="text-align:center;margin-bottom:68px;">
+    <p class="sec-tag">// the plan</p>
+    <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
+      Discovery begins on the<br><span class="grad-gold">yellow brick road</span>
+    </h2>
+  </div>
+
+  <div class="feat-grid">
+
+    <div class="feat-card">
+      <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(255,140,0,0.22) 0%,transparent 68%);"></div>
+      <div class="feat-card-idx">001</div>
+      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Compass/3D/compass_3d.png" alt="Compass" draggable="false"></div>
+      <div class="feat-card-content">
+        <span class="feat-card-tag" style="background:rgba(255,140,0,0.12);color:#FFA030;border:1px solid rgba(255,140,0,0.22);">PLAN</span>
+        <p class="feat-card-title">Build trust, understand goals, determine requirements, create roadmap, build designs uniquely curated for your business.</p>
       </div>
     </div>
+
+    <div class="feat-card">
+      <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(138,79,255,0.22) 0%,transparent 68%);"></div>
+      <div class="feat-card-idx">002</div>
+      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Artist%20palette/3D/artist_palette_3d.png" alt="Artist palette" draggable="false"></div>
+      <div class="feat-card-content">
+        <span class="feat-card-tag" style="background:rgba(138,79,255,0.12);color:#A070FF;border:1px solid rgba(138,79,255,0.22);">DESIGN</span>
+        <p class="feat-card-title">Easy to navigate, mobile responsive, lightning fast, pixel-perfect visuals crafted to reflect your brand and convert at glance.</p>
+      </div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(0,229,255,0.18) 0%,transparent 68%);"></div>
+      <div class="feat-card-idx">003</div>
+      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Rocket/3D/rocket_3d.png" alt="Rocket" draggable="false" style="transform:scaleX(-1);"></div>
+      <div class="feat-card-content">
+        <span class="feat-card-tag" style="background:rgba(0,229,255,0.10);color:#00E5FF;border:1px solid rgba(0,229,255,0.20);">LAUNCH</span>
+        <p class="feat-card-title">Review and sign off, site will be launched live worldwide — tested, optimised, and ready to rank from day one.</p>
+      </div>
+    </div>
+
+    <div class="feat-card">
+      <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(255,45,120,0.20) 0%,transparent 68%);"></div>
+      <div class="feat-card-idx">004</div>
+      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Wrench/3D/wrench_3d.png" alt="Wrench" draggable="false"></div>
+      <div class="feat-card-content">
+        <span class="feat-card-tag" style="background:rgba(255,45,120,0.10);color:#FF2D78;border:1px solid rgba(255,45,120,0.20);">MAINTAIN</span>
+        <p class="feat-card-title">Ongoing monthly maintenance, guaranteed updates, SEO analysis, speed checks, and 25/8 support so your site stays sharp.</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
 <div class="divider"></div>
 
 
-<!-- ────────────────────── CONTACT ────────────────────── -->
-<section id="contact" style="padding:100px 28px 120px;">
-  <div style="max-width:1200px;margin:0 auto;">
+<!-- ────────────────────── CINEMATIC FOOTER ────────────────────── -->
+<div id="footer-curtain" style="position:relative;height:100vh;clip-path:polygon(0% 0,100% 0%,100% 100%,0 100%);">
+  <footer class="cinematic-footer-wrapper" style="position:fixed;bottom:0;left:0;height:100vh;width:100%;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#070910;">
 
-    <div class="contact-grid">
+    <!-- Aurora glow -->
+    <div class="footer-aurora animate-footer-breathe" style="position:absolute;left:50%;top:50%;width:80vw;height:60vh;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;"></div>
 
-      <!-- Info -->
-      <div>
-        <p class="sec-tag">// contact us</p>
-        <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:20px;color:var(--text-1);">
-          Let's build your<br><span class="grad-cyan-pink">website</span>
-        </h2>
-        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:44px;">
-          Tell us about your project. We'll get back to you within 24 hours with a clear plan and honest pricing — no jargon, no pressure.
-        </p>
+    <!-- Grid bg -->
+    <div class="footer-bg-grid" style="position:absolute;inset:0;z-index:0;pointer-events:none;"></div>
 
-        <div style="display:flex;flex-direction:column;gap:16px;">
-          <div class="contact-info-card">
-            <div class="contact-info-icon icon-cyan">✉️</div>
-            <div>
-              <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Email Us</div>
-              <div style="font-size:14.5px;color:var(--text-1);font-family:'JetBrains Mono',monospace;">support@vardedveins.com</div>
-            </div>
-          </div>
-          <div class="contact-info-card">
-            <div class="contact-info-icon icon-gold">⏱️</div>
-            <div>
-              <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Response Time</div>
-              <div style="font-size:14.5px;color:var(--text-1);">Within 24 hours, Mon–Sun</div>
-            </div>
-          </div>
-          <div class="contact-info-card">
-            <div class="contact-info-icon icon-pink">🚀</div>
-            <div>
-              <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Typical Timeline</div>
-              <div style="font-size:14.5px;color:var(--text-1);">1–2 weeks from kickoff to launch</div>
-            </div>
-          </div>
+    <!-- Giant bg text -->
+    <div id="footer-giant-text" class="footer-giant-bg-text" style="position:absolute;bottom:-5vh;left:50%;transform:translateX(-50%);z-index:0;pointer-events:none;user-select:none;white-space:nowrap;">VardWeb</div>
+
+    <!-- Marquee -->
+    <div style="position:absolute;top:48px;left:0;width:100%;overflow:hidden;border-top:1px solid rgba(0,229,255,0.07);border-bottom:1px solid rgba(0,229,255,0.07);background:rgba(7,9,16,0.6);backdrop-filter:blur(12px);padding:16px 0;z-index:10;transform:rotate(-2deg) scale(1.1);box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+      <div class="animate-footer-scroll-marquee" style="display:flex;width:max-content;font-size:11px;font-weight:700;letter-spacing:0.28em;color:rgba(200,212,232,0.42);text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">
+        <div style="display:flex;align-items:center;gap:40px;padding:0 20px;">
+          <span>Pixel-Perfect Design</span><span style="color:rgba(0,229,255,0.4);">✦</span>
+          <span>Lightning-Fast Builds</span><span style="color:rgba(255,45,120,0.4);">✦</span>
+          <span>Enterprise-Grade Code</span><span style="color:rgba(0,229,255,0.4);">✦</span>
+          <span>SEO Optimized</span><span style="color:rgba(255,45,120,0.4);">✦</span>
+          <span>Mobile-First Responsive</span><span style="color:rgba(0,229,255,0.4);">✦</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:40px;padding:0 20px;">
+          <span>Pixel-Perfect Design</span><span style="color:rgba(0,229,255,0.4);">✦</span>
+          <span>Lightning-Fast Builds</span><span style="color:rgba(255,45,120,0.4);">✦</span>
+          <span>Enterprise-Grade Code</span><span style="color:rgba(0,229,255,0.4);">✦</span>
+          <span>SEO Optimized</span><span style="color:rgba(255,45,120,0.4);">✦</span>
+          <span>Mobile-First Responsive</span><span style="color:rgba(0,229,255,0.4);">✦</span>
         </div>
       </div>
-
-      <!-- Form -->
-      <div style="background:var(--surface);border:1px solid rgba(0,229,255,0.1);border-radius:20px;padding:44px;">
-        <form onsubmit="return false;" style="display:flex;flex-direction:column;gap:20px;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-            <div>
-              <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Your Name</label>
-              <input class="contact-input" type="text" placeholder="Jane Smith" autocomplete="name" />
-            </div>
-            <div>
-              <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Email Address</label>
-              <input class="contact-input" type="email" placeholder="jane@company.com" autocomplete="email" />
-            </div>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Project Type</label>
-            <select class="contact-select">
-              <option value="" disabled selected>Select a service…</option>
-              <option>New Website — Business / Brand</option>
-              <option>New Website — E-Commerce Store</option>
-              <option>Landing Page / Campaign Site</option>
-              <option>Website Redesign</option>
-              <option>SEO &amp; Performance Audit</option>
-              <option>Ongoing Maintenance &amp; Support</option>
-              <option>Other / Not Sure Yet</option>
-            </select>
-          </div>
-
-          <div>
-            <label style="display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:8px;">Tell Us About Your Project</label>
-            <textarea class="contact-textarea" placeholder="What does your business do? What problems does your current site have? What does success look like for you?"></textarea>
-          </div>
-
-          <button type="submit" class="btn btn-cta" style="width:100%;justify-content:center;font-size:14.5px;padding:15px 32px;margin-top:4px;">
-            Send Message <span aria-hidden="true">→</span>
-          </button>
-
-          <p style="text-align:center;font-size:12px;color:rgba(200,212,232,0.28);">No spam, ever &nbsp;·&nbsp; We'll respond within 24 hours</p>
-        </form>
-      </div>
-
     </div>
-  </div>
-</section>
 
+    <!-- Main center content -->
+    <div style="position:relative;z-index:10;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;margin-top:80px;width:100%;max-width:900px;margin-left:auto;margin-right:auto;">
+      <h2 id="footer-heading" class="footer-text-glow" style="font-size:clamp(3rem,8vw,6.5rem);font-weight:900;letter-spacing:-0.04em;margin-bottom:48px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;">Ready to build?</h2>
 
-<!-- ────────────────────── FOOTER ────────────────────── -->
-<footer style="border-top:1px solid rgba(0,229,255,0.07);padding:64px 28px 40px;">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div class="footer-grid">
-
-      <!-- Brand -->
-      <div>
-        <div class="logo-nav-wrap" style="display:inline-flex;margin-bottom:20px;">
-          <img src="brand_assets/Varded Veins Real.png" alt="VardedVeins" style="height:28px;width:auto;" />
-        </div>
-        <p style="font-size:13.5px;line-height:1.75;color:rgba(200,212,232,0.42);max-width:240px;margin-bottom:26px;">
-          High-performance websites for businesses serious about growth. Design, development, and results.
-        </p>
-        <div style="display:flex;gap:10px;">
-          <a href="#" class="social-btn" aria-label="Twitter/X">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/></svg>
+      <div id="footer-links" style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;">
+        <!-- Primary CTA pills -->
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;">
+          <a href="contact.html" class="footer-glass-pill footer-magnetic" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
+            Start Your Project <span style="opacity:0.7;">→</span>
           </a>
-          <a href="#" class="social-btn" aria-label="GitHub">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.23c-3.34.73-4.04-1.42-4.04-1.42-.55-1.39-1.33-1.76-1.33-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 6.8c1.02.005 2.05.138 3.01.404 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.69.82.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          <a href="contact.html" class="footer-glass-pill footer-magnetic" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
+            Contact Us
           </a>
-          <a href="#" class="social-btn" aria-label="Discord">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.32 4.37a19.79 19.79 0 0 0-4.89-1.52.07.07 0 0 0-.08.04 13.7 13.7 0 0 0-.6 1.25 18.27 18.27 0 0 0-5.49 0 12.64 12.64 0 0 0-.62-1.25.08.08 0 0 0-.08-.04A19.74 19.74 0 0 0 3.68 4.37a.07.07 0 0 0-.03.03C.53 9.05-.32 13.58.1 18.06a.08.08 0 0 0 .03.05 19.9 19.9 0 0 0 5.99 3.03.08.08 0 0 0 .08-.03c.46-.63.87-1.3 1.23-2a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.89.08.08 0 0 1-.01-.13c.13-.1.25-.2.37-.29a.07.07 0 0 1 .08-.01c3.93 1.79 8.18 1.79 12.06 0a.07.07 0 0 1 .08.01c.12.1.25.2.37.29a.08.08 0 0 1-.01.13c-.6.35-1.22.64-1.87.89a.08.08 0 0 0-.04.11c.36.7.78 1.36 1.23 1.99a.07.07 0 0 0 .08.03 19.84 19.84 0 0 0 6-3.03.08.08 0 0 0 .03-.05c.5-5.18-.84-9.67-3.55-13.66a.06.06 0 0 0-.03-.03z"/></svg>
+          <a href="our-work.html" class="footer-glass-pill footer-magnetic" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
+            View Our Work
           </a>
         </div>
+        <!-- Secondary pills -->
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px;">
+          <a href="faq.html"      class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">FAQ</a>
+          <a href="blog.html"     class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">Blog</a>
+          <a href="about.html"    class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">About Us</a>
+          <a href="privacy.html"  class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">Privacy Policy</a>
+          <a href="terms.html"    class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">Terms of Service</a>
+        </div>
       </div>
-
-      <!-- Services -->
-      <div>
-        <p class="footer-col-head">Services</p>
-        <a href="#" class="footer-link">Web Design</a>
-        <a href="#" class="footer-link">E-Commerce</a>
-        <a href="#" class="footer-link">Landing Pages</a>
-        <a href="#" class="footer-link">SEO &amp; Performance</a>
-        <a href="#" class="footer-link">Maintenance</a>
-      </div>
-
-      <!-- Company -->
-      <div>
-        <p class="footer-col-head">Company</p>
-        <a href="#" class="footer-link">About Us</a>
-        <a href="#" class="footer-link">Portfolio</a>
-        <a href="#" class="footer-link">Blog</a>
-        <a href="#" class="footer-link">Pricing</a>
-        <a href="#contact" class="footer-link">Contact</a>
-      </div>
-
-      <!-- Legal -->
-      <div>
-        <p class="footer-col-head">Legal</p>
-        <a href="#" class="footer-link">Privacy Policy</a>
-        <a href="#" class="footer-link">Terms of Service</a>
-        <a href="#" class="footer-link">Cookie Policy</a>
-        <a href="#" class="footer-link">Accessibility</a>
-        <a href="#" class="footer-link">WCAG Compliance</a>
-      </div>
-
     </div>
 
-    <div class="divider" style="margin-bottom:28px;max-width:100%;"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;">
-      <p style="font-size:12.5px;color:rgba(200,212,232,0.3);">© 2025 VardedVeins. All rights reserved.</p>
-      <p style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(200,212,232,0.22);">Built with <span style="color:var(--pink);">♥</span> by VardedVeins</p>
+    <!-- Bottom bar -->
+    <div style="position:relative;z-index:20;width:100%;padding:0 48px 32px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <p style="color:rgba(200,212,232,0.28);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">© 2026 VardWeb. All rights reserved.</p>
+
+      <div class="footer-glass-pill" style="padding:11px 22px;border-radius:9999px;display:flex;align-items:center;gap:8px;cursor:default;">
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+        <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">❤</span>
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+        <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+      </div>
+
+      <button id="footer-back-top" class="footer-glass-pill footer-magnetic" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(200,212,232,0.45);background:none;cursor:pointer;border:none;padding:0;flex-shrink:0;" aria-label="Back to top">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+      </button>
     </div>
-  </div>
-</footer>
+
+  </footer>
+</div>
+
+<script>
+(function () {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
+
+  // Block ScrollTrigger.refresh() entirely during resize so the pin-spacer
+  // recalculation never gets a chance to reset scroll position.
+  var _scrollY   = 0;
+  var _resizing  = false;
+  var _resizeEnd = null;
+  window.addEventListener('scroll', function () { if (!_resizing) _scrollY = window.scrollY; }, { passive: true });
+  window.addEventListener('resize', function () {
+    _resizing = true;
+    _scrollY = window.scrollY;
+    clearTimeout(_resizeEnd);
+    _resizeEnd = setTimeout(function () {
+      _resizing = false;
+      _origRefresh();
+      requestAnimationFrame(function () { window.scrollTo(0, _scrollY); });
+    }, 200);
+  }, { passive: true, capture: true });
+  var _origRefresh = ScrollTrigger.refresh.bind(ScrollTrigger);
+
+  var container = document.getElementById('cinematic-hero');
+  var mainCard  = document.getElementById('deep-card');
+  var mockup    = document.getElementById('phone-mockup');
+  var rafId     = 0;
+
+  // Desktop initial card size
+  var isMobile = window.innerWidth < 768;
+  if (!isMobile) {
+    mainCard.style.width        = '85vw';
+    mainCard.style.height       = '85vh';
+    mainCard.style.borderRadius = '40px';
+  }
+
+  // Mouse: card sheen + phone 3D tilt
+  window.addEventListener('mousemove', function (e) {
+    if (window.scrollY > window.innerHeight * 2) return;
+    cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(function () {
+      var rect = mainCard.getBoundingClientRect();
+      mainCard.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
+      mainCard.style.setProperty('--mouse-y', (e.clientY - rect.top)  + 'px');
+      var xVal = (e.clientX / window.innerWidth  - 0.5) * 2;
+      var yVal = (e.clientY / window.innerHeight - 0.5) * 2;
+      gsap.to(mockup, { rotationY: xVal * 12, rotationX: -yVal * 12, ease: 'power3.out', duration: 1.2 });
+    });
+  });
+
+  // Initial GSAP states
+  gsap.set('.text-track',   { autoAlpha: 0, y: 60, scale: 0.85, filter: 'blur(20px)', rotationX: -20 });
+  gsap.set('.text-days',    { autoAlpha: 1, clipPath: 'inset(0 100% 0 0)' });
+  gsap.set('.main-card',    { y: window.innerHeight + 200, autoAlpha: 1 });
+  gsap.set(['.card-left-text', '.card-right-text', '.mockup-scroll-wrapper', '.floating-badge', '.phone-widget'], { autoAlpha: 0 });
+  gsap.set('.cta-wrapper',  { autoAlpha: 0, scale: 0.8, filter: 'blur(30px)' });
+
+  // Intro animation (runs once on load)
+  gsap.timeline({ delay: 0.3 })
+    .to('.text-track', { duration: 1.8, autoAlpha: 1, y: 0, scale: 1, filter: 'blur(0px)', rotationX: 0, ease: 'expo.out' })
+    .to('.text-days',  { duration: 1.4, clipPath: 'inset(0 0% 0 0)', ease: 'power4.inOut' }, '-=1.0');
+
+  // Counter proxy for scroll-scrub animation
+  var counterProxy = { value: 0 };
+  var counterEl    = document.querySelector('.counter-val');
+
+  // Scroll-pinned cinematic timeline
+  var scrollTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: container,
+      start: 'top top',
+      end: '+=7000',
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1
+    }
+  });
+
+  scrollTl
+    .to(['.hero-text-wrapper', '.bg-grid-theme'], { scale: 1.15, filter: 'blur(20px)', opacity: 0.2, ease: 'power2.inOut', duration: 2 }, 0)
+    .to('.main-card', { y: 0, ease: 'power3.inOut', duration: 2 }, 0)
+    .to('.main-card', { width: '100%', height: '100%', borderRadius: '0px', ease: 'power3.inOut', duration: 1.5 })
+    .fromTo('.mockup-scroll-wrapper',
+      { y: 300, z: -500, rotationX: 50, rotationY: -30, autoAlpha: 0, scale: 0.6 },
+      { y: 0, z: 0, rotationX: 0, rotationY: 0, autoAlpha: 1, scale: 1, ease: 'expo.out', duration: 2.5 }, '-=0.8')
+    .fromTo('.phone-widget',
+      { y: 40, autoAlpha: 0, scale: 0.95 },
+      { y: 0, autoAlpha: 1, scale: 1, stagger: 0.15, ease: 'back.out(1.2)', duration: 1.5 }, '-=1.5')
+    .to('.progress-ring', { strokeDashoffset: 60, duration: 2, ease: 'power3.inOut' }, '-=1.2')
+    .to(counterProxy, {
+      value: 365, duration: 2, ease: 'expo.out',
+      onUpdate: function () { if (counterEl) counterEl.textContent = Math.round(counterProxy.value); }
+    }, '-=2.0')
+    .fromTo('.floating-badge',
+      { y: 100, autoAlpha: 0, scale: 0.7, rotationZ: -10 },
+      { y: 0, autoAlpha: 1, scale: 1, rotationZ: 0, ease: 'back.out(1.5)', duration: 1.5, stagger: 0.2 }, '-=2.0')
+    .fromTo('.card-left-text',  { x: -50, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: 'power4.out', duration: 1.5 }, '-=1.5')
+    .fromTo('.card-right-text', { x: 50, autoAlpha: 0, scale: 0.8 }, { x: 0, autoAlpha: 1, scale: 1, ease: 'expo.out', duration: 1.5 }, '<')
+    .to({}, { duration: 2.5 })
+    .set('.hero-text-wrapper', { autoAlpha: 0 })
+    .set('.cta-wrapper', { autoAlpha: 1 })
+    .to({}, { duration: 1.5 })
+    .to(['.mockup-scroll-wrapper', '.floating-badge', '.card-left-text', '.card-right-text'], {
+      scale: 0.9, y: -40, z: -200, autoAlpha: 0, ease: 'power3.in', duration: 1.2, stagger: 0.05
+    })
+    .to('.main-card', {
+      width: isMobile ? '92vw' : '85vw',
+      height: isMobile ? '92vh' : '85vh',
+      borderRadius: isMobile ? '32px' : '40px',
+      ease: 'expo.inOut', duration: 1.8
+    }, 'pullback')
+    .to('.cta-wrapper', { scale: 1, filter: 'blur(0px)', ease: 'expo.inOut', duration: 1.8 }, 'pullback')
+    .to('.main-card', { y: -(window.innerHeight + 300), ease: 'power3.in', duration: 1.5 });
+})();
+</script>
+
+<script>
+/* ── Bento Pan Animation ── */
+;(function() {
+  const canvas = document.getElementById('bento-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  const SUPER_W = 2960, SUPER_H = 2140;
+  const CARDS = [
+    { x: 80,   y: 80,   w: 480, h: 280, kind: 'chart',    hue: 220, label: 'Revenue'   },
+    { x: 600,  y: 80,   w: 280, h: 280, kind: 'counter',  hue: 280, label: 'MRR'        },
+    { x: 920,  y: 80,   w: 360, h: 180, kind: 'gradient', hue: 200                       },
+    { x: 1320, y: 80,   w: 480, h: 280, kind: 'code',     hue: 0,   label: 'deploy.ts'  },
+    { x: 1840, y: 80,   w: 280, h: 280, kind: 'logo',     hue: 320                       },
+    { x: 2160, y: 80,   w: 380, h: 180, kind: 'stat',     hue: 160, label: 'Uptime'     },
+    { x: 2580, y: 80,   w: 360, h: 280, kind: 'bars',     hue: 40,  label: 'Visits'     },
+    { x: 920,  y: 300,  w: 360, h: 200, kind: 'counter',  hue: 180, label: 'Users'      },
+    { x: 2160, y: 300,  w: 380, h: 200, kind: 'chart',    hue: 100, label: 'Latency'    },
+    { x: 80,   y: 400,  w: 280, h: 280, kind: 'gradient', hue: 340                       },
+    { x: 400,  y: 400,  w: 480, h: 280, kind: 'code',     hue: 0,   label: 'api.ts'     },
+    { x: 1320, y: 420,  w: 280, h: 280, kind: 'stat',     hue: 60,  label: 'P95'        },
+    { x: 1640, y: 420,  w: 380, h: 280, kind: 'bars',     hue: 260, label: 'Builds'     },
+    { x: 2580, y: 420,  w: 360, h: 280, kind: 'logo',     hue: 200                       },
+    { x: 80,   y: 720,  w: 480, h: 240, kind: 'chart',    hue: 290, label: 'Errors'     },
+    { x: 600,  y: 720,  w: 280, h: 240, kind: 'stat',     hue: 20,  label: 'RPS'        },
+    { x: 920,  y: 740,  w: 380, h: 220, kind: 'gradient', hue: 240                       },
+    { x: 1320, y: 740,  w: 360, h: 220, kind: 'counter',  hue: 140, label: 'Active'     },
+    { x: 1720, y: 740,  w: 480, h: 240, kind: 'code',     hue: 0,   label: 'worker.ts'  },
+    { x: 2240, y: 740,  w: 360, h: 240, kind: 'bars',     hue: 320, label: 'Queue'      },
+    { x: 80,   y: 1000, w: 360, h: 220, kind: 'logo',     hue: 180                       },
+    { x: 460,  y: 1000, w: 380, h: 220, kind: 'stat',     hue: 80,  label: 'Cache'      },
+    { x: 880,  y: 1000, w: 480, h: 220, kind: 'chart',    hue: 200, label: 'CPU'        },
+    { x: 1400, y: 1000, w: 280, h: 220, kind: 'counter',  hue: 360, label: 'Jobs'       },
+    { x: 1720, y: 1020, w: 360, h: 220, kind: 'gradient', hue: 120                       },
+    { x: 2120, y: 1020, w: 380, h: 220, kind: 'code',     hue: 0,   label: 'db.sql'     },
+    { x: 2540, y: 1020, w: 400, h: 220, kind: 'bars',     hue: 280, label: 'Tasks'      },
+    { x: 80,   y: 1280, w: 480, h: 260, kind: 'code',     hue: 0,   label: 'edge.ts'    },
+    { x: 600,  y: 1280, w: 360, h: 260, kind: 'chart',    hue: 240, label: 'TTFB'       },
+    { x: 1000, y: 1280, w: 280, h: 260, kind: 'logo',     hue: 60                        },
+    { x: 1320, y: 1280, w: 380, h: 260, kind: 'stat',     hue: 200, label: 'Hits'       },
+    { x: 1740, y: 1280, w: 360, h: 260, kind: 'counter',  hue: 300, label: 'Bytes'      },
+    { x: 2140, y: 1280, w: 380, h: 260, kind: 'gradient', hue: 160                       },
+    { x: 2560, y: 1280, w: 380, h: 260, kind: 'bars',     hue: 0,   label: 'Errors'     },
+    { x: 80,   y: 1600, w: 380, h: 220, kind: 'stat',     hue: 280, label: 'Saved'      },
+    { x: 500,  y: 1600, w: 480, h: 220, kind: 'chart',    hue: 40,  label: 'Net Out'    },
+    { x: 1020, y: 1600, w: 360, h: 220, kind: 'code',     hue: 0,   label: 'auth.ts'    },
+    { x: 1420, y: 1600, w: 280, h: 220, kind: 'logo',     hue: 220                       },
+    { x: 1740, y: 1620, w: 380, h: 220, kind: 'counter',  hue: 100, label: 'Hooks'      },
+    { x: 2160, y: 1620, w: 360, h: 220, kind: 'bars',     hue: 340, label: 'Runs'       },
+    { x: 2560, y: 1620, w: 380, h: 220, kind: 'gradient', hue: 200                       },
+    { x: 80,   y: 1880, w: 480, h: 240, kind: 'bars',     hue: 180, label: 'Edges'      },
+    { x: 600,  y: 1880, w: 380, h: 240, kind: 'gradient', hue: 320                       },
+    { x: 1020, y: 1880, w: 360, h: 240, kind: 'logo',     hue: 80                        },
+    { x: 1420, y: 1880, w: 480, h: 240, kind: 'chart',    hue: 260, label: 'Tokens'     },
+    { x: 1940, y: 1880, w: 280, h: 240, kind: 'counter',  hue: 20,  label: 'Calls'      },
+    { x: 2260, y: 1880, w: 380, h: 240, kind: 'stat',     hue: 140, label: 'Score'      },
+    { x: 2680, y: 1880, w: 260, h: 240, kind: 'code',     hue: 0,   label: 'ws.ts'      },
+  ];
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function noise(i, fr) {
+    return Math.sin(fr / 30 + i) * 0.5 + 0.5;
+  }
+
+  function wa(hue, a) {
+    return `hsla(${hue},70%,60%,${a})`;
+  }
+
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y,     x + w, y + r,     r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x,     y + h, x,     y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x,     y,     x + r, y,         r);
+    ctx.closePath();
+  }
+
+  function drawCard(card, idx, fr) {
+    const { x, y, w, h, kind, hue, label } = card;
+    const accent = `hsl(${hue || 180},70%,60%)`;
+    const t = noise(idx, fr) * 6.28;
+    const PAD = 18, R = 18;
+
+    ctx.save();
+
+    rr(x, y, w, h, R);
+    const bg = ctx.createLinearGradient(x, y, x, y + h);
+    bg.addColorStop(0, '#131313');
+    bg.addColorStop(1, '#0a0a0a');
+    ctx.fillStyle = bg;
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    rr(x, y, w, h, R);
+    ctx.clip();
+
+    if (kind === 'gradient') {
+      const g = ctx.createRadialGradient(x + w * .3, y + h * .3, 0, x + w * .3, y + h * .3, Math.max(w, h));
+      g.addColorStop(0,  `hsl(${hue},80%,60%)`);
+      g.addColorStop(.5, `hsl(${(hue + 60) % 360},70%,40%)`);
+      g.addColorStop(1,  '#0a0a0a');
+      ctx.fillStyle = g;
+      ctx.fillRect(x, y, w, h);
+      ctx.restore();
+      return;
+    }
+
+    if (kind === 'logo') {
+      const sz = 80, lx = x + (w - sz) / 2, ly = y + (h - sz) / 2;
+      const lg = ctx.createLinearGradient(lx, ly, lx + sz, ly + sz);
+      lg.addColorStop(0, accent);
+      lg.addColorStop(1, `hsl(${hue},70%,55%)`);
+      ctx.fillStyle = lg;
+      ctx.shadowColor = wa(hue, .27);
+      ctx.shadowBlur = 30;
+      rr(lx, ly, sz, sz, 20);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.restore();
+      return;
+    }
+
+    let labelH = 0;
+    if (label) {
+      ctx.font = '600 11px -apple-system, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.55)';
+      ctx.fillText(label.toUpperCase(), x + PAD, y + PAD + 11);
+      labelH = 24;
+    }
+
+    const ix = x + PAD, iy = y + PAD + labelH;
+    const iw = w - PAD * 2, ih = h - PAD * 2 - labelH;
+
+    if (kind === 'chart') {
+      const pts = Array.from({ length: 12 }, (_, i) => [
+        ix + (i / 11) * iw,
+        iy + ih * .5 - (Math.sin(i * .7 + t) * .3 + Math.cos(i * .4 + t * .6) * .13) * ih
+      ]);
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      pts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
+      ctx.lineTo(pts[11][0], iy + ih);
+      ctx.lineTo(pts[0][0],  iy + ih);
+      ctx.closePath();
+      ctx.fillStyle = wa(hue, .13);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      pts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.4;
+      ctx.lineJoin = ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    else if (kind === 'bars') {
+      const n = 10, gap = 6;
+      const bw = (iw - gap * (n - 1)) / n;
+      for (let i = 0; i < n; i++) {
+        const bh = (.25 + (Math.sin(i * .8 + t) * .5 + .5) * .7) * ih;
+        const bx = ix + i * (bw + gap), by = iy + ih - bh;
+        const g2 = ctx.createLinearGradient(bx, by, bx, by + bh);
+        g2.addColorStop(0, accent);
+        g2.addColorStop(1, wa(hue, .33));
+        ctx.fillStyle = g2;
+        rr(bx, by, bw, bh, 4);
+        ctx.fill();
+      }
+    }
+
+    else if (kind === 'code') {
+      const lines = [
+        { ind: 0, wp: .6, c: '#7dd3fc'              },
+        { ind: 1, wp: .8, c: 'rgba(255,255,255,0.8)' },
+        { ind: 1, wp: .5, c: '#f9a8d4'              },
+        { ind: 2, wp: .7, c: 'rgba(255,255,255,0.8)' },
+        { ind: 2, wp: .4, c: '#fde047'              },
+        { ind: 1, wp: .3, c: 'rgba(255,255,255,0.6)' },
+        { ind: 0, wp: .2, c: 'rgba(255,255,255,0.6)' },
+      ];
+      const lh = 8, lg2 = 8, iw2 = 14;
+      const tot = lines.length * (lh + lg2) - lg2;
+      const sy = iy + (ih - tot) / 2;
+      lines.forEach((l, i) => {
+        const lx2 = ix + l.ind * iw2, ly2 = sy + i * (lh + lg2);
+        const lw2 = l.wp * (iw - l.ind * iw2);
+        ctx.fillStyle = l.c;
+        ctx.globalAlpha = .7;
+        rr(lx2, ly2, lw2, lh, 3);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    else if (kind === 'counter') {
+      const v = Math.floor(1200 + noise(idx, fr) * 800);
+      const fs = Math.min(52, ih * .65);
+      ctx.font = `700 ${fs}px -apple-system, sans-serif`;
+      ctx.fillStyle = 'white';
+      ctx.fillText(v.toLocaleString(), ix, iy + fs);
+      const pct = (noise(idx + 1, fr) * 12).toFixed(1);
+      ctx.font = '600 12px -apple-system, sans-serif';
+      ctx.fillStyle = accent;
+      ctx.fillText(`+${pct}%`, ix, iy + ih - 8);
+    }
+
+    else if (kind === 'stat') {
+      const v = (95 + noise(idx, fr) * 5).toFixed(2);
+      const fs = Math.min(44, ih * .6);
+      ctx.font = `700 ${fs}px -apple-system, sans-serif`;
+      ctx.fillStyle = 'white';
+      const vw2 = ctx.measureText(v).width;
+      ctx.fillText(v, ix, iy + fs);
+      ctx.font = `400 ${Math.round(fs * .4)}px -apple-system, sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillText('%', ix + vw2 + 4, iy + fs);
+    }
+
+    ctx.restore();
+  }
+
+  let startTime = null;
+  const DURATION = 18000;
+
+  function tick(ts) {
+    if (!startTime) startTime = ts;
+    const elapsed  = (ts - startTime) % DURATION;
+    const progress = elapsed / DURATION;
+    const fr       = ts * 30 / 1000;
+
+    const W = canvas.width, H = canvas.height;
+    const SCALE = W / 1200;
+    const VW = W / SCALE, VH = H / SCALE;
+    const maxX = SUPER_W - VW, maxY = SUPER_H - VH;
+    const panX = progress * maxX, panY = progress * maxY;
+
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.scale(SCALE, SCALE);
+    ctx.translate(-panX, -panY);
+    CARDS.forEach((c, i) => {
+      if (c.x + c.w < panX - 20 || c.x > panX + VW + 20) return;
+      if (c.y + c.h < panY - 20 || c.y > panY + VH + 20) return;
+      drawCard(c, i, fr);
+    });
+    ctx.restore();
+
+    const vg = ctx.createRadialGradient(W/2, H/2, W*.04, W/2, H/2, W*.75);
+    vg.addColorStop(0,  'rgba(0,0,0,0)');
+    vg.addColorStop(.6, 'rgba(0,0,0,0.45)');
+    vg.addColorStop(1,  'rgba(0,0,0,0.9)');
+    ctx.fillStyle = vg;
+    ctx.fillRect(0, 0, W, H);
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+
+
+<script>
+/* ── Mobile: trigger hover effects on scroll via IntersectionObserver ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+
+  function watch(selector, opts, delayFn) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var ms = delayFn ? delayFn(el) : 0;
+        var activate = function () { el.classList.add('in-view'); };
+        ms > 0 ? setTimeout(activate, ms) : activate();
+        io.unobserve(el);
+      });
+    }, opts);
+    document.querySelectorAll(selector).forEach(function (el) { io.observe(el); });
+  }
+
+  var std  = { threshold: 0.28, rootMargin: '0px 0px -20px 0px' };
+  var foot = { threshold: 0.1 };
+
+  /* Stat cards: 2-col grid on mobile — stagger within each row pair */
+  watch('.stat-card', std, function (el) {
+    return Array.from(el.parentElement.children).indexOf(el) % 2 * 110;
+  });
+
+  /* Feature cards and testimonial cards: single-col on mobile, scroll-natural stagger */
+  watch('.card',  std);
+  watch('.tcard', std);
+
+  /* Buttons — skip hero/nav; only content sections */
+  watch('#why-us .btn, .cta-box .btn', std);
+
+  /* Footer: social icons stagger, then links cascade */
+  watch('.social-btn', foot, function (el) {
+    return Array.from(el.parentElement.children).indexOf(el) * 80;
+  });
+  watch('.footer-link', foot, function (el) {
+    return Array.from(document.querySelectorAll('.footer-link')).indexOf(el) * 40;
+  });
+})();
+</script>
+
+
+<script>
+/* ── Cinematic Footer ── */
+(function () {
+  if (typeof gsap === 'undefined') return;
+
+  /* ScrollTrigger parallax */
+  if (typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.fromTo('#footer-giant-text',
+      { y: '12vh', scale: 0.85, opacity: 0 },
+      { y: '0vh',  scale: 1,    opacity: 1, ease: 'power1.out',
+        scrollTrigger: { trigger: '#footer-curtain', start: 'top 80%', end: 'bottom bottom', scrub: 1 } }
+    );
+
+    gsap.fromTo(['#footer-heading', '#footer-links'],
+      { y: 50, opacity: 0 },
+      { y: 0,  opacity: 1, stagger: 0.15, ease: 'power3.out',
+        scrollTrigger: { trigger: '#footer-curtain', start: 'top 40%', end: 'bottom bottom', scrub: 1 } }
+    );
+  }
+
+  /* Magnetic pill effect */
+  document.querySelectorAll('.footer-magnetic').forEach(function (el) {
+    el.addEventListener('mousemove', function (e) {
+      var rect = el.getBoundingClientRect();
+      var x = e.clientX - rect.left - rect.width  / 2;
+      var y = e.clientY - rect.top  - rect.height / 2;
+      gsap.to(el, { x: x * 0.35, y: y * 0.35, rotationX: -y * 0.12, rotationY: x * 0.12, scale: 1.05, ease: 'power2.out', duration: 0.4 });
+    });
+    el.addEventListener('mouseleave', function () {
+      gsap.to(el, { x: 0, y: 0, rotationX: 0, rotationY: 0, scale: 1, ease: 'elastic.out(1,0.3)', duration: 1.2 });
+    });
+  });
+
+  /* Back to top */
+  var backTop = document.getElementById('footer-back-top');
+  if (backTop) backTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+})();
+</script>
+
+<script>
+/* ── Stat counter: smooth roll-up on first view ── */
+(function () {
+  function easeOutExpo(t) { return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+
+  function animateStat(el) {
+    var target   = parseFloat(el.dataset.target);
+    var suffix   = el.dataset.suffix   || '';
+    var decimals = parseInt(el.dataset.decimals || '0', 10);
+    var DURATION = 5000;
+    var start    = null;
+
+    function frame(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / DURATION, 1);
+      var val      = easeOutExpo(progress) * target;
+
+      el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.floor(val)) + suffix;
+
+      if (progress < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        el.textContent = (decimals > 0 ? target.toFixed(decimals) : String(Math.floor(target))) + suffix;
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      animateStat(entry.target);
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.4 });
+
+  document.querySelectorAll('.stat-num[data-target]').forEach(function (el) {
+    io.observe(el);
+  });
+})();
+</script>
 
 </body>
 </html>

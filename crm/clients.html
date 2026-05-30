@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb CRM — Clients</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <script src="/encryption-config.js"></script>
+  <style>
+    :root {
+      --cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;
+      --base:#070910;--surface:#0f1219;--raised:#161b27;
+      --border:rgba(0,229,255,0.1);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);
+      --sidebar:220px;
+      --green:#22c55e;--yellow:#eab308;--red:#ef4444;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;}
+    body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;display:flex;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+
+    /* ── Sidebar ── */
+    .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;padding:24px 0;}
+    .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid var(--border);}
+    .sidebar-logo img{height:28px;border-radius:6px;}
+    .sidebar-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);padding:20px 20px 8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-2);text-decoration:none;font-size:13px;font-weight:500;border-left:2px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+    .nav-item:hover{color:var(--text-1);background:rgba(0,229,255,0.04);}
+    .nav-item.active{color:var(--cyan);border-left-color:var(--cyan);background:rgba(0,229,255,0.06);}
+    .nav-item svg{width:15px;height:15px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:9px 12px;border-radius:8px;background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.2);color:#ff7eb3;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;}
+    .btn-logout:hover{background:rgba(255,45,120,0.18);}
+
+    /* ── Main ── */
+    .main{margin-left:var(--sidebar);flex:1;padding:32px 36px;min-height:100vh;}
+
+    /* ── Page header ── */
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .page-header-left{display:flex;align-items:center;gap:16px;}
+    .header-title-row{display:flex;align-items:center;gap:10px;}
+    .pulse-dot{width:9px;height:9px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse-anim 2s ease-in-out infinite;}
+    @keyframes pulse-anim{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,0.4);}50%{opacity:.8;box-shadow:0 0 0 6px rgba(34,197,94,0);}}
+    .page-title{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-0.03em;}
+    .client-count-badge{font-size:13px;color:var(--text-2);}
+
+    /* ── Toolbar ── */
+    .toolbar{display:flex;gap:12px;margin-bottom:20px;}
+    .search-wrap{position:relative;flex:1;}
+    .search-wrap input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px 10px 38px;color:var(--text-1);font-size:13px;outline:none;transition:border-color .2s;}
+    .search-wrap input:focus{border-color:rgba(0,229,255,0.4);}
+    .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-2);width:14px;height:14px;}
+
+    /* ── Clients card list ── */
+    .clients-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 24px;}
+
+    .clients-header{display:grid;grid-template-columns:56px 1.8fr 1.4fr 90px 180px 130px;gap:16px;padding:0 20px 10px;margin-bottom:4px;}
+    .clients-header > div{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);}
+
+    @keyframes rowSlideIn{
+      from{opacity:0;transform:translateX(-20px);filter:blur(3px);}
+      to{opacity:1;transform:translateX(0);filter:blur(0);}
+    }
+
+    .client-row{
+      position:relative;display:grid;grid-template-columns:56px 1.8fr 1.4fr 90px 180px 130px;
+      gap:16px;align-items:center;padding:16px 20px;
+      background:rgba(22,27,39,0.6);border:1px solid rgba(0,229,255,0.07);
+      border-radius:12px;margin-bottom:8px;cursor:pointer;overflow:hidden;
+      animation:rowSlideIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+      transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),border-color 0.2s;
+    }
+    .client-row:hover{transform:translateY(-2px);border-color:rgba(0,229,255,0.18);}
+    .client-row:last-child{margin-bottom:0;}
+
+    /* status gradient overlay on right */
+    .client-row-gradient{
+      position:absolute;right:0;top:0;bottom:0;width:28%;
+      pointer-events:none;
+    }
+
+    /* number */
+    .col-num{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--text-2);}
+
+    /* avatar + name */
+    .col-client{display:flex;align-items:center;gap:12px;}
+    .client-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;}
+    .client-avatar.av-active{background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.3);color:var(--cyan);}
+    .client-avatar.av-pending{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.3);color:var(--gold);}
+    .client-avatar.av-paused{background:rgba(255,45,120,0.12);border:1px solid rgba(255,45,120,0.3);color:var(--pink);}
+    .col-client-name{font-weight:600;font-size:14px;color:var(--text-1);}
+
+    /* email */
+    .col-email{font-size:13px;color:var(--text-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+    /* sites */
+    .col-sites{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);}
+
+    /* MRR bars */
+    .mrr-wrap{display:flex;align-items:center;gap:8px;}
+    .mrr-bars{display:flex;gap:3px;align-items:center;}
+    .mrr-bar{width:5px;height:18px;border-radius:3px;transition:background 0.3s;}
+    .mrr-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text-1);min-width:46px;}
+
+    /* status badge */
+    .status-pill{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
+    .status-active{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#4ade80;}
+    .status-pending{background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);color:#facc15;}
+    .status-paused{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;}
+
+    /* empty / loading */
+    .empty-state{text-align:center;padding:48px 0;color:var(--text-2);font-size:14px;}
+
+    /* ── Buttons ── */
+    .btn{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:7px;transition:opacity .15s,transform .15s;text-decoration:none;}
+    .btn:hover{opacity:.82;transform:translateY(-1px);}
+    .btn-cyan{background:var(--cyan);color:#000;}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2);}
+    .btn-ghost:hover{color:var(--text-1);border-color:rgba(0,229,255,0.3);}
+    .btn-sm{padding:6px 12px;font-size:12px;}
+
+    /* ── New Client Modal ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 36px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:translateY(12px);transition:transform .2s;}
+    .modal-overlay.open .modal{transform:translateY(0);}
+    .modal h2{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;letter-spacing:-0.03em;margin-bottom:22px;}
+    .field-group{margin-bottom:18px;}
+    label{display:block;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+    .help-tip{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;opacity:0.65;padding:0;line-height:1;}
+    .help-tip:hover{opacity:1;}
+    .help-panel{background:var(--raised);border-left:2px solid rgba(0,229,255,0.25);padding:10px 14px;margin-top:6px;font-size:12px;line-height:1.6;color:var(--text-2);border-radius:0 6px 6px 0;display:none;}
+    .help-panel.open{display:block;}
+    input[type=text],input[type=email],input[type=tel],select,textarea{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}
+    input:focus,select:focus,textarea:focus{border-color:rgba(0,229,255,0.4);box-shadow:0 0 0 3px rgba(0,229,255,0.07);}
+    textarea{resize:vertical;min-height:72px;}
+    select option{background:var(--raised);}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+
+    /* ── Client Detail Drawer ── */
+    .drawer{position:fixed;top:0;right:0;bottom:0;width:660px;background:var(--surface);border-left:1px solid var(--border);z-index:400;overflow-y:auto;transform:translateX(100%);transition:transform .25s ease;}
+    .drawer.open{transform:translateX(0);}
+    .drawer-header{display:flex;align-items:center;justify-content:space-between;padding:24px 28px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:10;}
+    .drawer-header h2{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;letter-spacing:-0.03em;}
+    .btn-close{background:none;border:none;color:var(--text-2);cursor:pointer;font-size:20px;padding:4px;transition:color .15s;}
+    .btn-close:hover{color:var(--text-1);}
+    .drawer-body{padding:24px 28px;}
+    #siteSwitcher{display:none;flex-wrap:wrap;gap:6px;padding:10px 28px 12px;border-bottom:1px solid var(--border);background:rgba(0,0,0,0.15);}
+    .site-pill{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;cursor:pointer;border:1px solid var(--border);background:var(--raised);color:var(--text-2);transition:border-color .2s,color .2s,background .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;}
+    .site-pill:hover{border-color:rgba(0,229,255,0.3);color:var(--text-1);}
+    .site-pill.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,229,255,0.08);}
+
+    /* Tabs */
+    .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px;}
+    .tab{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+    .tab:hover{color:var(--text-1);}
+    .tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* Credential field */
+    .cred-row{display:flex;align-items:center;gap:8px;}
+    .cred-row input{flex:1;}
+    .icon-btn{background:none;border:1px solid var(--border);border-radius:6px;padding:7px 10px;cursor:pointer;color:var(--text-2);transition:color .15s,border-color .15s;font-size:13px;}
+    .icon-btn:hover{color:var(--cyan);border-color:rgba(0,229,255,0.3);}
+    .enc-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--cyan);background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.15);border-radius:4px;padding:3px 8px;margin-top:6px;}
+
+    /* Info card */
+    .info-card{background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:14px;}
+    .info-card-title{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:12px;}
+    .info-row{display:flex;gap:8px;margin-bottom:8px;font-size:13px;}
+    .info-label{color:var(--text-2);min-width:140px;flex-shrink:0;}
+    .info-value{color:var(--text-1);font-weight:500;word-break:break-all;}
+
+    /* Transfer timeline */
+    .timeline{display:flex;align-items:center;gap:0;margin:14px 0;}
+    .tl-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+    .tl-step:not(:last-child)::after{content:'';position:absolute;top:8px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;}
+    .tl-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);background:var(--raised);z-index:1;flex-shrink:0;}
+    .tl-dot.done{background:var(--cyan);border-color:var(--cyan);}
+    .tl-label{font-size:10px;color:var(--text-2);margin-top:6px;text-align:center;}
+
+    /* Hosting card */
+    .provider-card{background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px;}
+    .provider-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .provider-name{font-weight:600;font-size:14px;}
+    .access-badge{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(0,229,255,0.1);color:var(--cyan);font-weight:600;}
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--text-2);}
+    .toggle{position:relative;width:36px;height:20px;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:var(--raised);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:background .2s;}
+    .toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#666;border-radius:50%;transition:transform .2s,background .2s;}
+    .toggle input:checked+.toggle-slider{background:rgba(0,229,255,0.2);border-color:var(--cyan);}
+    .toggle input:checked+.toggle-slider::before{transform:translateX(16px);background:var(--cyan);}
+
+    .empty{color:var(--text-2);font-size:13px;text-align:center;padding:24px 0;}
+    .divider{height:1px;background:var(--border);margin:20px 0;}
+    .section-title{font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:12px;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;}
+    .badge-active{background:rgba(0,229,255,0.12);color:var(--cyan);}
+    .badge-pending{background:rgba(255,215,0,0.15);color:var(--gold);}
+    .badge-paused{background:rgba(255,45,120,0.12);color:var(--pink);}
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="/brand_assets/VardWeb.png" alt="VardWeb" /></div>
+  <div class="sidebar-label">Admin</div>
+  <a href="/crm/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="/crm/clients.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clients</a>
+  <a href="/crm/invoices.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Invoices</a>
+  <a href="/crm/cms-editor.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>CMS Editor</a>
+  <a href="/crm/seo-tool.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>SEO Tool</a>
+  <div class="sidebar-bottom"><button class="btn-logout" id="logoutBtn">Sign Out</button></div>
+</aside>
+
+<!-- Main -->
+<main class="main">
+  <div class="page-header">
+    <div class="page-header-left">
+      <div class="header-title-row">
+        <div class="pulse-dot"></div>
+        <h1 class="page-title">Clients</h1>
+      </div>
+      <span class="client-count-badge" id="clientCountBadge"></span>
+    </div>
+    <button class="btn btn-cyan" id="newClientBtn">+ New Client</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search clients by name or email…" />
+    </div>
+  </div>
+
+  <!-- Card list -->
+  <div class="clients-card">
+    <div class="clients-header">
+      <div>No</div>
+      <div>Client</div>
+      <div>Email</div>
+      <div>Sites</div>
+      <div>MRR</div>
+      <div>Status</div>
+    </div>
+    <div id="clientsList"><div class="empty-state">Loading…</div></div>
+  </div>
+</main>
+
+<!-- ── New Client Modal ── -->
+<div class="modal-overlay" id="newClientModal">
+  <div class="modal">
+    <h2>New Client</h2>
+    <div class="field-group">
+      <label>Business Name <button class="help-tip" data-help="biz"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+      <div class="help-panel" id="help-biz">The client's trading/business name. This is how they'll appear across all CRM records.</div>
+      <input type="text" id="nc-biz" placeholder="Acme Co." />
+    </div>
+    <div class="field-group">
+      <label>Contact Name</label>
+      <input type="text" id="nc-contact" placeholder="Jane Smith" />
+    </div>
+    <div class="field-group">
+      <label>Contact Email <button class="help-tip" data-help="email"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+      <div class="help-panel" id="help-email">Used as the Supabase Auth login for this client. Must be unique. After creating the client, create their Auth account in Supabase → Authentication → Users → Invite User.</div>
+      <input type="email" id="nc-email" placeholder="jane@acme.com" />
+    </div>
+    <div class="field-group">
+      <label>Phone</label>
+      <input type="tel" id="nc-phone" placeholder="+1 555 000 0000" />
+    </div>
+    <div class="field-group">
+      <label>Notes</label>
+      <textarea id="nc-notes" placeholder="Internal notes about this client…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelNewClient">Cancel</button>
+      <button class="btn btn-cyan" id="saveNewClient">Save Client</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Client Detail Drawer ── -->
+<div class="drawer" id="clientDrawer">
+  <div class="drawer-header">
+    <h2 id="drawerTitle">Client</h2>
+    <button class="btn-close" id="closeDrawer">✕</button>
+  </div>
+  <div id="siteSwitcher"></div>
+  <div class="drawer-body">
+    <div class="tabs">
+      <div class="tab active" data-tab="overview">Overview</div>
+      <div class="tab" data-tab="domain">Domain & Hosting</div>
+      <div class="tab" data-tab="social">Social</div>
+      <div class="tab" data-tab="analytics">Analytics</div>
+      <div class="tab" data-tab="leases">Leases</div>
+      <div class="tab" data-tab="seo">SEO Reports</div>
+    </div>
+
+    <div class="tab-panel active" id="panel-overview">
+      <div id="overviewContent"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="tab-panel" id="panel-domain">
+      <div class="section-title">Domain</div>
+      <div id="domainContent"><div class="empty">Loading…</div></div>
+      <div class="divider"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="section-title" style="margin:0">Hosting Access</div>
+        <button class="btn btn-ghost btn-sm" id="addHostingBtn">+ Add Provider</button>
+      </div>
+      <div id="hostingContent"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="tab-panel" id="panel-social">
+      <div class="section-title">Social Links</div>
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Saving a link updates the database instantly. For it to appear on the live site, the client's HTML must have the CMS snippet in <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">&lt;head&gt;</code> and relevant elements tagged with <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">data-social-url="platform"</code> or <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">data-social-handle="platform"</code> — a one-time setup during site build. After that, changes here sync automatically.</p>
+      <div id="socialContent"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="tab-panel" id="panel-analytics">
+      <div id="analyticsContent"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="tab-panel" id="panel-leases">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div class="section-title" style="margin:0">Leases</div>
+        <button class="btn btn-ghost btn-sm" id="addLeaseBtn">+ Add Lease</button>
+      </div>
+      <div id="leasesContent"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="tab-panel" id="panel-seo">
+      <div id="seoContent"><div class="empty">Loading…</div></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  import { encrypt, decrypt } from './_crypto.js';
+
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-admin-auth' } });
+
+  /* Auth guard */
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  const { data: myProfile } = await sb.from('user_profiles').select('role').eq('id', session.user.id).single();
+  if (myProfile?.role !== 'admin') window.location.href = '/crm/portal.html';
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html'; });
+
+  /* ── Help tooltips ── */
+  document.addEventListener('click', e => {
+    const tip = e.target.closest('.help-tip');
+    if (!tip) return;
+    const panel = document.getElementById('help-' + tip.dataset.help);
+    if (panel) panel.classList.toggle('open');
+  });
+
+  /* ── Row rendering helpers ── */
+  const MAX_MRR = 500;
+  const MRR_BARS = 8;
+
+  function getMRRBars(mrr) {
+    const filled = Math.round((Math.min(mrr, MAX_MRR) / MAX_MRR) * MRR_BARS);
+    const bars = Array.from({ length: MRR_BARS }, (_, i) =>
+      `<div class="mrr-bar" style="background:${i < filled ? 'rgba(0,229,255,0.65)' : 'rgba(200,212,232,0.1)'}"></div>`
+    ).join('');
+    return `<div class="mrr-wrap"><div class="mrr-bars">${bars}</div><span class="mrr-val">$${mrr.toFixed(0)}</span></div>`;
+  }
+
+  function getStatusInfo(status) {
+    switch (status) {
+      case 'active':  return { cls: 'status-active',  grad: 'rgba(34,197,94,0.08)',  avCls: 'av-active',  label: 'Active' };
+      case 'pending': return { cls: 'status-pending', grad: 'rgba(234,179,8,0.08)', avCls: 'av-pending', label: 'Pending' };
+      default:        return { cls: 'status-paused',  grad: 'rgba(239,68,68,0.08)', avCls: 'av-paused',  label: 'Paused' };
+    }
+  }
+
+  /* ── Load clients ── */
+  let allClients = [];
+
+  async function loadClients() {
+    const { data } = await sb.from('clients').select(`
+      id, business_name, contact_name, contact_email, phone, notes, created_at,
+      sites(id, status, domain_name, cms_type, platform_origin, migration_phase),
+      leases(recurring_rate, billing_cycle, status)
+    `).order('created_at', { ascending: false });
+    allClients = data || [];
+    renderList(allClients);
+  }
+
+  function renderList(clients) {
+    const listEl = document.getElementById('clientsList');
+    const badge  = document.getElementById('clientCountBadge');
+
+    const active  = clients.filter(c => (c.leases || []).some(l => l.status === 'active')).length;
+    const total   = clients.length;
+    badge.textContent = total ? `${active} Active • ${total - active} Pending` : '';
+
+    if (!clients.length) {
+      listEl.innerHTML = '<div class="empty-state">No clients yet. Click <strong>+ New Client</strong> to add one.</div>';
+      return;
+    }
+
+    listEl.innerHTML = clients.map((c, idx) => {
+      const mrr = (c.leases || []).filter(l => l.status === 'active').reduce((s, l) =>
+        s + (parseFloat(l.recurring_rate) || 0) / (l.billing_cycle === 'yearly' ? 12 : 1), 0);
+      const activeSites = (c.sites || []).filter(s => s.status === 'active').length;
+      const hasActiveLease = (c.leases || []).some(l => l.status === 'active');
+      const status = hasActiveLease ? 'active' : 'pending';
+      const si = getStatusInfo(status);
+      const num = String(idx + 1).padStart(2, '0');
+      const initial = c.business_name.charAt(0).toUpperCase();
+
+      return `<div class="client-row" data-id="${c.id}" style="animation-delay:${idx * 0.07}s;">
+        <div class="client-row-gradient" style="background:linear-gradient(to left,${si.grad},transparent);"></div>
+        <div class="col-num">${num}</div>
+        <div class="col-client">
+          <div class="client-avatar ${si.avCls}">${initial}</div>
+          <div class="col-client-name">${c.business_name}</div>
+        </div>
+        <div class="col-email">${c.contact_email}</div>
+        <div class="col-sites">${activeSites}</div>
+        <div>${getMRRBars(mrr)}</div>
+        <div><span class="status-pill ${si.cls}">${si.label}</span></div>
+      </div>`;
+    }).join('');
+
+    listEl.querySelectorAll('.client-row[data-id]').forEach(row => {
+      row.addEventListener('click', () => openDrawer(row.dataset.id));
+    });
+  }
+
+  /* Search */
+  document.getElementById('searchInput').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    renderList(allClients.filter(c =>
+      c.business_name.toLowerCase().includes(q) || c.contact_email.toLowerCase().includes(q)
+    ));
+  });
+
+  await loadClients();
+
+  /* ── New Client Modal ── */
+  const modal = document.getElementById('newClientModal');
+  document.getElementById('newClientBtn').addEventListener('click', () => modal.classList.add('open'));
+  document.getElementById('cancelNewClient').addEventListener('click', () => modal.classList.remove('open'));
+  modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+
+  document.getElementById('saveNewClient').addEventListener('click', async () => {
+    const biz   = document.getElementById('nc-biz').value.trim();
+    const email = document.getElementById('nc-email').value.trim();
+    if (!biz || !email) return alert('Business name and email are required.');
+    const { error } = await sb.from('clients').insert({
+      business_name: biz,
+      contact_name:  document.getElementById('nc-contact').value.trim() || null,
+      contact_email: email,
+      phone:         document.getElementById('nc-phone').value.trim() || null,
+      notes:         document.getElementById('nc-notes').value.trim() || null,
+    });
+    if (error) return alert('Error: ' + error.message);
+    modal.classList.remove('open');
+    ['nc-biz','nc-contact','nc-email','nc-phone','nc-notes'].forEach(id => document.getElementById(id).value = '');
+    await loadClients();
+  });
+
+  /* ── Drawer ── */
+  let currentClientId = null;
+  let activeSiteId = null;
+
+  function renderSiteSwitcher(c) {
+    const el = document.getElementById('siteSwitcher');
+    const sites = c?.sites || [];
+    if (sites.length <= 1) { el.style.display = 'none'; return; }
+    el.style.display = 'flex';
+    el.innerHTML = sites.map(s => `<button class="site-pill${s.id === activeSiteId ? ' active' : ''}" data-sid="${s.id}">${s.domain_name || 'Unnamed Site'}</button>`).join('');
+    el.querySelectorAll('.site-pill').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        activeSiteId = btn.dataset.sid;
+        renderSiteSwitcher(c);
+        const activeTab = document.querySelector('.tab.active')?.dataset.tab || 'overview';
+        await loadDrawerTab(activeTab);
+      });
+    });
+  }
+
+  async function openDrawer(clientId) {
+    currentClientId = clientId;
+    const client = allClients.find(c => c.id === clientId);
+    activeSiteId = client?.sites?.[0]?.id || null;
+    const drawer = document.getElementById('clientDrawer');
+    drawer.classList.add('open');
+    renderSiteSwitcher(client);
+    activateTab('overview');
+    await loadDrawerTab('overview');
+  }
+
+  document.getElementById('closeDrawer').addEventListener('click', () => {
+    document.getElementById('clientDrawer').classList.remove('open');
+  });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      activateTab(tab.dataset.tab);
+      await loadDrawerTab(tab.dataset.tab);
+    });
+  });
+
+  function activateTab(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+  }
+
+  async function loadDrawerTab(tab) {
+    const client = allClients.find(c => c.id === currentClientId);
+    if (!client) return;
+    document.getElementById('drawerTitle').textContent = client.business_name;
+
+    if (tab === 'overview')   renderOverview(client);
+    if (tab === 'domain')     await renderDomain(client);
+    if (tab === 'social')     await renderSocial(client);
+    if (tab === 'analytics')  await renderAnalytics(client);
+    if (tab === 'leases')     await renderLeases(client);
+    if (tab === 'seo')        await renderSeoReports(client);
+  }
+
+  /* Overview */
+  function renderOverview(c) {
+    const site = c.sites?.find(s => s.id === activeSiteId) ?? c.sites?.[0];
+    const isSuspended = site?.status === 'suspended';
+
+    const phaseOpts = [
+      ['', '— Native VardWeb (no migration)'],
+      ['discovery', 'Discovery & Audit'],
+      ['design', 'Design'],
+      ['build', 'In Development'],
+      ['review', 'Client Review'],
+      ['launched', 'Launched'],
+    ].map(([v, l]) => `<option value="${v}" ${(site?.migration_phase || '') === v ? 'selected' : ''}>${l}</option>`).join('');
+
+    const originOpts = [
+      ['new', 'New Build'],
+      ['shopify', 'Shopify'],
+      ['wix', 'Wix'],
+      ['woocommerce', 'WooCommerce'],
+      ['squarespace', 'Squarespace'],
+      ['custom', 'Custom Platform'],
+    ].map(([v, l]) => `<option value="${v}" ${(site?.platform_origin || 'new') === v ? 'selected' : ''}>${l}</option>`).join('');
+
+    const addOriginOpts = [
+      ['new', 'New Build'],
+      ['shopify', 'Shopify'],
+      ['wix', 'Wix'],
+      ['woocommerce', 'WooCommerce'],
+      ['squarespace', 'Squarespace'],
+      ['custom', 'Custom Platform'],
+    ].map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+
+    document.getElementById('overviewContent').innerHTML = `
+      <div class="info-card">
+        <div class="info-card-title">Contact</div>
+        <div class="info-row"><span class="info-label">Business</span><span class="info-value">${c.business_name}</span></div>
+        <div class="info-row"><span class="info-label">Contact Name</span><span class="info-value">${c.contact_name || '—'}</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">${c.contact_email}</span></div>
+        <div class="info-row"><span class="info-label">Phone</span><span class="info-value">${c.phone || '—'}</span></div>
+        <div class="info-row"><span class="info-label">Client Since</span><span class="info-value">${new Date(c.created_at).toLocaleDateString()}</span></div>
+      </div>
+
+      ${site ? `
+      <div class="info-card" style="margin-top:12px;${isSuspended ? 'border-color:rgba(255,45,120,0.35);' : ''}">
+        <div class="info-card-title" style="display:flex;align-items:center;justify-content:space-between;">
+          Site
+          <button id="suspendSiteBtn" data-sid="${site.id}" data-action="${isSuspended ? 'reactivate' : 'suspend'}"
+            style="${isSuspended
+              ? 'background:var(--cyan);color:#000;border:none;font-size:11px;padding:4px 12px;cursor:pointer;border-radius:6px;font-weight:600;'
+              : 'background:rgba(255,45,120,0.12);border:1px solid rgba(255,45,120,0.3);color:var(--pink);font-size:11px;padding:4px 12px;cursor:pointer;border-radius:6px;font-weight:600;'}">
+            ${isSuspended ? 'Reactivate Site' : 'Suspend Site'}
+          </button>
+        </div>
+        <div class="info-row"><span class="info-label">Status</span><span class="info-value"><span class="badge ${isSuspended ? 'badge-overdue' : 'badge-active'}">${site.status}</span></span></div>
+        ${isSuspended ? `<div style="font-size:12px;color:var(--pink);margin-top:4px;margin-bottom:8px;line-height:1.6;">Client sees suspension banner. Reactivate once payment is resolved.</div>` : ''}
+
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:12px;">Edit Site Details</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">Domain</label>
+              <input type="text" id="edit-site-domain" value="${site.domain_name || ''}" placeholder="example.com" />
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">CMS Type</label>
+              <input type="text" id="edit-site-cms" value="${site.cms_type || 'VardWeb CMS'}" placeholder="VardWeb CMS" />
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">Origin Platform</label>
+              <select id="edit-site-origin">${originOpts}</select>
+            </div>
+            <div>
+              <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">Migration Phase</label>
+              <select id="edit-site-phase">${phaseOpts}</select>
+            </div>
+          </div>
+          <button id="saveSiteBtn" data-sid="${site.id}" style="background:var(--cyan);border:none;color:#000;font-size:12px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer;">Save Site</button>
+          <span id="saveSiteMsg" style="font-size:12px;margin-left:10px;"></span>
+        </div>
+      </div>` : `
+      <div class="info-card" style="margin-top:12px;border-color:rgba(0,229,255,0.15);">
+        <div class="info-card-title">Add Site</div>
+        <p style="font-size:12px;color:var(--text-2);margin-bottom:14px;">No site record yet for this client. Create one to enable the portal, CMS, and domain management.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div>
+            <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">Domain</label>
+            <input type="text" id="add-site-domain" placeholder="example.com" />
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">CMS Type</label>
+            <input type="text" id="add-site-cms" value="VardWeb CMS" placeholder="VardWeb CMS" />
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">Origin Platform</label>
+            <select id="add-site-origin">${addOriginOpts}</select>
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-2);display:block;margin-bottom:5px;">Migration Phase</label>
+            <select id="add-site-phase">
+              <option value="">— Native VardWeb (no migration)</option>
+              <option value="discovery">Discovery & Audit</option>
+              <option value="design">Design</option>
+              <option value="build">In Development</option>
+              <option value="review">Client Review</option>
+              <option value="launched">Launched</option>
+            </select>
+          </div>
+        </div>
+        <button id="addSiteBtn" style="background:var(--cyan);border:none;color:#000;font-size:12px;font-weight:700;padding:8px 18px;border-radius:7px;cursor:pointer;">Create Site</button>
+        <span id="addSiteMsg" style="font-size:12px;margin-left:10px;"></span>
+      </div>`}
+
+      ${c.notes ? `<div class="info-card" style="margin-top:12px;"><div class="info-card-title">Notes</div><div style="font-size:13px;line-height:1.7;">${c.notes}</div></div>` : ''}`;
+
+    /* Suspend / reactivate */
+    document.getElementById('suspendSiteBtn')?.addEventListener('click', async (e) => {
+      const action    = e.currentTarget.dataset.action;
+      const siteId    = e.currentTarget.dataset.sid;
+      const newStatus = action === 'suspend' ? 'suspended' : 'active';
+      const msg = action === 'suspend'
+        ? `Suspend ${c.business_name}'s site?\n\nThe client will see a suspension banner and their CMS will be locked.`
+        : `Reactivate ${c.business_name}'s site?`;
+      if (!confirm(msg)) return;
+      await sb.from('sites').update({ status: newStatus }).eq('id', siteId);
+      const sidx = c.sites?.findIndex(s => s.id === siteId) ?? -1;
+      if (sidx >= 0) c.sites[sidx].status = newStatus;
+      renderOverview(c);
+    });
+
+    /* Save existing site */
+    document.getElementById('saveSiteBtn')?.addEventListener('click', async (e) => {
+      const siteId = e.currentTarget.dataset.sid;
+      const btn    = e.currentTarget;
+      const msg    = document.getElementById('saveSiteMsg');
+      btn.textContent = 'Saving…'; btn.disabled = true;
+      const phaseVal = document.getElementById('edit-site-phase').value;
+      const { data: updated, error } = await sb.from('sites').update({
+        domain_name:      document.getElementById('edit-site-domain').value.trim(),
+        cms_type:         document.getElementById('edit-site-cms').value.trim() || 'VardWeb CMS',
+        platform_origin:  document.getElementById('edit-site-origin').value,
+        migration_phase:  phaseVal || null,
+      }).eq('id', siteId).select();
+      if (error || !updated?.length) {
+        msg.textContent = '⚠ Save failed.'; msg.style.color = 'var(--pink)';
+      } else {
+        const si = c.sites.findIndex(s => s.id === siteId);
+        if (si >= 0) Object.assign(c.sites[si], updated[0]);
+        msg.textContent = '✓ Saved'; msg.style.color = '#22c55e';
+        setTimeout(() => { msg.textContent = ''; }, 2500);
+      }
+      btn.textContent = 'Save Site'; btn.disabled = false;
+    });
+
+    /* Create new site */
+    document.getElementById('addSiteBtn')?.addEventListener('click', async () => {
+      const btn    = document.getElementById('addSiteBtn');
+      const msg    = document.getElementById('addSiteMsg');
+      const domain = document.getElementById('add-site-domain').value.trim();
+      if (!domain) { msg.textContent = 'Domain is required.'; msg.style.color = 'var(--pink)'; return; }
+      btn.textContent = 'Creating…'; btn.disabled = true;
+      const phaseVal = document.getElementById('add-site-phase').value;
+      const { data: created, error } = await sb.from('sites').insert({
+        client_id:       c.id,
+        domain_name:     domain,
+        cms_type:        document.getElementById('add-site-cms').value.trim() || 'VardWeb CMS',
+        platform_origin: document.getElementById('add-site-origin').value || 'new',
+        migration_phase: phaseVal || null,
+        status:          'active',
+      }).select();
+      if (error || !created?.length) {
+        msg.textContent = '⚠ Failed: ' + (error?.message || 'unknown error'); msg.style.color = 'var(--pink)';
+        btn.textContent = 'Create Site'; btn.disabled = false;
+      } else {
+        if (!c.sites) c.sites = [];
+        c.sites.push(created[0]);
+        activeSiteId = created[0].id;
+        renderSiteSwitcher(c);
+        renderOverview(c);
+      }
+    });
+  }
+
+  /* ── Embed script generator ── */
+  function generateEmbedScript(groupKey, domains) {
+    const primary = domains.find(d => d.is_primary)?.domain || domains[0]?.domain || 'site';
+    return `/* VardWeb Region Redirect — ${primary} */\n(function(){\n  var G=${JSON.stringify({group:groupKey,domains})};\n  var SK='vw_rr_'+G.group;\n  if(sessionStorage.getItem(SK))return;\n  var host=location.hostname.replace(/^www\\./,'');\n  fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(geo){\n    var country=geo.country_code;\n    var pref=G.domains.find(function(d){return d.region_code===country&&d.domain!==host;});\n    if(!pref)return;\n    var cur=G.domains.find(function(d){return d.domain===host;});\n    var diffC=pref.currency_code&&pref.currency_code!==(cur&&cur.currency_code||'');\n    var diffL=pref.locale_code&&pref.locale_code!==(cur&&cur.locale_code||'');\n    var why=[diffC?'prices in '+pref.currency_code:'',diffL?'local language support':''].filter(Boolean).join(' and ');\n    var b=document.createElement('div');\n    b.setAttribute('data-vw-banner','');\n    b.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);max-width:480px;width:90%;background:#111827;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999999;font-family:system-ui,sans-serif;display:flex;flex-direction:column;gap:10px;';\n    b.innerHTML='<div style="font-size:13px;font-weight:600;color:#f9fafb;">Visiting from '+pref.region_label+'?</div><div style="font-size:12px;color:#9ca3af;line-height:1.5;">We have a dedicated site for '+pref.region_label+(why?' with '+why:'')+'.</div><div style="display:flex;gap:8px;"><a href="https://'+pref.domain+'" style="flex:1;text-align:center;padding:8px;background:#0ea5e9;color:#fff;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;">Visit '+pref.domain+'</a><button onclick=\"sessionStorage.setItem(\\''+SK+'\\',\\'1\\');document.querySelector(\\'[data-vw-banner]\\').remove();\" style="flex:1;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:8px;cursor:pointer;font-size:12px;">Stay Here</button></div>';\n    document.body.appendChild(b);\n  }).catch(function(){});\n})();`;
+  }
+
+  /* Domain & Hosting */
+  async function renderDomain(c) {
+    const siteId = activeSiteId || c.sites?.[0]?.id;
+    const domEl  = document.getElementById('domainContent');
+    const hostEl = document.getElementById('hostingContent');
+
+    if (!siteId) { domEl.innerHTML = '<div class="empty">No site on record.</div>'; hostEl.innerHTML = ''; return; }
+
+    const [{ data: domains }, { data: hosting }, { data: siteRow }] = await Promise.all([
+      sb.from('domains').select('*').eq('site_id', siteId).order('is_primary', { ascending: false }).order('created_at'),
+      sb.from('hosting_access').select('*').eq('site_id', siteId),
+      sb.from('sites').select('domain_group_id').eq('id', siteId).single(),
+    ]);
+
+    let group = null;
+    if (siteRow?.domain_group_id) {
+      const { data: g } = await sb.from('domain_groups').select('*').eq('id', siteRow.domain_group_id).single();
+      group = g;
+    }
+
+    const showGroup = (domains?.length > 1) || !!group;
+    let html = '';
+
+    /* ── Domain Group Overview ── */
+    if (showGroup) {
+      const contentMode = group?.content_mode || 'shared';
+      html += `<div class="info-card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="info-card-title" style="margin:0;">Domain Group</div>
+          ${group ? `<span style="font-size:11px;color:var(--text-2);">${group.group_name}</span>` : ''}
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);white-space:nowrap;min-width:90px;">Content Mode</span>
+          <select id="contentModeSelect" style="flex:1;padding:6px 10px;font-size:12px;">
+            <option value="shared" ${contentMode==='shared'?'selected':''}>Shared — one CMS for all domains</option>
+            <option value="separate" ${contentMode==='separate'?'selected':''}>Separate — each domain has its own CMS</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" id="contentModeSave" style="white-space:nowrap;">Save</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-2);line-height:1.55;margin-bottom:16px;padding-left:98px;">
+          <strong style="color:var(--cyan);">Shared</strong> = client portal shows 1 site (good for alias/vanity domains with identical content).
+          <strong style="color:var(--cyan);">Separate</strong> = client sees a switcher with each site's own CMS workspace.
+        </div>
+
+        <div style="border-top:1px solid var(--border);padding-top:12px;margin-bottom:4px;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);">Domains in this group</div>
+        <div id="domainGroupList">
+          ${(domains || []).map(d => `
+            <div style="display:grid;grid-template-columns:auto 1fr auto;align-items:start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,229,255,0.06);" data-did="${d.id}">
+              <div style="padding-top:2px;">
+                ${d.is_primary
+                  ? `<span class="badge badge-active" style="font-size:9px;white-space:nowrap;">★ Primary</span>`
+                  : `<button class="btn btn-ghost btn-sm set-primary-btn" data-did="${d.id}" style="font-size:10px;padding:3px 8px;white-space:nowrap;">Set Primary</button>`}
+              </div>
+              <div>
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px;">${d.domain_name}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                  <input type="text" class="dr-region" data-did="${d.id}" placeholder="Region (CA, US…)" value="${d.region_code||''}" style="padding:5px 8px;font-size:11px;" title="ISO 3166-1 alpha-2 country code" />
+                  <input type="text" class="dr-locale" data-did="${d.id}" placeholder="Locale (en-CA…)" value="${d.locale_code||''}" style="padding:5px 8px;font-size:11px;" />
+                  <input type="text" class="dr-currency" data-did="${d.id}" placeholder="Currency (CAD…)" value="${d.currency_code||''}" style="padding:5px 8px;font-size:11px;" />
+                  <input type="text" class="dr-label" data-did="${d.id}" placeholder="Label (Canada…)" value="${d.region_label||''}" style="padding:5px 8px;font-size:11px;" />
+                </div>
+              </div>
+              <button class="btn btn-ghost btn-sm save-region-btn" data-did="${d.id}" style="font-size:10px;align-self:center;">Save</button>
+            </div>`).join('')}
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="addAliasDomainBtn">+ Add Domain Alias</button>
+          <button class="btn btn-ghost btn-sm" id="linkSiteBtn">${group ? 'Link / Manage Sites' : 'Link Another Site →'}</button>
+          <button class="btn btn-ghost btn-sm" id="copyEmbedBtn">📋 Copy Embed Script</button>
+        </div>
+        <pre id="embedScriptPre" style="display:none;background:var(--base);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:10px;overflow-x:auto;margin-top:10px;white-space:pre-wrap;word-break:break-all;color:var(--text-2);max-height:160px;overflow-y:auto;"></pre>
+      </div>`;
+    }
+
+    /* ── Domain credential cards ── */
+    if (!domains?.length) {
+      html += '<div class="empty">No domain record. Use "+ Add Domain Alias" above or contact VardWeb to add one.</div>';
+    } else {
+      const statusMap = { client: ['badge-active','Client Owned'], vardweb: ['badge-pending','VardWeb — Transfer Pending'], transferred: ['badge-active','Transferred'] };
+      const transferSteps = ['Purchased','Payment Received','Transfer Initiated','Transferred'];
+      const decryptedPasswords = [];
+
+      for (const domain of domains) {
+        let pw = '—';
+        if (domain.registrar_login_password) {
+          try { pw = await decrypt(domain.registrar_login_password); } catch { pw = '[decrypt error]'; }
+        }
+        decryptedPasswords.push(pw);
+      }
+
+      html += domains.map((domain, i) => {
+        const [badgeCls, label] = statusMap[domain.transfer_status === 'transferred' ? 'transferred' : domain.owned_by] || ['badge-active','Client Owned'];
+        const expiry = domain.expiry_date ? new Date(domain.expiry_date) : null;
+        const daysLeft = expiry ? Math.ceil((expiry - new Date()) / 86400000) : null;
+        const expiryColor = daysLeft !== null && daysLeft < 30 ? 'var(--pink)' : 'var(--text-1)';
+        const stepIdx = { null: 0, pending_payment: 0, transfer_initiated: 2, transferred: 3 }[domain.transfer_status] ?? 0;
+        const roleLabel = domain.is_primary ? '★ Primary' : (domains.length > 1 ? 'Alias' : '');
+        const roleBadge = roleLabel ? `<span class="badge ${domain.is_primary ? 'badge-active' : 'badge-pending'}" style="font-size:9px;margin-left:6px;">${roleLabel}</span>` : '';
+        return `
+        <div class="info-card"${i > 0 ? ' style="margin-top:12px;"' : ''}>
+          <div class="info-card-title">${domain.domain_name} ${roleBadge} <span class="badge ${badgeCls}" style="margin-left:4px;">${label}</span></div>
+          <div class="info-row"><span class="info-label">Registrar</span><span class="info-value">${domain.registrar || '—'}</span></div>
+          <div class="info-row"><span class="info-label">Registrar URL</span><span class="info-value">${domain.registrar_login_url ? `<a href="${domain.registrar_login_url}" target="_blank" style="color:var(--cyan);">${domain.registrar_login_url}</a>` : '—'}</span></div>
+          <div class="info-row"><span class="info-label">DNS Provider</span><span class="info-value">${domain.dns_provider || '—'}</span></div>
+          <div class="info-row"><span class="info-label">Expiry</span><span class="info-value" style="color:${expiryColor}">${domain.expiry_date || '—'}${daysLeft !== null ? ` (${daysLeft}d)` : ''}</span></div>
+          ${domain.owned_by === 'vardweb' ? `
+          <div style="margin-top:14px;margin-bottom:6px;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);">Transfer Progress</div>
+          <div class="timeline">${transferSteps.map((s,j) => `<div class="tl-step"><div class="tl-dot${j<=stepIdx?' done':''}"></div><div class="tl-label">${s}</div></div>`).join('')}</div>` : ''}
+          <div class="divider" style="margin:14px 0;"></div>
+          <div class="info-card-title">Registrar Credentials <button class="help-tip" data-help="regcred-${i}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div>
+          <div class="help-panel" id="help-regcred-${i}">These credentials allow VardWeb to log in to the registrar to manage DNS, renewals, and transfers. Stored encrypted — Supabase never sees the plaintext.</div>
+          <div class="info-row"><span class="info-label">Login Email</span><span class="info-value">${domain.registrar_login_email || '—'}</span></div>
+          <div class="info-row">
+            <span class="info-label">Password</span>
+            <span class="info-value" style="display:inline-flex;align-items:center;gap:6px;">
+              <span id="regPwDisplay-${i}">••••••••</span>
+              <button class="icon-btn" id="toggleRegPw-${i}" style="display:inline-flex;align-items:center;justify-content:center;line-height:1;">👁</button>
+              <button class="icon-btn" id="copyRegPw-${i}" style="display:inline-flex;align-items:center;justify-content:center;line-height:1;">⧉</button>
+            </span>
+          </div>
+          <div class="enc-badge">🔒 AES-256-GCM · Encryption · Zero plaintext</div>
+          ${domain.credentials_submitted_by ? `<div style="font-size:11px;color:var(--text-2);margin-top:8px;">Submitted by: ${domain.credentials_submitted_by} on ${domain.credentials_submitted_at ? new Date(domain.credentials_submitted_at).toLocaleDateString() : '—'}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    domEl.innerHTML = html;
+
+    /* Group overview listeners */
+    if (showGroup) {
+      /* Content mode save */
+      document.getElementById('contentModeSave')?.addEventListener('click', async () => {
+        const val = document.getElementById('contentModeSelect').value;
+        const saveBtn = document.getElementById('contentModeSave');
+        saveBtn.textContent = '…'; saveBtn.disabled = true;
+        if (!group) {
+          const { data: ng } = await sb.from('domain_groups').insert({ client_id: c.id, content_mode: val }).select().single();
+          if (ng) { group = ng; await sb.from('sites').update({ domain_group_id: ng.id }).eq('id', siteId); }
+        } else {
+          await sb.from('domain_groups').update({ content_mode: val }).eq('id', group.id);
+        }
+        saveBtn.textContent = 'Saved ✓'; setTimeout(() => { saveBtn.textContent = 'Save'; saveBtn.disabled = false; }, 1600);
+      });
+
+      /* Set Primary */
+      domEl.querySelectorAll('.set-primary-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          btn.textContent = '…'; btn.disabled = true;
+          await sb.from('domains').update({ is_primary: false }).eq('site_id', siteId);
+          await sb.from('domains').update({ is_primary: true }).eq('id', btn.dataset.did);
+          await renderDomain(c);
+        });
+      });
+
+      /* Save region metadata */
+      domEl.querySelectorAll('.save-region-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const did = btn.dataset.did;
+          const row = domEl.querySelector(`[data-did="${did}"]`);
+          btn.textContent = '…'; btn.disabled = true;
+          await sb.from('domains').update({
+            region_code:   row.querySelector('.dr-region').value.trim().toUpperCase() || null,
+            locale_code:   row.querySelector('.dr-locale').value.trim() || null,
+            currency_code: row.querySelector('.dr-currency').value.trim().toUpperCase() || null,
+            region_label:  row.querySelector('.dr-label').value.trim() || null,
+          }).eq('id', did);
+          btn.textContent = 'Saved ✓'; setTimeout(() => { btn.textContent = 'Save'; btn.disabled = false; }, 1600);
+        });
+      });
+
+      /* Add alias domain */
+      document.getElementById('addAliasDomainBtn')?.addEventListener('click', async () => {
+        const name = prompt('New alias domain name (e.g. vardedveins.ca):');
+        if (!name?.trim()) return;
+        const { error } = await sb.from('domains').insert({ site_id: siteId, client_id: c.id, domain_name: name.trim(), is_primary: false });
+        if (error) { alert('Failed: ' + error.message); return; }
+        await renderDomain(c);
+      });
+
+      /* Link another site */
+      document.getElementById('linkSiteBtn')?.addEventListener('click', async () => {
+        const otherSites = c.sites?.filter(s => s.id !== siteId) || [];
+        if (!otherSites.length) { alert('No other sites on this client account to link.'); return; }
+        const options = otherSites.map((s, i) => `${i + 1}. ${s.domain_name || s.id}`).join('\n');
+        const choice  = prompt(`Link a site to this domain group (enter number):\n${options}`);
+        if (!choice) return;
+        const target = otherSites[parseInt(choice) - 1];
+        if (!target) { alert('Invalid selection.'); return; }
+        let gid = group?.id;
+        if (!gid) {
+          const { data: ng } = await sb.from('domain_groups').insert({ client_id: c.id, content_mode: 'shared' }).select().single();
+          gid = ng?.id;
+          if (gid) await sb.from('sites').update({ domain_group_id: gid }).eq('id', siteId);
+        }
+        if (gid) await sb.from('sites').update({ domain_group_id: gid }).eq('id', target.id);
+        await renderDomain(c);
+      });
+
+      /* Copy embed script */
+      document.getElementById('copyEmbedBtn')?.addEventListener('click', () => {
+        const domainsJson = (domains || []).map(d => ({
+          domain: d.domain_name, is_primary: !!d.is_primary,
+          region_code: d.region_code || null, region_label: d.region_label || null,
+          locale_code: d.locale_code || null, currency_code: d.currency_code || null,
+        }));
+        const groupKey = (domains?.[0]?.domain_name || 'site').replace(/\W+/g, '_');
+        const script = generateEmbedScript(groupKey, domainsJson);
+        navigator.clipboard.writeText(script).catch(() => {});
+        const pre = document.getElementById('embedScriptPre');
+        pre.textContent = script; pre.style.display = 'block';
+        const btn = document.getElementById('copyEmbedBtn');
+        btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Embed Script', 2000);
+      });
+    }
+
+    /* Registrar password reveal listeners */
+    if (domains?.length) {
+      const decryptedPasswords = [];
+      for (const domain of domains) {
+        let pw = '—';
+        if (domain.registrar_login_password) {
+          try { pw = await decrypt(domain.registrar_login_password); } catch { pw = '[decrypt error]'; }
+        }
+        decryptedPasswords.push(pw);
+      }
+      domains.forEach((_, i) => {
+        const pw = decryptedPasswords[i];
+        document.getElementById(`toggleRegPw-${i}`)?.addEventListener('click', e => {
+          const el = document.getElementById(`regPwDisplay-${i}`);
+          const showing = e.target.dataset.showing === '1';
+          el.textContent = showing ? '••••••••' : pw;
+          e.target.dataset.showing = showing ? '0' : '1';
+        });
+        document.getElementById(`copyRegPw-${i}`)?.addEventListener('click', e => {
+          navigator.clipboard.writeText(pw);
+          e.target.textContent = '✓'; setTimeout(() => e.target.textContent = '⧉', 1500);
+        });
+      });
+    }
+
+    /* ── Hosting section ── */
+    if (!hosting?.length) {
+      hostEl.innerHTML = '<div class="empty">No hosting entries yet.</div>';
+    } else {
+      hostEl.innerHTML = hosting.map(h => `
+        <div class="provider-card" data-hid="${h.id}">
+          <div class="provider-header">
+            <span class="provider-name">${h.provider_name}</span>
+            <span class="access-badge">${h.access_type || 'login'}</span>
+          </div>
+          <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">URL</span><span>${h.provider_url ? `<a href="${h.provider_url}" target="_blank" style="color:var(--cyan);font-size:12px;">${h.provider_url}</a>` : '—'}</span></div>
+          <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">Login</span><span>${h.login_email || '—'}</span></div>
+          <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">Password</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;"><span class="h-pw-display">••••••••</span>
+            <button class="icon-btn h-pw-toggle" style="display:inline-flex;align-items:center;justify-content:center;line-height:1;" data-hid="${h.id}">👁</button>
+            <button class="icon-btn h-pw-copy" style="display:inline-flex;align-items:center;justify-content:center;line-height:1;" data-hid="${h.id}">⧉</button>
+            </span>
+          </div>
+          ${h.login_note ? `<div style="font-size:11px;color:var(--text-2);margin-top:4px;">Note: ${h.login_note}</div>` : ''}
+          <div class="enc-badge">🔒 AES-256-GCM · Zero plaintext stored</div>
+          <div class="toggle-row">
+            <span>Visible to client</span>
+            <label class="toggle"><input type="checkbox" ${h.visible_to_client ? 'checked' : ''} data-hid="${h.id}" class="vis-toggle"><span class="toggle-slider"></span></label>
+          </div>
+        </div>`).join('');
+
+      for (const h of hosting) {
+        let plain = '';
+        try { plain = await decrypt(h.login_password || ''); } catch {}
+        const card = hostEl.querySelector(`.provider-card[data-hid="${h.id}"]`);
+        if (!card) continue;
+        const disp = card.querySelector('.h-pw-display');
+        const tog  = card.querySelector('.h-pw-toggle');
+        const cpy  = card.querySelector('.h-pw-copy');
+        tog.addEventListener('click', () => {
+          const showing = tog.dataset.show === '1';
+          disp.textContent = showing ? '••••••••' : plain;
+          tog.dataset.show = showing ? '0' : '1';
+        });
+        cpy.addEventListener('click', () => {
+          navigator.clipboard.writeText(plain);
+          cpy.textContent = '✓'; setTimeout(() => cpy.textContent = '⧉', 1500);
+        });
+      }
+
+      hostEl.querySelectorAll('.vis-toggle').forEach(tog => {
+        tog.addEventListener('change', async () => {
+          await sb.from('hosting_access').update({ visible_to_client: tog.checked }).eq('id', tog.dataset.hid);
+        });
+      });
+    }
+
+    document.getElementById('addHostingBtn')?.addEventListener('click', () => {
+      const name = prompt('Provider name (e.g. Cloudflare, Netlify, cPanel):');
+      if (!name) return;
+      const url  = prompt('Login URL:') || '';
+      const type = prompt('Access type (shared_login / team_invite / api_key / ssh / cpanel):') || 'shared_login';
+      const email= prompt('Login email/username:') || '';
+      const pw   = prompt('Password or key:') || '';
+      const note = prompt('Note (optional, e.g. "2FA on client phone"):') || '';
+      if (!siteId) return;
+      encrypt(pw).then(async enc => {
+        await sb.from('hosting_access').insert({
+          site_id: siteId, client_id: c.id,
+          provider_name: name, provider_url: url, access_type: type,
+          login_email: email, login_password: enc, login_note: note,
+          credentials_submitted_by: 'admin', credentials_submitted_at: new Date().toISOString(),
+          visible_to_client: true,
+        });
+        await renderDomain(c);
+      });
+    });
+  }
+
+  /* Social */
+  async function renderSocial(c) {
+    const siteId = activeSiteId || c.sites?.[0]?.id;
+    const el = document.getElementById('socialContent');
+    if (!siteId) { el.innerHTML = '<div class="empty">No site on record.</div>'; return; }
+    const { data: links } = await sb.from('social_links').select('*').eq('site_id', siteId).order('updated_at');
+
+    function cardHTML(l) {
+      const p = l.platform || '';
+      return `<div class="info-card" style="padding:14px 16px;" data-orig-platform="${p}">
+        <input type="text" class="s-name" value="${p}" placeholder="Platform name (e.g. instagram)"
+          style="width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);border-radius:0;padding:4px 0 6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:12px;outline:none;" />
+        <div class="field-group" style="margin-bottom:8px;">
+          <label style="font-size:10px;">Handle</label>
+          <input type="text" class="s-handle" value="${l.account_handle || ''}" placeholder="@handle" style="padding:7px 10px;font-size:12px;" />
+        </div>
+        <div class="field-group" style="margin-bottom:8px;">
+          <label style="font-size:10px;">URL</label>
+          <input type="text" class="s-url" value="${l.account_url || ''}" placeholder="https://…" style="padding:7px 10px;font-size:12px;" />
+        </div>
+        <div class="field-group" style="margin-bottom:12px;">
+          <label style="font-size:10px;">Button Label</label>
+          <input type="text" class="s-label" value="${l.display_label || ''}" placeholder="Follow us (optional)" style="padding:7px 10px;font-size:12px;" />
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-cyan s-save" style="flex:1;font-size:11px;padding:7px 10px;" data-site="${siteId}" data-client="${c.id}">Save</button>
+          <button class="btn btn-pink s-delete" style="font-size:11px;padding:7px 10px;" data-site="${siteId}">✕</button>
+        </div>
+      </div>`;
+    }
+
+    function wireSave(btn) {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('[data-orig-platform]');
+        const orig = card.dataset.origPlatform;
+        const name = card.querySelector('.s-name').value.trim().toLowerCase().replace(/\s+/g,'_');
+        if (!name) { alert('Platform name is required.'); return; }
+        const handle = card.querySelector('.s-handle').value.trim();
+        const url    = card.querySelector('.s-url').value.trim();
+        const label  = card.querySelector('.s-label').value.trim();
+        if (orig && orig !== name) {
+          await sb.from('social_links').delete().eq('site_id', btn.dataset.site).eq('platform', orig);
+        }
+        await sb.from('social_links').upsert(
+          { site_id: btn.dataset.site, client_id: btn.dataset.client, platform: name, account_handle: handle, account_url: url, display_label: label, updated_at: new Date().toISOString() },
+          { onConflict: 'site_id,platform' }
+        );
+        card.dataset.origPlatform = name;
+        btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save', 1800);
+      });
+    }
+
+    function wireDelete(btn) {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('[data-orig-platform]');
+        const orig = card.dataset.origPlatform;
+        if (!orig) { card.remove(); return; }
+        if (!confirm(`Remove "${orig}"?`)) return;
+        await sb.from('social_links').delete().eq('site_id', btn.dataset.site).eq('platform', orig);
+        card.remove();
+      });
+    }
+
+    function addCard() {
+      const grid = document.getElementById('socialGrid');
+      const tmp = document.createElement('div');
+      tmp.innerHTML = cardHTML({ platform: '', account_handle: '', account_url: '', display_label: '' });
+      const card = tmp.firstElementChild;
+      grid.appendChild(card);
+      card.querySelectorAll('.s-save').forEach(wireSave);
+      card.querySelectorAll('.s-delete').forEach(wireDelete);
+      card.querySelector('.s-name').focus();
+    }
+
+    el.innerHTML = `
+      <div id="socialGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:14px;">
+        ${(links || []).map(l => cardHTML(l)).join('')}
+      </div>
+      <button class="btn btn-ghost" id="addSocialBtn" style="font-size:12px;padding:8px 16px;">+ Add Platform</button>`;
+
+    el.querySelectorAll('.s-save').forEach(wireSave);
+    el.querySelectorAll('.s-delete').forEach(wireDelete);
+    document.getElementById('addSocialBtn').addEventListener('click', addCard);
+  }
+
+  /* Analytics */
+  async function renderAnalytics(c) {
+    const siteId = activeSiteId || c.sites?.[0]?.id;
+    const el = document.getElementById('analyticsContent');
+    if (!siteId) { el.innerHTML = '<div class="empty">No site on record.</div>'; return; }
+    const { data: ana } = await sb.from('site_analytics').select('*').eq('site_id', siteId).single();
+
+    el.innerHTML = `
+      <div class="section-title">Tracking & Analytics</div>
+      <div class="info-card">
+        <div class="field-group" style="margin-bottom:14px;">
+          <label>GA4 Measurement ID <button class="help-tip" data-help="ga4"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-ga4">Google Analytics → Admin (gear) → Data Streams → click stream → copy Measurement ID (starts with G-). Once saved, the CMS snippet injects the GA4 tracking script on every page load of the live site.</div>
+          <input type="text" id="ana-ga4" value="${ana?.ga4_measurement_id || ''}" placeholder="G-XXXXXXXXXX" />
+        </div>
+        <div class="field-group" style="margin-bottom:14px;">
+          <label>Microsoft Clarity Project ID <button class="help-tip" data-help="clarity"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-clarity">clarity.microsoft.com → New Project → copy the 10-character project ID. Gives session recordings and heatmaps. Free forever, no session cap.</div>
+          <input type="text" id="ana-clarity" value="${ana?.clarity_project_id || ''}" placeholder="xxxxxxxxxx" />
+        </div>
+        <div class="field-group" style="margin-bottom:14px;">
+          <label>Facebook Pixel ID <span style="font-size:10px;font-weight:400;color:var(--text-2);">(optional)</span></label>
+          <input type="text" id="ana-pixel" value="${ana?.fb_pixel_id || ''}" placeholder="000000000000000" />
+        </div>
+        <div class="field-group" style="margin-bottom:14px;">
+          <label>Custom Head Script <button class="help-tip" data-help="custom-script"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-custom-script">Any additional tracking snippet to inject into the site's &lt;head&gt;. Admin-only — not shown to the client. Use for tools like Hotjar, Intercom, etc.</div>
+          <textarea id="ana-custom" placeholder="&lt;script&gt;…&lt;/script&gt;">${ana?.custom_head_script || ''}</textarea>
+        </div>
+        <button class="btn btn-cyan btn-sm" id="saveAnalytics">Save Analytics</button>
+        ${ana?.ga4_measurement_id ? `<a href="https://analytics.google.com" target="_blank" class="btn btn-ghost btn-sm" style="margin-left:10px;">View in GA4 →</a>` : ''}
+      </div>`;
+
+    document.getElementById('saveAnalytics').addEventListener('click', async () => {
+      const payload = {
+        site_id: siteId,
+        ga4_measurement_id:  document.getElementById('ana-ga4').value.trim() || null,
+        clarity_project_id:  document.getElementById('ana-clarity').value.trim() || null,
+        fb_pixel_id:         document.getElementById('ana-pixel').value.trim() || null,
+        custom_head_script:  document.getElementById('ana-custom').value.trim() || null,
+        updated_at: new Date().toISOString(),
+      };
+      await sb.from('site_analytics').upsert(payload, { onConflict: 'site_id' });
+      const btn = document.getElementById('saveAnalytics');
+      btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save Analytics', 1800);
+    });
+  }
+
+  /* Leases */
+  async function renderLeases(c) {
+    const el = document.getElementById('leasesContent');
+    const addBtn = document.getElementById('addLeaseBtn');
+    if (addBtn) addBtn.onclick = async () => {
+      const siteId = activeSiteId || c.sites?.[0]?.id;
+      if (!siteId) return alert('This client has no site record yet.');
+      const plan    = prompt('Plan name (e.g. Starter, Pro):') || 'Starter';
+      const flat    = parseFloat(prompt('Flat rate (one-time build cost, 0 if already paid):') || '0');
+      const rec     = parseFloat(prompt('Recurring rate (monthly or yearly fee):') || '0');
+      const cycle   = prompt('Billing cycle (monthly / yearly):') || 'monthly';
+      const renewal = prompt('Renewal date (YYYY-MM-DD):') || null;
+      await sb.from('leases').insert({ client_id: c.id, site_id: siteId, plan_name: plan, flat_rate: flat, recurring_rate: rec, billing_cycle: cycle, renewal_date: renewal, status: 'active' });
+      await renderLeases(c);
+    };
+
+    const { data: leases } = await sb.from('leases').select(`*, sites(domain_name)`).eq('client_id', c.id).order('created_at', { ascending: false });
+    if (!leases?.length) { el.innerHTML = '<div class="empty">No leases yet.</div>'; return; }
+    el.innerHTML = leases.map(l => {
+      const renewalDate = l.renewal_date ? new Date(l.renewal_date) : null;
+      const daysUntil   = renewalDate ? Math.ceil((renewalDate - new Date()) / 86400000) : null;
+      const renewColor  = daysUntil !== null ? (daysUntil <= 3 ? 'var(--pink)' : daysUntil <= 14 ? 'var(--gold)' : 'var(--text-1)') : 'var(--text-1)';
+      return `
+      <div class="info-card" style="margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-weight:600;">${l.plan_name || 'Unnamed Plan'}</div>
+          <span class="badge badge-${l.status === 'active' ? 'active' : 'pending'}">${l.status}</span>
+        </div>
+        <div class="info-row"><span class="info-label">Site</span><span class="info-value">${l.sites?.domain_name || '—'}</span></div>
+        <div class="info-row"><span class="info-label">Flat Rate</span><span class="info-value">$${l.flat_rate || 0} (one-time)</span></div>
+        <div class="info-row"><span class="info-label">Recurring</span><span class="info-value">$${l.recurring_rate || 0}/${l.billing_cycle || 'mo'}</span></div>
+        <div class="info-row">
+          <span class="info-label">Next Renewal</span>
+          <span class="info-value" style="color:${renewColor};">
+            ${l.renewal_date || '—'}${daysUntil !== null ? ` <span style="font-size:11px;opacity:0.8;">(${daysUntil}d)</span>` : ''}
+          </span>
+        </div>
+        <div class="info-row" style="align-items:center;">
+          <span class="info-label">Contract</span>
+          <span class="info-value" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            ${l.contract_accepted
+              ? `<span style="color:#22c55e;">✓ Accepted ${l.contract_accepted_at ? new Date(l.contract_accepted_at).toLocaleDateString() : ''}</span>
+                 <button class="contract-revoke" data-lid="${l.id}"
+                   style="background:none;border:1px solid rgba(255,45,120,0.35);color:var(--pink);font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:600;">
+                   Revoke
+                 </button>`
+              : `<span style="color:var(--gold);">— Pending client acceptance</span>
+                 <button class="contract-accept" data-lid="${l.id}"
+                   style="background:var(--cyan);border:none;color:#000;font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:600;">
+                   Mark Accepted
+                 </button>`
+            }
+          </span>
+        </div>
+      </div>`;
+    }).join('');
+
+    el.querySelectorAll('.contract-accept').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.textContent = 'Saving…'; btn.disabled = true;
+        const { data: updated, error } = await sb.from('leases')
+          .update({ contract_accepted: true, contract_accepted_at: new Date().toISOString() })
+          .eq('id', btn.dataset.lid)
+          .select();
+        if (error || !updated?.length) {
+          btn.textContent = 'Mark Accepted'; btn.disabled = false;
+          alert('Save failed — the admin RLS policy on the leases table may not be configured yet. Run the SQL from the setup checklist in Supabase.');
+          return;
+        }
+        await renderLeases(c);
+      });
+    });
+    el.querySelectorAll('.contract-revoke').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Revoke contract acceptance? The client will need to re-accept in their portal.')) return;
+        btn.textContent = 'Revoking…'; btn.disabled = true;
+        const { data: updated, error } = await sb.from('leases')
+          .update({ contract_accepted: false, contract_accepted_at: null })
+          .eq('id', btn.dataset.lid)
+          .select();
+        if (error || !updated?.length) {
+          btn.textContent = 'Revoke'; btn.disabled = false;
+          alert('Save failed — check Supabase RLS policies on leases.');
+          return;
+        }
+        await renderLeases(c);
+      });
+    });
+  }
+
+  /* SEO Reports */
+  async function renderSeoReports(c) {
+    const { data: reports } = await sb.from('seo_reports').select('*').eq('client_id', c.id).order('generated_at', { ascending: false });
+    const el = document.getElementById('seoContent');
+    if (!reports?.length) { el.innerHTML = `<div class="empty">No SEO reports yet. <a href="/crm/seo-tool.html" style="color:var(--cyan);">Generate one →</a></div>`; return; }
+    el.innerHTML = reports.map(r => `
+      <div class="info-card" style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;">${new Date(r.generated_at).toLocaleDateString()}</span>
+          <span style="font-size:11px;color:var(--text-2);">PageSpeed: ${r.report_data?.performance?.mobile ?? '—'}</span>
+        </div>
+      </div>`).join('');
+  }
+
+  /* Open drawer if URL has ?id= */
+  const urlId = new URLSearchParams(location.search).get('id');
+  if (urlId) openDrawer(urlId);
+  if (new URLSearchParams(location.search).get('new') === '1') {
+    document.getElementById('newClientModal').classList.add('open');
+  }
+</script>
+</body>
+</html>

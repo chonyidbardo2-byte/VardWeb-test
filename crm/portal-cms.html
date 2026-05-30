@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb — Edit My Site</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <style>
+    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.1);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;min-height:100vh;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+
+    .topnav{display:flex;align-items:center;justify-content:space-between;padding:16px 36px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+    .topnav img{height:26px;border-radius:6px;}
+    .topnav-right{display:flex;align-items:center;gap:12px;}
+    .btn{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s,transform .15s;}
+    .btn:hover{opacity:.8;transform:translateY(-1px);}
+    .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2);}
+    .btn-ghost:hover{color:var(--text-1);}
+    .btn-cyan{background:var(--cyan);color:#000;}
+
+    .page-tabs{display:flex;padding:0 36px;border-bottom:1px solid var(--border);background:var(--surface);}
+    .ptab{padding:12px 18px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+    .ptab:hover{color:var(--text-1);}.ptab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+    .body{max-width:780px;margin:0 auto;padding:36px 24px;}
+    .section-title{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--cyan);margin-bottom:4px;}
+    .section-sub{font-size:12px;color:var(--text-2);margin-bottom:20px;line-height:1.6;}
+    .tab-panel{display:none;}.tab-panel.active{display:block;}
+
+    .block-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px;}
+    .block-key{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);margin-bottom:6px;}
+    textarea,input[type=text]{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;resize:vertical;}
+    textarea:focus,input[type=text]:focus{border-color:rgba(0,229,255,0.4);}
+    input[type=url],input[type=email]{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}
+    input[type=url]:focus,input[type=email]:focus{border-color:rgba(0,229,255,0.4);}
+    .block-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+    .block-type{font-size:10px;color:var(--text-2);padding:2px 8px;background:var(--raised);border-radius:4px;border:1px solid var(--border);}
+
+    /* Help tooltips */
+    .help-tip{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;opacity:0.65;padding:0;}
+    .help-tip:hover{opacity:1;}
+    .help-panel{background:var(--raised);border-left:2px solid rgba(0,229,255,0.25);padding:10px 14px;margin-top:6px;margin-bottom:8px;font-size:12px;line-height:1.6;color:var(--text-2);border-radius:0 6px 6px 0;display:none;}
+    .help-panel.open{display:block;}
+
+    .social-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+    .social-title{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:10px;}
+    .field-group{margin-bottom:10px;}
+    label{display:block;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+    .empty{color:var(--text-2);font-size:13px;text-align:center;padding:32px 0;}
+    .note-box{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text-2);line-height:1.6;margin-bottom:20px;}
+  </style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="/index.html"><img src="/brand_assets/VardWeb.png" alt="VardWeb" /></a>
+  <span id="cmsSiteBadge" style="font-size:12px;font-weight:600;color:var(--cyan);background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);border-radius:20px;padding:4px 12px;display:none;"></span>
+  <div class="topnav-right">
+    <a href="/crm/portal.html" class="btn btn-ghost">← My Portal</a>
+  </div>
+</nav>
+
+<div class="page-tabs">
+  <div class="ptab active" data-tab="content">Content Blocks</div>
+  <div class="ptab" data-tab="social">Social Links</div>
+</div>
+
+<div class="body">
+  <!-- Content Blocks -->
+  <div class="tab-panel active" id="panel-content">
+    <div class="section-title">Content blocks</div>
+    <p class="section-sub">Edit the text and content on your website below. Every time you click Save, your live site updates automatically — no developer needed. <button class="help-tip" data-help="cms-how"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
+    <div class="help-panel" id="help-cms-how">Each block here is a piece of content on your website. When you update and save it, the change is live instantly. Visitors who refresh the page will see the new version.</div></p>
+    <div id="contentBlocks"><div class="empty">Loading…</div></div>
+  </div>
+
+  <!-- Social Links -->
+  <div class="tab-panel" id="panel-social">
+    <div class="section-title">Social links</div>
+    <p class="section-sub">Update your social media accounts here. Changing a handle or URL instantly updates every button and link on your site — you only need to change it in one place. <button class="help-tip" data-help="social-how"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
+    <div class="help-panel" id="help-social-how">Your social links are stored in one place and synced automatically to your live site. If you change your Instagram username, update it here once and every button on your site reflects the change immediately.</div></p>
+    <div id="socialBlocks"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-client-auth' } });
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  const { data: profile } = await sb.from('user_profiles').select('*, clients(id)').eq('id', session.user.id).single();
+  if (!profile || profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
+
+  const clientId  = profile.client_id;
+  const params    = new URLSearchParams(location.search);
+  const siteParam = params.get('site');
+  const { data: siteRows } = siteParam
+    ? await sb.from('sites').select('id, domain_name').eq('id', siteParam).eq('client_id', clientId).limit(1)
+    : await sb.from('sites').select('id, domain_name').eq('client_id', clientId).order('created_at', { ascending: false }).limit(1);
+  const site = siteRows?.[0] ?? null;
+
+  if (site?.domain_name) {
+    document.title = `Edit — ${site.domain_name}`;
+    const badge = document.getElementById('cmsSiteBadge');
+    badge.textContent = site.domain_name;
+    badge.style.display = 'inline-block';
+  }
+
+  /* Help tooltips */
+  document.addEventListener('click', e => {
+    const tip = e.target.closest('.help-tip');
+    if (!tip) return;
+    document.getElementById('help-' + tip.dataset.help)?.classList.toggle('open');
+  });
+
+  /* Tabs */
+  document.querySelectorAll('.ptab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab.dataset.tab));
+    });
+  });
+
+  /* ── Content Blocks ── */
+  const blocksEl = document.getElementById('contentBlocks');
+
+  if (!site) {
+    blocksEl.innerHTML = '<div class="empty">No site on record yet. Contact VardWeb to get started.</div>';
+  } else {
+    const { data: blocks } = await sb.from('site_content').select('*').eq('site_id', site.id).order('section_key');
+
+    if (!blocks?.length) {
+      blocksEl.innerHTML = `<div class="note-box">No editable content blocks have been set up for your site yet. VardWeb will add them during onboarding. <a href="/crm/portal.html" style="color:var(--cyan);">Return to portal →</a></div>`;
+    } else {
+      blocksEl.innerHTML = blocks.map(b => `
+        <div class="block-card" data-key="${b.section_key}">
+          <div class="block-key">${b.section_key}</div>
+          ${b.content_type === 'html'
+            ? `<textarea class="block-value" rows="4">${b.content_value || ''}</textarea>`
+            : `<input type="text" class="block-value" value="${(b.content_value || '').replace(/"/g,'&quot;')}" />`}
+          <div class="block-footer">
+            <span class="block-type">${b.content_type}</span>
+            <button class="btn btn-cyan" style="font-size:12px;padding:7px 14px;" data-key="${b.section_key}">Save <button class="help-tip" data-help="save-${b.section_key}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></button>
+          </div>
+          <div class="help-panel" id="help-save-${b.section_key}">Clicking Save immediately updates this piece of content on your live website. Visitors will see the change on their next page load.</div>
+        </div>`).join('');
+
+      blocksEl.querySelectorAll('.btn-cyan').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const card  = btn.closest('.block-card');
+          const value = card.querySelector('.block-value').value;
+          await sb.from('site_content').upsert({ site_id: site.id, section_key: btn.dataset.key, content_value: value, updated_at: new Date().toISOString() }, { onConflict: 'site_id,section_key' });
+          btn.textContent = 'Saved ✓ '; setTimeout(() => btn.innerHTML = 'Save <button class="help-tip" data-help="save-' + btn.dataset.key + '"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>', 1800);
+        });
+      });
+    }
+  }
+
+  /* ── Social Links ── */
+  const PLATFORMS = ['instagram','facebook','x','tiktok','linkedin','youtube'];
+
+  async function renderSocial() {
+    const socialEl = document.getElementById('socialBlocks');
+    if (!site) { socialEl.innerHTML = '<div class="empty">No site on record yet.</div>'; return; }
+
+    const { data: links } = await sb.from('social_links').select('*').eq('site_id', site.id).order('updated_at');
+    const map = Object.fromEntries((links || []).map(l => [l.platform, l]));
+    const customPlatforms = (links || []).map(l => l.platform).filter(p => !PLATFORMS.includes(p));
+    const allPlatforms = [...PLATFORMS, ...customPlatforms];
+
+    function cardHTML(p) {
+      const l = map[p] || {};
+      const isCustom = !PLATFORMS.includes(p);
+      return `<div class="social-card" data-p="${p}">
+        <div class="social-title">${p}${isCustom ? '<span style="font-size:9px;font-weight:400;opacity:0.55;margin-left:5px;text-transform:none;letter-spacing:0;">custom</span>' : ''}</div>
+        <div class="field-group">
+          <label>Handle <button class="help-tip" data-help="p-handle-${p}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-p-handle-${p}">Your username on ${p} (e.g. @yourbusiness). This is the text that shows on buttons and badges on your website.</div>
+          <input type="text" class="s-handle" data-p="${p}" value="${l.account_handle || ''}" placeholder="@${p}handle" />
+        </div>
+        <div class="field-group">
+          <label>Profile URL <button class="help-tip" data-help="p-url-${p}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-p-url-${p}">The full link to your ${p} profile (e.g. https://${p}.com/yourbusiness). This is where visitors go when they click your social buttons.</div>
+          <input type="url" class="s-url" data-p="${p}" value="${l.account_url || ''}" placeholder="https://${p}.com/…" />
+        </div>
+        <div class="field-group">
+          <label>Display Label <button class="help-tip" data-help="p-label-${p}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-p-label-${p}">Optional. If you want the button to say something other than your handle — like "Follow us" — enter it here. Leave blank to show your handle instead.</div>
+          <input type="text" class="s-label" data-p="${p}" value="${l.display_label || ''}" placeholder="Follow us (optional)" />
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-cyan" style="font-size:12px;padding:7px 14px;" data-p="${p}">Save</button>
+          ${isCustom ? `<button class="btn btn-ghost s-del" style="font-size:12px;padding:7px 14px;color:var(--pink);border-color:rgba(255,45,120,0.25);" data-p="${p}">Remove</button>` : ''}
+        </div>
+      </div>`;
+    }
+
+    socialEl.innerHTML = allPlatforms.map(cardHTML).join('') + `
+      <div style="display:flex;gap:8px;align-items:center;margin-top:14px;">
+        <input type="text" id="newPlatInput" placeholder="add platform (e.g. pinterest)" style="padding:8px 11px;font-size:12px;" />
+        <button class="btn btn-ghost" id="addPlatBtn" style="font-size:12px;padding:8px 14px;">+ Add Platform</button>
+      </div>`;
+
+    socialEl.querySelectorAll('.btn-cyan').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const p = btn.dataset.p;
+        if (!p) return;
+        const handle = socialEl.querySelector(`.s-handle[data-p="${p}"]`).value.trim();
+        const url    = socialEl.querySelector(`.s-url[data-p="${p}"]`).value.trim();
+        const label  = socialEl.querySelector(`.s-label[data-p="${p}"]`).value.trim();
+        await sb.from('social_links').upsert({ site_id: site.id, client_id: clientId, platform: p, account_handle: handle, account_url: url, display_label: label, updated_at: new Date().toISOString() }, { onConflict: 'site_id,platform' });
+        btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save', 1800);
+      });
+    });
+    socialEl.querySelectorAll('.s-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const p = btn.dataset.p;
+        if (!confirm(`Remove "${p}"?`)) return;
+        await sb.from('social_links').delete().eq('site_id', site.id).eq('platform', p);
+        await renderSocial();
+      });
+    });
+    document.getElementById('addPlatBtn')?.addEventListener('click', async () => {
+      const input = document.getElementById('newPlatInput');
+      const p = input.value.trim().toLowerCase().replace(/\s+/g,'_');
+      if (!p) return;
+      if (socialEl.querySelector(`[data-p="${p}"]`)) { alert(`"${p}" already exists.`); return; }
+      await sb.from('social_links').upsert({ site_id: site.id, client_id: clientId, platform: p, account_handle: '', account_url: '', display_label: '', updated_at: new Date().toISOString() }, { onConflict: 'site_id,platform' });
+      await renderSocial();
+    });
+  }
+
+  renderSocial();
+</script>
+</body>
+</html>

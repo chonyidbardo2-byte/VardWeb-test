@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb CRM — CMS Editor</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <style>
+    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.1);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);--sidebar:220px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html,body{height:100%;}
+    body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;display:flex;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+    .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;padding:24px 0;}
+    .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid var(--border);}.sidebar-logo img{height:28px;border-radius:6px;}
+    .sidebar-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);padding:20px 20px 8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-2);text-decoration:none;font-size:13px;font-weight:500;border-left:2px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+    .nav-item:hover{color:var(--text-1);background:rgba(0,229,255,0.04);}.nav-item.active{color:var(--cyan);border-left-color:var(--cyan);background:rgba(0,229,255,0.06);}
+    .nav-item svg{width:15px;height:15px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:9px 12px;border-radius:8px;background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.2);color:#ff7eb3;font-size:12px;font-weight:600;cursor:pointer;}
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    .top-bar{display:flex;align-items:center;gap:14px;padding:24px 36px;border-bottom:1px solid var(--border);}
+    .top-bar h1{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em;margin-right:auto;}
+    select{background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--text-1);font-size:13px;outline:none;min-width:180px;transition:border-color .2s;}
+    select:focus{border-color:rgba(0,229,255,0.4);}select option{background:var(--raised);}
+    .editor-body{display:flex;flex:1;gap:0;}
+
+    /* Left: Selector panel */
+    .selector-panel{width:260px;flex-shrink:0;border-right:1px solid var(--border);padding:24px 20px;overflow-y:auto;}
+    .selector-panel h2{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);margin-bottom:14px;}
+    .site-select-wrap{margin-bottom:20px;}
+    .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;}
+    .tab{padding:9px 14px;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+    .tab:hover{color:var(--text-1);}.tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+    /* Right: Edit area */
+    .edit-area{flex:1;padding:28px 36px;overflow-y:auto;}
+    .block-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:14px;}
+    .block-key{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);margin-bottom:8px;}
+    .block-label{font-size:13px;font-weight:600;margin-bottom:10px;}
+    textarea,input[type=text]{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;resize:vertical;}
+    textarea:focus,input[type=text]:focus{border-color:rgba(0,229,255,0.4);}
+    .block-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+    .block-type{font-size:10px;color:var(--text-2);padding:2px 8px;background:var(--raised);border-radius:4px;border:1px solid var(--border);}
+    .btn{padding:7px 16px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:5px;transition:opacity .15s;}
+    .btn:hover{opacity:.8;}.btn-cyan{background:var(--cyan);color:#000;}.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2);}
+    .btn-ghost:hover{color:var(--text-1);border-color:rgba(0,229,255,0.3);}
+    .btn-sm{padding:5px 11px;font-size:11px;}
+    .add-block-row{display:flex;gap:8px;margin-top:4px;}
+    .empty{color:var(--text-2);font-size:13px;text-align:center;padding:32px 0;}
+    .help-tip{background:none;border:none;color:var(--cyan);cursor:pointer;font-size:13px;opacity:0.65;padding:0;}
+    .help-tip:hover{opacity:1;}
+    .help-panel{background:var(--raised);border-left:2px solid rgba(0,229,255,0.25);padding:10px 14px;margin:6px 0 10px;font-size:12px;line-height:1.6;color:var(--text-2);border-radius:0 6px 6px 0;display:none;}
+    .help-panel.open{display:block;}
+    .social-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:12px;}
+    .social-title{font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:capitalize;color:var(--text-2);margin-bottom:10px;}
+    .field-row{margin-bottom:8px;}
+    .field-row label{font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);display:block;margin-bottom:4px;}
+    .note{font-size:11px;color:var(--text-2);margin-top:4px;line-height:1.5;}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="/brand_assets/VardWeb.png" alt="VardWeb" /></div>
+  <div class="sidebar-label">Admin</div>
+  <a href="/crm/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="/crm/clients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clients</a>
+  <a href="/crm/invoices.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Invoices</a>
+  <a href="/crm/cms-editor.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>CMS Editor</a>
+  <a href="/crm/seo-tool.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>SEO Tool</a>
+  <div class="sidebar-bottom"><button class="btn-logout" id="logoutBtn">Sign Out</button></div>
+</aside>
+
+<main class="main">
+  <div class="top-bar">
+    <h1>CMS Editor</h1>
+    <select id="clientSel"><option value="">— Select client —</option></select>
+    <select id="siteSel" disabled><option value="">— Select site —</option></select>
+  </div>
+
+  <div class="editor-body">
+    <!-- Left tabs -->
+    <div class="selector-panel">
+      <div class="tabs">
+        <div class="tab active" data-tab="content">Content</div>
+        <div class="tab" data-tab="social">Social</div>
+      </div>
+      <p style="font-size:12px;color:var(--text-2);line-height:1.6;" id="sideNote">Select a client and site to start editing content blocks.</p>
+    </div>
+
+    <!-- Right edit area -->
+    <div class="edit-area" id="editArea">
+      <div class="empty">Select a client and site to begin.</div>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-admin-auth' } });
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  const { data: myProfile } = await sb.from('user_profiles').select('role').eq('id', session.user.id).single();
+  if (myProfile?.role !== 'admin') window.location.href = '/crm/portal.html';
+  document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html'; });
+
+  document.addEventListener('click', e => {
+    const tip = e.target.closest('.help-tip');
+    if (!tip) return;
+    document.getElementById('help-' + tip.dataset.help)?.classList.toggle('open');
+  });
+
+  /* ── Load clients ── */
+  const { data: clients } = await sb.from('clients').select('id, business_name').order('business_name');
+  const clientSel = document.getElementById('clientSel');
+  (clients || []).forEach(c => {
+    const o = document.createElement('option'); o.value = c.id; o.textContent = c.business_name; clientSel.appendChild(o);
+  });
+
+  let currentSiteId = null, currentClientId = null, currentTab = 'content';
+
+  clientSel.addEventListener('change', async () => {
+    currentClientId = clientSel.value;
+    const siteSel = document.getElementById('siteSel');
+    siteSel.innerHTML = '<option value="">— Select site —</option>';
+    siteSel.disabled = !currentClientId;
+    if (!currentClientId) return;
+    const { data: sites } = await sb.from('sites').select('id, domain_name').eq('client_id', currentClientId);
+    (sites || []).forEach(s => {
+      const o = document.createElement('option'); o.value = s.id; o.textContent = s.domain_name; siteSel.appendChild(o);
+    });
+  });
+
+  document.getElementById('siteSel').addEventListener('change', async e => {
+    currentSiteId = e.target.value;
+    if (!currentSiteId) return;
+    await renderTab(currentTab);
+  });
+
+  /* Tabs */
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentTab = tab.dataset.tab;
+      if (currentSiteId) await renderTab(currentTab);
+    });
+  });
+
+  async function renderTab(tab) {
+    if (tab === 'content') await renderContent();
+    if (tab === 'social')  await renderSocial();
+  }
+
+  /* ── Content blocks ── */
+  async function renderContent() {
+    const ea = document.getElementById('editArea');
+    const { data: blocks } = await sb.from('site_content').select('*').eq('site_id', currentSiteId).order('section_key');
+
+    document.getElementById('sideNote').innerHTML = `
+      <strong>How it works:</strong><br>Any element on the live site with <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:10px;">data-cms="section_key"</code> gets its text automatically replaced by the value you save here.`;
+
+    if (!blocks?.length) {
+      ea.innerHTML = `<div class="empty">No content blocks yet. Add one below.</div>`;
+    } else {
+      ea.innerHTML = blocks.map(b => `
+        <div class="block-card" data-key="${b.section_key}">
+          <div class="block-key">${b.section_key} <button class="help-tip" data-help="block-${b.section_key}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div>
+          <div class="help-panel" id="help-block-${b.section_key}">Section key: <strong>${b.section_key}</strong>. Tag any element on the live site with <code>data-cms="${b.section_key}"</code> — its content will update automatically when you save here. Case-sensitive.</div>
+          ${b.content_type === 'html' ? `<textarea class="block-value" rows="4">${b.content_value || ''}</textarea>` : `<input type="text" class="block-value" value="${(b.content_value || '').replace(/"/g, '&quot;')}" />`}
+          <div class="block-footer">
+            <span class="block-type">${b.content_type}</span>
+            <button class="btn btn-cyan btn-sm save-block" data-key="${b.section_key}">Save</button>
+          </div>
+        </div>`).join('');
+    }
+
+    /* Add new block row */
+    ea.innerHTML += `
+      <div style="margin-top:8px;padding-top:20px;border-top:1px solid var(--border);">
+        <div style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);margin-bottom:10px;">Add New Block</div>
+        <div class="add-block-row">
+          <input type="text" id="newKey" placeholder="section_key (e.g. hero_headline)" style="flex:1;" />
+          <select id="newType" style="width:130px;">
+            <option value="text">text</option>
+            <option value="html">html</option>
+            <option value="image_url">image_url</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" id="addBlockBtn">+ Add</button>
+        </div>
+      </div>`;
+
+    ea.querySelectorAll('.save-block').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const card  = btn.closest('.block-card');
+        const value = card.querySelector('.block-value').value;
+        await sb.from('site_content').upsert({ site_id: currentSiteId, section_key: btn.dataset.key, content_value: value, updated_at: new Date().toISOString() }, { onConflict: 'site_id,section_key' });
+        btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save', 1800);
+      });
+    });
+
+    document.getElementById('addBlockBtn')?.addEventListener('click', async () => {
+      const key  = document.getElementById('newKey').value.trim().toLowerCase().replace(/\s+/g, '_');
+      const type = document.getElementById('newType').value;
+      if (!key) return alert('Section key is required.');
+      await sb.from('site_content').upsert({ site_id: currentSiteId, section_key: key, content_value: '', content_type: type, updated_at: new Date().toISOString() }, { onConflict: 'site_id,section_key' });
+      await renderContent();
+    });
+  }
+
+  /* ── Social links ── */
+  const PLATFORMS = ['instagram','facebook','x','tiktok','linkedin','youtube'];
+  async function renderSocial() {
+    const ea = document.getElementById('editArea');
+    document.getElementById('sideNote').innerHTML = `
+      <strong>Social Links:</strong><br>Tag live site elements with <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:10px;">data-social-url="platform"</code> for the link, or <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:10px;">data-social-handle="platform"</code> for the display text.`;
+
+    const { data: links } = await sb.from('social_links').select('*').eq('site_id', currentSiteId).order('updated_at');
+    const map = Object.fromEntries((links || []).map(l => [l.platform, l]));
+    const customPlatforms = (links || []).map(l => l.platform).filter(p => !PLATFORMS.includes(p));
+    const allPlatforms = [...PLATFORMS, ...customPlatforms];
+
+    function cardHTML(p) {
+      const l = map[p] || {};
+      const isCustom = !PLATFORMS.includes(p);
+      return `<div class="social-card" data-p="${p}">
+        <div class="social-title">${p}${isCustom ? '<span style="font-size:9px;font-weight:400;opacity:0.55;margin-left:5px;text-transform:none;letter-spacing:0;">custom</span>' : ''}</div>
+        <div class="field-row">
+          <label>Handle</label>
+          <input type="text" class="s-handle" data-p="${p}" value="${l.account_handle || ''}" placeholder="@${p}handle" />
+        </div>
+        <div class="field-row">
+          <label>URL</label>
+          <input type="text" class="s-url" data-p="${p}" value="${l.account_url || ''}" placeholder="https://…" />
+        </div>
+        <div class="field-row">
+          <label>Display Label <button class="help-tip" data-help="sl-${p}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
+          <div class="help-panel" id="help-sl-${p}">Optional text override. If blank, the handle is shown. Elements tagged <code>data-social-handle="${p}"</code> show this value.</div>
+          <input type="text" class="s-label" data-p="${p}" value="${l.display_label || ''}" placeholder="Follow us (optional)" />
+        </div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn btn-cyan btn-sm s-save" data-p="${p}">Save</button>
+          ${isCustom ? `<button class="btn btn-ghost btn-sm s-del" data-p="${p}" style="color:var(--pink);border-color:rgba(255,45,120,0.25);">Remove</button>` : ''}
+        </div>
+      </div>`;
+    }
+
+    ea.innerHTML = allPlatforms.map(cardHTML).join('') + `
+      <div style="display:flex;gap:8px;align-items:center;margin-top:14px;">
+        <input type="text" id="newPlatInput" placeholder="add platform (e.g. pinterest)" style="width:200px;font-size:12px;padding:7px 11px;" />
+        <button class="btn btn-ghost btn-sm" id="addPlatBtn">+ Add Platform</button>
+      </div>`;
+
+    ea.querySelectorAll('.s-save').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const p = btn.dataset.p;
+        const handle = ea.querySelector(`.s-handle[data-p="${p}"]`).value.trim();
+        const url    = ea.querySelector(`.s-url[data-p="${p}"]`).value.trim();
+        const label  = ea.querySelector(`.s-label[data-p="${p}"]`).value.trim();
+        await sb.from('social_links').upsert({ site_id: currentSiteId, client_id: currentClientId, platform: p, account_handle: handle, account_url: url, display_label: label, updated_at: new Date().toISOString() }, { onConflict: 'site_id,platform' });
+        btn.textContent = 'Saved ✓'; setTimeout(() => btn.textContent = 'Save', 1800);
+      });
+    });
+    ea.querySelectorAll('.s-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const p = btn.dataset.p;
+        if (!confirm(`Remove "${p}"?`)) return;
+        await sb.from('social_links').delete().eq('site_id', currentSiteId).eq('platform', p);
+        await renderSocial();
+      });
+    });
+    document.getElementById('addPlatBtn')?.addEventListener('click', async () => {
+      const input = document.getElementById('newPlatInput');
+      const p = input.value.trim().toLowerCase().replace(/\s+/g,'_');
+      if (!p) return;
+      if (ea.querySelector(`[data-p="${p}"]`)) { alert(`"${p}" already exists.`); return; }
+      await sb.from('social_links').upsert({ site_id: currentSiteId, client_id: currentClientId, platform: p, account_handle: '', account_url: '', display_label: '', updated_at: new Date().toISOString() }, { onConflict: 'site_id,platform' });
+      await renderSocial();
+    });
+  }
+</script>
+</body>
+</html>

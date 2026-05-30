@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: 'Inter', sans-serif; background: var(--base); color: var(--text-1); overflow: hidden; }
+
+    /* ── Two-column layout ── */
+    .login-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+    @media (max-width: 1023px) { .login-wrap { grid-template-columns: 1fr; } }
+    @media (max-width: 1023px) and (min-width: 451px) { .login-wrap { grid-template-rows: auto auto; min-height: auto; } }
+
+    /* ── Left panel ── */
+    .left-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: linear-gradient(145deg, #060a14 0%, #0c1525 50%, #060a14 100%);
+      padding: 40px 48px;
+      overflow: hidden;
+    }
+    @media (max-width: 450px) { .left-panel { display: none; } }
+    @media (max-width: 1023px) and (min-width: 451px) {
+      .left-panel {
+        padding: 28px 0 0;
+        height: auto;
+        min-height: 0;
+        justify-content: flex-start;
+      }
+    }
+
+    /* Grid pattern */
+    .left-panel::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(200,212,232,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,212,232,0.04) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Aurora blobs */
+    .left-panel::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 40% at 75% 15%, rgba(0,229,255,0.09) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(108,63,245,0.12) 0%, transparent 70%);
+    }
+
+    .left-top {
+      position: relative; z-index: 10;
+      display: flex; align-items: center;
+    }
+    .left-top img { height: 28px; border-radius: 6px; }
+
+    /* Characters stage */
+    .chars-wrap {
+      position: relative; z-index: 10;
+      display: flex; align-items: flex-end; justify-content: center;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding-bottom: 210px;
+    }
+    .chars-stage {
+      position: relative;
+      width: 550px; height: 400px;
+      flex-shrink: 0;
+    }
+
+    /* Character base */
+    .char {
+      position: absolute; bottom: 0;
+      transform-origin: bottom center;
+      transition: transform 0.7s ease-in-out, height 0.7s ease-in-out;
+    }
+
+    /* Eye containers */
+    .char-eyes {
+      position: absolute; display: flex;
+      transition: left 0.7s ease-in-out, top 0.7s ease-in-out;
+    }
+    .char-eyes.fast {
+      transition: left 0.2s ease-out, top 0.2s ease-out;
+    }
+
+    /* Eyeball (white sclera) */
+    .eyeball {
+      border-radius: 9999px;
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+      transition: height 0.15s ease-in-out;
+      flex-shrink: 0;
+    }
+
+    /* Pupil inside eyeball */
+    .pupil {
+      border-radius: 9999px;
+      background: #2D2D2D;
+      transition: transform 0.1s ease-out;
+      flex-shrink: 0;
+    }
+
+    /* Standalone pupil (no white sclera) */
+    .pupil-solo {
+      border-radius: 9999px;
+      background: #2D2D2D;
+      transition: transform 0.1s ease-out;
+      flex-shrink: 0;
+    }
+
+    /* Yellow mouth */
+    .char-mouth {
+      position: absolute;
+      background: #2D2D2D;
+      border-radius: 9999px;
+      height: 4px; width: 80px;
+      transition: left 0.2s ease-out, top 0.2s ease-out;
+    }
+
+    /* Left footer */
+    .left-footer {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: center; gap: 28px;
+    }
+    .left-footer a {
+      color: rgba(200,212,232,0.4); font-size: 13px;
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .left-footer a:hover { color: var(--text-1); }
+
+    /* ── Right panel ── */
+    .right-panel {
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 32px;
+      background: var(--base);
+      position: relative;
+    }
+
+    /* Noise texture */
+    .right-panel::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px; opacity: 0.036;
+    }
+
+    /* Subtle right glow */
+    .right-panel::after {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 50% 50% at 80% 20%, rgba(0,229,255,0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(255,45,120,0.04) 0%, transparent 70%);
+    }
+
+    .form-wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px;
+    }
+
+    /* Form header */
+    .form-header { text-align: center; margin-bottom: 32px; }
+    .form-header h1 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 26px; font-weight: 700; letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+    .form-header p { color: var(--text-2); font-size: 14px; }
+
+    /* Fields */
+    .field { margin-bottom: 18px; }
+    .field-label {
+      display: block; font-size: 12px; font-weight: 500;
+      color: var(--text-2); letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+    .input-base {
+      width: 100%;
+      background: var(--raised);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif; font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .input-base:focus {
+      border-color: rgba(0,229,255,0.4);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+    }
+    .input-wrap { position: relative; }
+    .input-wrap .input-base { padding-right: 44px; }
+
+    /* Eye toggle button */
+    .eye-toggle {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--text-2);
+      display: flex; align-items: center; padding: 0;
+      transition: color 0.15s ease;
+    }
+    .eye-toggle:hover { color: var(--text-1); }
+    .eye-toggle:focus-visible { outline: 2px solid rgba(0,229,255,0.5); border-radius: 4px; }
+    .eye-toggle svg { width: 18px; height: 18px; }
+
+    /* Forgot link row */
+    .forgot-row {
+      text-align: right;
+      margin-top: -4px;
+      margin-bottom: 22px;
+    }
+    .forgot-link {
+      font-size: 13px; color: var(--cyan); text-decoration: none;
+      font-weight: 500; background: none; border: none; padding: 0;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: opacity 0.15s ease;
+    }
+    .forgot-link:hover { opacity: 0.72; }
+    .forgot-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); border-radius: 2px; }
+
+    /* Error */
+    .error-msg {
+      background: rgba(255,45,120,0.1);
+      border: 1px solid rgba(255,45,120,0.3);
+      border-radius: 8px; padding: 10px 14px;
+      color: #ff7eb3; font-size: 13px;
+      margin-bottom: 14px; display: none;
+    }
+
+    /* Login button */
+    .btn-login {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--cyan) 0%, rgba(0,180,200,1) 100%);
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700; font-size: 14px; letter-spacing: 0.02em;
+      border: none; border-radius: 8px;
+      cursor: pointer; margin-bottom: 28px;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .btn-login:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* Back link */
+    .back-link { text-align: center; font-size: 13px; color: var(--text-2); }
+    .back-link a {
+      color: var(--text-1); text-decoration: none; font-weight: 500;
+      transition: color 0.15s ease;
+    }
+    .back-link a:hover { color: var(--cyan); }
+
+    /* ── Cloud Mobile Header (≤ 450px) ── */
+    .cloud-mobile-hdr {
+      display: none;
+      width: 100%;
+      background: linear-gradient(180deg, #0b1828 0%, #091320 60%, var(--base) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cloud-mobile-hdr::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 55%;
+      transform: translate(-50%, -50%);
+      width: 340px; height: 180px;
+      background: radial-gradient(ellipse, rgba(0,229,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cloud-inner {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 44px 24px 30px;
+      gap: 22px;
+    }
+    .cloud-char-frame {
+      position: relative;
+      width: 280px; height: 160px;
+      flex-shrink: 0;
+    }
+    .cloud-char-frame > img {
+      width: 100%; height: 100%;
+      display: block; object-fit: fill;
+      border-radius: 16px;
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,0.13),
+        0 8px 32px rgba(0,0,0,0.6);
+      user-select: none; -webkit-user-drag: none;
+    }
+    .m-eye {
+      position: absolute;
+      top: 60px;
+      width: 28px; height: 40px;
+      background: white;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      display: flex; align-items: flex-end; justify-content: center;
+      overflow: hidden;
+      pointer-events: none;
+      transition: height 0.15s ease, border-radius 0.15s ease, background 0.15s ease;
+    }
+    .m-eye-l { left: 80px; }
+    .m-eye-r { left: 150px; }
+    .m-pupil {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+      transition: transform 0.1s ease;
+    }
+    .cloud-brand img {
+      height: 24px;
+      border-radius: 5px;
+      opacity: 0.85;
+    }
+
+    /* ── Banner footer pill links ── */
+    .banner-footer {
+      display: none;
+      position: relative; z-index: 10;
+      align-items: center; justify-content: center;
+      gap: 8px; padding: 16px 24px 28px;
+      flex-wrap: wrap;
+    }
+    .banner-footer a {
+      color: rgba(200,212,232,0.45);
+      font-size: 11px; font-weight: 500; letter-spacing: 0.03em;
+      text-decoration: none;
+      padding: 5px 13px;
+      border: 1px solid rgba(200,212,232,0.1);
+      border-radius: 100px;
+      background: rgba(255,255,255,0.025);
+      transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+    .banner-footer a:hover {
+      color: var(--text-1);
+      border-color: rgba(0,229,255,0.28);
+      background: rgba(0,229,255,0.06);
+    }
+    .banner-footer a:focus-visible { outline: 2px solid rgba(0,229,255,0.5); border-radius: 100px; }
+
+    @media (max-width: 450px) {
+      html, body { overflow-y: auto; overflow-x: hidden; }
+      .cloud-mobile-hdr { display: block; }
+      .mobile-logo { display: none !important; }
+      .right-panel {
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0;
+        overflow-y: visible;
+      }
+      .form-wrap {
+        padding: 28px 24px 44px;
+        max-width: 450px;
+        width: 100%;
+      }
+    }
+
+    /* Banner mode overrides — all must live after base element styles in cascade */
+    @media (max-width: 1023px) and (min-width: 451px) {
+      html, body { overflow-y: auto; overflow-x: hidden; }
+      .left-top {
+        position: absolute !important;
+        display: flex !important;
+        top: 20px;
+        left: 24px;
+        z-index: 20;
+      }
+      .left-footer { display: none !important; }
+      .chars-wrap  {
+        flex: none !important;
+        padding-bottom: 0 !important;
+        align-items: flex-start !important;
+        overflow: hidden !important;
+        min-height: 0 !important;
+      }
+      .banner-footer { display: flex !important; }
+      .right-panel {
+        padding-top: 32px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrap">
+
+    <!-- ── Left: Animated Characters ── -->
+    <div class="left-panel">
+      <div class="left-top">
+        <img src="/brand_assets/VardWeb.png" alt="VardWeb" />
+      </div>
+
+      <div class="chars-wrap">
+        <div class="chars-stage" id="charsStage">
+
+          <!-- Purple tall rect — z:1 (back) -->
+          <div class="char" id="charPurple"
+               style="left:198px;width:180px;height:400px;background:#6C3FF5;border-radius:10px 10px 0 0;z-index:1;">
+            <div class="char-eyes" id="purpleEyes" style="gap:32px;">
+              <div class="eyeball" id="purpleEyeL" style="width:18px;height:18px;">
+                <div class="pupil" id="purplePupilL" style="width:7px;height:7px;"></div>
+              </div>
+              <div class="eyeball" id="purpleEyeR" style="width:18px;height:18px;">
+                <div class="pupil" id="purplePupilR" style="width:7px;height:7px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Black tall rect — z:2 (middle) -->
+          <div class="char" id="charBlack"
+               style="left:368px;width:120px;height:310px;background:#2D2D2D;border-radius:8px 8px 0 0;z-index:2;">
+            <div class="char-eyes" id="blackEyes" style="gap:24px;">
+              <div class="eyeball" id="blackEyeL" style="width:16px;height:16px;">
+                <div class="pupil" id="blackPupilL" style="width:6px;height:6px;"></div>
+              </div>
+              <div class="eyeball" id="blackEyeR" style="width:16px;height:16px;">
+                <div class="pupil" id="blackPupilR" style="width:6px;height:6px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Orange semicircle — z:3 (front left) -->
+          <div class="char" id="charOrange"
+               style="left:128px;width:240px;height:200px;background:#FF9B6B;border-radius:120px 120px 0 0;z-index:3;">
+            <div class="char-eyes fast" id="orangeEyes" style="gap:32px;">
+              <div class="pupil-solo" id="orangePupilL" style="width:12px;height:12px;"></div>
+              <div class="pupil-solo" id="orangePupilR" style="width:12px;height:12px;"></div>
+            </div>
+          </div>
+
+          <!-- Yellow rounded rect — z:4 (front right) -->
+          <div class="char" id="charYellow"
+               style="left:438px;width:140px;height:230px;background:#E8D754;border-radius:70px 70px 0 0;z-index:4;">
+            <div class="char-eyes fast" id="yellowEyes" style="gap:24px;">
+              <div class="pupil-solo" id="yellowPupilL" style="width:12px;height:12px;"></div>
+              <div class="pupil-solo" id="yellowPupilR" style="width:12px;height:12px;"></div>
+            </div>
+            <div class="char-mouth" id="yellowMouth"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Banner pill links — visible only at 451–1023px -->
+      <div class="banner-footer">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+
+      <div class="left-footer">
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/terms.html">Terms of Service</a>
+        <a href="/contact.html">Contact</a>
+      </div>
+    </div>
+
+    <!-- ── Right: Login Form ── -->
+    <div class="right-panel">
+
+      <!-- Cloud character header — visible only at ≤ 450px -->
+      <div class="cloud-mobile-hdr" id="cloudMobileHdr">
+        <div class="cloud-inner">
+          <div class="cloud-char-frame" id="cloudCharFrame">
+            <img src="https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/cloud.jpg"
+                 alt="VardWeb character" draggable="false" />
+            <div class="m-eye m-eye-l" id="mEyeL">
+              <div class="m-pupil" id="mPupilL"></div>
+            </div>
+            <div class="m-eye m-eye-r" id="mEyeR">
+              <div class="m-pupil" id="mPupilR"></div>
+            </div>
+          </div>
+          <div class="cloud-brand">
+            <img src="/brand_assets/VardWeb.png" alt="VardWeb" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-wrap">
+
+        <!-- ── Login View (default) ── -->
+        <div id="loginView">
+          <div class="form-header">
+            <h1>Welcome!</h1>
+            <p>Sign in to the VardWeb portal</p>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <div class="field">
+              <label class="field-label" for="email">Email</label>
+              <input class="input-base" type="email" id="email"
+                     placeholder="you@example.com" required autocomplete="email" />
+            </div>
+
+            <div class="field">
+              <label class="field-label" for="password">Password</label>
+              <div class="input-wrap">
+                <input class="input-base" type="password" id="password"
+                       placeholder="••••••••" required autocomplete="current-password" />
+                <button type="button" class="eye-toggle" id="eyeToggle" aria-label="Toggle password visibility">
+                  <!-- Eye open -->
+                  <svg id="iconEyeOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <!-- Eye off -->
+                  <svg id="iconEyeOff" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="forgot-row">
+              <button type="button" class="forgot-link" id="forgotPasswordBtn">Forgot password?</button>
+            </div>
+
+            <div class="error-msg" id="errorMsg"></div>
+
+            <button type="submit" class="btn-login" id="loginBtn">Sign In →</button>
+          </form>
+
+          <div class="back-link">
+            <a href="/index.html">← Back to VardWeb.com</a>
+          </div>
+        </div>
+
+        <!-- ── Forgot Password View ── -->
+        <div id="forgotView" style="display:none;">
+          <div class="form-header">
+            <h1>Reset Password</h1>
+            <p>Enter your account email and we'll send you a secure link to create a new password.</p>
+          </div>
+
+          <form id="forgotForm" novalidate>
+            <div class="field">
+              <label class="field-label" for="forgotEmail">Email Address</label>
+              <input class="input-base" type="email" id="forgotEmail"
+                     placeholder="you@example.com" required autocomplete="email" />
+            </div>
+
+            <div class="error-msg" id="forgotErrorMsg"></div>
+
+            <button type="submit" class="btn-login" id="forgotBtn">Send Reset Link →</button>
+          </form>
+
+          <div class="back-link" style="margin-top:0;">
+            <button type="button" id="backToLoginBtn"
+              style="background:none;border:none;padding:0;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);">
+              ← <span style="color:var(--text-1);font-weight:500;transition:color 0.15s ease;" id="backToLoginText">Back to Sign In</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ── Reset Link Sent Confirmation View ── -->
+        <div id="sentView" style="display:none;">
+          <div style="text-align:center;margin-bottom:36px;">
+            <div style="width:64px;height:64px;border-radius:50%;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.22);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h1 style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;letter-spacing:-0.03em;color:var(--text-1);margin-bottom:14px;">Check Your Inbox</h1>
+            <p style="color:var(--text-2);font-size:14px;line-height:1.7;max-width:300px;margin:0 auto;">
+              If an account with that email address exists, a secure password reset link has been sent. Please check your inbox and spam folder.
+            </p>
+          </div>
+          <div class="back-link">
+            <button type="button" id="backToLoginSentBtn"
+              style="background:none;border:none;padding:0;cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;color:var(--text-2);">
+              ← <span style="color:var(--text-1);font-weight:500;">Back to Sign In</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    const cfg = window.SUPABASE_CONFIG || {};
+    const url  = cfg.url  || 'https://placeholder.supabase.co';
+    const key  = cfg.anonKey || 'placeholder';
+
+    /* Role-keyed clients — admin and client sessions are completely independent in localStorage */
+    const adminSb  = createClient(url, key, { auth: { storageKey: 'vw-admin-auth'  } });
+    const clientSb = createClient(url, key, { auth: { storageKey: 'vw-client-auth' } });
+    /* Temp client used only during the login handshake, then cleared */
+    const tempSb   = createClient(url, key, { auth: { storageKey: 'vw-temp-auth'   } });
+
+    /* ── Auth redirect if already logged in ── */
+    const justSignedOut = new URLSearchParams(window.location.search).has('signedout');
+    if (!justSignedOut) {
+      try {
+        const { data: { session: adminSession  } } = await adminSb.auth.getSession();
+        if (adminSession)  { window.location.href = '/crm/dashboard.html'; }
+        const { data: { session: clientSession } } = await clientSb.auth.getSession();
+        if (clientSession) { window.location.href = '/crm/portal.html'; }
+      } catch (_) { /* dev mode */ }
+    }
+
+    /* ═══════════════════════════════════════════
+       CHARACTER ANIMATION — Vanilla JS port of
+       the animated-characters-login-page React component
+    ═══════════════════════════════════════════ */
+
+    /* State */
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let isPurpleBlinking = false;
+    let isBlackBlinking  = false;
+    let isTyping              = false;
+    let isLookingAtEachOther  = false;
+    let lookingTimer          = null;
+    let showPassword          = false;
+    let passwordValue         = '';
+    let isPurplePeeking       = false;
+    let peekTimeout           = null;
+    let peekEndTimeout        = null;
+
+    /* Element refs */
+    const leftPanel    = document.querySelector('.left-panel');
+    const charPurple   = document.getElementById('charPurple');
+    const charBlack    = document.getElementById('charBlack');
+    const charOrange   = document.getElementById('charOrange');
+    const charYellow   = document.getElementById('charYellow');
+    const purpleEyes   = document.getElementById('purpleEyes');
+    const blackEyes    = document.getElementById('blackEyes');
+    const orangeEyes   = document.getElementById('orangeEyes');
+    const yellowEyes   = document.getElementById('yellowEyes');
+    const purpleEyeL   = document.getElementById('purpleEyeL');
+    const purpleEyeR   = document.getElementById('purpleEyeR');
+    const blackEyeL    = document.getElementById('blackEyeL');
+    const blackEyeR    = document.getElementById('blackEyeR');
+    const purplePupilL = document.getElementById('purplePupilL');
+    const purplePupilR = document.getElementById('purplePupilR');
+    const blackPupilL  = document.getElementById('blackPupilL');
+    const blackPupilR  = document.getElementById('blackPupilR');
+    const orangePupilL = document.getElementById('orangePupilL');
+    const orangePupilR = document.getElementById('orangePupilR');
+    const yellowPupilL = document.getElementById('yellowPupilL');
+    const yellowPupilR = document.getElementById('yellowPupilR');
+    const yellowMouth  = document.getElementById('yellowMouth');
+
+    /* Mouse tracking */
+    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+
+    /* Calculate body skew + face offset for a character element */
+    function calcBodyPos(el) {
+      const r  = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top  + r.height / 3;
+      const dx = mouseX - cx;
+      const dy = mouseY - cy;
+      return {
+        faceX:    Math.max(-15, Math.min(15, dx / 20)),
+        faceY:    Math.max(-10, Math.min(10, dy / 30)),
+        bodySkew: Math.max(-6,  Math.min(6,  -dx / 120)),
+      };
+    }
+
+    /* Calculate pupil offset — tracked from eyeEl center, or forced */
+    function pupilOffset(eyeEl, maxDist, forceX, forceY) {
+      if (forceX !== undefined) return { x: forceX, y: forceY };
+      const r     = eyeEl.getBoundingClientRect();
+      const cx    = r.left + r.width  / 2;
+      const cy    = r.top  + r.height / 2;
+      const dx    = mouseX - cx;
+      const dy    = mouseY - cy;
+      const dist  = Math.min(Math.sqrt(dx * dx + dy * dy), maxDist);
+      const angle = Math.atan2(dy, dx);
+      return { x: Math.cos(angle) * dist, y: Math.sin(angle) * dist };
+    }
+
+    /* ── Blinking ── */
+    function scheduleBlink(eyeL, eyeR, fullH, setFlag, clearFlag) {
+      setTimeout(() => {
+        setFlag();
+        eyeL.style.height = '2px';
+        eyeR.style.height = '2px';
+        setTimeout(() => {
+          clearFlag();
+          eyeL.style.height = fullH + 'px';
+          eyeR.style.height = fullH + 'px';
+          scheduleBlink(eyeL, eyeR, fullH, setFlag, clearFlag);
+        }, 150);
+      }, Math.random() * 4000 + 3000);
+    }
+
+    scheduleBlink(purpleEyeL, purpleEyeR, 18,
+      () => { isPurpleBlinking = true;  },
+      () => { isPurpleBlinking = false; }
+    );
+    scheduleBlink(blackEyeL, blackEyeR, 16,
+      () => { isBlackBlinking = true;  },
+      () => { isBlackBlinking = false; }
+    );
+
+    /* ── Peek scheduling (purple sneaks look when password is visible) ── */
+    function schedulePeek() {
+      clearTimeout(peekTimeout);
+      clearTimeout(peekEndTimeout);
+      if (passwordValue.length > 0 && showPassword) {
+        peekTimeout = setTimeout(() => {
+          isPurplePeeking = true;
+          peekEndTimeout = setTimeout(() => {
+            isPurplePeeking = false;
+            schedulePeek();
+          }, 800);
+        }, Math.random() * 3000 + 2000);
+      } else {
+        isPurplePeeking = false;
+      }
+    }
+
+    /* ── Input event wiring ── */
+    const emailInput    = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+
+    emailInput.addEventListener('focus', () => {
+      isTyping = true;
+      if (!isLookingAtEachOther) {
+        isLookingAtEachOther = true;
+        clearTimeout(lookingTimer);
+        lookingTimer = setTimeout(() => { isLookingAtEachOther = false; }, 800);
+      }
+    });
+    emailInput.addEventListener('input', () => {
+      if (!isLookingAtEachOther) {
+        isLookingAtEachOther = true;
+        clearTimeout(lookingTimer);
+        lookingTimer = setTimeout(() => { isLookingAtEachOther = false; }, 800);
+      }
+    });
+    emailInput.addEventListener('blur', () => { isTyping = false; });
+
+    passwordInput.addEventListener('input', () => {
+      passwordValue = passwordInput.value;
+      schedulePeek();
+    });
+
+    /* ── Show/hide password ── */
+    const eyeToggle   = document.getElementById('eyeToggle');
+    const iconEyeOpen = document.getElementById('iconEyeOpen');
+    const iconEyeOff  = document.getElementById('iconEyeOff');
+
+    eyeToggle.addEventListener('click', () => {
+      showPassword = !showPassword;
+      passwordInput.type       = showPassword ? 'text' : 'password';
+      iconEyeOpen.style.display = showPassword ? 'none' : '';
+      iconEyeOff.style.display  = showPassword ? ''     : 'none';
+      schedulePeek();
+    });
+
+    /* ════════════════════════════════
+       RAF animation loop
+    ════════════════════════════════ */
+    function animate() {
+      requestAnimationFrame(animate);
+
+      /* Skip if left panel hidden (mobile) */
+      if (getComputedStyle(leftPanel).display === 'none') return;
+
+      /* ── Derived state ── */
+      const purpleHiding  = isTyping || (passwordValue.length > 0 && !showPassword);
+      const purpleWatching = passwordValue.length > 0 && showPassword;
+
+      /* ── Read: body positions ── */
+      const pp = calcBodyPos(charPurple);
+      const bp = calcBodyPos(charBlack);
+      const op = calcBodyPos(charOrange);
+      const yp = calcBodyPos(charYellow);
+
+      /* ══ PURPLE ══ */
+      charPurple.style.height = purpleHiding ? '440px' : '400px';
+      if (purpleWatching) {
+        charPurple.style.transform = 'skewX(0deg)';
+      } else if (purpleHiding) {
+        charPurple.style.transform = `skewX(${pp.bodySkew - 12}deg) translateX(40px)`;
+      } else {
+        charPurple.style.transform = `skewX(${pp.bodySkew}deg)`;
+      }
+
+      let purFlX, purFlY;
+      let purEL, purET;
+      if (purpleWatching) {
+        purEL = 20; purET = 35;
+        purFlX = isPurplePeeking ? 4 : -4;
+        purFlY = isPurplePeeking ? 5 : -4;
+      } else if (isLookingAtEachOther) {
+        purEL = 55; purET = 65;
+        purFlX = 3; purFlY = 4;
+      } else {
+        purEL = 45 + pp.faceX; purET = 40 + pp.faceY;
+        purFlX = undefined; purFlY = undefined;
+      }
+      purpleEyes.style.left = purEL + 'px';
+      purpleEyes.style.top  = purET + 'px';
+      if (!isPurpleBlinking) {
+        const pL = pupilOffset(purpleEyeL, 5, purFlX, purFlY);
+        const pR = pupilOffset(purpleEyeR, 5, purFlX, purFlY);
+        purplePupilL.style.transform = `translate(${pL.x}px,${pL.y}px)`;
+        purplePupilR.style.transform = `translate(${pR.x}px,${pR.y}px)`;
+      }
+
+      /* ══ BLACK ══ */
+      if (purpleWatching) {
+        charBlack.style.transform = 'skewX(0deg)';
+      } else if (isLookingAtEachOther) {
+        charBlack.style.transform = `skewX(${bp.bodySkew * 1.5 + 10}deg) translateX(20px)`;
+      } else if (purpleHiding) {
+        charBlack.style.transform = `skewX(${bp.bodySkew * 1.5}deg)`;
+      } else {
+        charBlack.style.transform = `skewX(${bp.bodySkew}deg)`;
+      }
+
+      let blkFlX, blkFlY;
+      let blkEL, blkET;
+      if (purpleWatching) {
+        blkEL = 10; blkET = 28;
+        blkFlX = -4; blkFlY = -4;
+      } else if (isLookingAtEachOther) {
+        blkEL = 32; blkET = 12;
+        blkFlX = 0; blkFlY = -4;
+      } else {
+        blkEL = 26 + bp.faceX; blkET = 32 + bp.faceY;
+        blkFlX = undefined; blkFlY = undefined;
+      }
+      blackEyes.style.left = blkEL + 'px';
+      blackEyes.style.top  = blkET + 'px';
+      if (!isBlackBlinking) {
+        const bL = pupilOffset(blackEyeL, 4, blkFlX, blkFlY);
+        const bR = pupilOffset(blackEyeR, 4, blkFlX, blkFlY);
+        blackPupilL.style.transform = `translate(${bL.x}px,${bL.y}px)`;
+        blackPupilR.style.transform = `translate(${bR.x}px,${bR.y}px)`;
+      }
+
+      /* ══ ORANGE ══ */
+      charOrange.style.transform = purpleWatching ? 'skewX(0deg)' : `skewX(${op.bodySkew}deg)`;
+      let orFlX, orFlY, orEL, orET;
+      if (purpleWatching) {
+        orEL = 50; orET = 85; orFlX = -5; orFlY = -4;
+      } else {
+        orEL = 82 + op.faceX; orET = 90 + op.faceY; orFlX = undefined; orFlY = undefined;
+      }
+      orangeEyes.style.left = orEL + 'px';
+      orangeEyes.style.top  = orET + 'px';
+      const oL = pupilOffset(orangePupilL, 5, orFlX, orFlY);
+      const oR = pupilOffset(orangePupilR, 5, orFlX, orFlY);
+      orangePupilL.style.transform = `translate(${oL.x}px,${oL.y}px)`;
+      orangePupilR.style.transform = `translate(${oR.x}px,${oR.y}px)`;
+
+      /* ══ YELLOW ══ */
+      charYellow.style.transform = purpleWatching ? 'skewX(0deg)' : `skewX(${yp.bodySkew}deg)`;
+      let ylFlX, ylFlY, ylEL, ylET;
+      if (purpleWatching) {
+        ylEL = 20; ylET = 35; ylFlX = -5; ylFlY = -4;
+      } else {
+        ylEL = 52 + yp.faceX; ylET = 40 + yp.faceY; ylFlX = undefined; ylFlY = undefined;
+      }
+      yellowEyes.style.left = ylEL + 'px';
+      yellowEyes.style.top  = ylET + 'px';
+      const yL = pupilOffset(yellowPupilL, 5, ylFlX, ylFlY);
+      const yR = pupilOffset(yellowPupilR, 5, ylFlX, ylFlY);
+      yellowPupilL.style.transform = `translate(${yL.x}px,${yL.y}px)`;
+      yellowPupilR.style.transform = `translate(${yR.x}px,${yR.y}px)`;
+
+      yellowMouth.style.left = (purpleWatching ? 10 : 40 + yp.faceX) + 'px';
+      yellowMouth.style.top  = (purpleWatching ? 88 : 88 + yp.faceY) + 'px';
+    }
+
+    requestAnimationFrame(animate);
+
+    /* ── Banner mode: scale chars-stage to fit viewport width ── */
+    const charsWrap = document.querySelector('.chars-wrap');
+
+    function scaleBannerChars() {
+      const w = window.innerWidth;
+
+      // Cloud mobile (≤ 450px) — clear everything
+      if (w <= 450) {
+        charsStage.style.transform = '';
+        charsStage.style.transformOrigin = '';
+        charsWrap.style.height = '';
+        charsWrap.style.paddingTop = '';
+        return;
+      }
+
+      // Banner mode (451–1023px) — scale to fit full viewport width
+      if (w <= 1023) {
+        const scale = Math.min(1, (w - 48) / 550);
+        const visualH = Math.round(400 * scale);
+        const halfDown = Math.round(visualH / 2);
+        charsStage.style.transform = `scale(${scale}) translateX(-78px)`;
+        charsStage.style.transformOrigin = 'top center';
+        charsWrap.style.paddingTop = halfDown + 'px';
+        charsWrap.style.height = (visualH + halfDown) + 'px';
+        return;
+      }
+
+      // Desktop mode (≥ 1024px) — scale to fit left panel (50% viewport, 48px padding each side)
+      // 606 = 2 × 303, where 303 is yellow's right edge (578) minus stage centre (275)
+      // translateX(-78px) aligns visual midpoint (stage x=353) with chars-wrap centre (ToS pill axis)
+      const available = (w / 2) - 96;
+      const scale = Math.min(1, available / 606);
+      charsWrap.style.paddingTop = '';
+      charsWrap.style.height = '';
+      charsStage.style.transformOrigin = 'bottom center';
+      charsStage.style.transform = scale >= 1
+        ? 'translateX(-78px)'
+        : `scale(${scale}) translateX(-78px)`;
+    }
+
+    scaleBannerChars();
+    window.addEventListener('resize', scaleBannerChars);
+
+    /* ══════════════════════════════════════
+       CLOUD MOBILE CHARACTER — ≤ 450px eyes
+    ══════════════════════════════════════ */
+    const mEyeL   = document.getElementById('mEyeL');
+    const mEyeR   = document.getElementById('mEyeR');
+    const mPupilL = document.getElementById('mPupilL');
+    const mPupilR = document.getElementById('mPupilR');
+    let mEyesClosed = false;
+    let mIsBlinking = false;
+
+    function isMobileCloudVisible() {
+      return document.getElementById('cloudMobileHdr').offsetParent !== null;
+    }
+
+    function setMEyesClosed(closed) {
+      mEyesClosed = closed;
+      if (closed) {
+        mEyeL.style.height = '4px';  mEyeR.style.height = '4px';
+        mEyeL.style.borderRadius = '2px'; mEyeR.style.borderRadius = '2px';
+        mEyeL.style.background = '#111';  mEyeR.style.background = '#111';
+      } else {
+        mEyeL.style.height = '40px'; mEyeR.style.height = '40px';
+        mEyeL.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%';
+        mEyeR.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%';
+        mEyeL.style.background = 'white'; mEyeR.style.background = 'white';
+      }
+    }
+
+    function scheduleCloudBlink() {
+      setTimeout(() => {
+        if (!mEyesClosed) {
+          mIsBlinking = true;
+          mEyeL.style.height = '6px'; mEyeR.style.height = '6px';
+          mEyeL.style.borderRadius = '2px'; mEyeR.style.borderRadius = '2px';
+          setTimeout(() => {
+            mIsBlinking = false;
+            if (!mEyesClosed) {
+              mEyeL.style.height = '40px'; mEyeR.style.height = '40px';
+              mEyeL.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%';
+              mEyeR.style.borderRadius = '50% 50% 50% 50% / 60% 60% 40% 40%';
+            }
+            scheduleCloudBlink();
+          }, 200);
+        } else {
+          scheduleCloudBlink();
+        }
+      }, 3000);
+    }
+    scheduleCloudBlink();
+
+    function updateCloudPupils(clientX) {
+      if (mEyesClosed || mIsBlinking) return;
+      const offset = Math.max(-8, Math.min(8, ((clientX / window.innerWidth) - 0.5) * 40));
+      mPupilL.style.transform = `translateX(${offset}px)`;
+      mPupilR.style.transform = `translateX(${offset}px)`;
+    }
+
+    window.addEventListener('mousemove', (e) => updateCloudPupils(e.clientX));
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches[0]) updateCloudPupils(e.touches[0].clientX);
+    }, { passive: true });
+
+    passwordInput.addEventListener('focus', () => {
+      if (isMobileCloudVisible()) setMEyesClosed(true);
+    });
+    passwordInput.addEventListener('blur', () => {
+      if (isMobileCloudVisible()) setMEyesClosed(false);
+    });
+
+    /* ── View switcher ── */
+    function showView(id) {
+      ['loginView', 'forgotView', 'sentView'].forEach(v => {
+        document.getElementById(v).style.display = v === id ? 'block' : 'none';
+      });
+    }
+
+    /* ── Forgot password ── */
+    document.getElementById('forgotPasswordBtn').addEventListener('click', () => {
+      const loginEmail = document.getElementById('email').value.trim();
+      if (loginEmail) document.getElementById('forgotEmail').value = loginEmail;
+      showView('forgotView');
+      document.getElementById('forgotEmail').focus();
+    });
+
+    document.getElementById('backToLoginBtn').addEventListener('click', () => showView('loginView'));
+    document.getElementById('backToLoginSentBtn').addEventListener('click', () => showView('loginView'));
+
+    document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn   = document.getElementById('forgotBtn');
+      const errEl = document.getElementById('forgotErrorMsg');
+      const email = document.getElementById('forgotEmail').value.trim();
+
+      if (!email) {
+        errEl.textContent = 'Please enter your email address.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      errEl.style.display = 'none';
+
+      try {
+        await sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/crm/reset-password.html'
+        });
+      } catch (_) { /* always show success to prevent email enumeration */ }
+
+      showView('sentView');
+    });
+
+    /* ── Login form submit ── */
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn   = document.getElementById('loginBtn');
+      const errEl = document.getElementById('errorMsg');
+      const email = emailInput.value.trim();
+      const pass  = passwordInput.value;
+
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+      errEl.style.display = 'none';
+
+      try {
+        /* Sign in via the temp client to get tokens without polluting either keyed slot */
+        const { data, error } = await tempSb.auth.signInWithPassword({ email, password: pass });
+        if (error) throw error;
+
+        const { data: profile } = await tempSb.from('user_profiles').select('role').eq('id', data.user.id).single();
+        const isAdmin = profile?.role === 'admin';
+
+        /* Store session under the correct role-keyed slot, then clear the temp slot */
+        const targetSb = isAdmin ? adminSb : clientSb;
+        await targetSb.auth.setSession({ access_token: data.session.access_token, refresh_token: data.session.refresh_token });
+        await tempSb.auth.signOut();
+
+        window.location.href = isAdmin ? '/crm/dashboard.html' : '/crm/portal.html';
+      } catch (err) {
+        errEl.textContent = err.message === 'Invalid login credentials'
+          ? 'Incorrect email or password. Please try again.'
+          : (err.message || 'Sign in failed. Please try again.');
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In →';
+      }
+    });
+  </script>
+</body>
+</html>
