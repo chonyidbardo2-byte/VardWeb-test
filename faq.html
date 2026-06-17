@@ -223,16 +223,39 @@
     .scroll-fade-top    { top: 0;    background: linear-gradient(to bottom, var(--surface), transparent); }
     .scroll-fade-bottom { bottom: 0; background: linear-gradient(to top, var(--surface), transparent); }
 
-    /* ── Tag chips ── */
+    /* ── Tag chips (interactive nav pills) ── */
     .tag-chip {
-      display: inline-flex; align-items: center;
-      background: rgba(0,229,255,0.07);
-      border: 1px solid rgba(0,229,255,0.14);
-      border-radius: 999px; padding: 7px 16px;
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.16);
+      border-radius: 999px; padding: 8px 18px;
       font-size: 12px; font-weight: 600;
       color: var(--cyan);
       font-family: 'JetBrains Mono', monospace;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease,
+                  box-shadow 0.2s ease, color 0.2s ease,
+                  transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
+    .tag-chip:hover {
+      background: rgba(0,229,255,0.13);
+      border-color: rgba(0,229,255,0.38);
+      box-shadow: 0 0 18px rgba(0,229,255,0.16), 0 4px 12px rgba(0,0,0,0.3);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+    .tag-chip:active { transform: translateY(0); box-shadow: none; }
+    .tag-chip:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; }
+    .tag-chip-arrow {
+      width: 13px; height: 13px; opacity: 0.6;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      flex-shrink: 0;
+    }
+    .tag-chip:hover .tag-chip-arrow { transform: translateY(2px); opacity: 1; }
+
+    /* ── FAQ anchor offset ── */
+    .faq-category { scroll-margin-top: 84px; }
 
     /* ── FAQ Accordion ── */
     .faq-category { margin-bottom: 52px; }
@@ -333,6 +356,9 @@
       transition: opacity 0.3s ease;
     }
     .faq-item.open .faq-content-inner::before { opacity: 0.38; }
+    .faq-content-inner p { margin: 0; }
+    .faq-content-inner p + p { margin-top: 13px; }
+    .faq-content-inner code { white-space: nowrap; }
 
     /* ── CTA card ── */
     .cta-card {
@@ -380,6 +406,15 @@
       border-color: rgba(200,212,232,0.2);
       background: rgba(200,212,232,0.07);
     }
+    .footer-nav-section { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .footer-home-btn { background: rgba(200,212,232,0.035); border: 1px solid rgba(200,212,232,0.08); border-radius: 9999px; padding: 10px 20px; font-size: 13px; color: rgba(200,212,232,0.5); font-family: 'Inter', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
+    .footer-home-btn:hover, .footer-home-btn[aria-expanded="true"] { color: #C8D4E8; border-color: rgba(200,212,232,0.2); background: rgba(200,212,232,0.07); }
+    .footer-home-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+    .footer-home-btn[aria-expanded="true"] .footer-home-chevron { transform: rotate(180deg); opacity: 0.8; }
+    .footer-home-sub-row { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); width: 100%; }
+    .footer-home-sub-row > div { overflow: hidden; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .footer-home-sub-row.open { grid-template-rows: 1fr; }
+    .footer-home-sub-row.open > div { padding-top: 10px; }
     .footer-copy {
       color: rgba(200,212,232,0.28); font-size: 11px;
       font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
@@ -412,8 +447,50 @@
       background: rgba(255,255,255,0.05);
       transform: translateY(-2px);
     }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background: rgba(200,212,232,0.7); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
   </style>
   <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
 </head>
 <body>
@@ -444,16 +521,43 @@
       <a href="about.html"    class="nav-link">About</a>
       <a href="contact.html"  class="nav-link">Contact</a>
     </div>
-    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
-      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
-        <circle cx="10" cy="5.5" r="4.5"/>
-        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
-      </svg>
-      Login
-    </a>
-    <a href="contact.html" class="btn btn-primary">
-      Get a Quote <span aria-hidden="true">→</span>
-    </a>
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+          <circle cx="10" cy="5.5" r="4.5"/>
+          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+        </svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">
+        Get a Quote <span aria-hidden="true">→</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html"          class="mob-link mob-sub">Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="index.html#services" class="mob-link mob-sub">Services</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <a href="faq.html"      class="mob-link active">FAQ</a>
+    <a href="blog.html"     class="mob-link">Blog</a>
+    <a href="our-work.html" class="mob-link">Our Work</a>
+    <a href="about.html"    class="mob-link">About</a>
+    <a href="contact.html"  class="mob-link">Contact</a>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
   </div>
 </nav>
 
@@ -557,7 +661,7 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </div>
             <div class="scroll-item-text">
-              <strong>CMS Included</strong>
+              <strong>Whitelist-CMS Included</strong>
               <span>Update your own content easily</span>
             </div>
           </div>
@@ -624,7 +728,7 @@
             <div class="scroll-item-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </div>
-            <div class="scroll-item-text"><strong>CMS Included</strong><span>Update your own content easily</span></div>
+            <div class="scroll-item-text"><strong>Whitelist-CMS Included</strong><span>Update your own content easily</span></div>
           </div>
           <div class="scroll-item">
             <div class="scroll-item-icon">
@@ -661,13 +765,28 @@
         From timelines and pricing to hosting and revisions — we've answered the questions we hear most, honestly and in plain language.
         Scroll down for all eighteen.
       </p>
-      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-        <span class="tag-chip">The Foundations</span>
-        <span class="tag-chip">Straight Answers</span>
-        <span class="tag-chip">Process &amp; Timeline</span>
-        <span class="tag-chip">Pricing &amp; Packages</span>
-        <span class="tag-chip">Technical</span>
-        <span class="tag-chip">Working With Us</span>
+      <div>
+        <p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;margin-bottom:12px;">Jump to topic</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <a href="#faq-foundations" class="tag-chip">The Foundations
+            <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <a href="#faq-straight-answers" class="tag-chip">Straight Answers
+            <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <a href="#faq-process" class="tag-chip">Process &amp; Timeline
+            <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <a href="#faq-pricing" class="tag-chip">Pricing &amp; Packages
+            <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <a href="#faq-technical" class="tag-chip">Technical
+            <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <a href="#faq-working-with-us" class="tag-chip">Working With Us
+            <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -695,7 +814,7 @@
     </div>
 
     <!-- ── // The Foundations ── -->
-    <div class="faq-category">
+    <div class="faq-category" id="faq-foundations">
       <p class="sec-tag">// the foundations</p>
       <div class="faq-group">
 
@@ -712,7 +831,9 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Does your competitor have one? Does theirs look professional? Does it actually represent what they do — or does it look like it was built in 2009 and nobody's touched it since? Now ask yourself the same questions about yours. At minimum, a website hands anyone who finds you exactly what they need to stop browsing and start buying: your phone number, email, location, hours, and a straight answer to "what do you actually do around here." That alone is the difference between a window shopper and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">real lead</code>. Beyond that, it's the only piece of <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">digital real estate</code> you actually own — social platforms can throttle your reach, change the rules, or disappear entirely, and everything you built there goes with them. Your website doesn't answer to an algorithm. It answers to you.
+              <p>Does your competitor have one? Does theirs look professional? Does it actually represent what they do — or does it look like it was built in 2009 and nobody's touched it since? Now ask yourself the same questions about yours.</p>
+              <p>At minimum, a website hands anyone who finds you exactly what they need to stop browsing and start buying: your phone number, email, location, hours, and a straight answer to "what do you actually do around here." That alone is the difference between a window shopper and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">real lead</code>.</p>
+              <p>Beyond that, it's the only piece of <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">digital real estate</code> you actually own — social platforms can throttle your reach, change the rules, or disappear entirely, and everything you built there goes with them. Your website doesn't answer to an algorithm. It answers to you.</p>
             </div>
           </div>
         </div>
@@ -730,7 +851,9 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              If it loads slowly, looks broken on a phone, doesn't reflect what your business actually does today, or you're quietly embarrassed to hand someone the link — it needs work. Beyond aesthetics, an outdated site carries real cost: poor <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Core Web Vitals</code> hurt your search rankings, expired dependencies create security vulnerabilities, and a dated design signals to potential clients that you may not be paying attention. Your website is often the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">first impression</code>. Make sure it's earning its keep.
+              <p>If it loads slowly, looks broken on a phone, doesn't reflect what your business actually does today, or you're quietly embarrassed to hand someone the link — it needs work.</p>
+              <p>Beyond aesthetics, an outdated site carries real cost: poor <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Core Web Vitals</code> hurt your search rankings, expired dependencies create security vulnerabilities, and a dated design signals to potential clients that you may not be paying attention.</p>
+              <p>Your website is often the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">first impression</code>. Make sure it's earning its keep.</p>
             </div>
           </div>
         </div>
@@ -748,7 +871,9 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              SEO — Search Engine Optimization — is essentially your website's <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">street cred</code> in the eyes of Google and every other search engine out there. It operates on two fronts: technical (site speed, structured data, crawlability, mobile performance) and content (relevance, authority, keyword alignment). Here's the part no one likes to say out loud: nobody knows the exact algorithm, and it's always changing. What we do know is that proper SEO steadily improves where you rank — and rank matters. When was the last time you scrolled past <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">page one</code> of search results? Let alone page two? That's the game. A well-optimized site earns organic visibility over time, getting real eyeballs on what you're running without paying for every click. It's not a one-time fix — it compounds the longer you commit to it.
+              <p>SEO — Search Engine Optimization — is essentially your website's <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">street cred</code> in the eyes of Google and every other search engine out there. It operates on two fronts: technical (site speed, structured data, crawlability, mobile performance) and content (relevance, authority, keyword alignment).</p>
+              <p>Here's the part no one likes to say out loud: nobody knows the exact algorithm, and it's always changing. What we do know is that proper SEO steadily improves where you rank — and rank matters. When was the last time you scrolled past <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">page one</code> of search results? Let alone page two? That's the game.</p>
+              <p>A well-optimized site earns organic visibility over time, getting real eyeballs on what you're running without paying for every click. It's not a one-time fix — it compounds the longer you commit to it.</p>
             </div>
           </div>
         </div>
@@ -757,7 +882,7 @@
     </div>
 
     <!-- ── // Straight Answers ── -->
-    <div class="faq-category">
+    <div class="faq-category" id="faq-straight-answers">
       <p class="sec-tag">// straight answers</p>
       <div class="faq-group">
 
@@ -774,7 +899,9 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              We're different because we won't make that promise. No one can guarantee a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">#1 ranking</code> — Google's algorithm weighs hundreds of signals, updates constantly, and doesn't take instructions from agencies. Anyone promising otherwise is selling you a headline, not a result. What we do instead is build technically sound, fast, well-structured sites with clean <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">semantic markup</code>, proper metadata, and content architecture that gives search engines every reason to surface you. That foundation compounds over time. We'd rather you trust us because we told you the truth upfront than because we told you what you wanted to hear.
+              <p>We're different because we won't make that promise. No one can guarantee a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">#1 ranking</code> — Google's algorithm weighs hundreds of signals, updates constantly, and doesn't take instructions from agencies. Anyone promising otherwise is selling you a headline, not a result.</p>
+              <p>What we do instead is build technically sound, fast, well-structured sites with clean <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">semantic markup</code>, proper metadata, and content architecture that gives search engines every reason to surface you. That foundation compounds over time.</p>
+              <p>We'd rather you trust us because we told you the truth upfront than because we told you what you wanted to hear.</p>
             </div>
           </div>
         </div>
@@ -792,7 +919,9 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Honestly — it depends on what stage you're at and what you're trying to prove. A DIY tool can get you online fast, but it costs you in ways that don't show up on a pricing page: time you could spend building your business, performance limitations that cap your growth, and a template-built presence that makes it harder to stand out in a crowded market. The risk isn't the tool — it's treating your online presence as a checkbox rather than an <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">asset</code>. If budget is a real constraint right now, talk to us anyway. We'd rather help you think through the right move than watch you invest time in something you'll <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">rebuild</code> in a year.
+              <p>Honestly — it depends on what stage you're at and what you're trying to prove.</p>
+              <p>A DIY tool can get you online fast, but it costs you in ways that don't show up on a pricing page: time you could spend building your business, performance limitations that cap your growth, and a template-built presence that makes it harder to stand out in a crowded market. The risk isn't the tool — it's treating your online presence as a checkbox rather than an <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">asset</code>.</p>
+              <p>If budget is a real constraint right now, talk to us anyway. We'd rather help you think through the right move than watch you invest time in something you'll <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">rebuild</code> in a year.</p>
             </div>
           </div>
         </div>
@@ -810,7 +939,10 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Social media is genuinely great — Instagram, Facebook, TikTok, X, LinkedIn, YouTube, Pinterest, Snapchat, Reddit, WhatsApp — the reach across those platforms is real and worth using. But here's a question worth sitting with: when you're actually searching for a service, where do you go? Facebook? Instagram? X? Probably not. You open Google. Because social platforms are where we scroll, discover, and pass along recommendations — signals, suggestions, people pointing you somewhere. The active search, though? That's still a search engine. And what do you think surfaced that Instagram page in the first place? Think of your website as the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">digital front door</code> to your business. No door, and people are left standing outside trying to peer through windows — if you even have windows. Short of an apocalypse, I doubt anyone's climbing through. A social page is <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">borrowed land</code>: the platform owns your audience, controls your reach, and can change the rules without warning — leaving you to rebuild from nothing. Your website is yours. Own the door.
+              <p>Social media is genuinely great — Instagram, Facebook, TikTok, X, LinkedIn, YouTube, Pinterest, Snapchat, Reddit, WhatsApp — the reach across those platforms is real and worth using.</p>
+              <p>But here's a question worth sitting with: when you're actually searching for a service, where do you go? Facebook? Instagram? X? Probably not. You open Google. Because social platforms are where we scroll, discover, and pass along recommendations — signals, suggestions, people pointing you somewhere. The active search, though? That's still a search engine. And what do you think surfaced that Instagram page in the first place?</p>
+              <p>Think of your website as the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">digital front door</code> to your business. No door, and people are left standing outside trying to peer through windows — if you even have windows. Short of an apocalypse, I doubt anyone's climbing through.</p>
+              <p>A social page is <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">borrowed land</code>: the platform owns your audience, controls your reach, and can change the rules without warning — leaving you to rebuild from nothing. Your website is yours. Own the door.</p>
             </div>
           </div>
         </div>
@@ -833,7 +965,7 @@
     </div>
 
     <!-- ── // Process & Timeline ── -->
-    <div class="faq-category">
+    <div class="faq-category" id="faq-process">
       <p class="sec-tag">// process &amp; timeline</p>
       <div class="faq-group">
 
@@ -895,7 +1027,7 @@
     </div>
 
     <!-- ── // Pricing & Packages ── -->
-    <div class="faq-category">
+    <div class="faq-category" id="faq-pricing">
       <p class="sec-tag">// pricing &amp; packages</p>
       <div class="faq-group">
 
@@ -930,7 +1062,8 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Every engagement includes two components: a one-time <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Flat Rate</code> that covers the full design and build of your custom system, and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Recurring</code> plan — billed monthly or yearly — that keeps it maintained, updated, and performing. Both are always required, because we don't hand you a product and disappear. What we build is yours alone — designed from scratch, built around your business specifically, not templated or recycled. That level of ownership comes with ongoing accountability on our end, and that's exactly what the recurring plan protects.
+              <p>Every engagement includes two components: a one-time <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Flat Rate</code> that covers the full design and build of your custom system, and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Recurring</code> plan — billed monthly or yearly — that keeps it maintained, updated, and performing. Both are always required, because we don't hand you a product and disappear.</p>
+              <p>What we build is yours alone — designed from scratch, built around your business specifically, not templated or recycled. That level of ownership comes with ongoing accountability on our end, and that's exactly what the recurring plan protects.</p>
             </div>
           </div>
         </div>
@@ -948,7 +1081,11 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Monthly maintenance at VardWeb isn't a helpdesk ticket — it's an active, ongoing partnership. On the technical side, that means continuous performance auditing (<code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Core Web Vitals</code>, load optimization, render-blocking resolution), dependency and security patch cycles, SSL integrity checks, uptime monitoring with rapid-response protocols, and CRM pipeline health checks if your system includes one. On the relationship side, it means you have a team that already knows your stack, your goals, and your brand — so when something needs to change, it changes fast, correctly, and without a briefing call from scratch. We don't believe in handing clients a finished product and considering the job done. A website is a living system: search algorithms shift, browsers update, user behavior evolves, and your business grows. Maintenance is how we stay ahead of all of it on your behalf. Our clients aren't customers — they're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">long-term partners</code>, and that distinction shapes everything about how we work.
+              <p>Monthly maintenance at VardWeb isn't a helpdesk ticket — it's an active, ongoing partnership.</p>
+              <p>On the technical side, that means continuous performance auditing (<code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Core Web Vitals</code>, load optimization, render-blocking resolution), dependency and security patch cycles, SSL integrity checks, uptime monitoring with rapid-response protocols, and CRM pipeline health checks if your system includes one.</p>
+              <p>On the relationship side, it means you have a team that already knows your stack, your goals, and your brand — so when something needs to change, it changes fast, correctly, and without a briefing call from scratch.</p>
+              <p>We don't believe in handing clients a finished product and considering the job done. A website is a living system: search algorithms shift, browsers update, user behavior evolves, and your business grows. Maintenance is how we stay ahead of all of it on your behalf.</p>
+              <p>Our clients aren't customers — they're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">long-term partners</code>, and that distinction shapes everything about how we work.</p>
             </div>
           </div>
         </div>
@@ -957,7 +1094,7 @@
     </div>
 
     <!-- ── // Technical ── -->
-    <div class="faq-category">
+    <div class="faq-category" id="faq-technical">
       <p class="sec-tag">// technical</p>
       <div class="faq-group">
 
@@ -1019,7 +1156,7 @@
     </div>
 
     <!-- ── // Working With Us ── -->
-    <div class="faq-category">
+    <div class="faq-category" id="faq-working-with-us">
       <p class="sec-tag">// working with us</p>
       <div class="faq-group">
 
