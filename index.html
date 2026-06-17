@@ -209,7 +209,7 @@
     /* ── Hero ── */
     .hero {
       min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       position: relative; overflow: hidden;
       padding: 100px 28px 80px;
       background:
@@ -373,32 +373,60 @@
     .pu  { color: rgba(200,212,232,0.5); }
     .nu  { color: #b5cea8; }
 
-    /* ── Cards ── */
-    .card {
-      background: var(--surface);
-      border: 1px solid rgba(0,229,255,0.08);
-      border-radius: 16px; padding: 32px;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
-                  border-color 0.25s ease, box-shadow 0.25s ease;
+    /* ── Services cards: animated gradient "shader" panels ── */
+    .svc-card {
+      position: relative;
+      display: block;
+      height: 350px;
+      border-radius: 26px;
+      overflow: hidden;
+      isolation: isolate;
+      text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
     }
-    .card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(0,229,255,0.22);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 20px rgba(0,229,255,0.06);
+    .svc-card:hover {
+      transform: translateY(-6px);
+      box-shadow:
+        0 24px 56px rgba(0,0,0,0.55),
+        0 0 38px color-mix(in srgb, var(--c1, #00E5FF) 34%, transparent);
     }
-    .card-icon {
-      width: 48px; height: 48px; border-radius: 12px;
+    .svc-card:focus-visible { outline: 2px solid var(--c1, #00E5FF); outline-offset: 4px; }
+
+    .svc-card-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; background: #07080f; filter: blur(20px); }
+
+    .svc-card-panel {
+      position: relative; z-index: 1; height: 100%;
+      display: flex; flex-direction: column;
+      padding: 30px;
+      background: rgba(7,9,16,0.15);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 26px;
+    }
+    .svc-card-icon {
+      width: 54px; height: 54px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; margin-bottom: 20px;
+      margin-bottom: 20px; color: #fff;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.30));
     }
-    .icon-cyan { background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.14); }
-    .icon-pink { background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.14); }
-    .icon-gold { background: rgba(255,215,0,0.08);  border: 1px solid rgba(255,215,0,0.14); }
-    .card h3 {
-      font-size: 17px; font-weight: 700; color: var(--text-1);
+    .svc-card-panel h3 {
+      font-size: 21px; font-weight: 800; color: #fff;
       margin-bottom: 12px; letter-spacing: -0.02em;
     }
-    .card p { font-size: 14px; line-height: 1.78; color: var(--text-2); }
+    .svc-card-panel p {
+      font-size: 14px; line-height: 1.75;
+      color: rgba(255,255,255,0.82);
+      flex-grow: 1;
+    }
+    .svc-card-more {
+      margin-top: 20px; display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.85);
+    }
+    .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
+    @media (max-width: 560px) {
+      .svc-card { height: 320px; }
+    }
 
     /* ── Testimonials ── */
     .tcard {
@@ -421,26 +449,6 @@
       font-weight: 700; font-size: 13px; flex-shrink: 0;
     }
 
-    /* ── CTA section ── */
-    .cta-box {
-      background: var(--raised);
-      border: 1px solid rgba(0,229,255,0.12);
-      border-radius: 24px; padding: 80px 60px;
-      text-align: center; position: relative; overflow: hidden;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(0,229,255,0.08);
-    }
-    .cta-box .orb1 {
-      position: absolute; top: -100px; right: -100px;
-      width: 320px; height: 320px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,229,255,0.1), transparent 70%);
-      pointer-events: none;
-    }
-    .cta-box .orb2 {
-      position: absolute; bottom: -80px; left: -80px;
-      width: 260px; height: 260px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,45,120,0.08), transparent 70%);
-      pointer-events: none;
-    }
 
     /* ── Contact Form ── */
     .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: start; }
@@ -539,120 +547,142 @@
     /* ── Selection ── */
     ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
 
-    /* ── Cinematic Hero ── */
-    .film-grain {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 50; opacity: 0.05; mix-blend-mode: overlay;
-      background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)"/></svg>');
+    /* ── Hero: interactive dot canvas + bottom fade ── */
+    .hero-dots-canvas { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .hero-fade {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background: linear-gradient(to bottom, transparent 85%, var(--base) 100%);
     }
-    .bg-grid-theme {
-      background-size: 60px 60px;
-      background-image:
-        linear-gradient(to right, rgba(238,240,248,0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(238,240,248,0.05) 1px, transparent 1px);
-      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+
+    /* ── Hero: rotating word ── always sits on its own line below "designed to" */
+    .hero-rotate { display: inline-block; position: relative; color: var(--cyan); }
+    .hero-rotate .ch {
+      display: inline-block;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
     }
-    .text-3d-matte {
-      color: #eef0f8;
-      text-shadow: 0 10px 30px rgba(238,240,248,0.2), 0 2px 4px rgba(238,240,248,0.1);
+    .hero-rotate .ch.enter { transform: translateY(100%);  opacity: 0; }
+    .hero-rotate .ch.exit  { transform: translateY(-120%); opacity: 0; }
+
+    /* ── Hero: "works with" strip ── */
+    .works-item {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.5);
+      white-space: nowrap;
     }
-    .text-silver-matte {
-      background: linear-gradient(180deg, #eef0f8 0%, rgba(238,240,248,0.4) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      transform: translateZ(0);
-      filter: drop-shadow(0px 10px 20px rgba(238,240,248,0.15)) drop-shadow(0px 2px 4px rgba(238,240,248,0.1));
+
+    /* ── Hero: shiny badge sweep ── */
+    .badge-shiny { position: relative; overflow: hidden; }
+    .badge-shiny::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(100deg, transparent 30%, rgba(0,229,255,0.35) 50%, transparent 70%);
+      transform: translateX(-120%);
+      animation: badge-shine 2.6s ease-in-out infinite;
     }
-    .text-card-silver-matte {
-      background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      transform: translateZ(0);
-      filter: drop-shadow(0px 12px 24px rgba(0,0,0,0.8)) drop-shadow(0px 4px 8px rgba(0,0,0,0.6));
+    @keyframes badge-shine {
+      0%, 15%  { transform: translateX(-120%); }
+      50%,100% { transform: translateX(120%); }
     }
-    .premium-depth-card {
-      background: linear-gradient(145deg, #162C6D 0%, #0A101D 100%);
-      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.9), 0 20px 40px -20px rgba(0,0,0,0.8),
-        inset 0 1px 2px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.8);
-      border: 1px solid rgba(255,255,255,0.04);
+
+    /* ── Browser Mockup (shared pattern, also used in our-work.html) ── */
+    .browser-mock {
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 14px;
+      overflow: hidden;
       position: relative;
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(0,229,255,0.05) inset;
     }
-    .card-sheen {
-      position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 50;
-      background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.06) 0%, transparent 40%);
-      mix-blend-mode: screen; transition: opacity 0.3s ease;
+    .browser-bar {
+      height: 40px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 14px;
     }
-    .iphone-bezel {
-      background-color: #111;
-      box-shadow: inset 0 0 0 2px #52525B, inset 0 0 0 7px #000,
-        0 40px 80px -15px rgba(0,0,0,0.9), 0 15px 25px -5px rgba(0,0,0,0.7);
-      transform-style: preserve-3d;
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .browser-url-bar {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: rgba(200,212,232,0.35);
+      font-family: 'JetBrains Mono', monospace;
     }
-    .hardware-btn {
-      background: linear-gradient(90deg, #404040 0%, #171717 100%);
-      box-shadow: -2px 0 5px rgba(0,0,0,0.8), inset -1px 0 1px rgba(255,255,255,0.15), inset 1px 0 2px rgba(0,0,0,0.8);
-      border-left: 1px solid rgba(255,255,255,0.05);
+    .browser-body { overflow: hidden; }
+
+    .hero-mock-wrap { width: 100%; max-width: 860px; margin: 56px auto 0; position: relative; z-index: 1; }
+    .hero-mock-row { display: grid; grid-template-columns: 1fr 220px; gap: 20px; align-items: start; }
+    .browser-mock img { display: block; width: 100%; height: auto; }
+
+    /* Phone chassis: layered inset shadows simulate a metal frame + black bezel
+       around an inset screen, instead of a flat bordered box. */
+    .phone-mock {
+      background: linear-gradient(165deg, #2a2a2e 0%, #0a0a0c 60%);
+      border-radius: 36px;
+      overflow: hidden;
+      position: relative;
+      width: 220px;
+      aspect-ratio: 756 / 1732;
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,0.14),
+        inset 0 0 0 8px #050505,
+        0 45px 90px -20px rgba(0,0,0,0.85),
+        0 18px 32px -10px rgba(0,0,0,0.7);
     }
-    .screen-glare { background: linear-gradient(110deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 45%); }
-    .widget-depth {
-      background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 1px 1px rgba(255,255,255,0.05), inset 0 -1px 1px rgba(0,0,0,0.5);
-      border: 1px solid rgba(255,255,255,0.03);
+    .phone-mock-screen {
+      position: absolute; inset: 8px;
+      border-radius: 28px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
     }
-    .floating-ui-badge {
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 25px 50px -12px rgba(0,0,0,0.8),
-        inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -1px 1px rgba(0,0,0,0.5);
+    .phone-mock-notch {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 72px; height: 20px; background: #000; border-radius: 9999px; z-index: 2;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
     }
-    .btn-modern-light, .btn-modern-dark {
-      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-        box-shadow 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    .phone-mock-screen img {
+      position: absolute; inset: 30px 0 0 0;
+      width: 100%; height: calc(100% - 30px);
+      object-fit: cover; object-position: top;
     }
-    .btn-modern-light {
-      background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%); color: #0F172A;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.1), 0 12px 24px -4px rgba(0,0,0,0.3),
-        inset 0 1px 1px #fff, inset 0 -3px 6px rgba(0,0,0,0.06);
+
+    /* Both mocks link out to the live site: lift + cursor-tracked light on hover */
+    .mock-link {
+      display: block;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
     }
-    .btn-modern-light:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 6px 12px -2px rgba(0,0,0,0.15), 0 20px 32px -6px rgba(0,0,0,0.4),
-        inset 0 1px 1px #fff, inset 0 -3px 6px rgba(0,0,0,0.06);
+    .mock-link:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 28px rgba(0,229,255,0.1);
     }
-    .btn-modern-light:active { transform: translateY(1px); background: linear-gradient(180deg, #F1F5F9 0%, #E2E8F0 100%); }
-    .btn-modern-dark {
-      background: linear-gradient(180deg, #27272A 0%, #18181B 100%); color: #FFFFFF;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.6), 0 12px 24px -4px rgba(0,0,0,0.9),
-        inset 0 1px 1px rgba(255,255,255,0.15), inset 0 -3px 6px rgba(0,0,0,0.8);
+    .mock-link:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 4px; }
+    /* Spotlight: bright at the cursor, soft dark vignette at the edges so it
+       reads clearly over both light and dark parts of the screenshot. */
+    .mock-sheen {
+      position: absolute; inset: 0; z-index: 6; pointer-events: none;
+      border-radius: inherit;
+      background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%),
+        rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.06) 35%, rgba(0,0,0,0.32) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
-    .btn-modern-dark:hover {
-      transform: translateY(-3px);
-      background: linear-gradient(180deg, #3F3F46 0%, #27272A 100%);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.15), 0 6px 12px -2px rgba(0,0,0,0.7), 0 20px 32px -6px rgba(0,0,0,1),
-        inset 0 1px 1px rgba(255,255,255,0.2), inset 0 -3px 6px rgba(0,0,0,0.8);
+    .mock-link:hover .mock-sheen { opacity: 1; }
+
+    @media (max-width: 860px) {
+      .hero-mock-row { grid-template-columns: 1fr; justify-content: center; }
+      .hero-mock-desktop { display: none; }
+      .phone-mock { width: min(300px, 100%); margin: 0 auto; aspect-ratio: 756 / 1500; }
     }
-    .btn-modern-dark:active { transform: translateY(1px); background: #18181B; }
-    .btn-modern-light:focus-visible, .btn-modern-dark:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; }
-    .progress-ring {
-      transform: rotate(-90deg); transform-origin: 88px 88px;
-      stroke-dasharray: 402; stroke-dashoffset: 402; stroke-linecap: round;
-    }
-    /* Card inner responsive grid */
-    .card-inner-grid {
-      display: flex; flex-direction: column; justify-content: space-evenly;
-      align-items: center; padding: 1.5rem 1rem; width: 100%; height: 100%;
-    }
-    .card-desc-text { display: block; }
-    .mockup-inner-scale { transform: scale(0.65); display: flex; align-items: center; justify-content: center; position: relative; width: 100%; height: 100%; }
-    @media (min-width: 768px) {
-      .mockup-inner-scale { transform: scale(0.85); }
-    }
-    @media (min-width: 1024px) {
-      .card-inner-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem; padding: 0 3rem; }
-      .card-right-text { grid-column: 3; grid-row: 1; justify-content: flex-end !important; }
-      .mockup-scroll-wrapper { grid-column: 2; grid-row: 1; height: 600px !important; }
-      .card-left-text { grid-column: 1; grid-row: 1; text-align: left !important; }
-      .card-left-text .card-desc-text { margin-left: 0 !important; margin-right: 0 !important; }
-      .mockup-inner-scale { transform: scale(1); }
+    @media (max-width: 480px) {
+      .hero-mock-wrap { margin-top: 40px; }
     }
 
     /* ── Responsive ── */
@@ -660,14 +690,28 @@
 
     .stats-grid { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
     .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 0; align-items: center; }
+    .about-grid .ah-intro   { grid-column: 1; grid-row: 1; }
+    .about-grid .ah-outro   { grid-column: 1; grid-row: 2; }
+    .about-grid .code-block { grid-column: 2; grid-row: 1 / span 2; }
     .tcard-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
 
     @media (max-width: 1024px) {
       .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-grid .ah-intro,
+      .about-grid .ah-outro,
+      .about-grid .code-block { grid-column: auto; grid-row: auto; }
       .contact-grid { grid-template-columns: 1fr; gap: 52px; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+      #footer-bottom-bar { flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-bottom: 17vh; }
+      #footer-bottom-bar > * { order: 2; margin-left: auto; margin-right: auto; }
+      #footer-back-top   { order: 0; }
+      #footer-credit     { order: 1; }
+      .footer-giant-bg-text {
+        -webkit-text-stroke: 1px rgba(200,212,232,0.18);
+        background: linear-gradient(180deg, rgba(200,212,232,0.32) 0%, rgba(200,212,232,0.1) 70%, transparent 100%);
+      }
     }
     @media (max-width: 860px) {
       .features-grid { grid-template-columns: repeat(2,1fr); }
@@ -678,7 +722,6 @@
     @media (max-width: 560px) {
       .features-grid { grid-template-columns: 1fr; }
       .stats-grid    { grid-template-columns: repeat(2,1fr); }
-      .cta-box       { padding: 52px 28px; }
       .footer-grid   { grid-template-columns: 1fr; gap: 36px; }
       .logo-card img { height: 64px; }
       .logo-card     { padding: 14px 24px; }
@@ -767,6 +810,21 @@
       background-clip: text;
       filter: drop-shadow(0px 0px 20px rgba(200,212,232,0.15));
     }
+    @media (max-width: 768px) {
+      .footer-pill-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .footer-pill-cta {
+        width: 100%;
+        max-width: 280px;
+      }
+      .footer-pill-sec {
+        width: 100%;
+        max-width: 220px;
+      }
+    }
 
     /* ── Mobile: hover states triggered by scroll instead of pointer ── */
     @media (hover: none) {
@@ -774,10 +832,9 @@
         border-color: rgba(0,229,255,0.28);
         box-shadow: 0 0 24px rgba(0,229,255,0.07), inset 0 1px 0 rgba(0,229,255,0.08);
       }
-      .card.in-view {
-        transform: translateY(-5px);
-        border-color: rgba(0,229,255,0.22);
-        box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 20px rgba(0,229,255,0.06);
+      .svc-card.in-view {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 56px rgba(0,0,0,0.55), 0 0 28px rgba(0,229,255,0.07);
       }
       .tcard.in-view {
         transform: translateY(-5px);
@@ -808,8 +865,50 @@
         color: var(--cyan);
       }
     }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background: rgba(200,212,232,0.7); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; text-align: center; }
+      .mob-link { display: flex; align-items: center; justify-content: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; text-align: center; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 0; font-size: 13.5px; color: rgba(200,212,232,0.45); justify-content: center; }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: center; gap: 8px; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; justify-content: center; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
   </style>
   <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
 </head>
 
@@ -843,162 +942,120 @@
       <a href="contact.html"  class="nav-link">Contact</a>
     </div>
 
-    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
-      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
-        <circle cx="10" cy="5.5" r="4.5"/>
-        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
-      </svg>
-      Login
-    </a>
-    <a href="contact.html" class="btn btn-primary">
-      Get a Quote <span aria-hidden="true">→</span>
-    </a>
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+          <circle cx="10" cy="5.5" r="4.5"/>
+          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+        </svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">
+        Get a Quote <span aria-hidden="true">→</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html" class="mob-link mob-sub">Landing</a>
+    <a href="#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="#services" class="mob-link mob-sub">Services</a>
+    <a href="#results"  class="mob-link mob-sub">Results</a>
+    <a href="#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <a href="faq.html"      class="mob-link">FAQ</a>
+    <a href="blog.html"     class="mob-link">Blog</a>
+    <a href="our-work.html" class="mob-link">Our Work</a>
+    <a href="about.html"    class="mob-link">About</a>
+    <a href="contact.html"  class="mob-link">Contact</a>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
   </div>
 </nav>
 
 
-<!-- ────────────────────── CINEMATIC HERO ────────────────────── -->
-<div id="cinematic-hero" style="position:relative;width:100%;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--base);perspective:1500px;">
+<!-- ────────────────────── HERO ────────────────────── -->
+<section class="hero" id="hero">
+  <canvas id="hero-dots" class="hero-dots-canvas" aria-hidden="true"></canvas>
+  <div class="hero-fade" aria-hidden="true"></div>
 
-  <div class="film-grain" aria-hidden="true"></div>
-  <div class="bg-grid-theme" style="position:absolute;inset:0;z-index:0;pointer-events:none;opacity:0.5;" aria-hidden="true"></div>
+  <div class="hero-content">
+    <div class="badge badge-shiny" style="margin:0 auto 28px;">
+      <span class="badge-dot"></span>
+      Now booking Q3 2026 projects
+    </div>
 
-  <!-- Background layer: taglines -->
-  <div class="hero-text-wrapper" style="position:absolute;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;padding:0 1rem;will-change:transform;">
-    <h1 class="text-track text-3d-matte" style="font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,6rem);font-weight:700;letter-spacing:-0.03em;margin-bottom:8px;">Built to perform,</h1>
-    <h1 class="text-days text-silver-matte" style="font-family:'JetBrains Mono',monospace;font-size:clamp(2rem,6vw,6rem);font-weight:800;letter-spacing:-0.05em;">designed to convert.</h1>
-  </div>
+    <h1 style="font-family:'JetBrains Mono',monospace;font-size:clamp(2.2rem,6vw,4.6rem);font-weight:700;letter-spacing:-0.03em;line-height:1.08;color:var(--text-1);margin-bottom:22px;">
+      Built to perform,<br>
+      designed to<br>
+      <span id="hero-rotate" class="hero-rotate"><span class="word">Convert</span></span>
+    </h1>
 
-  <!-- CTA layer (revealed after scroll) -->
-  <div class="cta-wrapper" style="position:absolute;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%;padding:0 28px;pointer-events:auto;will-change:transform;">
-    <div style="max-width:900px;margin:0 auto;width:100%;">
-      <div class="cta-box">
-        <div class="orb1" aria-hidden="true"></div>
-        <div class="orb2" aria-hidden="true"></div>
-        <div style="position:relative;z-index:1;">
-          <p class="sec-tag" style="margin-bottom:18px;">// ready to launch?</p>
-          <h2 style="font-size:clamp(28px,5vw,54px);font-weight:800;line-height:1.08;margin-bottom:20px;color:var(--text-1);">
-            Your business deserves<br><span class="grad-cyan-pink">a website that works</span>
-          </h2>
-          <p style="font-size:16.5px;line-height:1.72;color:var(--text-2);max-width:480px;margin:0 auto 44px;">
-            Join 40+ businesses who trust VardWeb to power their digital presence. Let's build something that drives real growth.
-          </p>
-          <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-            <a href="contact.html" class="btn btn-cta" style="font-size:14.5px;padding:14px 36px;">
-              Get a Free Quote <span aria-hidden="true">→</span>
-            </a>
-            <a href="#services" class="btn btn-ghost" style="font-size:14px;padding:14px 28px;">
-              View Services
-            </a>
-          </div>
-          <p style="margin-top:22px;font-size:12px;color:rgba(200,212,232,0.3);">No commitment required &nbsp;·&nbsp; Discovery call is always free</p>
-        </div>
+    <p style="font-size:16.5px;line-height:1.75;color:var(--text-2);max-width:560px;margin:0 auto 36px;">
+      A Slow, outdated, or hard-to-navigate site doesn't just look bad — it actively costs you customers. We combine technical excellence to achieve pixel-perfect, blazing-fast, optimized enterprise-grade web apps.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;">
+      <a href="contact.html" class="btn btn-primary">Get a Free Quote <span aria-hidden="true">→</span></a>
+      <a href="our-work.html" class="btn btn-ghost">View Our Work</a>
+    </div>
+
+    <p style="font-size:12px;color:rgba(200,212,232,0.3);">No commitment required &nbsp;·&nbsp; Discovery call is always free</p>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:40px;">
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;">Works with</span>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:24px;">
+        <span class="works-item">Desktop
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </span>
+        <span class="works-item">Mobile
+          <svg width="13" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2D78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        </span>
+        <span class="works-item">Google
+          <svg width="16" height="16" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        </span>
+        <span class="works-item">Email
+          <svg width="16" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 9 6 9-6"/></svg>
+        </span>
+        <span class="works-item" style="font-weight:700;">AND MORE</span>
       </div>
     </div>
   </div>
 
-  <!-- Foreground: deep blue physical card -->
-  <div style="position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;perspective:1500px;">
-    <div id="deep-card" class="main-card premium-depth-card" style="position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;pointer-events:auto;width:92vw;height:92vh;border-radius:32px;">
-      <div class="card-sheen" aria-hidden="true"></div>
-
-      <!-- Responsive inner grid -->
-      <div class="card-inner-grid">
-
-        <!-- Brand name: top on mobile, right column on desktop -->
-        <div class="card-right-text" style="display:flex;justify-content:center;align-items:center;z-index:20;width:100%;">
-          <h2 class="text-card-silver-matte" style="font-family:'JetBrains Mono',monospace;font-size:clamp(2.5rem,9vw,8rem);font-weight:900;text-transform:uppercase;letter-spacing:-0.05em;line-height:1;">VardWeb</h2>
-        </div>
-
-        <!-- iPhone mockup: center -->
-        <div class="mockup-scroll-wrapper" style="position:relative;width:100%;height:380px;display:flex;align-items:center;justify-content:center;z-index:10;">
-          <div class="mockup-inner-scale">
-            <!-- iPhone bezel -->
-            <div id="phone-mockup" class="iphone-bezel" style="position:relative;width:280px;height:580px;border-radius:3rem;flex-shrink:0;will-change:transform;">
-              <div class="hardware-btn" style="position:absolute;top:120px;left:-3px;width:3px;height:25px;border-radius:4px 0 0 4px;" aria-hidden="true"></div>
-              <div class="hardware-btn" style="position:absolute;top:160px;left:-3px;width:3px;height:45px;border-radius:4px 0 0 4px;" aria-hidden="true"></div>
-              <div class="hardware-btn" style="position:absolute;top:220px;left:-3px;width:3px;height:45px;border-radius:4px 0 0 4px;" aria-hidden="true"></div>
-              <div class="hardware-btn" style="position:absolute;top:170px;right:-3px;width:3px;height:70px;border-radius:0 4px 4px 0;transform:scaleX(-1);" aria-hidden="true"></div>
-              <!-- Screen -->
-              <div style="position:absolute;inset:7px;background:#050914;border-radius:2.5rem;overflow:hidden;box-shadow:inset 0 0 15px rgba(0,0,0,1);color:white;z-index:10;">
-                <div class="screen-glare" style="position:absolute;inset:0;z-index:40;pointer-events:none;" aria-hidden="true"></div>
-                <!-- Dynamic Island -->
-                <div style="position:absolute;top:5px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#000;border-radius:9999px;z-index:50;display:flex;align-items:center;justify-content:flex-end;padding:0 12px;">
-                  <div style="width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.8);animation:blink 2.2s ease-in-out infinite;"></div>
-                </div>
-                <!-- App UI -->
-                <div style="position:relative;width:100%;height:100%;padding:3rem 1.25rem 2rem;display:flex;flex-direction:column;">
-                  <div class="phone-widget" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;">
-                    <div>
-                      <div style="font-size:10px;color:rgba(200,200,200,0.6);text-transform:uppercase;letter-spacing:0.15em;font-weight:700;margin-bottom:4px;">Today</div>
-                      <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;color:white;">Journey</div>
-                    </div>
-                    <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.05);color:#e5e5e5;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 4px 12px rgba(0,0,0,0.5);">JS</div>
-                  </div>
-                  <!-- Progress ring -->
-                  <div class="phone-widget" style="position:relative;width:176px;height:176px;margin:0 auto 2rem;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 15px 25px rgba(0,0,0,0.8));">
-                    <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 176 176" aria-hidden="true">
-                      <circle cx="88" cy="88" r="64" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="12"/>
-                      <circle class="progress-ring" cx="88" cy="88" r="64" fill="none" stroke="#3B82F6" stroke-width="12"/>
-                    </svg>
-                    <div style="text-align:center;z-index:10;display:flex;flex-direction:column;align-items:center;">
-                      <span class="counter-val" style="font-size:2.5rem;font-weight:900;letter-spacing:-0.05em;color:white;">0</span>
-                      <span style="font-size:8px;color:rgba(147,197,253,0.5);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-top:2px;">Days Support</span>
-                    </div>
-                  </div>
-                  <!-- Widget cards -->
-                  <div style="display:flex;flex-direction:column;gap:12px;">
-                    <div class="phone-widget widget-depth" style="border-radius:16px;padding:12px;display:flex;align-items:center;">
-                      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(59,130,246,0.2),rgba(37,99,235,0.05));display:flex;align-items:center;justify-content:center;margin-right:12px;border:1px solid rgba(96,165,250,0.2);">
-                        <svg width="16" height="16" fill="none" stroke="#60A5FA" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                      </div>
-                      <div><div style="height:8px;width:80px;background:rgba(200,200,200,0.3);border-radius:4px;margin-bottom:8px;"></div><div style="height:6px;width:48px;background:rgba(100,100,100,0.5);border-radius:4px;"></div></div>
-                    </div>
-                    <div class="phone-widget widget-depth" style="border-radius:16px;padding:12px;display:flex;align-items:center;">
-                      <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(5,150,105,0.05));display:flex;align-items:center;justify-content:center;margin-right:12px;border:1px solid rgba(52,211,153,0.2);">
-                        <svg width="16" height="16" fill="none" stroke="#34D399" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                      </div>
-                      <div><div style="height:8px;width:64px;background:rgba(200,200,200,0.3);border-radius:4px;margin-bottom:8px;"></div><div style="height:6px;width:96px;background:rgba(100,100,100,0.5);border-radius:4px;"></div></div>
-                    </div>
-                  </div>
-                  <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:120px;height:4px;background:rgba(255,255,255,0.2);border-radius:9999px;"></div>
-                </div>
-              </div>
-            </div>
-            <!-- Floating badges -->
-            <div class="floating-badge floating-ui-badge" style="position:absolute;top:24px;left:-60px;display:flex;align-items:center;gap:12px;border-radius:16px;padding:12px 16px;z-index:30;">
-              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(180deg,rgba(59,130,246,0.2),rgba(29,78,216,0.1));display:flex;align-items:center;justify-content:center;border:1px solid rgba(96,165,250,0.3);">
-                <span aria-hidden="true" style="font-size:18px;">🔥</span>
-              </div>
-              <div>
-                <div style="color:white;font-size:13px;font-weight:700;letter-spacing:-0.01em;">Quality SEO</div>
-                <div style="color:rgba(147,197,253,0.5);font-size:11px;font-weight:500;">Customers to Clients</div>
-              </div>
-            </div>
-            <div class="floating-badge floating-ui-badge" style="position:absolute;bottom:80px;right:-60px;display:flex;align-items:center;gap:12px;border-radius:16px;padding:12px 16px;z-index:30;">
-              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(180deg,rgba(99,102,241,0.2),rgba(67,56,202,0.1));display:flex;align-items:center;justify-content:center;border:1px solid rgba(129,140,248,0.3);">
-                <span aria-hidden="true" style="font-size:16px;">🤝</span>
-              </div>
-              <div>
-                <div style="color:white;font-size:13px;font-weight:700;letter-spacing:-0.01em;">User-friendly</div>
-                <div style="color:rgba(147,197,253,0.5);font-size:11px;font-weight:500;">Mobile Responsive.</div>
-              </div>
-            </div>
+  <div class="hero-mock-wrap">
+    <div class="hero-mock-row">
+      <a href="https://vardedveins.com" target="_blank" rel="noopener noreferrer" class="browser-mock hero-mock-desktop mock-link" aria-label="Visit VardedVeins (opens in a new tab)">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <div class="browser-dot" style="background:#FF5F56;"></div>
+            <div class="browser-dot" style="background:#FFBD2E;"></div>
+            <div class="browser-dot" style="background:#27C93F;"></div>
           </div>
+          <div class="browser-url-bar">vardedveins.com</div>
         </div>
-
-        <!-- Card description: bottom on mobile, left column on desktop -->
-        <div class="card-left-text" style="display:flex;flex-direction:column;justify-content:center;text-align:center;z-index:20;width:100%;padding:0 1rem;">
-          <h3 style="color:white;font-size:clamp(1.1rem,2.5vw,2.25rem);font-weight:700;letter-spacing:-0.02em;margin:0;">Web Design, redefined.</h3>
-          <p class="card-desc-text" style="color:rgba(147,197,253,0.7);font-size:clamp(0.875rem,1.2vw,1rem);font-weight:400;line-height:1.7;max-width:340px;margin:20px auto 0;">
-            <span style="color:white;font-weight:600;">Slow</span>, outdated, or hard-to-navigate site doesn't just look bad — it actively costs you customers. We combine technical excellence to achieve pixel-perfect, blazing-fast, optimized enterprise-grade web apps.
-          </p>
+        <div class="browser-body">
+          <img src="brand_assets/vardedveins.com_Desktop.webp" alt="VardedVeins desktop site preview" loading="lazy">
         </div>
+        <div class="mock-sheen" aria-hidden="true"></div>
+      </a>
 
-      </div>
+      <a href="https://vardedveins.com" target="_blank" rel="noopener noreferrer" class="phone-mock mock-link" aria-label="Visit VardedVeins (opens in a new tab)">
+        <div class="phone-mock-screen">
+          <div class="phone-mock-notch"></div>
+          <img src="brand_assets/vardedveins.com_Mobile_cropped.webp" alt="VardedVeins mobile site preview" loading="lazy">
+        </div>
+        <div class="mock-sheen" aria-hidden="true"></div>
+      </a>
     </div>
   </div>
-</div>
+</section>
 
 
 <!-- ────────────────────── STATS ────────────────────── -->
@@ -1029,22 +1086,15 @@
   <div style="max-width:1200px;margin:0 auto;">
     <div class="about-grid">
 
-      <!-- Text -->
-      <div>
-        <p class="sec-tag">// seo &amp; performance</p>
+      <!-- Text intro -->
+      <div class="ah-intro">
+        <p class="sec-tag">// Why Us?</p>
         <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:24px;color:var(--text-1);">
           Rank higher,<br>convert better
         </h2>
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:20px;">
-          In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion</code>. VardWeb builds sites that work as hard as you do.
+          In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion.</code> VardWeb builds sites that work as hard as you do.
         </p>
-        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:36px;">
-          From landing pages to full web applications, we deliver results. Clean code, lightning-fast load times, and structured data built to satisfy both search engines and the people using them — so you rank higher and keep visitors once they arrive.
-        </p>
-        <div style="display:flex;gap:14px;flex-wrap:wrap;">
-          <a href="contact.html" class="btn btn-primary">Start Your Project</a>
-          <a href="#services" class="btn btn-ghost">See Services</a>
-        </div>
       </div>
 
       <!-- Code block -->
@@ -1060,6 +1110,17 @@
         </div>
       </div>
 
+      <!-- Text outro -->
+      <div class="ah-outro">
+        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:36px;">
+          From landing pages to full web applications, we deliver results. Clean code, lightning-fast load times, and structured data built to satisfy both search engines and the people using them — so you <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">rank higher</code> and keep visitors once they arrive.
+        </p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;">
+          <a href="contact.html" class="btn btn-primary">Start Your Project</a>
+          <a href="#services" class="btn btn-ghost">See Services</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -1072,43 +1133,79 @@
   <div style="max-width:1200px;margin:0 auto;">
 
     <div style="text-align:center;margin-bottom:68px;">
-      <p class="sec-tag">// what we deliver</p>
+      <p class="sec-tag">// Services</p>
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
         Every site comes with<br><span class="grad-cyan-pink">these by default</span>
       </h2>
     </div>
 
     <div class="features-grid">
-      <div class="card">
-        <div class="card-icon icon-cyan">📱</div>
-        <h3>Mobile-First Design</h3>
-        <p>Every site we build starts mobile and scales up. Fully responsive across all devices and screen sizes — your visitors get a flawless experience on phone, tablet, or desktop.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon icon-gold">⚡</div>
-        <h3>Lightning-Fast Loading</h3>
-        <p>Speed is a conversion factor. We optimize every asset, lazy-load resources, and write efficient code so your site loads in under 2 seconds. Faster sites rank higher and sell more.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon icon-pink">🔍</div>
-        <h3>SEO-Optimized Structure</h3>
-        <p>Built for search engines from day one. Semantic HTML, structured data, optimized meta tags, and content hierarchy designed to get you found by the people actively searching for you.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon icon-cyan">🎯</div>
-        <h3>Strategic CTAs &amp; UX</h3>
-        <p>Intuitive navigation, clear visual hierarchy, and action-oriented calls-to-action placed with intent. We design user journeys that guide visitors toward conversion — every time.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon icon-pink">🔒</div>
-        <h3>Security &amp; Privacy</h3>
-        <p>HTTPS by default, secure form handling, GDPR-compliant privacy setups, and WCAG accessibility standards — your site protects your users and earns their trust from first load.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon icon-gold">📊</div>
-        <h3>Analytics &amp; Optimization</h3>
-        <p>We set up tracking, monitor performance, and provide ongoing insights. Know exactly who's visiting, what they're doing, and where to improve — with data-backed continuous optimization.</p>
-      </div>
+      <a href="contact.html" class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="11" y1="18.5" x2="13" y2="18.5"/></svg>
+          </div>
+          <h3>Mobile-First Design</h3>
+          <p>Every site we build starts mobile and scales up. Fully responsive across all devices and screen sizes — your visitors get a flawless experience on phone, tablet, or desktop.</p>
+          <div class="svc-card-more">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+      <a href="contact.html" class="svc-card" style="--c1:#FFD700;--c2:#FF8C00;--c3:#FFE873;">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 4 14 12 14 11 22 20 10 12 10 13 2"/></svg>
+          </div>
+          <h3>Lightning-Fast Loading</h3>
+          <p>Speed is a conversion factor. We optimize every asset, lazy-load resources, and write efficient code so your site loads in under 2 seconds. Faster sites rank higher and sell more.</p>
+          <div class="svc-card-more">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+      <a href="contact.html" class="svc-card" style="--c1:#FF2D78;--c2:#C9185E;--c3:#FF7AB0;">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3>SEO-Optimized Structure</h3>
+          <p>Built for search engines from day one. Semantic HTML, structured data, optimized meta tags, and content hierarchy designed to get you found by the people actively searching for you.</p>
+          <div class="svc-card-more">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+      <a href="contact.html" class="svc-card" style="--c1:#8A4FFF;--c2:#5B2EBF;--c3:#C9A8FF;">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <h3>Strategic CTAs &amp; UX</h3>
+          <p>Intuitive navigation, clear visual hierarchy, and action-oriented calls-to-action placed with intent. We design user journeys that guide visitors toward conversion — every time.</p>
+          <div class="svc-card-more">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+      <a href="contact.html" class="svc-card" style="--c1:#1FD18C;--c2:#0E9468;--c3:#7CFFCB;">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l7.5 3.2v6c0 5-3.2 8.3-7.5 9.8-4.3-1.5-7.5-4.8-7.5-9.8v-6L12 2.5z"/><path d="M9 12l2.2 2.2L15.5 9.7"/></svg>
+          </div>
+          <h3>Security &amp; Privacy</h3>
+          <p>HTTPS by default, secure form handling, GDPR-compliant privacy setups, and WCAG accessibility standards — your site protects your users and earns their trust from first load.</p>
+          <div class="svc-card-more">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
+      <a href="contact.html" class="svc-card" style="--c1:#FF5C5C;--c2:#C73E3E;--c3:#FF9B9B;">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="21" x2="5" y2="13"/><line x1="12" y1="21" x2="12" y2="8"/><line x1="19" y1="21" x2="19" y2="3"/></svg>
+          </div>
+          <h3>Analytics &amp; Optimization</h3>
+          <p>We set up tracking, monitor performance, and provide ongoing insights. Know exactly who's visiting, what they're doing, and where to improve — with data-backed continuous optimization.</p>
+          <div class="svc-card-more">Learn more <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </a>
     </div>
 
   </div>
@@ -1118,56 +1215,293 @@
 
 
 <!-- ────────────────────── RESULTS / TESTIMONIALS ────────────────────── -->
-<section id="results" style="padding:100px 28px;">
-  <div style="max-width:1200px;margin:0 auto;">
+<section id="results" style="padding:100px 0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(255,215,0,0.028) 0%,transparent 65%),var(--base);">
+  <style>
+    .testi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    @media (max-width: 860px) {
+      .testi-grid { grid-template-columns: 1fr; gap: 48px; }
+    }
+    .testi-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .testi-fade.in { opacity: 1; transform: translateY(0); }
+    .testi-card-outer {
+      position: relative;
+      min-height: 400px;
+    }
+    @media (max-width: 860px) { .testi-card-outer { min-height: 500px; } }
+    @media (max-width: 480px)  { .testi-card-outer { min-height: 540px; } }
+    .testi-card {
+      position: absolute;
+      inset: 0;
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.09);
+      border-radius: 20px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateX(72px) scale(0.93);
+      transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      pointer-events: none;
+      z-index: 0;
+      box-shadow:
+        0 28px 72px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(0,229,255,0.04) inset,
+        0 2px 0 rgba(255,255,255,0.03) inset;
+    }
+    @media (max-width: 860px) {
+      .testi-card { padding: 28px; }
+    }
+    .testi-card.active {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+      z-index: 10;
+    }
+    .testi-stars { display: flex; gap: 6px; margin-bottom: 28px; }
+    .testi-quote-svg {
+      position: absolute;
+      top: -5px; left: -5px;
+      width: 40px; height: 40px;
+      transform: rotate(180deg);
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+    .testi-quote-text {
+      position: relative;
+      z-index: 1;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.78;
+      color: var(--text-1);
+    }
+    .testi-sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.12), transparent);
+      margin: 24px 0;
+      flex-shrink: 0;
+    }
+    .testi-avatar-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .testi-avatar-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .testi-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--text-1);
+      margin-bottom: 3px;
+    }
+    .testi-role {
+      font-size: 14px;
+      color: var(--text-2);
+    }
+    @media (max-width: 860px) {
+      .testi-quote-text { font-size: 16px; }
+      .testi-name { font-size: 15px; }
+      .testi-role { font-size: 13px; }
+      .testi-avatar-circle { width: 50px; height: 50px; }
+    }
+    .testi-dot {
+      height: 10px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: rgba(200,212,232,0.16);
+      padding: 0;
+      width: 10px;
+      transition: width 0.35s cubic-bezier(0.34,1.56,0.64,1),
+                  background 0.3s ease;
+    }
+    .testi-dot.active { width: 40px; background: var(--gold); }
+    .testi-dot:hover:not(.active) { background: rgba(255,215,0,0.38); }
+    .testi-dot:focus-visible { outline: 2px solid rgba(255,215,0,0.55); outline-offset: 3px; border-radius: 999px; }
+  </style>
 
-    <div style="text-align:center;margin-bottom:68px;">
-      <p class="sec-tag">// client results</p>
-      <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-        Real businesses,<br><span class="grad-gold">real results</span>
-      </h2>
+  <div style="max-width:1200px;margin:0 auto;padding:0 28px;">
+    <div class="testi-grid">
+
+      <!-- LEFT: heading + dots -->
+      <div class="testi-fade" id="testi-left">
+
+        <div style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-radius:999px;padding:5px 16px;margin-bottom:16px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.08em;color:rgba(255,215,0,0.85);">Trusted by clients</span>
+        </div>
+
+        <p class="sec-tag">// Results</p>
+
+        <h2 style="font-size:clamp(28px,4vw,46px);font-weight:800;line-height:1.1;letter-spacing:-0.03em;color:var(--text-1);margin-bottom:20px;">
+          Real businesses,<br><span class="grad-gold">real results</span>
+        </h2>
+
+        <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);max-width:400px;margin-bottom:38px;">
+          Don't just take our word for it. See what our clients say after working with VardWeb — from restaurant owners to e-commerce founders.
+        </p>
+
+        <div style="display:flex;align-items:center;gap:10px;" role="tablist" aria-label="Client testimonials">
+          <button class="testi-dot active" data-ti="0" role="tab" aria-selected="true"  aria-label="Testimonial 1"></button>
+          <button class="testi-dot"        data-ti="1" role="tab" aria-selected="false" aria-label="Testimonial 2"></button>
+          <button class="testi-dot"        data-ti="2" role="tab" aria-selected="false" aria-label="Testimonial 3"></button>
+        </div>
+      </div>
+
+      <!-- RIGHT: stacked animated cards -->
+      <div class="testi-fade testi-card-outer" style="transition-delay:0.18s;" id="testi-cards">
+
+        <!-- Decorative corners -->
+        <div style="position:absolute;bottom:-22px;left:-22px;width:72px;height:72px;border-radius:14px;background:rgba(0,229,255,0.04);pointer-events:none;"></div>
+        <div style="position:absolute;top:-22px;right:-22px;width:72px;height:72px;border-radius:14px;background:rgba(255,45,120,0.04);pointer-events:none;"></div>
+
+        <!-- Card 0 — Marcus R. -->
+        <div class="testi-card active" data-card="0">
+          <div class="testi-stars">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div style="position:relative;flex:1;">
+            <svg class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(0,229,255,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"VardWeb transformed our online presence. Our new site loads twice as fast, and we've seen a 40% increase in enquiries since launch. The branding is sharp and consistent throughout."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;border:2px solid rgba(0,229,255,0.25);">MR</div>
+            <div>
+              <div class="testi-name">Marcus R.</div>
+              <div class="testi-role">Restaurant Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 1 — Priya S. -->
+        <div class="testi-card" data-card="1">
+          <div class="testi-stars">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div style="position:relative;flex:1;">
+            <svg class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,45,120,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"They nailed the brief on the first round. Beautiful design, perfect on mobile, and the SEO work means we're ranking on page one for our key terms. Incredible team to work with."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;border:2px solid rgba(255,45,120,0.25);">PS</div>
+            <div>
+              <div class="testi-name">Priya S.</div>
+              <div class="testi-role">E-Commerce Founder</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 — Daniel W. -->
+        <div class="testi-card" data-card="2">
+          <div class="testi-stars">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div style="position:relative;flex:1;">
+            <svg class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"I was skeptical about investing in a professional site, but the ROI has been undeniable. More traffic, more leads, better trust signals — our brand finally looks the part it deserves."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;border:2px solid rgba(255,215,0,0.25);">DW</div>
+            <div>
+              <div class="testi-name">Daniel W.</div>
+              <div class="testi-role">Marketing Consultant</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <div class="tcard-grid">
-
-      <div class="tcard">
-        <div class="quote" style="color:rgba(0,229,255,0.55);">"</div>
-        <p>VardWeb transformed our online presence. Our new site loads twice as fast, and we've seen a 40% increase in enquiries since launch. The branding is sharp and consistent throughout.</p>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="avatar" style="background:linear-gradient(135deg,#00E5FF,#005580);">MR</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;color:var(--text-1);">Marcus R.</div>
-            <div style="font-size:12px;color:rgba(200,212,232,0.4);">Restaurant Owner</div>
-          </div>
-        </div>
+    <!-- Logo cloud -->
+    <div class="testi-fade" style="margin-top:80px;text-align:center;transition-delay:0.3s;">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,212,232,0.3);margin-bottom:32px;">Trusted by businesses using companies worldwide</p>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:40px 56px;">
+        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Google</span>
+        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Microsoft</span>
+        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Airbnb</span>
+        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Spotify</span>
+        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Amazon</span>
       </div>
-
-      <div class="tcard" style="background:rgba(255,45,120,0.04);border-color:rgba(255,45,120,0.1);">
-        <div class="quote" style="color:rgba(255,45,120,0.55);">"</div>
-        <p>They nailed the brief on the first round. Beautiful design, perfect on mobile, and the SEO work means we're ranking on page one for our key terms. Incredible team to work with.</p>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="avatar" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;">PS</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;color:var(--text-1);">Priya S.</div>
-            <div style="font-size:12px;color:rgba(200,212,232,0.4);">E-Commerce Founder</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tcard" style="background:rgba(255,215,0,0.03);border-color:rgba(255,215,0,0.09);">
-        <div class="quote" style="color:rgba(255,215,0,0.55);">"</div>
-        <p>I was skeptical about investing in a professional site, but the ROI has been undeniable. More traffic, more leads, better trust signals — our brand finally looks the part it deserves.</p>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div class="avatar" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;">DW</div>
-          <div>
-            <div style="font-weight:600;font-size:14px;color:var(--text-1);">Daniel W.</div>
-            <div style="font-size:12px;color:rgba(200,212,232,0.4);">Marketing Consultant</div>
-          </div>
-        </div>
-      </div>
-
     </div>
+
   </div>
+
+  <script>
+  (function () {
+    var cards = Array.from(document.querySelectorAll('.testi-card'));
+    var dots  = Array.from(document.querySelectorAll('.testi-dot'));
+    var active = 0;
+    var timer;
+
+    function goTo(idx) {
+      cards[active].classList.remove('active');
+      dots[active].classList.remove('active');
+      dots[active].setAttribute('aria-selected', 'false');
+      active = idx;
+      cards[active].classList.add('active');
+      dots[active].classList.add('active');
+      dots[active].setAttribute('aria-selected', 'true');
+    }
+
+    function next() { goTo((active + 1) % cards.length); }
+
+    function resetTimer() { clearInterval(timer); timer = setInterval(next, 6000); }
+
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        goTo(parseInt(dot.dataset.ti, 10));
+        resetTimer();
+      });
+    });
+
+    /* Scroll-triggered entrance */
+    var fadeEls = document.querySelectorAll('.testi-fade');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    fadeEls.forEach(function (el) { io.observe(el); });
+
+    timer = setInterval(next, 6000);
+  })();
+  </script>
 </section>
 
 
@@ -1270,7 +1604,7 @@
   </style>
 
   <div style="text-align:center;margin-bottom:68px;">
-    <p class="sec-tag">// the plan</p>
+    <p class="sec-tag">// The Roadmap</p>
     <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
       Discovery begins on the<br><span class="grad-gold">yellow brick road</span>
     </h2>
@@ -1363,33 +1697,33 @@
 
       <div id="footer-links" style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;">
         <!-- Primary CTA pills -->
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;">
-          <a href="contact.html" class="footer-glass-pill footer-magnetic" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
+        <div class="footer-pill-row footer-pill-row-primary" style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px;width:100%;">
+          <a href="contact.html" class="footer-glass-pill footer-magnetic footer-pill-cta" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
             Start Your Project <span style="opacity:0.7;">→</span>
           </a>
-          <a href="contact.html" class="footer-glass-pill footer-magnetic" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
+          <a href="contact.html" class="footer-glass-pill footer-magnetic footer-pill-cta" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
             Contact Us
           </a>
-          <a href="our-work.html" class="footer-glass-pill footer-magnetic" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
+          <a href="our-work.html" class="footer-glass-pill footer-magnetic footer-pill-cta" style="padding:20px 40px;border-radius:9999px;color:#C8D4E8;font-weight:700;font-size:15px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;">
             View Our Work
           </a>
         </div>
         <!-- Secondary pills -->
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px;">
-          <a href="faq.html"      class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">FAQ</a>
-          <a href="blog.html"     class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">Blog</a>
-          <a href="about.html"    class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">About Us</a>
-          <a href="privacy.html"  class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">Privacy Policy</a>
-          <a href="terms.html"    class="footer-glass-pill footer-magnetic" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;">Terms of Service</a>
+        <div class="footer-pill-row footer-pill-row-secondary" style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px;">
+          <a href="faq.html"      class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">FAQ</a>
+          <a href="blog.html"     class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Blog</a>
+          <a href="about.html"    class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">About Us</a>
+          <a href="privacy.html"  class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Privacy Policy</a>
+          <a href="terms.html"    class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Terms of Service</a>
         </div>
       </div>
     </div>
 
     <!-- Bottom bar -->
-    <div style="position:relative;z-index:20;width:100%;padding:0 48px 32px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div id="footer-bottom-bar" style="position:relative;z-index:20;width:100%;padding:0 48px 32px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
       <p style="color:rgba(200,212,232,0.28);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">© 2026 VardWeb. All rights reserved.</p>
 
-      <div class="footer-glass-pill" style="padding:11px 22px;border-radius:9999px;display:flex;align-items:center;gap:8px;cursor:default;">
+      <div id="footer-credit" class="footer-glass-pill" style="padding:11px 22px;border-radius:9999px;display:flex;align-items:center;gap:8px;cursor:default;">
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
         <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">❤</span>
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
@@ -1407,119 +1741,229 @@
 </div>
 
 <script>
+/* ── Hero: interactive dot-grid canvas ── */
 (function () {
-  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  gsap.registerPlugin(ScrollTrigger);
-  ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load' });
+  var canvas = document.getElementById('hero-dots');
+  var hero   = document.getElementById('hero');
+  if (!canvas || !hero) return;
 
-  // Block ScrollTrigger.refresh() entirely during resize so the pin-spacer
-  // recalculation never gets a chance to reset scroll position.
-  var _scrollY   = 0;
-  var _resizing  = false;
-  var _resizeEnd = null;
-  window.addEventListener('scroll', function () { if (!_resizing) _scrollY = window.scrollY; }, { passive: true });
-  window.addEventListener('resize', function () {
-    _resizing = true;
-    _scrollY = window.scrollY;
-    clearTimeout(_resizeEnd);
-    _resizeEnd = setTimeout(function () {
-      _resizing = false;
-      _origRefresh();
-      requestAnimationFrame(function () { window.scrollTo(0, _scrollY); });
-    }, 200);
-  }, { passive: true, capture: true });
-  var _origRefresh = ScrollTrigger.refresh.bind(ScrollTrigger);
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ctx = canvas.getContext('2d');
 
-  var container = document.getElementById('cinematic-hero');
-  var mainCard  = document.getElementById('deep-card');
-  var mockup    = document.getElementById('phone-mockup');
-  var rafId     = 0;
+  var DOT_SPACING       = 28;
+  var BASE_OPACITY_MIN  = 0.20;
+  var BASE_OPACITY_MAX  = 0.38;
+  var BASE_RADIUS       = 1;
+  var INTERACTION_RADIUS    = 140;
+  var INTERACTION_RADIUS_SQ = INTERACTION_RADIUS * INTERACTION_RADIUS;
+  var OPACITY_BOOST = 0.5;
+  var RADIUS_BOOST  = 2;
+  var GRID_CELL_SIZE = Math.max(50, Math.floor(INTERACTION_RADIUS / 1.5));
 
-  // Desktop initial card size
-  var isMobile = window.innerWidth < 768;
-  if (!isMobile) {
-    mainCard.style.width        = '85vw';
-    mainCard.style.height       = '85vh';
-    mainCard.style.borderRadius = '40px';
+  var dots = [];
+  var grid = {};
+  var size = { width: 0, height: 0 };
+  var mouse = { x: null, y: null };
+  var rafId = 0;
+
+  function createDots() {
+    dots = [];
+    grid = {};
+    var cols = Math.ceil(size.width  / DOT_SPACING);
+    var rows = Math.ceil(size.height / DOT_SPACING);
+
+    for (var i = 0; i < cols; i++) {
+      for (var j = 0; j < rows; j++) {
+        var x = i * DOT_SPACING + DOT_SPACING / 2;
+        var y = j * DOT_SPACING + DOT_SPACING / 2;
+        var cellKey = Math.floor(x / GRID_CELL_SIZE) + '_' + Math.floor(y / GRID_CELL_SIZE);
+        if (!grid[cellKey]) grid[cellKey] = [];
+        grid[cellKey].push(dots.length);
+
+        var baseOpacity = Math.random() * (BASE_OPACITY_MAX - BASE_OPACITY_MIN) + BASE_OPACITY_MIN;
+        dots.push({
+          x: x, y: y,
+          targetOpacity: baseOpacity,
+          currentOpacity: baseOpacity,
+          opacitySpeed: Math.random() * 0.005 + 0.002,
+          currentRadius: BASE_RADIUS
+        });
+      }
+    }
   }
 
-  // Mouse: card sheen + phone 3D tilt
-  window.addEventListener('mousemove', function (e) {
-    if (window.scrollY > window.innerHeight * 2) return;
-    cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(function () {
-      var rect = mainCard.getBoundingClientRect();
-      mainCard.style.setProperty('--mouse-x', (e.clientX - rect.left) + 'px');
-      mainCard.style.setProperty('--mouse-y', (e.clientY - rect.top)  + 'px');
-      var xVal = (e.clientX / window.innerWidth  - 0.5) * 2;
-      var yVal = (e.clientY / window.innerHeight - 0.5) * 2;
-      gsap.to(mockup, { rotationY: xVal * 12, rotationX: -yVal * 12, ease: 'power3.out', duration: 1.2 });
+  function handleResize() {
+    var width  = hero.clientWidth;
+    var height = hero.clientHeight;
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width  = width;
+      canvas.height = height;
+      size = { width: width, height: height };
+      createDots();
+    }
+  }
+
+  function handleMouseMove(e) {
+    var rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  }
+
+  function drawStatic() {
+    ctx.clearRect(0, 0, size.width, size.height);
+    dots.forEach(function (dot) {
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(0,229,255,' + dot.currentOpacity.toFixed(3) + ')';
+      ctx.arc(dot.x, dot.y, dot.currentRadius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function animate() {
+    if (!size.width || !size.height) { rafId = requestAnimationFrame(animate); return; }
+    ctx.clearRect(0, 0, size.width, size.height);
+
+    var active = {};
+    if (mouse.x !== null && mouse.y !== null) {
+      var mCellX = Math.floor(mouse.x / GRID_CELL_SIZE);
+      var mCellY = Math.floor(mouse.y / GRID_CELL_SIZE);
+      var searchRadius = Math.ceil(INTERACTION_RADIUS / GRID_CELL_SIZE);
+      for (var i = -searchRadius; i <= searchRadius; i++) {
+        for (var j = -searchRadius; j <= searchRadius; j++) {
+          var cellKey = (mCellX + i) + '_' + (mCellY + j);
+          if (grid[cellKey]) grid[cellKey].forEach(function (idx) { active[idx] = true; });
+        }
+      }
+    }
+
+    dots.forEach(function (dot, index) {
+      dot.currentOpacity += dot.opacitySpeed;
+      if (dot.currentOpacity >= dot.targetOpacity || dot.currentOpacity <= BASE_OPACITY_MIN) {
+        dot.opacitySpeed = -dot.opacitySpeed;
+        dot.currentOpacity = Math.max(BASE_OPACITY_MIN, Math.min(dot.currentOpacity, BASE_OPACITY_MAX));
+        dot.targetOpacity = Math.random() * (BASE_OPACITY_MAX - BASE_OPACITY_MIN) + BASE_OPACITY_MIN;
+      }
+
+      var interactionFactor = 0;
+      if (mouse.x !== null && mouse.y !== null && active[index]) {
+        var dx = dot.x - mouse.x, dy = dot.y - mouse.y;
+        var distSq = dx * dx + dy * dy;
+        if (distSq < INTERACTION_RADIUS_SQ) {
+          var factor = Math.max(0, 1 - Math.sqrt(distSq) / INTERACTION_RADIUS);
+          interactionFactor = factor * factor;
+        }
+      }
+
+      var finalOpacity = Math.min(1, dot.currentOpacity + interactionFactor * OPACITY_BOOST);
+      dot.currentRadius = BASE_RADIUS + interactionFactor * RADIUS_BOOST;
+
+      ctx.beginPath();
+      ctx.fillStyle = 'rgba(0,229,255,' + finalOpacity.toFixed(3) + ')';
+      ctx.arc(dot.x, dot.y, dot.currentRadius, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    rafId = requestAnimationFrame(animate);
+  }
+
+  handleResize();
+  window.addEventListener('resize', handleResize);
+
+  if (reduceMotion) {
+    drawStatic();
+    return;
+  }
+
+  window.addEventListener('mousemove', handleMouseMove, { passive: true });
+  document.documentElement.addEventListener('mouseleave', function () {
+    mouse.x = null; mouse.y = null;
+  });
+  rafId = requestAnimationFrame(animate);
+})();
+</script>
+
+<script>
+/* ── Hero: rotating headline word ── */
+(function () {
+  var wrap = document.getElementById('hero-rotate');
+  if (!wrap) return;
+  var wordEl = wrap.querySelector('.word');
+
+  var words = ['Convert', 'Scale', 'Rank', 'Engage', 'Grow'];
+  var idx = 0;
+  var CHAR_STAGGER_MS = 18;
+  var TRANSITION_MS   = 400;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function toChars(word) {
+    return word.split('').map(function (c) { return '<span class="ch">' + c + '</span>'; }).join('');
+  }
+
+  wordEl.innerHTML = toChars(words[0]);
+  if (reduceMotion || words.length <= 1) return;
+
+  function swap() {
+    if (document.hidden) return;
+    idx = (idx + 1) % words.length;
+
+    var current = wordEl.querySelectorAll('.ch');
+    current.forEach(function (ch, i) {
+      ch.style.transitionDelay = (i * CHAR_STAGGER_MS) + 'ms';
+      ch.classList.add('exit');
+    });
+
+    var exitWait = (current.length - 1) * CHAR_STAGGER_MS + TRANSITION_MS;
+    setTimeout(function () {
+      wordEl.innerHTML = toChars(words[idx]);
+      var next = wordEl.querySelectorAll('.ch');
+      next.forEach(function (ch, i) {
+        ch.style.transitionDelay = (i * CHAR_STAGGER_MS) + 'ms';
+        ch.classList.add('enter');
+      });
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          next.forEach(function (ch) { ch.classList.remove('enter'); });
+        });
+      });
+    }, exitWait);
+  }
+
+  setInterval(swap, 2400);
+})();
+</script>
+
+<script>
+/* ── Hero: match phone-mock height to the desktop browser-mock ── */
+(function () {
+  var desktop = document.querySelector('.hero-mock-desktop');
+  var phone = document.querySelector('.phone-mock');
+  if (!desktop || !phone) return;
+
+  function sync() {
+    if (getComputedStyle(desktop).display === 'none') {
+      phone.style.height = '';
+      return;
+    }
+    phone.style.height = desktop.getBoundingClientRect().height + 'px';
+  }
+
+  window.addEventListener('resize', sync);
+  window.addEventListener('load', sync);
+  var img = desktop.querySelector('img');
+  if (img.complete) sync(); else img.addEventListener('load', sync);
+})();
+</script>
+
+<script>
+/* ── Hero: cursor-tracked light sheen on the site mockups ── */
+(function () {
+  document.querySelectorAll('.mock-link').forEach(function (el) {
+    el.addEventListener('mousemove', function (e) {
+      var rect = el.getBoundingClientRect();
+      el.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width) * 100 + '%');
+      el.style.setProperty('--my', ((e.clientY - rect.top) / rect.height) * 100 + '%');
     });
   });
-
-  // Initial GSAP states
-  gsap.set('.text-track',   { autoAlpha: 0, y: 60, scale: 0.85, filter: 'blur(20px)', rotationX: -20 });
-  gsap.set('.text-days',    { autoAlpha: 1, clipPath: 'inset(0 100% 0 0)' });
-  gsap.set('.main-card',    { y: window.innerHeight + 200, autoAlpha: 1 });
-  gsap.set(['.card-left-text', '.card-right-text', '.mockup-scroll-wrapper', '.floating-badge', '.phone-widget'], { autoAlpha: 0 });
-  gsap.set('.cta-wrapper',  { autoAlpha: 0, scale: 0.8, filter: 'blur(30px)' });
-
-  // Intro animation (runs once on load)
-  gsap.timeline({ delay: 0.3 })
-    .to('.text-track', { duration: 1.8, autoAlpha: 1, y: 0, scale: 1, filter: 'blur(0px)', rotationX: 0, ease: 'expo.out' })
-    .to('.text-days',  { duration: 1.4, clipPath: 'inset(0 0% 0 0)', ease: 'power4.inOut' }, '-=1.0');
-
-  // Counter proxy for scroll-scrub animation
-  var counterProxy = { value: 0 };
-  var counterEl    = document.querySelector('.counter-val');
-
-  // Scroll-pinned cinematic timeline
-  var scrollTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: container,
-      start: 'top top',
-      end: '+=7000',
-      pin: true,
-      scrub: 1,
-      anticipatePin: 1
-    }
-  });
-
-  scrollTl
-    .to(['.hero-text-wrapper', '.bg-grid-theme'], { scale: 1.15, filter: 'blur(20px)', opacity: 0.2, ease: 'power2.inOut', duration: 2 }, 0)
-    .to('.main-card', { y: 0, ease: 'power3.inOut', duration: 2 }, 0)
-    .to('.main-card', { width: '100%', height: '100%', borderRadius: '0px', ease: 'power3.inOut', duration: 1.5 })
-    .fromTo('.mockup-scroll-wrapper',
-      { y: 300, z: -500, rotationX: 50, rotationY: -30, autoAlpha: 0, scale: 0.6 },
-      { y: 0, z: 0, rotationX: 0, rotationY: 0, autoAlpha: 1, scale: 1, ease: 'expo.out', duration: 2.5 }, '-=0.8')
-    .fromTo('.phone-widget',
-      { y: 40, autoAlpha: 0, scale: 0.95 },
-      { y: 0, autoAlpha: 1, scale: 1, stagger: 0.15, ease: 'back.out(1.2)', duration: 1.5 }, '-=1.5')
-    .to('.progress-ring', { strokeDashoffset: 60, duration: 2, ease: 'power3.inOut' }, '-=1.2')
-    .to(counterProxy, {
-      value: 365, duration: 2, ease: 'expo.out',
-      onUpdate: function () { if (counterEl) counterEl.textContent = Math.round(counterProxy.value); }
-    }, '-=2.0')
-    .fromTo('.floating-badge',
-      { y: 100, autoAlpha: 0, scale: 0.7, rotationZ: -10 },
-      { y: 0, autoAlpha: 1, scale: 1, rotationZ: 0, ease: 'back.out(1.5)', duration: 1.5, stagger: 0.2 }, '-=2.0')
-    .fromTo('.card-left-text',  { x: -50, autoAlpha: 0 }, { x: 0, autoAlpha: 1, ease: 'power4.out', duration: 1.5 }, '-=1.5')
-    .fromTo('.card-right-text', { x: 50, autoAlpha: 0, scale: 0.8 }, { x: 0, autoAlpha: 1, scale: 1, ease: 'expo.out', duration: 1.5 }, '<')
-    .to({}, { duration: 2.5 })
-    .set('.hero-text-wrapper', { autoAlpha: 0 })
-    .set('.cta-wrapper', { autoAlpha: 1 })
-    .to({}, { duration: 1.5 })
-    .to(['.mockup-scroll-wrapper', '.floating-badge', '.card-left-text', '.card-right-text'], {
-      scale: 0.9, y: -40, z: -200, autoAlpha: 0, ease: 'power3.in', duration: 1.2, stagger: 0.05
-    })
-    .to('.main-card', {
-      width: isMobile ? '92vw' : '85vw',
-      height: isMobile ? '92vh' : '85vh',
-      borderRadius: isMobile ? '32px' : '40px',
-      ease: 'expo.inOut', duration: 1.8
-    }, 'pullback')
-    .to('.cta-wrapper', { scale: 1, filter: 'blur(0px)', ease: 'expo.inOut', duration: 1.8 }, 'pullback')
-    .to('.main-card', { y: -(window.innerHeight + 300), ease: 'power3.in', duration: 1.5 });
 })();
 </script>
 
@@ -1827,11 +2271,11 @@
   });
 
   /* Feature cards and testimonial cards: single-col on mobile, scroll-natural stagger */
-  watch('.card',  std);
+  watch('.svc-card', std);
   watch('.tcard', std);
 
   /* Buttons — skip hero/nav; only content sections */
-  watch('#why-us .btn, .cta-box .btn', std);
+  watch('#why-us .btn, .hero .btn', std);
 
   /* Footer: social icons stagger, then links cascade */
   watch('.social-btn', foot, function (el) {
@@ -1882,6 +2326,119 @@
   /* Back to top */
   var backTop = document.getElementById('footer-back-top');
   if (backTop) backTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+})();
+</script>
+
+<script>
+/* ── Services: plasma-gradient canvas animation (--c1/c2/c3 per card) ── */
+(function () {
+  function hexToRgb(hex) {
+    hex = hex.trim().replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+  }
+
+  document.querySelectorAll('.svc-card').forEach(function(card, ci) {
+    var canvas = card.querySelector('.svc-card-shader');
+    if (!canvas) return;
+
+    var cs = getComputedStyle(card);
+    var c1 = hexToRgb(cs.getPropertyValue('--c1').trim());
+    var c2 = hexToRgb(cs.getPropertyValue('--c2').trim());
+    var c3 = hexToRgb(cs.getPropertyValue('--c3').trim());
+    var ctx = canvas.getContext('2d');
+    var raf = 0, live = false;
+    var SEED = ci * 2.09;
+
+    function resize() {
+      canvas.width  = canvas.offsetWidth  || card.offsetWidth;
+      canvas.height = canvas.offsetHeight || card.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    function draw(ts) {
+      var t = ts * 0.0006 + SEED;
+      var W = canvas.width, H = canvas.height;
+      if (!W || !H) { if (live) raf = requestAnimationFrame(draw); return; }
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#07080f';
+      ctx.fillRect(0, 0, W, H);
+
+      /* ambient base – slow gentle fill so card never goes fully dark */
+      var ox = W * (0.50 + Math.sin(t * 0.21) * 0.10);
+      var oy = H * (0.50 + Math.cos(t * 0.18) * 0.10);
+      var go = ctx.createRadialGradient(ox, oy, 0, ox, oy, W * 0.85);
+      go.addColorStop(0,    'rgba('+c1+',0.38)');
+      go.addColorStop(0.55, 'rgba('+c1+',0.14)');
+      go.addColorStop(1,    'rgba('+c1+',0)');
+      ctx.fillStyle = go; ctx.fillRect(0, 0, W, H);
+
+      /* blob A – primary, upper-left vivid hotspot (+25% radius) */
+      var ax = W * (0.35 + Math.sin(t * 0.48) * 0.21);
+      var ay = H * (0.33 + Math.cos(t * 0.37) * 0.21);
+      var ga = ctx.createRadialGradient(ax, ay, 0, ax, ay, W * 0.60);
+      ga.addColorStop(0,    'rgba('+c1+',0.92)');
+      ga.addColorStop(0.20, 'rgba('+c1+',0.42)');
+      ga.addColorStop(0.55, 'rgba('+c1+',0.07)');
+      ga.addColorStop(1,    'rgba('+c1+',0)');
+      ctx.fillStyle = ga; ctx.fillRect(0, 0, W, H);
+
+      /* blob B – light tone, lower-right, counter-phase (+25% radius) */
+      var bx = W * (0.67 + Math.cos(t * 0.59 + 2.1) * 0.21);
+      var by = H * (0.67 + Math.sin(t * 0.46 + 1.7) * 0.21);
+      var gb = ctx.createRadialGradient(bx, by, 0, bx, by, W * 0.55);
+      gb.addColorStop(0,    'rgba('+c3+',0.88)');
+      gb.addColorStop(0.20, 'rgba('+c3+',0.34)');
+      gb.addColorStop(0.55, 'rgba('+c3+',0.06)');
+      gb.addColorStop(1,    'rgba('+c3+',0)');
+      ctx.fillStyle = gb; ctx.fillRect(0, 0, W, H);
+
+      /* blob C – mid accent, right side, tall vertical sweep (+26% radius) */
+      var cx = W * (0.65 + Math.sin(t * 0.73 + 3.8) * 0.18);
+      var cy = H * (0.44 + Math.cos(t * 0.62 + 0.9) * 0.28);
+      var gc = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.48);
+      gc.addColorStop(0,    'rgba('+c2+',0.80)');
+      gc.addColorStop(0.22, 'rgba('+c2+',0.20)');
+      gc.addColorStop(0.60, 'rgba('+c2+',0.03)');
+      gc.addColorStop(1,    'rgba('+c2+',0)');
+      ctx.fillStyle = gc; ctx.fillRect(0, 0, W, H);
+
+      /* blob D – primary dim, lower-left, slow independent orbit (+24% radius) */
+      var dx = W * (0.30 + Math.cos(t * 0.54 + 5.1) * 0.18);
+      var dy = H * (0.70 + Math.sin(t * 0.67 + 4.2) * 0.20);
+      var gd = ctx.createRadialGradient(dx, dy, 0, dx, dy, W * 0.42);
+      gd.addColorStop(0,    'rgba('+c1+',0.65)');
+      gd.addColorStop(0.28, 'rgba('+c1+',0.12)');
+      gd.addColorStop(0.65, 'rgba('+c1+',0.02)');
+      gd.addColorStop(1,    'rgba('+c1+',0)');
+      ctx.fillStyle = gd; ctx.fillRect(0, 0, W, H);
+
+      /* perimeter fade – keeps edges dark so border stays clean */
+      var e = 0.12;
+      function edgeFade(x0,y0,x1f,y1f,rx,ry,rw,rh,a0,a1) {
+        var g = ctx.createLinearGradient(x0,y0,x1f,y1f);
+        g.addColorStop(0,'rgba(0,0,0,'+a0+')');
+        g.addColorStop(1,'rgba(0,0,0,'+a1+')');
+        ctx.fillStyle = g; ctx.fillRect(rx,ry,rw,rh);
+      }
+      edgeFade(0,0,       0,H*e,     0,0,    W,H*e,    0.50,0);
+      edgeFade(0,H*(1-e), 0,H,       0,H*(1-e),W,H*e,  0,0.50);
+      edgeFade(0,0,       W*e,0,     0,0,    W*e,H,    0.50,0);
+      edgeFade(W*(1-e),0, W,0,       W*(1-e),0,W*e,H,  0,0.50);
+
+      if (live) raf = requestAnimationFrame(draw);
+    }
+
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting && !live)  { live = true;  raf = requestAnimationFrame(draw); }
+        else if (!e.isIntersecting && live) { live = false; cancelAnimationFrame(raf); }
+      });
+    }, { threshold: 0.05 });
+    io.observe(card);
+  });
 })();
 </script>
 
