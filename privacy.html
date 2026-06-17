@@ -316,8 +316,50 @@
       background: rgba(255,255,255,0.05);
       transform: translateY(-2px);
     }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background: rgba(200,212,232,0.7); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
   </style>
   <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
 </head>
 <body>
@@ -346,16 +388,41 @@
       <a href="about.html"          class="nav-link">About</a>
       <a href="contact.html"        class="nav-link">Contact</a>
     </div>
-    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
-      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
-        <circle cx="10" cy="5.5" r="4.5"/>
-        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
-      </svg>
-      Login
-    </a>
-    <a href="contact.html" class="btn btn-primary">
-      Get a Quote <span aria-hidden="true">→</span>
-    </a>
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+          <circle cx="10" cy="5.5" r="4.5"/>
+          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+        </svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">
+        Get a Quote <span aria-hidden="true">→</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html"          class="mob-link mob-sub">Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="index.html#services" class="mob-link mob-sub">Services</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <a href="faq.html"      class="mob-link">FAQ</a>
+    <a href="about.html"    class="mob-link">About</a>
+    <a href="contact.html"  class="mob-link">Contact</a>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
   </div>
 </nav>
 

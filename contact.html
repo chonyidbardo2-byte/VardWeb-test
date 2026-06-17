@@ -356,9 +356,6 @@
       .contact-grid { grid-template-columns: 1fr; gap: 52px; }
       .footer-grid  { grid-template-columns: 1fr 1fr; gap: 40px; }
     }
-    @media (max-width: 860px) {
-      .nav-links { display: none; }
-    }
     @media (max-width: 560px) {
       .footer-grid { grid-template-columns: 1fr; gap: 36px; }
     }
@@ -389,8 +386,80 @@
       background: rgba(255,255,255,0.05);
       transform: translateY(-2px);
     }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background: rgba(200,212,232,0.7); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
+
+    /* ── Website Yes/No toggle buttons ── */
+    .website-toggle-btn {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: rgba(200,212,232,0.45);
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .website-toggle-btn:hover {
+      border-color: rgba(0,229,255,0.25);
+      color: rgba(200,212,232,0.8);
+      background: rgba(0,229,255,0.04);
+    }
+    .website-toggle-btn.selected {
+      border-color: rgba(0,229,255,0.38);
+      background: rgba(0,229,255,0.08);
+      color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.08);
+    }
+    .website-toggle-btn:focus-visible {
+      outline: 2px solid rgba(0,229,255,0.5);
+      outline-offset: 2px;
+    }
+    .website-toggle-btn:active { transform: translateY(0); }
   </style>
   <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
 </head>
 
@@ -424,16 +493,43 @@
       <a href="contact.html"  class="nav-link active">Contact</a>
     </div>
 
-    <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;display:inline-flex;align-items:center;gap:7px;">
-      <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
-        <circle cx="10" cy="5.5" r="4.5"/>
-        <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
-      </svg>
-      Login
-    </a>
-    <a href="contact.html" class="btn btn-primary">
-      Get a Quote <span aria-hidden="true">→</span>
-    </a>
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+          <circle cx="10" cy="5.5" r="4.5"/>
+          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+        </svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">
+        Get a Quote <span aria-hidden="true">→</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html"          class="mob-link mob-sub">Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="index.html#services" class="mob-link mob-sub">Services</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <a href="faq.html"      class="mob-link">FAQ</a>
+    <a href="blog.html"     class="mob-link">Blog</a>
+    <a href="our-work.html" class="mob-link">Our Work</a>
+    <a href="about.html"    class="mob-link">About</a>
+    <a href="contact.html"  class="mob-link active">Contact</a>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
   </div>
 </nav>
 
@@ -519,6 +615,23 @@
             </select>
           </div>
           <div>
+            <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:6px;">Business Type</label>
+            <select id="mini-business-type" class="contact-select" style="padding:10px 13px;font-size:13px;">
+              <option value="" disabled selected>Select business type…</option>
+              <option>🌱 New Business — We're just starting out</option>
+              <option>🔄 Established — Looking to refresh and modernize</option>
+              <option>📈 Established — Actively looking to grow the business</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:6px;">Do you have an existing website?</label>
+            <div style="display:flex;gap:8px;">
+              <button type="button" class="website-toggle-btn" id="mini-website-yes" data-value="Yes">Yes</button>
+              <button type="button" class="website-toggle-btn" id="mini-website-no"  data-value="No">No</button>
+            </div>
+            <input type="hidden" id="mini-has-website" value="" />
+          </div>
+          <div>
             <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:rgba(200,212,232,0.45);margin-bottom:6px;">Tell Us About Your Project</label>
             <textarea id="mini-message" class="contact-textarea" placeholder="What problems does your business need to solve? What's your timeline and budget?" style="min-height:88px;font-size:13px;padding:10px 13px;"></textarea>
           </div>
@@ -595,6 +708,20 @@ var EJS_TEMPLATE_ID = _cfg.templateId || '';
 
 emailjs.init(EJS_PUBLIC_KEY);
 
+/* ── Website Yes/No toggle ── */
+(function () {
+  var btns   = document.querySelectorAll('.website-toggle-btn');
+  var hidden = document.getElementById('mini-has-website');
+  btns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      btns.forEach(function (b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      hidden.value = btn.getAttribute('data-value');
+      hidden.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  });
+})();
+
 /* ── Live field check — enable/disable send button ── */
 (function () {
   var btn    = document.getElementById('mini-submit');
@@ -602,6 +729,8 @@ emailjs.init(EJS_PUBLIC_KEY);
     document.getElementById('mini-name'),
     document.getElementById('mini-email'),
     document.getElementById('mini-project'),
+    document.getElementById('mini-business-type'),
+    document.getElementById('mini-has-website'),
     document.getElementById('mini-message'),
   ];
   function check() {
@@ -620,10 +749,12 @@ emailjs.init(EJS_PUBLIC_KEY);
   if (!btn) return;
 
   btn.addEventListener('click', function () {
-    var name    = document.getElementById('mini-name').value.trim();
-    var email   = document.getElementById('mini-email').value.trim();
-    var project = document.getElementById('mini-project').value;
-    var message = document.getElementById('mini-message').value.trim();
+    var name         = document.getElementById('mini-name').value.trim();
+    var email        = document.getElementById('mini-email').value.trim();
+    var project      = document.getElementById('mini-project').value;
+    var businessType = document.getElementById('mini-business-type').value;
+    var hasWebsite   = document.getElementById('mini-has-website').value;
+    var message      = document.getElementById('mini-message').value.trim();
 
     /* ── Send ── */
     var originalBtnCSS = btn.style.cssText;
@@ -642,7 +773,9 @@ emailjs.init(EJS_PUBLIC_KEY);
       '  PROJECT DETAILS',
       '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
       '',
-      'Type:     ' + project,
+      'Type:          ' + project,
+      'Business Type: ' + businessType,
+      'Has Website:   ' + hasWebsite,
       '',
       'Message:',
       message,
@@ -704,10 +837,13 @@ emailjs.init(EJS_PUBLIC_KEY);
                   animDiv.style.display = 'none';
                   animDiv.style.opacity = '0';
 
-                  document.getElementById('mini-name').value    = '';
-                  document.getElementById('mini-email').value   = '';
-                  document.getElementById('mini-project').value = '';
-                  document.getElementById('mini-message').value = '';
+                  document.getElementById('mini-name').value          = '';
+                  document.getElementById('mini-email').value         = '';
+                  document.getElementById('mini-project').value       = '';
+                  document.getElementById('mini-business-type').value = '';
+                  document.getElementById('mini-has-website').value   = '';
+                  document.querySelectorAll('.website-toggle-btn').forEach(function (b) { b.classList.remove('selected'); });
+                  document.getElementById('mini-message').value       = '';
                   btn.style.cssText = originalBtnCSS;
                   btn.innerHTML = 'Send Message <span aria-hidden="true">→</span>';
                   btn.disabled  = true;
