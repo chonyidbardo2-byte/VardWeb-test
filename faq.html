@@ -380,46 +380,32 @@
     }
 
     /* ── Footer ── */
-    .site-footer {
-      background: var(--surface);
-      border-top: 1px solid rgba(0,229,255,0.07);
-      padding: 52px 28px 36px;
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
+    .footer-social-row { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-link.active { color: var(--cyan); }
+    .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
     }
-    .footer-inner {
-      max-width: 1200px; margin: 0 auto;
-      display: flex; flex-direction: column; align-items: center;
-      gap: 28px; text-align: center;
-    }
-    .footer-links-row {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
-    }
-    .footer-pill {
-      background: rgba(200,212,232,0.035);
-      border: 1px solid rgba(200,212,232,0.08);
-      border-radius: 9999px; padding: 10px 20px;
-      font-size: 13px; color: rgba(200,212,232,0.5);
-      text-decoration: none; font-family: 'Inter', sans-serif;
-      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-    }
-    .footer-pill:hover {
-      color: #C8D4E8;
-      border-color: rgba(200,212,232,0.2);
-      background: rgba(200,212,232,0.07);
-    }
-    .footer-nav-section { display: flex; flex-direction: column; align-items: center; width: 100%; }
-    .footer-home-btn { background: rgba(200,212,232,0.035); border: 1px solid rgba(200,212,232,0.08); border-radius: 9999px; padding: 10px 20px; font-size: 13px; color: rgba(200,212,232,0.5); font-family: 'Inter', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease; }
-    .footer-home-btn:hover, .footer-home-btn[aria-expanded="true"] { color: #C8D4E8; border-color: rgba(200,212,232,0.2); background: rgba(200,212,232,0.07); }
-    .footer-home-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
-    .footer-home-btn[aria-expanded="true"] .footer-home-chevron { transform: rotate(180deg); opacity: 0.8; }
-    .footer-home-sub-row { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); width: 100%; }
-    .footer-home-sub-row > div { overflow: hidden; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-    .footer-home-sub-row.open { grid-template-rows: 1fr; }
-    .footer-home-sub-row.open > div { padding-top: 10px; }
-    .footer-copy {
-      color: rgba(200,212,232,0.28); font-size: 11px;
-      font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: background 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s cubic-bezier(0.16,1,0.3,1); }
+    @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (max-width: 560px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
 
     ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
 
@@ -430,6 +416,9 @@
     @media (max-width: 768px) {
       .nav-links { display: none; }
       .cta-card { padding: 44px 28px; }
+      .jump-topic-wrap { text-align: center; }
+      .jump-topic-pills { flex-direction: column; align-items: center; }
+      .jump-topic-pills .tag-chip { width: 100%; max-width: 280px; justify-content: center; }
     }
     @media (max-width: 600px) {
       .faq-trigger { padding: 18px 20px; gap: 12px; }
@@ -453,11 +442,12 @@
     .nav-mobile-menu { display: none; }
     .nav-right { display: flex; align-items: center; gap: 10px; }
     @media (max-width: 1024px) {
+      .nav-inner { position: relative; }
       .nav-links { display: none; }
       .nav-right .btn { display: none; }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; }
-      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background: rgba(200,212,232,0.7); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
       .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
@@ -550,11 +540,39 @@
     <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
-    <a href="faq.html"      class="mob-link active">FAQ</a>
-    <a href="blog.html"     class="mob-link">Blog</a>
-    <a href="our-work.html" class="mob-link">Our Work</a>
-    <a href="about.html"    class="mob-link">About</a>
-    <a href="contact.html"  class="mob-link">Contact</a>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+      Company
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-company-panel"><div>
+    <a href="about.html"    class="mob-link mob-sub">About Us</a>
+    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+    <a href="faq.html"      class="mob-link mob-sub active">FAQ</a>
+    <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+      Services
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-services-panel"><div>
+    <a href="contact.html" class="mob-link mob-sub">Web Design</a>
+    <a href="contact.html" class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html" class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html" class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="contact.html" class="mob-link mob-sub">Maintenance</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+      Legal
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+    <a href="privacy.html" class="mob-link mob-sub">Privacy Policy</a>
+    <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+    <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
+    <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+    <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+    </div></div>
     <div class="mob-divider"></div>
     <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
     <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
@@ -765,9 +783,9 @@
         From timelines and pricing to hosting and revisions — we've answered the questions we hear most, honestly and in plain language.
         Scroll down for all eighteen.
       </p>
-      <div>
+      <div class="jump-topic-wrap">
         <p style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;margin-bottom:12px;">Jump to topic</p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <div class="jump-topic-pills" style="display:flex;flex-wrap:wrap;gap:10px;">
           <a href="#faq-foundations" class="tag-chip">The Foundations
             <svg class="tag-chip-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </a>
@@ -831,8 +849,8 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              <p>Does your competitor have one? Does theirs look professional? Does it actually represent what they do — or does it look like it was built in 2009 and nobody's touched it since? Now ask yourself the same questions about yours.</p>
-              <p>At minimum, a website hands anyone who finds you exactly what they need to stop browsing and start buying: your phone number, email, location, hours, and a straight answer to "what do you actually do around here." That alone is the difference between a window shopper and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">real lead</code>.</p>
+              <p>Does your competitor have one? Does theirs look <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">professional?</code> Does it actually represent what they do — or does it look like it was built in 2009 and nobody's touched it since? Now ask yourself the same questions about yours.</p>
+              <p>At minimum, a website hands anyone who finds you exactly what they need to stop browsing and start buying: your phone number, email, location, hours, and a straight answer to "what do you actually do around here." That alone is the difference between a window shopper and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">real lead.</code></p>
               <p>Beyond that, it's the only piece of <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">digital real estate</code> you actually own — social platforms can throttle your reach, change the rules, or disappear entirely, and everything you built there goes with them. Your website doesn't answer to an algorithm. It answers to you.</p>
             </div>
           </div>
@@ -851,9 +869,9 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              <p>If it loads slowly, looks broken on a phone, doesn't reflect what your business actually does today, or you're quietly embarrassed to hand someone the link — it needs work.</p>
-              <p>Beyond aesthetics, an outdated site carries real cost: poor <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Core Web Vitals</code> hurt your search rankings, expired dependencies create security vulnerabilities, and a dated design signals to potential clients that you may not be paying attention.</p>
-              <p>Your website is often the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">first impression</code>. Make sure it's earning its keep.</p>
+              <p>If it loads slowly, looks broken on a phone, doesn't reflect what your business actually does today, or you're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">quietly embarrassed</code> to hand someone the link — it needs work.</p>
+              <p>Beyond aesthetics, an outdated site carries real cost: poor Core <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Web Vitals</code> hurt your search rankings, expired dependencies create security vulnerabilities, and a dated design signals to potential clients that you may not be paying attention.</p>
+              <p>Your website is often the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">first impression.</code> Make sure it's earning its keep.</p>
             </div>
           </div>
         </div>
@@ -873,7 +891,7 @@
             <div class="faq-content-inner">
               <p>SEO — Search Engine Optimization — is essentially your website's <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">street cred</code> in the eyes of Google and every other search engine out there. It operates on two fronts: technical (site speed, structured data, crawlability, mobile performance) and content (relevance, authority, keyword alignment).</p>
               <p>Here's the part no one likes to say out loud: nobody knows the exact algorithm, and it's always changing. What we do know is that proper SEO steadily improves where you rank — and rank matters. When was the last time you scrolled past <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">page one</code> of search results? Let alone page two? That's the game.</p>
-              <p>A well-optimized site earns organic visibility over time, getting real eyeballs on what you're running without paying for every click. It's not a one-time fix — it compounds the longer you commit to it.</p>
+              <p>A well-optimized site earns <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">organic visibility</code> over time, getting real eyeballs on what you're running without paying for every click. It's not a one-time fix — it compounds the longer you commit to it.</p>
             </div>
           </div>
         </div>
@@ -900,8 +918,8 @@
           <div class="faq-content">
             <div class="faq-content-inner">
               <p>We're different because we won't make that promise. No one can guarantee a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">#1 ranking</code> — Google's algorithm weighs hundreds of signals, updates constantly, and doesn't take instructions from agencies. Anyone promising otherwise is selling you a headline, not a result.</p>
-              <p>What we do instead is build technically sound, fast, well-structured sites with clean <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">semantic markup</code>, proper metadata, and content architecture that gives search engines every reason to surface you. That foundation compounds over time.</p>
-              <p>We'd rather you trust us because we told you the truth upfront than because we told you what you wanted to hear.</p>
+              <p>What we do instead is build technically sound, fast, well-structured sites with clean <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">semantic markup,</code> proper metadata, and content architecture that gives search engines every reason to surface you. That foundation compounds over time.</p>
+              <p>We'd rather you trust us because we told you the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">truth upfront</code> than because we told you what you wanted to hear.</p>
             </div>
           </div>
         </div>
@@ -919,8 +937,8 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              <p>Honestly — it depends on what stage you're at and what you're trying to prove.</p>
-              <p>A DIY tool can get you online fast, but it costs you in ways that don't show up on a pricing page: time you could spend building your business, performance limitations that cap your growth, and a template-built presence that makes it harder to stand out in a crowded market. The risk isn't the tool — it's treating your online presence as a checkbox rather than an <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">asset</code>.</p>
+              <p>Honestly — it depends on what stage you're at and what you're trying to <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">prove.</code></p>
+              <p>A DIY tool can get you online fast, but it costs you in ways that don't show up on a pricing page: time you could spend building your business, performance limitations that cap your growth, and a template-built presence that makes it harder to stand out in a crowded market. The risk isn't the tool — it's treating your online presence as a checkbox rather than an <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">asset.</code></p>
               <p>If budget is a real constraint right now, talk to us anyway. We'd rather help you think through the right move than watch you invest time in something you'll <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">rebuild</code> in a year.</p>
             </div>
           </div>
@@ -939,8 +957,8 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              <p>Social media is genuinely great — Instagram, Facebook, TikTok, X, LinkedIn, YouTube, Pinterest, Snapchat, Reddit, WhatsApp — the reach across those platforms is real and worth using.</p>
-              <p>But here's a question worth sitting with: when you're actually searching for a service, where do you go? Facebook? Instagram? X? Probably not. You open Google. Because social platforms are where we scroll, discover, and pass along recommendations — signals, suggestions, people pointing you somewhere. The active search, though? That's still a search engine. And what do you think surfaced that Instagram page in the first place?</p>
+              <p>Social media is genuinely great — Instagram, Facebook, TikTok, X, LinkedIn, YouTube, Pinterest, Snapchat, Reddit, WhatsApp — the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">reach</code> across those platforms is real and worth using.</p>
+              <p>But here's a question worth sitting with: when you're actually searching for a service, where do you go? Facebook? Instagram? X? Probably not. You open Google. Because social platforms are where we scroll, discover, and pass along recommendations — signals, suggestions, people pointing you somewhere. The active search, though? That's still a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">search engine.</code> And what do you think surfaced that Instagram page in the first place?</p>
               <p>Think of your website as the <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">digital front door</code> to your business. No door, and people are left standing outside trying to peer through windows — if you even have windows. Short of an apocalypse, I doubt anyone's climbing through.</p>
               <p>A social page is <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">borrowed land</code>: the platform owns your audience, controls your reach, and can change the rules without warning — leaving you to rebuild from nothing. Your website is yours. Own the door.</p>
             </div>
@@ -1044,7 +1062,7 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Every project is scoped individually because every business is different. Rather than vague ranges, we review your requirements and send a clear, <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">itemized quote</code>. Request one now — it's fast, free, and completely obligation-free.
+              Every project is scoped individually because every business is different. Rather than vague ranges, we review your requirements and send a clear, <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">itemized quote.</code> Request one now — it's fast, free, and completely obligation-free.
             </div>
           </div>
         </div>
@@ -1063,7 +1081,7 @@
           <div class="faq-content">
             <div class="faq-content-inner">
               <p>Every engagement includes two components: a one-time <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Flat Rate</code> that covers the full design and build of your custom system, and a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Recurring</code> plan — billed monthly or yearly — that keeps it maintained, updated, and performing. Both are always required, because we don't hand you a product and disappear.</p>
-              <p>What we build is yours alone — designed from scratch, built around your business specifically, not templated or recycled. That level of ownership comes with ongoing accountability on our end, and that's exactly what the recurring plan protects.</p>
+              <p>What we build is yours alone — designed from <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">scratch,</code> built around your business specifically, not templated or recycled. That level of ownership comes with ongoing accountability on our end, and that's exactly what the recurring plan protects.</p>
             </div>
           </div>
         </div>
@@ -1081,11 +1099,11 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              <p>Monthly maintenance at VardWeb isn't a helpdesk ticket — it's an active, ongoing partnership.</p>
-              <p>On the technical side, that means continuous performance auditing (<code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Core Web Vitals</code>, load optimization, render-blocking resolution), dependency and security patch cycles, SSL integrity checks, uptime monitoring with rapid-response protocols, and CRM pipeline health checks if your system includes one.</p>
-              <p>On the relationship side, it means you have a team that already knows your stack, your goals, and your brand — so when something needs to change, it changes fast, correctly, and without a briefing call from scratch.</p>
-              <p>We don't believe in handing clients a finished product and considering the job done. A website is a living system: search algorithms shift, browsers update, user behavior evolves, and your business grows. Maintenance is how we stay ahead of all of it on your behalf.</p>
-              <p>Our clients aren't customers — they're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">long-term partners</code>, and that distinction shapes everything about how we work.</p>
+              <p>Monthly maintenance at VardWeb isn't a helpdesk ticket — it's an active, <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">ongoing partnership.</code></p>
+              <p>On the technical side, that means continuous performance auditing Core (Web Vitals, load optimization, render-blocking resolution), dependency and security patch cycles, SSL integrity checks, uptime monitoring with <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">rapid-response protocols,</code> and CRM pipeline health checks if your system includes one.</p>
+              <p>On the relationship side, it means you have a team that already knows your stack, your goals, and your brand — so when something needs to change, it <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">changes fast,</code> correctly, and without a briefing call from scratch.</p>
+              <p>We don't believe in handing clients a finished product and considering the job done. A website is a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">living system:</code> search algorithms shift, browsers update, user behavior evolves, and your business grows. Maintenance is how we stay ahead of all of it on your behalf.</p>
+              <p>Our clients aren't customers — they're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">long-term partners,</code> and that distinction shapes everything about how we work.</p>
             </div>
           </div>
         </div>
@@ -1129,7 +1147,7 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Every site we build includes VardWeb's <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">White Label CRM</code>, giving you a full SaaS stack built directly into your site: pipelines, automations, client portals, and more. It's the difference between a website and a business tool.
+              Every site we build includes VardWeb's Custom <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Whitelist-CRM,</code> giving you a full SaaS stack built directly into your site: pipelines, automations, client portals, and more. It's the difference between a website and a business tool.
             </div>
           </div>
         </div>
@@ -1147,7 +1165,7 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              If you need a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">CMS</code>, we build it in from the start. If you'd rather hand updates off to us, that's exactly what monthly maintenance is for. We build around how you work — not the other way around.
+              If you need a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">CMS,</code> we build it in from the start. If you'd rather hand updates off to us, that's exactly what monthly maintenance is for. We build around how you work — not the other way around.
             </div>
           </div>
         </div>
@@ -1191,7 +1209,7 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Absolutely. VardWeb is proudly <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Canadian-built</code> but works with clients <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">worldwide</code>. Time zones haven't been a barrier — we've kept projects running smoothly across multiple continents.
+              Absolutely. VardWeb is proudly <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">Canadian-built</code> but works with clients <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">worldwide.</code> Time zones haven't been a barrier — we've kept projects running smoothly across multiple continents.
             </div>
           </div>
         </div>
@@ -1209,7 +1227,7 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              No templates. No handoffs. No account managers. Every site is built <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">from scratch</code>, specifically for your business. You work directly with the developer — which means faster decisions, tighter feedback loops, and a result that actually reflects your brand.
+              No templates. No handoffs. No account managers. Every site is built <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">from scratch,</code> specifically for your business. You work directly with the developer — which means faster decisions, tighter feedback loops, and a result that actually reflects your brand.
             </div>
           </div>
         </div>
@@ -1252,20 +1270,61 @@
 <!-- ── FOOTER ── -->
 <footer class="site-footer">
   <div class="footer-inner">
-    <div class="logo-nav-wrap" style="padding: 6px 14px;">
-      <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height: 30px; width: auto; display: block;" />
+    <div class="footer-grid">
+      <div>
+        <div class="logo-nav-wrap" style="display:inline-flex;">
+          <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+        </div>
+        <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
+        <div class="footer-social-row">
+          <a href="#" class="social-btn" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-head">Home</p>
+        <a href="index.html#hero"     class="footer-link">Landing</a>
+        <a href="index.html#why-us"   class="footer-link">Why Us</a>
+        <a href="index.html#services" class="footer-link">Services</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
+        <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Company</p>
+        <a href="about.html"    class="footer-link">About Us</a>
+        <a href="our-work.html" class="footer-link">Our Work</a>
+        <a href="blog.html"     class="footer-link">Blog</a>
+        <a href="faq.html"      class="footer-link active">FAQ</a>
+        <a href="contact.html"  class="footer-link">Contact</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Services</p>
+        <a href="contact.html" class="footer-link">Web Design</a>
+        <a href="contact.html" class="footer-link">E-Commerce</a>
+        <a href="contact.html" class="footer-link">Landing Pages</a>
+        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">Maintenance</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Legal</p>
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms.html"           class="footer-link">Terms of Service</a>
+        <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
+        <a href="accessibility.html"   class="footer-link">Accessibility</a>
+        <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
+      </div>
     </div>
-    <div class="footer-links-row">
-      <a href="index.html"          class="footer-pill">Home</a>
-      <a href="index.html#services" class="footer-pill">Services</a>
-      <a href="index.html#results"  class="footer-pill">Results</a>
-      <a href="index.html#roadmap"  class="footer-pill">Roadmap</a>
-      <a href="faq.html"            class="footer-pill" style="color: var(--cyan); border-color: rgba(0,229,255,0.2);">FAQ</a>
-      <a href="about.html"          class="footer-pill">About</a>
-      <a href="contact.html"        class="footer-pill">Contact</a>
-      <a href="privacy.html"        class="footer-pill">Privacy Policy</a>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-bar">
+      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <div class="footer-credit">
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+        <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">&#10084;</span>
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+        <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+      </div>
     </div>
-    <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
   </div>
 </footer>
 

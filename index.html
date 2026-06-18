@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>VardWeb — Web Design &amp; Development</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { scroll-behavior: smooth; scrollbar-gutter: stable; background: var(--base); }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; background: var(--base); overflow-x: hidden; }
 
     body {
       background: var(--base);
@@ -357,6 +357,8 @@
       font-size: 13px; line-height: 1.75;
       box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.06), inset 0 1px 0 rgba(0,229,255,0.06);
     }
+    #bento-canvas { height: 340px; }
+    @media (max-width: 768px) { #bento-canvas { height: 255px; } }
     .code-header {
       background: rgba(255,255,255,0.03);
       border-bottom: 1px solid rgba(0,229,255,0.08);
@@ -425,7 +427,8 @@
     .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
     @media (max-width: 560px) {
-      .svc-card { height: 320px; }
+      .svc-card { height: auto; min-height: 320px; }
+      .svc-card-panel { height: auto; }
     }
 
     /* ── Testimonials ── */
@@ -791,6 +794,88 @@
         inset 0 1px 1px var(--pill-highlight-hover);
       color: #C8D4E8;
     }
+
+    /* ── Footer Home dropdown pill ── */
+    .footer-pill-home-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+    .footer-pill-home-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 11px 22px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: rgba(200,212,232,0.45);
+    }
+    .footer-pill-home-btn[aria-expanded="true"] {
+      color: rgba(200,212,232,0.8);
+    }
+    .footer-pill-home-chevron {
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+    .footer-pill-home-btn[aria-expanded="true"] .footer-pill-home-chevron {
+      transform: rotate(180deg);
+      opacity: 0.9;
+    }
+    .footer-pill-home-panel {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      min-width: 148px;
+      background: linear-gradient(145deg, rgba(14,18,32,0.96) 0%, rgba(10,13,24,0.98) 100%);
+      border: 1px solid rgba(200,212,232,0.12);
+      border-radius: 16px;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow:
+        0 24px 48px -8px rgba(0,0,0,0.75),
+        inset 0 1px 1px rgba(200,212,232,0.1);
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 60;
+    }
+    .footer-pill-home-panel.open {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .footer-pill-home-sub {
+      display: block;
+      padding: 9px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(200,212,232,0.45);
+      text-decoration: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .footer-pill-home-sub:first-child { padding-top: 13px; }
+    .footer-pill-home-sub:last-child  { padding-bottom: 13px; }
+    .footer-pill-home-sub:hover {
+      color: rgba(200,212,232,0.9);
+      background: rgba(200,212,232,0.05);
+    }
+    .footer-pill-home-sub:focus-visible {
+      outline: none;
+      color: rgba(0,229,255,0.9);
+      background: rgba(0,229,255,0.05);
+    }
+
     .footer-giant-bg-text {
       font-size: 26vw;
       line-height: 0.75;
@@ -856,14 +941,6 @@
         box-shadow: 0 0 28px rgba(255,45,120,0.45), 0 8px 24px rgba(0,0,0,0.4);
         transform: translateY(-2px);
       }
-      .social-btn.in-view {
-        border-color: rgba(0,229,255,0.4);
-        color: var(--cyan);
-        background: rgba(0,229,255,0.06);
-      }
-      .footer-link.in-view {
-        color: var(--cyan);
-      }
     }
 
     /* ── Mobile Nav ── */
@@ -871,19 +948,20 @@
     .nav-mobile-menu { display: none; }
     .nav-right { display: flex; align-items: center; gap: 10px; }
     @media (max-width: 1024px) {
+      .nav-inner { position: relative; }
       .nav-links { display: none; }
       .nav-right .btn { display: none; }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; }
-      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background: rgba(200,212,232,0.7); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; appearance: none; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
       .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
       .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
       .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
       @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; text-align: center; }
-      .mob-link { display: flex; align-items: center; justify-content: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; text-align: center; }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
       .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
       .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
       .mob-link:hover::before { transform: scaleY(1); }
@@ -891,9 +969,9 @@
       .mob-link.active { color: var(--cyan); }
       .mob-link.active::before { transform: scaleY(1); }
       .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
-      .mob-sub { padding-left: 0; font-size: 13.5px; color: rgba(200,212,232,0.45); justify-content: center; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
       .mob-sub:hover { color: rgba(0,229,255,0.9); }
-      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: center; gap: 8px; }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
       .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
       .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
       .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
@@ -971,11 +1049,39 @@
     <a href="#results"  class="mob-link mob-sub">Results</a>
     <a href="#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
-    <a href="faq.html"      class="mob-link">FAQ</a>
-    <a href="blog.html"     class="mob-link">Blog</a>
-    <a href="our-work.html" class="mob-link">Our Work</a>
-    <a href="about.html"    class="mob-link">About</a>
-    <a href="contact.html"  class="mob-link">Contact</a>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+      Company
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-company-panel"><div>
+    <a href="about.html"    class="mob-link mob-sub">About Us</a>
+    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+    <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+    <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+      Services
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-services-panel"><div>
+    <a href="contact.html" class="mob-link mob-sub">Web Design</a>
+    <a href="contact.html" class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html" class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html" class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="contact.html" class="mob-link mob-sub">Maintenance</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+      Legal
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+    <a href="privacy.html" class="mob-link mob-sub">Privacy Policy</a>
+    <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+    <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
+    <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+    <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+    </div></div>
     <div class="mob-divider"></div>
     <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
     <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
@@ -1062,7 +1168,7 @@
 <section class="stats-wrap">
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-num" style="color:var(--cyan);" data-target="40" data-suffix="+">40+</div>
+      <div class="stat-num" style="color:var(--cyan);" data-target="25" data-suffix="+">25+</div>
       <div class="stat-label">Sites Launched</div>
     </div>
     <div class="stat-card">
@@ -1074,7 +1180,7 @@
       <div class="stat-label">Avg Load Speed</div>
     </div>
     <div class="stat-card">
-      <div class="stat-num" style="color:#00E5FF;" data-target="20" data-suffix="+">20+</div>
+      <div class="stat-num" style="color:#00E5FF;" data-target="15" data-suffix="+">15+</div>
       <div class="stat-label">Industries Served</div>
     </div>
   </div>
@@ -1090,7 +1196,7 @@
       <div class="ah-intro">
         <p class="sec-tag">// Why Us?</p>
         <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:24px;color:var(--text-1);">
-          Rank higher,<br>convert better
+          Rank higher,<br><span class="grad-cyan-pink">convert better</span>
         </h2>
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:20px;">
           In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion.</code> VardWeb builds sites that work as hard as you do.
@@ -1106,7 +1212,7 @@
           <span style="margin-left:8px;font-size:11px;color:rgba(255,255,255,0.28);">https://www.yourwebsite.com</span>
         </div>
         <div class="code-body" style="padding:0;overflow:hidden;">
-          <canvas id="bento-canvas" style="display:block;width:100%;height:340px;"></canvas>
+          <canvas id="bento-canvas" style="display:block;width:100%;"></canvas>
         </div>
       </div>
 
@@ -1135,7 +1241,7 @@
     <div style="text-align:center;margin-bottom:68px;">
       <p class="sec-tag">// Services</p>
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-        Every site comes with<br><span class="grad-cyan-pink">these by default</span>
+        Every site<br>comes with<br><span class="grad-cyan-pink">these by default</span>
       </h2>
     </div>
 
@@ -1606,7 +1712,7 @@
   <div style="text-align:center;margin-bottom:68px;">
     <p class="sec-tag">// The Roadmap</p>
     <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-      Discovery begins on the<br><span class="grad-gold">yellow brick road</span>
+      Discovery begins<br>on the<br><span class="grad-gold">yellow brick road</span>
     </h2>
   </div>
 
@@ -1710,11 +1816,29 @@
         </div>
         <!-- Secondary pills -->
         <div class="footer-pill-row footer-pill-row-secondary" style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px;">
+          <!-- Home dropdown pill -->
+          <div class="footer-pill-home-wrap" id="footer-home-wrap">
+            <button type="button" class="footer-glass-pill footer-magnetic footer-pill-home-btn footer-pill-sec"
+              id="footer-home-btn" aria-expanded="false" aria-controls="footer-home-panel" aria-haspopup="menu">
+              Home
+              <svg class="footer-pill-home-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="footer-pill-home-panel" id="footer-home-panel" role="menu">
+              <a href="index.html" class="footer-pill-home-sub" role="menuitem">Landing</a>
+              <a href="#why-us"   class="footer-pill-home-sub" role="menuitem">Why Us</a>
+              <a href="#services" class="footer-pill-home-sub" role="menuitem">Services</a>
+              <a href="#results"  class="footer-pill-home-sub" role="menuitem">Results</a>
+              <a href="#roadmap"  class="footer-pill-home-sub" role="menuitem">Roadmap</a>
+            </div>
+          </div>
           <a href="faq.html"      class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">FAQ</a>
           <a href="blog.html"     class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Blog</a>
           <a href="about.html"    class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">About Us</a>
           <a href="privacy.html"  class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Privacy Policy</a>
           <a href="terms.html"    class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Terms of Service</a>
+          <a href="cookie-policy.html" class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Cookie Policy</a>
+          <a href="accessibility.html" class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">Accessibility</a>
+          <a href="wcag-compliance.html" class="footer-glass-pill footer-magnetic footer-pill-sec" style="padding:11px 22px;border-radius:9999px;color:rgba(200,212,232,0.45);font-weight:500;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">WCAG Compliance</a>
         </div>
       </div>
     </div>
@@ -2277,13 +2401,6 @@
   /* Buttons — skip hero/nav; only content sections */
   watch('#why-us .btn, .hero .btn', std);
 
-  /* Footer: social icons stagger, then links cascade */
-  watch('.social-btn', foot, function (el) {
-    return Array.from(el.parentElement.children).indexOf(el) * 80;
-  });
-  watch('.footer-link', foot, function (el) {
-    return Array.from(document.querySelectorAll('.footer-link')).indexOf(el) * 40;
-  });
 })();
 </script>
 
@@ -2366,56 +2483,63 @@
       ctx.fillStyle = '#07080f';
       ctx.fillRect(0, 0, W, H);
 
-      /* ambient base – slow gentle fill so card never goes fully dark */
+      /* ambient base – barely-there tint, does not flood center */
       var ox = W * (0.50 + Math.sin(t * 0.21) * 0.10);
       var oy = H * (0.50 + Math.cos(t * 0.18) * 0.10);
-      var go = ctx.createRadialGradient(ox, oy, 0, ox, oy, W * 0.85);
-      go.addColorStop(0,    'rgba('+c1+',0.38)');
-      go.addColorStop(0.55, 'rgba('+c1+',0.14)');
+      var go = ctx.createRadialGradient(ox, oy, 0, ox, oy, W * 0.45);
+      go.addColorStop(0,    'rgba('+c1+',0.08)');
+      go.addColorStop(0.55, 'rgba('+c1+',0.03)');
       go.addColorStop(1,    'rgba('+c1+',0)');
       ctx.fillStyle = go; ctx.fillRect(0, 0, W, H);
 
-      /* blob A – primary, upper-left vivid hotspot (+25% radius) */
-      var ax = W * (0.35 + Math.sin(t * 0.48) * 0.21);
-      var ay = H * (0.33 + Math.cos(t * 0.37) * 0.21);
-      var ga = ctx.createRadialGradient(ax, ay, 0, ax, ay, W * 0.60);
-      ga.addColorStop(0,    'rgba('+c1+',0.92)');
-      ga.addColorStop(0.20, 'rgba('+c1+',0.42)');
-      ga.addColorStop(0.55, 'rgba('+c1+',0.07)');
+      /* blob A – top-left corner, stays in upper-left quadrant */
+      var ax = W * (0.16 + Math.sin(t * 0.48) * 0.14);
+      var ay = H * (0.18 + Math.cos(t * 0.37) * 0.14);
+      var ga = ctx.createRadialGradient(ax, ay, 0, ax, ay, W * 0.484);
+      ga.addColorStop(0,    'rgba('+c1+',0.80)');
+      ga.addColorStop(0.20, 'rgba('+c1+',0.38)');
+      ga.addColorStop(0.55, 'rgba('+c1+',0.06)');
       ga.addColorStop(1,    'rgba('+c1+',0)');
       ctx.fillStyle = ga; ctx.fillRect(0, 0, W, H);
 
-      /* blob B – light tone, lower-right, counter-phase (+25% radius) */
-      var bx = W * (0.67 + Math.cos(t * 0.59 + 2.1) * 0.21);
-      var by = H * (0.67 + Math.sin(t * 0.46 + 1.7) * 0.21);
-      var gb = ctx.createRadialGradient(bx, by, 0, bx, by, W * 0.55);
-      gb.addColorStop(0,    'rgba('+c3+',0.88)');
-      gb.addColorStop(0.20, 'rgba('+c3+',0.34)');
-      gb.addColorStop(0.55, 'rgba('+c3+',0.06)');
+      /* blob B – bottom-right corner, counter-phase */
+      var bx = W * (0.83 + Math.cos(t * 0.59 + 2.1) * 0.14);
+      var by = H * (0.80 + Math.sin(t * 0.46 + 1.7) * 0.14);
+      var gb = ctx.createRadialGradient(bx, by, 0, bx, by, W * 0.484);
+      gb.addColorStop(0,    'rgba('+c3+',0.75)');
+      gb.addColorStop(0.20, 'rgba('+c3+',0.28)');
+      gb.addColorStop(0.55, 'rgba('+c3+',0.05)');
       gb.addColorStop(1,    'rgba('+c3+',0)');
       ctx.fillStyle = gb; ctx.fillRect(0, 0, W, H);
 
-      /* blob C – mid accent, right side, tall vertical sweep (+26% radius) */
-      var cx = W * (0.65 + Math.sin(t * 0.73 + 3.8) * 0.18);
-      var cy = H * (0.44 + Math.cos(t * 0.62 + 0.9) * 0.28);
-      var gc = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.48);
-      gc.addColorStop(0,    'rgba('+c2+',0.80)');
-      gc.addColorStop(0.22, 'rgba('+c2+',0.20)');
-      gc.addColorStop(0.60, 'rgba('+c2+',0.03)');
+      /* blob C – right edge, mid-height vertical sweep */
+      var cx = W * (0.88 + Math.sin(t * 0.73 + 3.8) * 0.09);
+      var cy = H * (0.50 + Math.cos(t * 0.62 + 0.9) * 0.22);
+      var gc = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.418);
+      gc.addColorStop(0,    'rgba('+c2+',0.68)');
+      gc.addColorStop(0.22, 'rgba('+c2+',0.16)');
+      gc.addColorStop(0.60, 'rgba('+c2+',0.02)');
       gc.addColorStop(1,    'rgba('+c2+',0)');
       ctx.fillStyle = gc; ctx.fillRect(0, 0, W, H);
 
-      /* blob D – primary dim, lower-left, slow independent orbit (+24% radius) */
-      var dx = W * (0.30 + Math.cos(t * 0.54 + 5.1) * 0.18);
-      var dy = H * (0.70 + Math.sin(t * 0.67 + 4.2) * 0.20);
-      var gd = ctx.createRadialGradient(dx, dy, 0, dx, dy, W * 0.42);
-      gd.addColorStop(0,    'rgba('+c1+',0.65)');
-      gd.addColorStop(0.28, 'rgba('+c1+',0.12)');
-      gd.addColorStop(0.65, 'rgba('+c1+',0.02)');
+      /* blob D – bottom-left corner, slow independent orbit */
+      var dx = W * (0.14 + Math.cos(t * 0.54 + 5.1) * 0.11);
+      var dy = H * (0.82 + Math.sin(t * 0.67 + 4.2) * 0.14);
+      var gd = ctx.createRadialGradient(dx, dy, 0, dx, dy, W * 0.385);
+      gd.addColorStop(0,    'rgba('+c1+',0.58)');
+      gd.addColorStop(0.28, 'rgba('+c1+',0.10)');
+      gd.addColorStop(0.65, 'rgba('+c1+',0.01)');
       gd.addColorStop(1,    'rgba('+c1+',0)');
       ctx.fillStyle = gd; ctx.fillRect(0, 0, W, H);
 
-      /* perimeter fade – keeps edges dark so border stays clean */
+      /* centre vignette – keeps text zone dark regardless of blob positions */
+      var gv = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.68);
+      gv.addColorStop(0,    'rgba(0,0,0,0.62)');
+      gv.addColorStop(0.38, 'rgba(0,0,0,0.28)');
+      gv.addColorStop(1,    'rgba(0,0,0,0)');
+      ctx.fillStyle = gv; ctx.fillRect(0, 0, W, H);
+
+      /* perimeter fade – softened so edge blob glow can breathe through */
       var e = 0.12;
       function edgeFade(x0,y0,x1f,y1f,rx,ry,rw,rh,a0,a1) {
         var g = ctx.createLinearGradient(x0,y0,x1f,y1f);
@@ -2423,10 +2547,10 @@
         g.addColorStop(1,'rgba(0,0,0,'+a1+')');
         ctx.fillStyle = g; ctx.fillRect(rx,ry,rw,rh);
       }
-      edgeFade(0,0,       0,H*e,     0,0,    W,H*e,    0.50,0);
-      edgeFade(0,H*(1-e), 0,H,       0,H*(1-e),W,H*e,  0,0.50);
-      edgeFade(0,0,       W*e,0,     0,0,    W*e,H,    0.50,0);
-      edgeFade(W*(1-e),0, W,0,       W*(1-e),0,W*e,H,  0,0.50);
+      edgeFade(0,0,       0,H*e,     0,0,    W,H*e,    0.32,0);
+      edgeFade(0,H*(1-e), 0,H,       0,H*(1-e),W,H*e,  0,0.32);
+      edgeFade(0,0,       W*e,0,     0,0,    W*e,H,    0.32,0);
+      edgeFade(W*(1-e),0, W,0,       W*(1-e),0,W*e,H,  0,0.32);
 
       if (live) raf = requestAnimationFrame(draw);
     }
@@ -2438,6 +2562,40 @@
       });
     }, { threshold: 0.05 });
     io.observe(card);
+  });
+})();
+</script>
+
+<script>
+/* ── Footer: Home dropdown pill ── */
+(function () {
+  var wrap  = document.getElementById('footer-home-wrap');
+  var btn   = document.getElementById('footer-home-btn');
+  var panel = document.getElementById('footer-home-panel');
+  if (!btn || !panel) return;
+
+  function close() {
+    btn.setAttribute('aria-expanded', 'false');
+    panel.classList.remove('open');
+  }
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    panel.classList.toggle('open', !expanded);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!wrap.contains(e.target)) close();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+
+  panel.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', close);
   });
 })();
 </script>
