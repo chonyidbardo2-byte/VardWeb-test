@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cookie Policy — VardWeb</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    .grad-cyan-pink {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Nav */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; position: relative; padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu {
+      position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    /* Section tag */
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+
+    /* Policy card */
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid rgba(0,229,255,0.08);
+      border-radius: 18px;
+      padding: 36px 40px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .policy-card:hover {
+      border-color: rgba(0,229,255,0.18);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.04);
+    }
+    .policy-card h3 {
+      font-size: 18px; font-weight: 700; color: var(--text-1);
+      margin-bottom: 14px; letter-spacing: -0.02em;
+    }
+    .policy-card p, .policy-card li {
+      font-size: 14.5px; line-height: 1.85; color: var(--text-2);
+    }
+    .policy-card ul {
+      list-style: none; padding: 0; margin-top: 12px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .policy-card li {
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .policy-card li::before {
+      content: '—';
+      color: var(--cyan);
+      opacity: 0.6;
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .policy-card .sub-label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(200,212,232,0.38);
+      margin-bottom: 8px;
+    }
+    .policy-card .sub-section {
+      padding: 18px 20px;
+      background: rgba(0,229,255,0.03);
+      border: 1px solid rgba(0,229,255,0.07);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+    .policy-card .sub-section + .sub-section { margin-top: 10px; }
+    .policy-card .sub-section h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; font-weight: 700;
+      color: var(--cyan); margin-bottom: 8px;
+      letter-spacing: 0.01em;
+    }
+
+    /* Rights chips */
+    .rights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    @media (max-width: 600px) { .rights-grid { grid-template-columns: 1fr; } }
+    .rights-chip {
+      display: flex; align-items: center; gap: 12px;
+      background: rgba(0,229,255,0.04);
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 12px; padding: 14px 18px;
+    }
+    .rights-chip-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      background: rgba(0,229,255,0.08);
+      border: 1px solid rgba(0,229,255,0.12);
+    }
+    .rights-chip-text {
+      font-size: 13.5px; color: var(--text-2); line-height: 1.45;
+    }
+
+    /* Gold notice banner */
+    .no-share-banner {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,215,0,0.05);
+      border: 1px solid rgba(255,215,0,0.15);
+      border-radius: 14px; padding: 20px 24px;
+    }
+    .no-share-icon { font-size: 28px; flex-shrink: 0; }
+    .no-share-banner p { font-size: 14.5px; line-height: 1.7; color: var(--text-2); }
+    .no-share-banner strong { color: #FFD700; font-weight: 600; }
+
+    /* Pink warning banner */
+    .warn-banner {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: rgba(255,45,120,0.05);
+      border: 1px solid rgba(255,45,120,0.18);
+      border-radius: 14px; padding: 20px 24px;
+      margin-top: 16px;
+    }
+    .warn-banner p { font-size: 14.5px; line-height: 1.7; color: var(--text-2); }
+    .warn-banner strong { color: var(--pink); font-weight: 600; }
+
+    /* Cookie table */
+    .cookie-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    .cookie-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(0,229,255,0.65);
+      padding: 10px 14px; text-align: left;
+      border-bottom: 1px solid rgba(0,229,255,0.1);
+      background: rgba(0,229,255,0.025);
+    }
+    .cookie-table th:first-child { border-radius: 8px 0 0 0; }
+    .cookie-table th:last-child { border-radius: 0 8px 0 0; }
+    .cookie-table td {
+      padding: 11px 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+      border-bottom: 1px solid rgba(0,229,255,0.05);
+      font-size: 13px;
+      vertical-align: top;
+    }
+    .cookie-table tr:last-child td { border-bottom: none; }
+    .cookie-table tr:hover td { background: rgba(0,229,255,0.02); }
+    .cookie-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; color: var(--text-1); font-weight: 600;
+    }
+    .cookie-duration {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: rgba(0,229,255,0.6); font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Footer */
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
+    .footer-social-row { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-link.active { color: var(--cyan); }
+    .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
+    }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: background 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s cubic-bezier(0.16,1,0.3,1); }
+    @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (max-width: 560px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .policy-card { padding: 28px 24px; }
+      .cookie-table { font-size: 12px; }
+      .cookie-table th, .cookie-table td { padding: 8px 10px; }
+    }
+
+    /* Mobile Nav */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-inner { position: relative; }
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
+  </style>
+  <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="VardWeb Home">
+      <div class="logo-nav-wrap">
+        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+      </div>
+    </a>
+    <div class="nav-links">
+      <div class="nav-dropdown">
+        <a href="index.html" class="nav-link nav-dropdown-trigger">
+          Home <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu">
+          <a href="index.html#why-us"   class="dropdown-item">Why Us</a>
+          <a href="index.html#services" class="dropdown-item">Services</a>
+          <a href="index.html#results"  class="dropdown-item">Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item">Roadmap</a>
+        </div>
+      </div>
+      <a href="faq.html"     class="nav-link">FAQ</a>
+      <a href="about.html"   class="nav-link">About</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">Get a Quote <span aria-hidden="true">→</span></a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html"          class="mob-link mob-sub">Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="index.html#services" class="mob-link mob-sub">Services</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+      Company
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-company-panel"><div>
+    <a href="about.html"    class="mob-link mob-sub">About Us</a>
+    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+    <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+    <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+      Services
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-services-panel"><div>
+    <a href="contact.html" class="mob-link mob-sub">Web Design</a>
+    <a href="contact.html" class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html" class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html" class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="contact.html" class="mob-link mob-sub">Maintenance</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+      Legal
+      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+    <a href="privacy.html"        class="mob-link mob-sub">Privacy Policy</a>
+    <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+    <a href="cookie-policy.html"  class="mob-link mob-sub active">Cookie Policy</a>
+    <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+    <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+    </div></div>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section style="
+  padding: 160px 28px 90px;
+  text-align: center;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,229,255,0.06) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255,45,120,0.05) 0%, transparent 65%),
+    var(--base);
+  position: relative; overflow: hidden;
+">
+  <div style="position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 44px 44px;"></div>
+  <div style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
+    <p class="sec-tag" style="margin-bottom: 20px;">// legal &amp; transparency</p>
+    <h1 style="font-size: clamp(36px, 6vw, 68px); font-weight: 900; line-height: 1.04; color: var(--text-1); margin-bottom: 22px;">
+      Cookie<br><span class="grad-cyan-pink">Policy</span>
+    </h1>
+    <p style="font-size: 17px; color: var(--text-2); line-height: 1.75; max-width: 520px; margin: 0 auto 32px;">
+      Transparent about what we track, how we use it, and exactly how you can take back control. No hidden trackers. No dark patterns.
+    </p>
+    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.18); border-radius: 999px; padding: 6px 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(0,229,255,0.75); letter-spacing: 0.06em;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
+      Last updated: June 2026
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT ── -->
+<section style="padding: 80px 28px 100px;">
+  <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+
+    <!-- 01 — What Are Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 01 — what are cookies</p>
+      <h3>Small files. Big transparency.</h3>
+      <p>Cookies are small text files that a website places on your device — computer, phone, or tablet — when you visit. They are stored by your browser and sent back to the originating website on subsequent visits. Cookies allow websites to remember information about you, such as your preferences or authentication state.</p>
+      <div class="sub-section">
+        <h4>Session Cookies vs. Persistent Cookies</h4>
+        <p><strong style="color: var(--text-1); font-weight: 600;">Session cookies</strong> are temporary. They exist only while your browser is open and are automatically deleted when you close it. They contain no persistent identifying information.<br><br><strong style="color: var(--text-1); font-weight: 600;">Persistent cookies</strong> remain on your device after the browser is closed, for a defined duration. They allow a site to remember you across visits — for example, keeping you logged in or remembering your preferences.</p>
+      </div>
+      <div class="sub-section">
+        <h4>First-Party vs. Third-Party Cookies</h4>
+        <p><strong style="color: var(--text-1); font-weight: 600;">First-party cookies</strong> are set directly by VardWeb (vardweb.ca / vardweb.com). Only we can read them.<br><br><strong style="color: var(--text-1); font-weight: 600;">Third-party cookies</strong> are set by external services that provide functionality on our sites — such as analytics tools. These cookies are governed by those third parties' privacy policies, not ours.</p>
+      </div>
+    </div>
+
+    <!-- 02 — Why We Use Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 02 — why we use cookies</p>
+      <h3>Every cookie has a reason. Here's each one.</h3>
+      <p style="margin-bottom: 4px;">We use cookies for a narrow set of legitimate purposes. We do not use cookies to build advertising profiles, fingerprint devices, or sell data. Our cookie usage falls into four categories, only two of which require your consent:</p>
+      <ul style="margin-top: 16px;">
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Strictly Necessary</strong> — Required for the site to function. No consent needed under Canadian, EU, and UK law.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Functional</strong> — Remember your preferences to improve your experience. Consent can be withdrawn at any time.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Analytics</strong> — Anonymized, aggregate data about how visitors use the site. Consent can be withdrawn at any time.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Marketing</strong> — We do not use marketing or advertising cookies. Period.</span></li>
+      </ul>
+    </div>
+
+    <!-- 03 — Strictly Necessary Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 03 — strictly necessary cookies</p>
+      <h3>The cookies the site cannot function without.</h3>
+      <p>These cookies are essential for you to browse the site and use its features — including accessing secure areas of the site. They do not require your consent under the Canadian <em>Personal Information Protection and Electronic Documents Act</em> (PIPEDA), the EU ePrivacy Directive, or the UK PECR, as they are required for the delivery of a service you have explicitly requested.</p>
+      <div style="overflow-x: auto;">
+        <table class="cookie-table" role="table" aria-label="Strictly necessary cookies">
+          <thead>
+            <tr>
+              <th scope="col">Cookie Name</th>
+              <th scope="col">Provider</th>
+              <th scope="col">Purpose</th>
+              <th scope="col">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cookie-name">vw_session</span></td>
+              <td>VardWeb</td>
+              <td>Maintains your session state while navigating the site</td>
+              <td><span class="cookie-duration">Session</span></td>
+            </tr>
+            <tr>
+              <td><span class="cookie-name">vw_csrf</span></td>
+              <td>VardWeb</td>
+              <td>Cross-Site Request Forgery protection token — prevents unauthorized form submissions</td>
+              <td><span class="cookie-duration">Session</span></td>
+            </tr>
+            <tr>
+              <td><span class="cookie-name">sb-access-token</span></td>
+              <td>Supabase</td>
+              <td>Authenticates registered users in the client portal; required for secure account access</td>
+              <td><span class="cookie-duration">1 hour</span></td>
+            </tr>
+            <tr>
+              <td><span class="cookie-name">sb-refresh-token</span></td>
+              <td>Supabase</td>
+              <td>Refreshes the access token without requiring re-authentication each hour</td>
+              <td><span class="cookie-duration">1 week</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 04 — Functional Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 04 — functional cookies</p>
+      <h3>Remembering your preferences. Nothing more.</h3>
+      <p>Functional cookies allow the site to remember choices you make — such as saving your contact form details for convenience — so you don't have to re-enter them on every visit. These cookies do not track your activity across other websites and do not collect any personal data beyond what you explicitly provide.</p>
+      <div style="overflow-x: auto; margin-top: 16px;">
+        <table class="cookie-table" role="table" aria-label="Functional cookies">
+          <thead>
+            <tr>
+              <th scope="col">Cookie Name</th>
+              <th scope="col">Provider</th>
+              <th scope="col">Purpose</th>
+              <th scope="col">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cookie-name">vw_prefs</span></td>
+              <td>VardWeb</td>
+              <td>Stores user interface preferences (e.g., saved form fields) if you opt in to saving details</td>
+              <td><span class="cookie-duration">1 year</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warn-banner" style="margin-top: 20px;">
+        <p><strong>You may opt out of functional cookies at any time</strong> by clearing your browser cookies or adjusting your browser settings. Doing so will not prevent you from using the site but will mean your preferences are not saved between visits.</p>
+      </div>
+    </div>
+
+    <!-- 05 — Analytics Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 05 — analytics cookies</p>
+      <h3>Understanding traffic. Never tracking people.</h3>
+      <p style="margin-bottom: 4px;">We use analytics cookies to understand aggregate patterns in how visitors interact with vardweb.ca and vardweb.com. This data is anonymized and aggregated — it tells us which pages are popular, not who you are. We use this insight to improve site performance and content quality.</p>
+
+      <div class="sub-section">
+        <h4>Google Analytics (GA4)</h4>
+        <p>We use Google Analytics 4 to collect anonymized, aggregated usage data. IP addresses are anonymized before processing. We do not upload or merge any personally identifiable information with Google Analytics data. Google processes analytics data under their own <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Privacy Policy</a>.</p>
+      </div>
+
+      <div style="overflow-x: auto; margin-top: 16px;">
+        <table class="cookie-table" role="table" aria-label="Analytics cookies">
+          <thead>
+            <tr>
+              <th scope="col">Cookie Name</th>
+              <th scope="col">Provider</th>
+              <th scope="col">Purpose</th>
+              <th scope="col">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cookie-name">_ga</span></td>
+              <td>Google Analytics</td>
+              <td>Registers a unique ID to generate statistical data on how you use the site (anonymized)</td>
+              <td><span class="cookie-duration">2 years</span></td>
+            </tr>
+            <tr>
+              <td><span class="cookie-name">_gid</span></td>
+              <td>Google Analytics</td>
+              <td>Registers a unique ID for a single day's session to generate statistical data</td>
+              <td><span class="cookie-duration">24 hours</span></td>
+            </tr>
+            <tr>
+              <td><span class="cookie-name">_ga_*</span></td>
+              <td>Google Analytics</td>
+              <td>GA4 measurement ID cookie — used to persist session state and configuration</td>
+              <td><span class="cookie-duration">2 years</span></td>
+            </tr>
+            <tr>
+              <td><span class="cookie-name">_gat_gtag_*</span></td>
+              <td>Google Analytics</td>
+              <td>Throttles the request rate to Google Analytics servers</td>
+              <td><span class="cookie-duration">1 minute</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top: 16px; font-size: 13.5px; color: var(--text-2);">You may opt out of Google Analytics across all sites by installing the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Google Analytics Opt-out Browser Add-on</a>.</p>
+    </div>
+
+    <!-- 06 — Marketing Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 06 — marketing &amp; advertising cookies</p>
+      <h3>We don't use them. Full stop.</h3>
+      <div class="no-share-banner" style="margin-top: 16px;">
+        <div class="no-share-icon">🚫</div>
+        <p>
+          <strong>VardWeb does not use marketing, advertising, or retargeting cookies.</strong> We do not participate in any advertising networks, affiliate tracking systems, or cross-site behavioural profiling. Your browsing habits are not sold, rented, or shared with any advertising platform.
+        </p>
+      </div>
+    </div>
+
+    <!-- 07 — Third-Party Cookies -->
+    <div class="policy-card">
+      <p class="sec-tag">// 07 — third-party cookies</p>
+      <h3>Vendors who may set cookies. Named individually.</h3>
+      <p style="margin-bottom: 4px;">Some functionality on our sites is provided by third-party services. These services may set their own cookies, subject to their own privacy policies. We have carefully selected vendors with strong privacy practices. Below is a complete list.</p>
+
+      <div class="sub-section">
+        <h4>Google Analytics</h4>
+        <p>Analytics data collection. Cookies: <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">_ga, _gid, _ga_*, _gat_gtag_*</span><br>
+        Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">policies.google.com/privacy</a></p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Supabase</h4>
+        <p>Backend authentication and database services for registered client portal users only. Cookies only set when you log into the client portal. Cookies: <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">sb-access-token, sb-refresh-token</span><br>
+        Policy: <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">supabase.com/privacy</a></p>
+      </div>
+
+      <div class="sub-section">
+        <h4>Stripe</h4>
+        <p>Payment processing for invoices and transactions. Stripe cookies are only set during payment flows and are strictly necessary for fraud prevention and transaction integrity. Cookies: <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">__stripe_mid, __stripe_sid</span><br>
+        Policy: <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">stripe.com/privacy</a></p>
+      </div>
+    </div>
+
+    <!-- 08 — Cookie Duration Summary -->
+    <div class="policy-card">
+      <p class="sec-tag">// 08 — cookie duration</p>
+      <h3>How long cookies last on your device.</h3>
+      <p>The table below summarizes all cookies by maximum duration. You may clear any or all cookies at any time through your browser settings.</p>
+      <div style="overflow-x: auto;">
+        <table class="cookie-table" role="table" aria-label="Cookie duration summary" style="margin-top: 20px;">
+          <thead>
+            <tr>
+              <th scope="col">Duration</th>
+              <th scope="col">Cookies</th>
+              <th scope="col">Category</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="cookie-duration">Session only</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">vw_session, vw_csrf, _gat_gtag_*</span></td>
+              <td>Strictly Necessary / Analytics</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">1 minute</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">_gat_gtag_*</span></td>
+              <td>Analytics</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">30 minutes</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">__stripe_sid</span></td>
+              <td>Strictly Necessary (payment flows)</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">1 hour</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">sb-access-token</span></td>
+              <td>Strictly Necessary</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">24 hours</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">_gid</span></td>
+              <td>Analytics</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">1 week</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">sb-refresh-token</span></td>
+              <td>Strictly Necessary</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">1 year</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">vw_prefs, __stripe_mid</span></td>
+              <td>Functional / Strictly Necessary (payment flows)</td>
+            </tr>
+            <tr>
+              <td><span class="cookie-duration">2 years</span></td>
+              <td><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-1);">_ga, _ga_*</span></td>
+              <td>Analytics</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 09 — Managing Preferences -->
+    <div class="policy-card">
+      <p class="sec-tag">// 09 — managing your preferences</p>
+      <h3>You are always in control.</h3>
+      <p style="margin-bottom: 4px;">You have the right to accept, reject, or withdraw consent for non-essential cookies at any time. There are several ways to exercise this right:</p>
+      <ul>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Browser settings</strong> — The most reliable method. Configure your browser to block or delete cookies at any time (see Section 10 for browser-specific instructions).</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Google Analytics opt-out</strong> — Install the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">GA Opt-out Add-on</a> to block Google Analytics tracking across all sites.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Contact us</strong> — Email <a href="mailto:support@vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">support@vardweb.com</a> to request that any data associated with your session be deleted.</span></li>
+      </ul>
+      <p style="margin-top: 14px;">Blocking strictly necessary cookies will prevent certain features from functioning correctly. All other cookie categories can be disabled without affecting your ability to browse the site.</p>
+    </div>
+
+    <!-- 10 — Browser Controls -->
+    <div class="policy-card">
+      <p class="sec-tag">// 10 — browser controls</p>
+      <h3>How to manage cookies in your browser.</h3>
+      <p style="margin-bottom: 4px;">All major browsers allow you to view, delete, and block cookies. Instructions for the most common browsers:</p>
+
+      <div class="sub-section">
+        <h4>Google Chrome</h4>
+        <p>Settings → Privacy and security → Cookies and other site data. You can block all cookies, block third-party cookies, or clear cookies for specific sites.</p>
+      </div>
+      <div class="sub-section">
+        <h4>Mozilla Firefox</h4>
+        <p>Settings → Privacy &amp; Security → Cookies and Site Data. Firefox also offers Enhanced Tracking Protection (ETP), which blocks known third-party trackers automatically.</p>
+      </div>
+      <div class="sub-section">
+        <h4>Apple Safari</h4>
+        <p>Preferences → Privacy → Manage Website Data. Safari blocks cross-site tracking cookies by default. You can block all cookies or manage site-specific data.</p>
+      </div>
+      <div class="sub-section">
+        <h4>Microsoft Edge</h4>
+        <p>Settings → Cookies and site permissions → Cookies and site data. Edge includes Tracking Prevention with three levels (Basic, Balanced, Strict).</p>
+      </div>
+      <div class="warn-banner">
+        <p><strong>Note:</strong> Blocking or deleting strictly necessary cookies — including session and authentication cookies — may prevent certain features of the site from working correctly, including the client login portal and contact form submissions.</p>
+      </div>
+    </div>
+
+    <!-- 11 — Do Not Track & GPC -->
+    <div class="policy-card">
+      <p class="sec-tag">// 11 — do not track &amp; global privacy control</p>
+      <h3>We respect your browser's privacy signals.</h3>
+      <div class="sub-section">
+        <h4>Do Not Track (DNT)</h4>
+        <p>Some browsers transmit a "Do Not Track" (DNT) signal to websites. Because there is no consistent technical standard for how DNT signals should be interpreted, our sites do not currently modify their cookie behaviour in response to DNT headers. We encourage you to use your browser's native cookie controls (Section 10) as the most reliable opt-out mechanism.</p>
+      </div>
+      <div class="sub-section">
+        <h4>Global Privacy Control (GPC)</h4>
+        <p>The Global Privacy Control (GPC) is an emerging browser signal that communicates your preference not to have your data sold or shared. Where technically feasible and legally required — including under the California Consumer Privacy Act (CCPA) and its amendment (CPRA) — VardWeb honours the GPC signal by suppressing non-essential analytics cookies. We are committed to expanding GPC support as implementation standards mature.</p>
+      </div>
+    </div>
+
+    <!-- 12 — Your Rights -->
+    <div class="policy-card">
+      <p class="sec-tag">// 12 — your rights</p>
+      <h3>Rights that apply regardless of where you are.</h3>
+      <p style="margin-bottom: 4px;">Depending on your jurisdiction, you have specific rights regarding cookies and the data they generate. We honour these rights without friction and without requiring you to justify your request.</p>
+      <div class="rights-grid">
+        <div class="rights-chip">
+          <div class="rights-chip-icon">🔄</div>
+          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Withdraw Consent (GDPR Art. 7)</strong>Withdraw consent for non-essential cookies at any time, with no adverse effect.</span>
+        </div>
+        <div class="rights-chip">
+          <div class="rights-chip-icon">🚫</div>
+          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Object to Processing (GDPR Art. 21)</strong>Object to processing of your data for analytics purposes where we rely on legitimate interests.</span>
+        </div>
+        <div class="rights-chip">
+          <div class="rights-chip-icon">🛑</div>
+          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Opt-Out of Sale (CCPA/CPRA)</strong>California residents may opt out of the sale or sharing of personal information. We do not sell data.</span>
+        </div>
+        <div class="rights-chip">
+          <div class="rights-chip-icon">📋</div>
+          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Access &amp; Correction (PIPEDA)</strong>Request access to or correction of any personal data associated with your use of our site.</span>
+        </div>
+      </div>
+      <p style="margin-top: 16px; font-size: 13.5px; color: var(--text-2);">To exercise any of the above rights, contact us at <a href="mailto:support@vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">support@vardweb.com</a>. We respond to all requests within 30 days.</p>
+    </div>
+
+    <!-- 13 — Cross-Border Transfers -->
+    <div class="policy-card">
+      <p class="sec-tag">// 13 — cross-border data transfers</p>
+      <h3>Where your cookie data is processed.</h3>
+      <p>VardWeb is a Canadian business. However, some of our third-party service providers process data in other jurisdictions. Specifically:</p>
+      <ul>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Google Analytics</strong> — Data is processed in the United States. Google participates in the EU-U.S. Data Privacy Framework and provides Standard Contractual Clauses (SCCs) for EU/UK transfers.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Supabase</strong> — Data may be processed in the United States. Supabase is SOC 2 Type II compliant and provides SCCs for international transfers.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Stripe</strong> — Data is processed in the United States. Stripe is certified under the EU-U.S. Data Privacy Framework.</span></li>
+      </ul>
+      <p style="margin-top: 14px;">Where data is transferred internationally, we require our vendors to maintain appropriate safeguards consistent with PIPEDA, GDPR, and applicable data protection law.</p>
+    </div>
+
+    <!-- 14 — Children's Privacy -->
+    <div class="policy-card">
+      <p class="sec-tag">// 14 — children's privacy</p>
+      <h3>Our sites are not directed at children.</h3>
+      <p>VardWeb's websites — vardweb.ca and vardweb.com — are directed at businesses and adult professionals. We do not knowingly set cookies on the devices of children under the age of 13, nor do we knowingly collect personal information from children under 13 through our cookie mechanisms or otherwise.</p>
+      <p style="margin-top: 12px;">If you believe a child under 13 has submitted personal information to us or that cookies have been placed on their device, please contact us immediately at <a href="mailto:support@vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">support@vardweb.com</a> and we will take prompt steps to delete any such data. This policy is consistent with the U.S. Children's Online Privacy Protection Act (COPPA) and equivalent Canadian and international standards.</p>
+    </div>
+
+    <!-- 15 — Changes to This Policy -->
+    <div class="policy-card">
+      <p class="sec-tag">// 15 — changes to this policy</p>
+      <h3>We'll tell you when things change.</h3>
+      <p>We review this Cookie Policy periodically and update it as our practices evolve or as required by law. The "Last updated" date at the top of this page reflects the date of the most recent revision.</p>
+      <p style="margin-top: 12px;">If we make material changes to the types of cookies we use, the vendors we work with, or the rights available to you, we will provide notice through a prominent notice on vardweb.ca and vardweb.com. Your continued use of the site following the posting of a revised policy constitutes acceptance of the updated terms. Where required by applicable law, we will seek fresh consent for new processing activities.</p>
+    </div>
+
+    <!-- 16 — Contact -->
+    <div class="policy-card" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
+      <p class="sec-tag">// 16 — contact &amp; consent withdrawal</p>
+      <h3>Questions? We answer them.</h3>
+      <p style="margin-bottom: 20px;">
+        If you have questions about this Cookie Policy, wish to withdraw consent for non-essential cookies, or want to request deletion of any data we hold about you, contact us. Every request is handled by a real person and responded to within 30 days.
+      </p>
+      <a href="contact.html" class="btn btn-primary" style="font-size: 13px;">Contact Us →</a>
+      <p style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+        <a href="mailto:support@vardweb.com" style="color: rgba(0,229,255,0.55); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.35);">support@vardweb.com</a>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="logo-nav-wrap" style="display:inline-flex;">
+          <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+        </div>
+        <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
+        <div class="footer-social-row">
+          <a href="#" class="social-btn" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-head">Home</p>
+        <a href="index.html#hero"     class="footer-link">Landing</a>
+        <a href="index.html#why-us"   class="footer-link">Why Us</a>
+        <a href="index.html#services" class="footer-link">Services</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
+        <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Company</p>
+        <a href="about.html"    class="footer-link">About Us</a>
+        <a href="our-work.html" class="footer-link">Our Work</a>
+        <a href="blog.html"     class="footer-link">Blog</a>
+        <a href="faq.html"      class="footer-link">FAQ</a>
+        <a href="contact.html"  class="footer-link">Contact</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Services</p>
+        <a href="contact.html" class="footer-link">Web Design</a>
+        <a href="contact.html" class="footer-link">E-Commerce</a>
+        <a href="contact.html" class="footer-link">Landing Pages</a>
+        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">Maintenance</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Legal</p>
+        <a href="privacy.html"         class="footer-link">Privacy Policy</a>
+        <a href="terms.html"           class="footer-link">Terms of Service</a>
+        <a href="cookie-policy.html"   class="footer-link active">Cookie Policy</a>
+        <a href="accessibility.html"   class="footer-link">Accessibility</a>
+        <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-bar">
+      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <div class="footer-credit">
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+        <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">&#10084;</span>
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+        <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
