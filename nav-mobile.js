@@ -3,8 +3,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var menu = document.querySelector('.nav-mobile-menu');
   if (!btn || !menu) return;
 
-  var homeTrigger = menu.querySelector('.mob-accordion-trigger');
-  var homePanel   = menu.querySelector('.mob-accordion-panel');
+  var triggers = menu.querySelectorAll('.mob-accordion-trigger');
+  var panels   = menu.querySelectorAll('.mob-accordion-panel');
+
+  function closeAllAccordions() {
+    triggers.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+    panels.forEach(function (p) { p.classList.remove('open'); });
+  }
 
   function close() {
     menu.classList.remove('open');
@@ -12,16 +17,18 @@ document.addEventListener('DOMContentLoaded', function () {
     btn.setAttribute('aria-expanded', 'false');
     menu.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
-    if (homeTrigger) homeTrigger.setAttribute('aria-expanded', 'false');
-    if (homePanel) homePanel.classList.remove('open');
+    closeAllAccordions();
   }
 
-  if (homeTrigger && homePanel) {
-    homeTrigger.addEventListener('click', function () {
-      var open = homePanel.classList.toggle('open');
-      homeTrigger.setAttribute('aria-expanded', open);
+  triggers.forEach(function (trigger) {
+    var panelId = trigger.getAttribute('aria-controls');
+    var panel   = panelId ? menu.querySelector('#' + panelId) : null;
+    if (!panel) return;
+    trigger.addEventListener('click', function () {
+      var open = panel.classList.toggle('open');
+      trigger.setAttribute('aria-expanded', open);
     });
-  }
+  });
 
   btn.addEventListener('click', function () {
     var open = menu.classList.toggle('open');
