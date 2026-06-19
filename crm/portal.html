@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -8,7 +8,7 @@
   <script src="/supabase-config.js"></script>
   <script src="/encryption-config.js"></script>
   <style>
-    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.1);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);}
+    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.3);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html,body{min-height:100%;}
     body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;}
     body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
@@ -85,9 +85,47 @@
     .social-title{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:10px;}
 
     .note-box{background:rgba(0,229,255,0.04);border:1px solid rgba(0,229,255,0.12);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--text-2);line-height:1.6;margin-top:10px;}
+
+    /* ── Skip link (WCAG 2.4.1) ── */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 20px;
+      z-index: 9000;
+      padding: 10px 20px;
+      background: #070910;
+      color: #00E5FF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border: 2px solid #00E5FF;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 20px rgba(0,229,255,0.3);
+      transition: top 0.15s ease;
+    }
+    .skip-link:focus { top: 20px; }
+
+    /* ── Screen-reader-only utility (WCAG 1.3.1) ── */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+    }
+
+    /* ── WCAG 2.2.2 — Respect reduced-motion preference ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <!-- Top nav -->
 <nav class="topnav">
@@ -123,7 +161,7 @@
   <div class="ptab" data-tab="seo">SEO Reports</div>
 </div>
 
-<div class="portal-body">
+<div class="portal-body" id="main-content" tabindex="-1">
   <!-- My Site -->
   <div class="tab-panel active" id="panel-site">
     <div class="section-title">My site</div>
