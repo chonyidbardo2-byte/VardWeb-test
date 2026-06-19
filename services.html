@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services — VardWeb</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/gsap.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'vv-cyan':    '#00E5FF',
+            'vv-pink':    '#FF2D78',
+            'vv-gold':    '#FFD700',
+            'vv-base':    '#070910',
+            'vv-surface': '#0f1219',
+            'vv-raised':  '#161b27',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Grain overlay ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    /* ── Gradient text ── */
+    .grad-cyan-pink {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+
+    /* ── Nav Dropdown ── */
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+
+    /* logo in nav */
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 2px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    /* ── Section tag ── */
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+
+    /* ── Footer ── */
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
+    .footer-social-row { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-link.active { color: var(--cyan); }
+    .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
+    }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: background 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s cubic-bezier(0.16,1,0.3,1); }
+    @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
+
+    /* ── Services card system ── */
+    .svc-card {
+      position: relative;
+      display: block;
+      height: auto;
+      min-height: 380px;
+      border-radius: 26px;
+      overflow: hidden;
+      isolation: isolate;
+      text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+    }
+    .svc-card:hover {
+      transform: translateY(-6px);
+      box-shadow:
+        0 24px 56px rgba(0,0,0,0.55),
+        0 0 38px color-mix(in srgb, var(--c1, #00E5FF) 34%, transparent);
+    }
+    .svc-card:focus-visible { outline: 2px solid var(--c1, #00E5FF); outline-offset: 4px; }
+
+    .svc-card-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; background: #07080f; filter: blur(20px); }
+
+    .svc-card-panel {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      padding: 32px;
+      background: rgba(7,9,16,0.15);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 26px;
+      height: 100%;
+      min-height: 380px;
+    }
+    .svc-card-icon {
+      width: 54px; height: 54px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px; color: #fff;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.30));
+    }
+    .svc-card-panel h3 {
+      font-size: 22px; font-weight: 800; color: #fff;
+      margin-bottom: 10px; letter-spacing: -0.02em;
+    }
+    .svc-card-caption {
+      font-size: 13.5px; line-height: 1.65;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .svc-bullets {
+      list-style: none;
+      padding: 0; margin: 0;
+      flex-grow: 1;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 16px;
+    }
+    .svc-bullets li {
+      font-size: 12.5px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.68);
+      padding: 5px 0 5px 20px;
+      position: relative;
+    }
+    .svc-bullets li::before {
+      content: '›';
+      position: absolute;
+      left: 4px;
+      color: rgba(255,255,255,0.38);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .svc-card-more {
+      margin-top: 20px; display: flex; align-items: center; gap: 8px;
+      font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+    }
+    .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
+
+    /* ── Services page grid ── */
+    .services-page-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 820px) {
+      .services-page-grid { grid-template-columns: 1fr; gap: 18px; }
+    }
+
+    /* ── Responsive footer ── */
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (max-width: 560px)  { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); -webkit-transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute; top: -100px; left: 20px; z-index: 9000;
+      padding: 10px 20px; background: #070910; color: #00E5FF;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.04em; border: 2px solid #00E5FF; border-radius: 8px;
+      text-decoration: none; box-shadow: 0 0 20px rgba(0,229,255,0.3);
+      transition: top 0.15s ease;
+    }
+    .skip-link:focus { top: 20px; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
+  </style>
+  <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+        var trigger = dd.querySelector('.nav-dropdown-trigger');
+        if (!trigger) return;
+        dd.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+        dd.addEventListener('focusout', function (e) {
+          if (!dd.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false');
+        });
+        dd.addEventListener('mouseleave', function () {
+          if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- ── Nav ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="VardWeb Home">
+      <div class="logo-nav-wrap">
+        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+      </div>
+    </a>
+
+    <div class="nav-links">
+      <div class="nav-dropdown">
+        <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
+          Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us</a>
+          <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
+        </div>
+      </div>
+      <a href="faq.html"      class="nav-link">FAQ</a>
+      <a href="blog.html"     class="nav-link">Blog</a>
+      <a href="our-work.html" class="nav-link">Our Work</a>
+      <a href="about.html"    class="nav-link">About</a>
+      <a href="services.html" class="nav-link active">Services</a>
+      <a href="contact.html"  class="nav-link">Contact</a>
+    </div>
+
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+          <circle cx="10" cy="5.5" r="4.5"/>
+          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+        </svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">
+        Get a Quote <span aria-hidden="true">→</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html"          class="mob-link mob-sub">Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="index.html#services" class="mob-link mob-sub">Services</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+      Company
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-company-panel"><div>
+    <a href="about.html"    class="mob-link mob-sub">About Us</a>
+    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+    <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+    <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+      Services
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-services-panel"><div>
+    <a href="services.html" class="mob-link mob-sub active">All Services</a>
+    <a href="contact.html"  class="mob-link mob-sub">Web Design</a>
+    <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html"  class="mob-link mob-sub">App Development</a>
+    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
+    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
+    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+      Legal
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+    <a href="privacy.html" class="mob-link mob-sub">Privacy Policy</a>
+    <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+    <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
+    <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+    <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+    </div></div>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
+  </div>
+</nav>
+
+<main id="main-content" tabindex="-1">
+
+<!-- ── Page header ── -->
+<div style="padding:120px 28px 0;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
+    <div style="position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:480px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.055) 0%,transparent 70%);"></div>
+    <div style="position:absolute;top:0;right:0;width:440px;height:360px;background:radial-gradient(ellipse,rgba(255,45,120,0.035) 0%,transparent 70%);"></div>
+    <div style="position:absolute;top:60px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.025) 0%,transparent 70%);"></div>
+  </div>
+  <div style="position:relative;z-index:1;max-width:680px;margin:0 auto;">
+    <p class="sec-tag" style="margin-bottom:14px;">// what we do</p>
+    <h1 style="font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.06;margin-bottom:20px;color:var(--text-1);">
+      Services.
+    </h1>
+    <p style="font-size:16px;line-height:1.82;color:var(--text-2);max-width:500px;margin:0 auto;">
+      Pick your weapon. We'll do the rest.
+    </p>
+  </div>
+</div>
+
+<div class="divider" style="margin-top:52px;"></div>
+
+<!-- ── Services grid ── -->
+<section style="padding:72px 28px 100px;" aria-label="All services">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div class="services-page-grid">
+
+      <!-- 1. Web Design -->
+      <a href="contact.html" class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;" aria-label="Web Design — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <h3>Web Design</h3>
+          <p class="svc-card-caption">"We make sites people actually want to visit — not flee from in horror."</p>
+          <ul class="svc-bullets">
+            <li>Custom-coded, pixel-precise layouts</li>
+            <li>Mobile-first &amp; responsive across all devices</li>
+            <li>Optimised for speed and conversion</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 2. E-Commerce -->
+      <a href="contact.html" class="svc-card" style="--c1:#FFD700;--c2:#FF9500;--c3:#FFEC80;" aria-label="E-Commerce — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+          </div>
+          <h3>E-Commerce</h3>
+          <p class="svc-card-caption">"A storefront that sells 24/7 without you saying a word. Introvert-approved."</p>
+          <ul class="svc-bullets">
+            <li>Full product catalogue &amp; checkout integration</li>
+            <li>Payment gateway &amp; inventory management</li>
+            <li>Mobile-optimised shopping experience</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 3. Landing Pages -->
+      <a href="contact.html" class="svc-card" style="--c1:#FF2D78;--c2:#C4004F;--c3:#FF8FBA;" aria-label="Landing Pages — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <circle cx="12" cy="13" r="3"/>
+              <line x1="12" y1="16" x2="12" y2="19"/>
+            </svg>
+          </div>
+          <h3>Landing Pages</h3>
+          <p class="svc-card-caption">"One page. One purpose. One conversion rate your boss will love."</p>
+          <ul class="svc-bullets">
+            <li>Conversion-focused single-page design</li>
+            <li>A/B test-ready structure &amp; CTA hierarchy</li>
+            <li>Sub-2 second load times, guaranteed</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 4. App Development -->
+      <a href="contact.html" class="svc-card" style="--c1:#A855F7;--c2:#7C3AED;--c3:#D8B4FE;" aria-label="App Development — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2.5"/>
+              <line x1="9" y1="7" x2="15" y2="7"/>
+              <line x1="9" y1="11" x2="15" y2="11"/>
+              <line x1="9" y1="15" x2="12" y2="15"/>
+              <circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <h3>App Development</h3>
+          <p class="svc-card-caption">"Your idea, our caffeine, everyone's new daily habit."</p>
+          <ul class="svc-bullets">
+            <li>Progressive Web Apps &amp; native-feel UX</li>
+            <li>API integrations &amp; real-time features</li>
+            <li>Cross-platform, any screen, any device</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 5. SEO & Performance -->
+      <a href="contact.html" class="svc-card" style="--c1:#22D3EE;--c2:#0E7490;--c3:#67E8F9;" aria-label="SEO and Performance — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              <line x1="11" y1="8" x2="11" y2="14"/>
+              <line x1="8" y1="11" x2="14" y2="11"/>
+            </svg>
+          </div>
+          <h3>SEO &amp; Performance</h3>
+          <p class="svc-card-caption">"Page 1 or bust. We also fix your load time so Google stops judging you."</p>
+          <ul class="svc-bullets">
+            <li>Technical SEO &amp; Core Web Vitals audit</li>
+            <li>Keyword strategy &amp; on-page optimisation</li>
+            <li>Speed audits, tuning &amp; image compression</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 6. Maintenance -->
+      <a href="contact.html" class="svc-card" style="--c1:#60A5FA;--c2:#1D4ED8;--c3:#BFDBFE;" aria-label="Maintenance — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/>
+            </svg>
+          </div>
+          <h3>Maintenance</h3>
+          <p class="svc-card-caption">"We catch bugs before they become catastrophes. Your site's immune system."</p>
+          <ul class="svc-bullets">
+            <li>Regular updates, backups &amp; uptime monitoring</li>
+            <li>Security patches &amp; real-time threat alerts</li>
+            <li>Content edits &amp; feature requests, on demand</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 7. Hosting Services -->
+      <a href="contact.html" class="svc-card" style="--c1:#34D399;--c2:#059669;--c3:#A7F3D0;" aria-label="Hosting Services — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="8" rx="2"/>
+              <rect x="2" y="14" width="20" height="8" rx="2"/>
+              <line x1="6" y1="6" x2="6.01" y2="6"/>
+              <line x1="6" y1="18" x2="6.01" y2="18"/>
+            </svg>
+          </div>
+          <h3>Hosting Services</h3>
+          <p class="svc-card-caption">"Your site stays online. Even at 3am. Yes, we checked."</p>
+          <ul class="svc-bullets">
+            <li>Managed hosting with 99.9% uptime SLA</li>
+            <li>SSL, CDN &amp; DDoS protection included</li>
+            <li>Auto-scaling for traffic spikes, no downtime</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 8. Content Creation -->
+      <a href="contact.html" class="svc-card" style="--c1:#FBBF24;--c2:#D97706;--c3:#FDE68A;" aria-label="Content Creation — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+          </div>
+          <h3>Content Creation</h3>
+          <p class="svc-card-caption">"Words that convert. Copy that doesn't sound like a robot wrote it. (Mostly.)"</p>
+          <ul class="svc-bullets">
+            <li>SEO-optimised blog posts &amp; web copy</li>
+            <li>Brand-voice consistent tone &amp; style guide</li>
+            <li>Headlines and CTAs engineered to convert</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 9. Social Media -->
+      <a href="contact.html" class="svc-card" style="--c1:#F472B6;--c2:#DB2777;--c3:#FBCFE8;" aria-label="Social Media — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6"  cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59"  y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51"  x2="8.59"  y2="10.49"/>
+            </svg>
+          </div>
+          <h3>Social Media</h3>
+          <p class="svc-card-caption">"Scroll-stopping content that makes them put down their coffee."</p>
+          <ul class="svc-bullets">
+            <li>Platform-specific content strategy</li>
+            <li>Branded graphics &amp; short-form video</li>
+            <li>Consistent posting schedule &amp; analytics</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+      <!-- 10. Custom Request -->
+      <a href="contact.html" class="svc-card" style="--c1:#00E5FF;--c2:#FF2D78;--c3:#FFD700;" aria-label="Custom Request — learn more">
+        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-panel">
+          <div class="svc-card-icon">
+            <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <h3>Custom Request</h3>
+          <p class="svc-card-caption">"Got something we haven't thought of yet? Even better. We like a challenge."</p>
+          <ul class="svc-bullets">
+            <li>Anything you can dream, we can build</li>
+            <li>Discovery call to scope your exact vision</li>
+            <li>Fixed scope, transparent pricing, no surprises</li>
+          </ul>
+          <div class="svc-card-more">
+            Explore
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </div>
+        </div>
+      </a>
+
+    </div><!-- /services-page-grid -->
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CTA ── -->
+<section style="padding:80px 28px 100px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;background:var(--surface);border:1px solid rgba(0,229,255,0.1);border-radius:24px;padding:64px 40px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:300px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.05) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="position:absolute;top:0;right:0;width:300px;height:240px;background:radial-gradient(ellipse,rgba(255,45,120,0.03) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="position:relative;z-index:1;">
+        <p class="sec-tag" style="margin-bottom:16px;">// not sure where to start?</p>
+        <h2 style="font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:18px;color:var(--text-1);">
+          Let's figure it out <span class="grad-cyan-pink">together</span>
+        </h2>
+        <p style="font-size:15px;line-height:1.82;color:var(--text-2);max-width:440px;margin:0 auto 32px;">
+          Tell us what you're building and we'll match you with the right service — or build something entirely new.
+        </p>
+        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
+          <a href="contact.html" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">
+            Start a Project <span aria-hidden="true">→</span>
+          </a>
+          <a href="our-work.html" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">
+            See Our Work
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="logo-nav-wrap" style="display:inline-flex;">
+          <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+        </div>
+        <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
+        <div class="footer-social-row">
+          <a href="#" class="social-btn" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-head">Home</p>
+        <a href="index.html#hero"     class="footer-link">Landing</a>
+        <a href="index.html#why-us"   class="footer-link">Why Us</a>
+        <a href="index.html#services" class="footer-link">Services</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
+        <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Company</p>
+        <a href="about.html"    class="footer-link">About Us</a>
+        <a href="our-work.html" class="footer-link">Our Work</a>
+        <a href="blog.html"     class="footer-link">Blog</a>
+        <a href="faq.html"      class="footer-link">FAQ</a>
+        <a href="contact.html"  class="footer-link">Contact</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link active">All Services</a>
+        <a href="contact.html"  class="footer-link">Web Design</a>
+        <a href="contact.html"  class="footer-link">E-Commerce</a>
+        <a href="contact.html"  class="footer-link">Landing Pages</a>
+        <a href="contact.html"  class="footer-link">Maintenance</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Legal</p>
+        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+        <a href="terms.html"           class="footer-link">Terms of Service</a>
+        <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
+        <a href="accessibility.html"   class="footer-link">Accessibility</a>
+        <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-bar">
+      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <div class="footer-credit">
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+        <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">&#10084;</span>
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+        <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Services: plasma-gradient canvas animation (--c1/c2/c3 per card) ── */
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function hexToRgb(hex) {
+    hex = hex.trim().replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
+  }
+
+  document.querySelectorAll('.svc-card').forEach(function(card, ci) {
+    var canvas = card.querySelector('.svc-card-shader');
+    if (!canvas) return;
+
+    var cs = getComputedStyle(card);
+    var c1 = hexToRgb(cs.getPropertyValue('--c1').trim());
+    var c2 = hexToRgb(cs.getPropertyValue('--c2').trim());
+    var c3 = hexToRgb(cs.getPropertyValue('--c3').trim());
+    var ctx = canvas.getContext('2d');
+    var raf = 0, live = false;
+    var SEED = ci * 2.09;
+
+    function resize() {
+      canvas.width  = canvas.offsetWidth  || card.offsetWidth;
+      canvas.height = canvas.offsetHeight || card.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    function draw(ts) {
+      var t = ts * 0.0006 + SEED;
+      var W = canvas.width, H = canvas.height;
+      if (!W || !H) { if (live && !reduceMotion) raf = requestAnimationFrame(draw); return; }
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#07080f';
+      ctx.fillRect(0, 0, W, H);
+
+      /* ambient base */
+      var ox = W * (0.50 + Math.sin(t * 0.21) * 0.10);
+      var oy = H * (0.50 + Math.cos(t * 0.18) * 0.10);
+      var go = ctx.createRadialGradient(ox, oy, 0, ox, oy, W * 0.45);
+      go.addColorStop(0,    'rgba('+c1+',0.08)');
+      go.addColorStop(0.55, 'rgba('+c1+',0.03)');
+      go.addColorStop(1,    'rgba('+c1+',0)');
+      ctx.fillStyle = go; ctx.fillRect(0, 0, W, H);
+
+      /* blob A – top-left corner */
+      var ax = W * (0.16 + Math.sin(t * 0.48) * 0.14);
+      var ay = H * (0.18 + Math.cos(t * 0.37) * 0.14);
+      var ga = ctx.createRadialGradient(ax, ay, 0, ax, ay, W * 0.484);
+      ga.addColorStop(0,    'rgba('+c1+',0.80)');
+      ga.addColorStop(0.20, 'rgba('+c1+',0.38)');
+      ga.addColorStop(0.55, 'rgba('+c1+',0.06)');
+      ga.addColorStop(1,    'rgba('+c1+',0)');
+      ctx.fillStyle = ga; ctx.fillRect(0, 0, W, H);
+
+      /* blob B – bottom-right corner */
+      var bx = W * (0.83 + Math.cos(t * 0.59 + 2.1) * 0.14);
+      var by = H * (0.80 + Math.sin(t * 0.46 + 1.7) * 0.14);
+      var gb = ctx.createRadialGradient(bx, by, 0, bx, by, W * 0.484);
+      gb.addColorStop(0,    'rgba('+c3+',0.75)');
+      gb.addColorStop(0.20, 'rgba('+c3+',0.28)');
+      gb.addColorStop(0.55, 'rgba('+c3+',0.05)');
+      gb.addColorStop(1,    'rgba('+c3+',0)');
+      ctx.fillStyle = gb; ctx.fillRect(0, 0, W, H);
+
+      /* blob C – right edge */
+      var cx = W * (0.88 + Math.sin(t * 0.73 + 3.8) * 0.09);
+      var cy = H * (0.50 + Math.cos(t * 0.62 + 0.9) * 0.22);
+      var gc = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.418);
+      gc.addColorStop(0,    'rgba('+c2+',0.68)');
+      gc.addColorStop(0.22, 'rgba('+c2+',0.16)');
+      gc.addColorStop(0.60, 'rgba('+c2+',0.02)');
+      gc.addColorStop(1,    'rgba('+c2+',0)');
+      ctx.fillStyle = gc; ctx.fillRect(0, 0, W, H);
+
+      /* blob D – bottom-left corner */
+      var dx = W * (0.14 + Math.cos(t * 0.54 + 5.1) * 0.11);
+      var dy = H * (0.82 + Math.sin(t * 0.67 + 4.2) * 0.14);
+      var gd = ctx.createRadialGradient(dx, dy, 0, dx, dy, W * 0.385);
+      gd.addColorStop(0,    'rgba('+c1+',0.58)');
+      gd.addColorStop(0.28, 'rgba('+c1+',0.10)');
+      gd.addColorStop(0.65, 'rgba('+c1+',0.01)');
+      gd.addColorStop(1,    'rgba('+c1+',0)');
+      ctx.fillStyle = gd; ctx.fillRect(0, 0, W, H);
+
+      /* centre vignette */
+      var gv = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.68);
+      gv.addColorStop(0,    'rgba(0,0,0,0.62)');
+      gv.addColorStop(0.38, 'rgba(0,0,0,0.28)');
+      gv.addColorStop(1,    'rgba(0,0,0,0)');
+      ctx.fillStyle = gv; ctx.fillRect(0, 0, W, H);
+
+      /* perimeter fade */
+      var e = 0.12;
+      function edgeFade(x0,y0,x1f,y1f,rx,ry,rw,rh,a0,a1) {
+        var g = ctx.createLinearGradient(x0,y0,x1f,y1f);
+        g.addColorStop(0,'rgba(0,0,0,'+a0+')');
+        g.addColorStop(1,'rgba(0,0,0,'+a1+')');
+        ctx.fillStyle = g; ctx.fillRect(rx,ry,rw,rh);
+      }
+      edgeFade(0,0,       0,H*e,     0,0,    W,H*e,    0.32,0);
+      edgeFade(0,H*(1-e), 0,H,       0,H*(1-e),W,H*e,  0,0.32);
+      edgeFade(0,0,       W*e,0,     0,0,    W*e,H,    0.32,0);
+      edgeFade(W*(1-e),0, W,0,       W*(1-e),0,W*e,H,  0,0.32);
+
+      if (live && !reduceMotion) raf = requestAnimationFrame(draw);
+    }
+
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting && !live) {
+          live = true;
+          if (!reduceMotion) raf = requestAnimationFrame(draw);
+          else draw(0);
+        } else if (!e.isIntersecting && live) { live = false; cancelAnimationFrame(raf); }
+      });
+    }, { threshold: 0.05 });
+    io.observe(card);
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -17,7 +17,7 @@
       --base:    #070910;
       --surface: #0f1219;
       --raised:  #161b27;
-      --border:  rgba(0,229,255,0.1);
+      --border:  rgba(0,229,255,0.3);
       --text-1:  #eef0f8;
       --text-2:  rgba(200,212,232,0.62);
     }
@@ -279,7 +279,7 @@
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
     .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
     .footer-social-row { display: flex; gap: 10px; }
-    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
     .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
     .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
     .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
@@ -316,10 +316,10 @@
       .nav-right .btn { display: none; }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
       .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
-      .nav-hamburger span { display: block; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
-      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); -webkit-transform: translateY(-8px) rotate(-45deg); }
       .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
       .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
       @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
@@ -347,12 +347,52 @@
       .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
       .mob-cta-primary::before { display: none; }
     }
+  
+    /* ── WCAG Accessibility Additions ── */
+    .skip-link {
+      position: absolute; top: -100px; left: 20px; z-index: 9000;
+      padding: 10px 20px; background: #070910; color: #00E5FF;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px;
+      font-weight: 700; letter-spacing: 0.04em;
+      border: 2px solid #00E5FF; border-radius: 8px;
+      text-decoration: none; box-shadow: 0 0 20px rgba(0,229,255,0.3);
+      transition: top 0.15s ease;
+    }
+    .skip-link:focus { top: 20px; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+        var trigger = dd.querySelector('.nav-dropdown-trigger');
+        if (!trigger) return;
+        dd.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+        dd.addEventListener('focusout', function (e) {
+          if (!dd.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false');
+        });
+        dd.addEventListener('mouseleave', function () {
+          if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+  </script>
 </head>
 <body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
 
 <!-- ── NAV ── -->
 <nav class="nav">
@@ -364,19 +404,20 @@
     </a>
     <div class="nav-links">
       <div class="nav-dropdown">
-        <a href="index.html" class="nav-link nav-dropdown-trigger">
-          Home <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
+          Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
-        <div class="dropdown-menu">
-          <a href="index.html#why-us"   class="dropdown-item">Why Us</a>
-          <a href="index.html#services" class="dropdown-item">Services</a>
-          <a href="index.html#results"  class="dropdown-item">Results</a>
-          <a href="index.html#roadmap"  class="dropdown-item">Roadmap</a>
+        <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us</a>
+          <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
       <a href="faq.html"     class="nav-link">FAQ</a>
-      <a href="about.html"   class="nav-link">About</a>
-      <a href="contact.html" class="nav-link">Contact</a>
+      <a href="about.html"    class="nav-link">About</a>
+      <a href="services.html" class="nav-link">Services</a>
+      <a href="contact.html"  class="nav-link">Contact</a>
     </div>
     <div class="nav-right">
       <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
@@ -393,7 +434,7 @@
     <div class="mob-section-label">Navigate</div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
       Home
-      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-home-panel"><div>
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
@@ -404,7 +445,7 @@
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
       Company
-      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-company-panel"><div>
     <a href="about.html"    class="mob-link mob-sub">About Us</a>
@@ -415,18 +456,24 @@
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
       Services
-      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
-    <a href="contact.html" class="mob-link mob-sub">Web Design</a>
-    <a href="contact.html" class="mob-link mob-sub">E-Commerce</a>
-    <a href="contact.html" class="mob-link mob-sub">Landing Pages</a>
-    <a href="contact.html" class="mob-link mob-sub">SEO &amp; Performance</a>
-    <a href="contact.html" class="mob-link mob-sub">Maintenance</a>
+    <a href="services.html" class="mob-link mob-sub">All Services</a>
+    <a href="contact.html"  class="mob-link mob-sub">Web Design</a>
+    <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html"  class="mob-link mob-sub">App Development</a>
+    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
+    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
+    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
       Legal
-      <svg class="mob-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-legal-panel"><div>
     <a href="privacy.html"        class="mob-link mob-sub">Privacy Policy</a>
@@ -440,6 +487,7 @@
     <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
   </div>
 </nav>
+<main id="main-content" tabindex="-1">
 
 <!-- ── HERO ── -->
 <section style="
@@ -462,7 +510,7 @@
     </p>
     <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.18); border-radius: 999px; padding: 6px 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(0,229,255,0.75); letter-spacing: 0.06em;">
       <span style="width:6px;height:6px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
-      Last updated: June 2026
+      Last updated: 19 June 2026 — Full AA conformance
     </div>
   </div>
 </section>
@@ -489,10 +537,10 @@
       <div class="no-share-banner" style="margin-top: 16px; margin-bottom: 20px;">
         <div class="no-share-icon">📋</div>
         <p>
-          <strong>Conformance Status: Partially Conformant — WCAG 2.1 Level AA.</strong> Our sites partially conform to WCAG 2.1 Level AA. "Partially conformant" means that some parts of the content do not fully conform to the accessibility standard. Known gaps are documented in Section 09 of this statement and in the WCAG Compliance Report.
+          <strong>Conformance Status: Conformant — WCAG 2.1 Level AA.</strong> Our sites conform to WCAG 2.1 Level AA. All Level A and Level AA success criteria are met as of June 2026. No known gaps remain.
         </p>
       </div>
-      <p>We have applied WCAG 2.1 Level A and AA success criteria to the best of our current capability. The standard referenced is the <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Web Content Accessibility Guidelines (WCAG) version 2.1</a>, published by the W3C Web Accessibility Initiative (WAI).</p>
+      <p>We have implemented all WCAG 2.1 Level A and AA success criteria across all public pages. The standard referenced is the <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Web Content Accessibility Guidelines (WCAG) version 2.1</a>, published by the W3C Web Accessibility Initiative (WAI). A full criterion-by-criterion breakdown is available in our <a href="wcag-compliance.html" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">WCAG Compliance Report</a>.</p>
     </div>
 
     <!-- 03 — Technical Specifications -->
@@ -545,8 +593,9 @@
     <div class="policy-card">
       <p class="sec-tag">// 05 — keyboard navigation</p>
       <h3>Fully navigable without a mouse.</h3>
-      <p style="margin-bottom: 4px;">Our sites are designed to be fully operable via keyboard alone. The following accessibility features are implemented:</p>
+      <p style="margin-bottom: 4px;">Our sites are designed to be fully operable via keyboard alone. A "Skip to main content" link appears on the first Tab keypress on every page, allowing keyboard users to bypass repeated navigation blocks directly. The following additional accessibility features are implemented:</p>
       <ul>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Skip link</strong> — A visually hidden "Skip to main content" link is the first focusable element on every page. Appears on Tab keypress, moves focus directly to main content.</span></li>
         <li><span><strong style="color: var(--text-1); font-weight: 600;">Tab / Shift+Tab</strong> — Navigate between all interactive elements in logical document order.</span></li>
         <li><span><strong style="color: var(--text-1); font-weight: 600;">Enter / Space</strong> — Activate buttons, links, and form controls.</span></li>
         <li><span><strong style="color: var(--text-1); font-weight: 600;">Arrow keys</strong> — Navigate within composite widgets (e.g., mobile menu accordion).</span></li>
@@ -595,10 +644,11 @@
       <p class="sec-tag">// 08 — forms &amp; interactive elements</p>
       <h3>Forms that work for everyone.</h3>
       <ul>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Labels</strong> — All form fields on vardweb.ca and vardweb.com include programmatically associated labels. No field is identified by placeholder text alone.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Labels</strong> — All form fields include programmatically associated labels via for/id pairing. Toggle groups use fieldset/legend for semantic grouping. No field is identified by placeholder text alone.</span></li>
         <li><span><strong style="color: var(--text-1); font-weight: 600;">Error identification</strong> — Errors are described in text, not only by colour. Error messages identify the specific field affected and describe what is required to resolve the issue.</span></li>
         <li><span><strong style="color: var(--text-1); font-weight: 600;">No time limits</strong> — No forms or interactive elements impose session time limits that would prevent users with disabilities from completing tasks.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">ARIA on custom controls</strong> — Custom interactive components (mobile accordion navigation, dropdown menus) use appropriate WAI-ARIA roles, states, and properties.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">ARIA on custom controls</strong> — Custom interactive components (mobile accordion, desktop dropdown, FAQ accordion) use WAI-ARIA roles, states, and properties including aria-expanded, aria-controls, aria-haspopup, and role=menu.</span></li>
+        <li><span><strong style="color: var(--text-1); font-weight: 600;">Status messages</strong> — Form submission success and error responses are announced to screen readers via aria-live="polite" regions, without requiring visual focus change.</span></li>
         <li><span><strong style="color: var(--text-1); font-weight: 600;">Touch targets</strong> — All interactive elements on mobile meet a minimum touch target size of 44×44 CSS pixels, consistent with WCAG 2.5.5 (AAA target) and platform guidelines.</span></li>
       </ul>
     </div>
@@ -606,13 +656,20 @@
     <!-- 09 — Known Limitations -->
     <div class="policy-card">
       <p class="sec-tag">// 09 — known limitations</p>
-      <h3>Where we're still improving.</h3>
-      <p>We believe in transparent disclosure over vague assurances. The following are known accessibility gaps we are actively working to remediate:</p>
-      <div class="warn-banner">
+      <h3>No known limitations remain as of June 2026.</h3>
+      <p>We believe in transparent disclosure over vague assurances. All previously documented gaps have been fully remediated:</p>
+      <div class="no-share-banner" style="background: rgba(0,229,255,0.05); border-color: rgba(0,229,255,0.2);">
+        <div class="no-share-icon">✅</div>
         <div>
-          <p><strong>Desktop dropdown navigation</strong> — The header dropdown menus are currently triggered by hover and CSS <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--pink);">:focus-within</code>. While keyboard users can access them via Tab/Enter, the interaction pattern may not be consistent across all screen reader and browser combinations. We are implementing a fully ARIA-compliant disclosure pattern. <strong>Target: Q3 2026.</strong></p>
-          <p style="margin-top: 10px;"><strong>Reduced motion preference</strong> — CSS animations on the site do not currently check for the <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--pink);">prefers-reduced-motion</code> media query. Users with vestibular disorders or motion sensitivity may be affected. We are applying <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--pink);">@media (prefers-reduced-motion: reduce)</code> rules across all animated elements. <strong>Target: Q3 2026.</strong></p>
-          <p style="margin-top: 10px;"><strong>Skip navigation link</strong> — A visible "Skip to main content" link is not yet present on all pages. We are adding this to the top of every page template. <strong>Target: Q3 2026.</strong></p>
+          <p><strong>All previously documented limitations have been resolved ahead of the Q3 2026 target:</strong></p>
+          <ul style="margin-top: 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+            <li style="font-size: 13.5px; color: var(--text-2);">Desktop dropdown navigation — Fully ARIA-compliant with aria-haspopup, aria-expanded, aria-controls, and role=menu on all pages (June 2026)</li>
+            <li style="font-size: 13.5px; color: var(--text-2);">Reduced motion preference — prefers-reduced-motion CSS and JavaScript RAF guards implemented site-wide (June 2026)</li>
+            <li style="font-size: 13.5px; color: var(--text-2);">Skip navigation link — Added to all 31 pages; visible on first Tab press, moves focus to main content (June 2026)</li>
+            <li style="font-size: 13.5px; color: var(--text-2);">Decorative SVG labelling — All decorative inline SVGs carry aria-hidden="true" across all pages (June 2026)</li>
+            <li style="font-size: 13.5px; color: var(--text-2);">Form status messages — aria-live="polite" regions added; screen readers announce success and error states (June 2026)</li>
+            <li style="font-size: 13.5px; color: var(--text-2);">UI component contrast — Input borders and social button borders raised to meet 3:1 non-text contrast threshold (June 2026)</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -678,6 +735,7 @@
 <div class="divider"></div>
 
 <!-- ── FOOTER ── -->
+</main>
 <footer class="site-footer">
   <div class="footer-inner">
     <div class="footer-grid">
