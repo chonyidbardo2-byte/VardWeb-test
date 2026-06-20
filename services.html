@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -236,84 +236,154 @@
     .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: background 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s cubic-bezier(0.16,1,0.3,1); }
     @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
 
-    /* ── Services card system ── */
+    /* ── Services card system (gradient-card design) ── */
     .svc-card {
       position: relative;
       display: block;
-      height: auto;
-      min-height: 380px;
-      border-radius: 26px;
+      border-radius: 24px;
       overflow: hidden;
       isolation: isolate;
       text-decoration: none;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      min-height: 288px;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
     }
-    .svc-card:hover {
-      transform: translateY(-6px);
-      box-shadow:
-        0 24px 56px rgba(0,0,0,0.55),
-        0 0 38px color-mix(in srgb, var(--c1, #00E5FF) 34%, transparent);
+    @media (hover: hover) {
+      .svc-card:hover {
+        transform: scale(1.03) translateY(-4px);
+        box-shadow:
+          0 28px 60px rgba(0,0,0,0.6),
+          0 0 40px color-mix(in srgb, var(--c1, #00E5FF) 28%, transparent);
+      }
     }
     .svc-card:focus-visible { outline: 2px solid var(--c1, #00E5FF); outline-offset: 4px; }
 
-    .svc-card-shader { position: absolute; inset: 0; display: block; width: 100%; height: 100%; background: #07080f; filter: blur(20px); }
-
-    .svc-card-panel {
-      position: relative; z-index: 1;
-      display: flex; flex-direction: column;
-      padding: 32px;
-      background: rgba(7,9,16,0.15);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 26px;
-      height: 100%;
-      min-height: 380px;
+    /* Layered radial gradient wash (replaces canvas animation) */
+    .svc-card-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 8% 10%,   color-mix(in srgb, var(--c1) 30%, transparent) 0%, transparent 100%),
+        radial-gradient(ellipse 55% 50% at 88% 82%,  color-mix(in srgb, var(--c3) 24%, transparent) 0%, transparent 100%),
+        radial-gradient(ellipse 60% 50% at 85% 40%,  color-mix(in srgb, var(--c2) 18%, transparent) 0%, transparent 100%),
+        radial-gradient(ellipse 50% 60% at 10% 82%,  color-mix(in srgb, var(--c1) 16%, transparent) 0%, transparent 100%),
+        radial-gradient(ellipse 100% 100% at 50% 50%, rgba(7,9,16,0.72) 0%, rgba(7,9,16,0.92) 100%);
     }
+
+    /* 3D illustration anchored bottom-right — matches original demo sizing */
+    .svc-card-img {
+      position: absolute;
+      right: -14%;
+      bottom: -14%;
+      width: 63%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .svc-card-img img {
+      width: 100%; height: auto; display: block;
+      transform: scale(1) rotate(0deg);
+      transform-origin: center center;
+      transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+      opacity: 0.80;
+    }
+    @media (hover: hover) {
+      .svc-card:hover .svc-card-img img {
+        transform: scale(1.1) rotate(3deg);
+        opacity: 0.92;
+      }
+    }
+    /* Content panel */
+    .svc-card-panel {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column;
+      padding: 28px 28px 24px;
+      min-height: 288px;
+    }
+
+    /* Badge pill */
+    .svc-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      margin-bottom: 18px; padding: 5px 12px 5px 8px;
+      border-radius: 999px; width: fit-content;
+    }
+    .svc-badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--c1, #00E5FF);
+      box-shadow: 0 0 6px var(--c1, #00E5FF);
+      flex-shrink: 0;
+    }
+    .svc-badge-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
     .svc-card-icon {
-      width: 54px; height: 54px;
+      width: 44px; height: 44px;
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 18px; color: #fff;
-      filter: drop-shadow(0 0 10px rgba(255,255,255,0.30));
+      margin-bottom: 14px;
+      color: var(--c1, #00E5FF);
+      filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c1, #00E5FF) 55%, transparent));
     }
     .svc-card-panel h3 {
-      font-size: 22px; font-weight: 800; color: #fff;
-      margin-bottom: 10px; letter-spacing: -0.02em;
+      font-size: 20px; font-weight: 800; color: #fff;
+      margin-bottom: 8px; letter-spacing: -0.02em;
     }
     .svc-card-caption {
-      font-size: 13.5px; line-height: 1.65;
-      color: rgba(255,255,255,0.75);
-      margin-bottom: 20px;
+      font-size: 13px; line-height: 1.65;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 18px;
       font-style: italic;
+      max-width: 62%;
     }
     .svc-bullets {
       list-style: none;
       padding: 0; margin: 0;
       flex-grow: 1;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 16px;
+      max-width: 41%;
+      border-top: 1px solid rgba(255,255,255,0.09);
+      padding-top: 14px;
     }
     .svc-bullets li {
-      font-size: 12.5px;
-      line-height: 1.6;
-      color: rgba(255,255,255,0.68);
+      font-size: 12.5px; line-height: 1.6;
+      color: rgba(255,255,255,0.65);
       padding: 5px 0 5px 20px;
       position: relative;
     }
     .svc-bullets li::before {
-      content: '›';
-      position: absolute;
-      left: 4px;
-      color: rgba(255,255,255,0.38);
-      font-size: 14px;
-      line-height: 1.5;
+      content: '›'; position: absolute; left: 4px;
+      color: rgba(255,255,255,0.35);
+      font-size: 14px; line-height: 1.5;
     }
     .svc-card-more {
-      margin-top: 20px; display: flex; align-items: center; gap: 8px;
+      margin-top: 18px; display: flex; align-items: center; gap: 8px;
       font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.82);
       text-transform: uppercase;
     }
     .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
+
+    /* Mobile: scroll-activated hover via IntersectionObserver */
+    @media (hover: none) {
+      .svc-card.in-view {
+        transform: scale(1.02) translateY(-3px);
+        box-shadow: 0 22px 50px rgba(0,0,0,0.55);
+      }
+      .svc-card.in-view .svc-card-img img {
+        transform: scale(1.08) rotate(3deg);
+        opacity: 0.88;
+      }
+      .svc-card:active .svc-card-img img {
+        transform: scale(1.1) rotate(3deg);
+        opacity: 0.92;
+      }
+    }
+    /* Narrow screens: larger image centred mid-right, emerging from right edge */
+    @media (max-width: 480px) {
+      .svc-card-img { width: 80%; right: -22%; bottom: 0%; }
+      .svc-card-img img { opacity: 0.55; }
+    }
 
     /* ── Services page grid ── */
     .services-page-grid {
@@ -449,7 +519,23 @@
       <a href="blog.html"     class="nav-link">Blog</a>
       <a href="our-work.html" class="nav-link">Our Work</a>
       <a href="about.html"    class="nav-link">About</a>
-      <a href="services.html" class="nav-link active">Services</a>
+      <div class="nav-dropdown">
+        <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+          Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu" id="dd-services-menu" role="menu">
+          <a href="web-design.html" class="dropdown-item" role="menuitem">Web Design</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
+        </div>
+      </div>
       <a href="contact.html"  class="nav-link">Contact</a>
     </div>
 
@@ -499,7 +585,7 @@
     </button>
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
     <a href="services.html" class="mob-link mob-sub active">All Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Web Design</a>
+    <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
@@ -556,9 +642,16 @@
     <div class="services-page-grid">
 
       <!-- 1. Web Design -->
-      <a href="contact.html" class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;" aria-label="Web Design — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+      <a href="web-design.html" class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;" aria-label="Web Design — learn more">
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-18CRi69lDzJKMJWgH1Mxw41v78Cq20.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);">
+            <span class="svc-badge-dot"></span>
+            <span class="svc-badge-label" style="color:#00E5FF;">Design</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -567,7 +660,7 @@
             </svg>
           </div>
           <h3>Web Design</h3>
-          <p class="svc-card-caption">"We make sites people actually want to visit — not flee from in horror."</p>
+          <p class="svc-card-caption">"We make sites people actually want to visit</br> — not flee from in horror."</p>
           <ul class="svc-bullets">
             <li>Custom-coded, pixel-precise layouts</li>
             <li>Mobile-first &amp; responsive across all devices</li>
@@ -582,8 +675,15 @@
 
       <!-- 2. E-Commerce -->
       <a href="contact.html" class="svc-card" style="--c1:#FFD700;--c2:#FF9500;--c3:#FFEC80;" aria-label="E-Commerce — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-aVMcBoKPxWSQV3iw3xPRFYGVBDZwzN.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(255,215,0,0.09);border:1px solid rgba(255,215,0,0.22);">
+            <span class="svc-badge-dot" style="background:#FFD700;box-shadow:0 0 6px #FFD700;"></span>
+            <span class="svc-badge-label" style="color:#FFD700;">Commerce</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -591,7 +691,7 @@
             </svg>
           </div>
           <h3>E-Commerce</h3>
-          <p class="svc-card-caption">"A storefront that sells 24/7 without you saying a word. Introvert-approved."</p>
+          <p class="svc-card-caption">"A storefront that sells 24/7 without you saying a word.</br>Introvert-approved."</p>
           <ul class="svc-bullets">
             <li>Full product catalogue &amp; checkout integration</li>
             <li>Payment gateway &amp; inventory management</li>
@@ -606,8 +706,15 @@
 
       <!-- 3. Landing Pages -->
       <a href="contact.html" class="svc-card" style="--c1:#FF2D78;--c2:#C4004F;--c3:#FF8FBA;" aria-label="Landing Pages — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-CCwIWAzE77jGrCqKZB8s5kfubGGoqy.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(255,45,120,0.09);border:1px solid rgba(255,45,120,0.22);">
+            <span class="svc-badge-dot" style="background:#FF2D78;box-shadow:0 0 6px #FF2D78;"></span>
+            <span class="svc-badge-label" style="color:#FF2D78;">Conversion</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -616,7 +723,7 @@
             </svg>
           </div>
           <h3>Landing Pages</h3>
-          <p class="svc-card-caption">"One page. One purpose. One conversion rate your boss will love."</p>
+          <p class="svc-card-caption">"One page. One purpose. One conversion</br>rate your boss will love."</p>
           <ul class="svc-bullets">
             <li>Conversion-focused single-page design</li>
             <li>A/B test-ready structure &amp; CTA hierarchy</li>
@@ -631,8 +738,15 @@
 
       <!-- 4. App Development -->
       <a href="contact.html" class="svc-card" style="--c1:#A855F7;--c2:#7C3AED;--c3:#D8B4FE;" aria-label="App Development — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-LxbDZUY1gzuzF4AEv0OHAqsSGpAng8.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(168,85,247,0.09);border:1px solid rgba(168,85,247,0.22);">
+            <span class="svc-badge-dot" style="background:#A855F7;box-shadow:0 0 6px #A855F7;"></span>
+            <span class="svc-badge-label" style="color:#A855F7;">Build</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <rect x="5" y="2" width="14" height="20" rx="2.5"/>
@@ -658,8 +772,15 @@
 
       <!-- 5. SEO & Performance -->
       <a href="contact.html" class="svc-card" style="--c1:#22D3EE;--c2:#0E7490;--c3:#67E8F9;" aria-label="SEO and Performance — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-73pNGHJBFF75t0zRsAgQInW9DAM4vd.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(34,211,238,0.09);border:1px solid rgba(34,211,238,0.22);">
+            <span class="svc-badge-dot" style="background:#22D3EE;box-shadow:0 0 6px #22D3EE;"></span>
+            <span class="svc-badge-label" style="color:#22D3EE;">Growth</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="7"/>
@@ -669,7 +790,7 @@
             </svg>
           </div>
           <h3>SEO &amp; Performance</h3>
-          <p class="svc-card-caption">"Page 1 or bust. We also fix your load time so Google stops judging you."</p>
+          <p class="svc-card-caption">"Page 1 or bust. We also fix your load time</br>so Google stops judging you."</p>
           <ul class="svc-bullets">
             <li>Technical SEO &amp; Core Web Vitals audit</li>
             <li>Keyword strategy &amp; on-page optimisation</li>
@@ -684,8 +805,15 @@
 
       <!-- 6. Maintenance -->
       <a href="contact.html" class="svc-card" style="--c1:#60A5FA;--c2:#1D4ED8;--c3:#BFDBFE;" aria-label="Maintenance — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-rwEvYLT3gAQ9WJJXFEV6eMrbaB2EaO.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(96,165,250,0.09);border:1px solid rgba(96,165,250,0.22);">
+            <span class="svc-badge-dot" style="background:#60A5FA;box-shadow:0 0 6px #60A5FA;"></span>
+            <span class="svc-badge-label" style="color:#60A5FA;">Support</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/>
@@ -707,8 +835,15 @@
 
       <!-- 7. Hosting Services -->
       <a href="contact.html" class="svc-card" style="--c1:#34D399;--c2:#059669;--c3:#A7F3D0;" aria-label="Hosting Services — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-x3jWH9IOEgOOgjk99NJoK1WgftvOP3.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(52,211,153,0.09);border:1px solid rgba(52,211,153,0.22);">
+            <span class="svc-badge-dot" style="background:#34D399;box-shadow:0 0 6px #34D399;"></span>
+            <span class="svc-badge-label" style="color:#34D399;">Infrastructure</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="2" width="20" height="8" rx="2"/>
@@ -718,7 +853,7 @@
             </svg>
           </div>
           <h3>Hosting Services</h3>
-          <p class="svc-card-caption">"Your site stays online. Even at 3am. Yes, we checked."</p>
+          <p class="svc-card-caption">"Your site stays online. Even at 3am.</br>Yes, we checked."</p>
           <ul class="svc-bullets">
             <li>Managed hosting with 99.9% uptime SLA</li>
             <li>SSL, CDN &amp; DDoS protection included</li>
@@ -733,8 +868,15 @@
 
       <!-- 8. Content Creation -->
       <a href="contact.html" class="svc-card" style="--c1:#FBBF24;--c2:#D97706;--c3:#FDE68A;" aria-label="Content Creation — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-87oIRYgIF8H6g08mymzdY2lCqYFvvU.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(251,191,36,0.09);border:1px solid rgba(251,191,36,0.22);">
+            <span class="svc-badge-dot" style="background:#FBBF24;box-shadow:0 0 6px #FBBF24;"></span>
+            <span class="svc-badge-label" style="color:#FBBF24;">Content</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 20h9"/>
@@ -742,7 +884,7 @@
             </svg>
           </div>
           <h3>Content Creation</h3>
-          <p class="svc-card-caption">"Words that convert. Copy that doesn't sound like a robot wrote it. (Mostly.)"</p>
+          <p class="svc-card-caption">"Words that convert. Copy that doesn't sound</br>like a robot wrote it. (Mostly.)"</p>
           <ul class="svc-bullets">
             <li>SEO-optimised blog posts &amp; web copy</li>
             <li>Brand-voice consistent tone &amp; style guide</li>
@@ -757,8 +899,15 @@
 
       <!-- 9. Social Media -->
       <a href="contact.html" class="svc-card" style="--c1:#F472B6;--c2:#DB2777;--c3:#FBCFE8;" aria-label="Social Media — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-SvsQzp9loTopQTNCj70C36xeF3x7p2.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(244,114,182,0.09);border:1px solid rgba(244,114,182,0.22);">
+            <span class="svc-badge-dot" style="background:#F472B6;box-shadow:0 0 6px #F472B6;"></span>
+            <span class="svc-badge-label" style="color:#F472B6;">Social</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="18" cy="5" r="3"/>
@@ -769,7 +918,7 @@
             </svg>
           </div>
           <h3>Social Media</h3>
-          <p class="svc-card-caption">"Scroll-stopping content that makes them put down their coffee."</p>
+          <p class="svc-card-caption">"Scroll-stopping content that makes</br>them put down their coffee."</p>
           <ul class="svc-bullets">
             <li>Platform-specific content strategy</li>
             <li>Branded graphics &amp; short-form video</li>
@@ -784,15 +933,22 @@
 
       <!-- 10. Custom Request -->
       <a href="contact.html" class="svc-card" style="--c1:#00E5FF;--c2:#FF2D78;--c3:#FFD700;" aria-label="Custom Request — learn more">
-        <canvas class="svc-card-shader" aria-hidden="true"></canvas>
+        <div class="svc-card-bg" aria-hidden="true"></div>
+        <div class="svc-card-img" aria-hidden="true">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-O2xK1uyESsdlH6NyqPH3TnKp0uwtKi.png&w=320&q=75" alt="" loading="lazy"/>
+        </div>
         <div class="svc-card-panel">
+          <div class="svc-badge" style="background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);">
+            <span class="svc-badge-dot" style="background:linear-gradient(135deg,#00E5FF,#FF2D78,#FFD700);box-shadow:none;"></span>
+            <span class="svc-badge-label" style="color:#00E5FF;">Custom</span>
+          </div>
           <div class="svc-card-icon">
             <svg aria-hidden="true" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
             </svg>
           </div>
           <h3>Custom Request</h3>
-          <p class="svc-card-caption">"Got something we haven't thought of yet? Even better. We like a challenge."</p>
+          <p class="svc-card-caption">"Got something we haven't thought of yet?</br>Even better. We like a challenge."</p>
           <ul class="svc-bullets">
             <li>Anything you can dream, we can build</li>
             <li>Discovery call to scope your exact vision</li>
@@ -874,7 +1030,7 @@
       <div>
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link active">All Services</a>
-        <a href="contact.html"  class="footer-link">Web Design</a>
+        <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html"  class="footer-link">E-Commerce</a>
         <a href="contact.html"  class="footer-link">Landing Pages</a>
         <a href="contact.html"  class="footer-link">Maintenance</a>
@@ -902,127 +1058,17 @@
 </footer>
 
 <script>
-/* ── Services: plasma-gradient canvas animation (--c1/c2/c3 per card) ── */
+/* ── Services: mobile scroll-activated hover via IntersectionObserver ── */
 (function () {
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function hexToRgb(hex) {
-    hex = hex.trim().replace('#', '');
-    if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
-    return [parseInt(hex.slice(0,2),16), parseInt(hex.slice(2,4),16), parseInt(hex.slice(4,6),16)];
-  }
-
-  document.querySelectorAll('.svc-card').forEach(function(card, ci) {
-    var canvas = card.querySelector('.svc-card-shader');
-    if (!canvas) return;
-
-    var cs = getComputedStyle(card);
-    var c1 = hexToRgb(cs.getPropertyValue('--c1').trim());
-    var c2 = hexToRgb(cs.getPropertyValue('--c2').trim());
-    var c3 = hexToRgb(cs.getPropertyValue('--c3').trim());
-    var ctx = canvas.getContext('2d');
-    var raf = 0, live = false;
-    var SEED = ci * 2.09;
-
-    function resize() {
-      canvas.width  = canvas.offsetWidth  || card.offsetWidth;
-      canvas.height = canvas.offsetHeight || card.offsetHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-
-    function draw(ts) {
-      var t = ts * 0.0006 + SEED;
-      var W = canvas.width, H = canvas.height;
-      if (!W || !H) { if (live && !reduceMotion) raf = requestAnimationFrame(draw); return; }
-
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#07080f';
-      ctx.fillRect(0, 0, W, H);
-
-      /* ambient base */
-      var ox = W * (0.50 + Math.sin(t * 0.21) * 0.10);
-      var oy = H * (0.50 + Math.cos(t * 0.18) * 0.10);
-      var go = ctx.createRadialGradient(ox, oy, 0, ox, oy, W * 0.45);
-      go.addColorStop(0,    'rgba('+c1+',0.08)');
-      go.addColorStop(0.55, 'rgba('+c1+',0.03)');
-      go.addColorStop(1,    'rgba('+c1+',0)');
-      ctx.fillStyle = go; ctx.fillRect(0, 0, W, H);
-
-      /* blob A – top-left corner */
-      var ax = W * (0.16 + Math.sin(t * 0.48) * 0.14);
-      var ay = H * (0.18 + Math.cos(t * 0.37) * 0.14);
-      var ga = ctx.createRadialGradient(ax, ay, 0, ax, ay, W * 0.484);
-      ga.addColorStop(0,    'rgba('+c1+',0.80)');
-      ga.addColorStop(0.20, 'rgba('+c1+',0.38)');
-      ga.addColorStop(0.55, 'rgba('+c1+',0.06)');
-      ga.addColorStop(1,    'rgba('+c1+',0)');
-      ctx.fillStyle = ga; ctx.fillRect(0, 0, W, H);
-
-      /* blob B – bottom-right corner */
-      var bx = W * (0.83 + Math.cos(t * 0.59 + 2.1) * 0.14);
-      var by = H * (0.80 + Math.sin(t * 0.46 + 1.7) * 0.14);
-      var gb = ctx.createRadialGradient(bx, by, 0, bx, by, W * 0.484);
-      gb.addColorStop(0,    'rgba('+c3+',0.75)');
-      gb.addColorStop(0.20, 'rgba('+c3+',0.28)');
-      gb.addColorStop(0.55, 'rgba('+c3+',0.05)');
-      gb.addColorStop(1,    'rgba('+c3+',0)');
-      ctx.fillStyle = gb; ctx.fillRect(0, 0, W, H);
-
-      /* blob C – right edge */
-      var cx = W * (0.88 + Math.sin(t * 0.73 + 3.8) * 0.09);
-      var cy = H * (0.50 + Math.cos(t * 0.62 + 0.9) * 0.22);
-      var gc = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.418);
-      gc.addColorStop(0,    'rgba('+c2+',0.68)');
-      gc.addColorStop(0.22, 'rgba('+c2+',0.16)');
-      gc.addColorStop(0.60, 'rgba('+c2+',0.02)');
-      gc.addColorStop(1,    'rgba('+c2+',0)');
-      ctx.fillStyle = gc; ctx.fillRect(0, 0, W, H);
-
-      /* blob D – bottom-left corner */
-      var dx = W * (0.14 + Math.cos(t * 0.54 + 5.1) * 0.11);
-      var dy = H * (0.82 + Math.sin(t * 0.67 + 4.2) * 0.14);
-      var gd = ctx.createRadialGradient(dx, dy, 0, dx, dy, W * 0.385);
-      gd.addColorStop(0,    'rgba('+c1+',0.58)');
-      gd.addColorStop(0.28, 'rgba('+c1+',0.10)');
-      gd.addColorStop(0.65, 'rgba('+c1+',0.01)');
-      gd.addColorStop(1,    'rgba('+c1+',0)');
-      ctx.fillStyle = gd; ctx.fillRect(0, 0, W, H);
-
-      /* centre vignette */
-      var gv = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.68);
-      gv.addColorStop(0,    'rgba(0,0,0,0.62)');
-      gv.addColorStop(0.38, 'rgba(0,0,0,0.28)');
-      gv.addColorStop(1,    'rgba(0,0,0,0)');
-      ctx.fillStyle = gv; ctx.fillRect(0, 0, W, H);
-
-      /* perimeter fade */
-      var e = 0.12;
-      function edgeFade(x0,y0,x1f,y1f,rx,ry,rw,rh,a0,a1) {
-        var g = ctx.createLinearGradient(x0,y0,x1f,y1f);
-        g.addColorStop(0,'rgba(0,0,0,'+a0+')');
-        g.addColorStop(1,'rgba(0,0,0,'+a1+')');
-        ctx.fillStyle = g; ctx.fillRect(rx,ry,rw,rh);
-      }
-      edgeFade(0,0,       0,H*e,     0,0,    W,H*e,    0.32,0);
-      edgeFade(0,H*(1-e), 0,H,       0,H*(1-e),W,H*e,  0,0.32);
-      edgeFade(0,0,       W*e,0,     0,0,    W*e,H,    0.32,0);
-      edgeFade(W*(1-e),0, W,0,       W*(1-e),0,W*e,H,  0,0.32);
-
-      if (live && !reduceMotion) raf = requestAnimationFrame(draw);
-    }
-
-    var io = new IntersectionObserver(function(entries) {
-      entries.forEach(function(e) {
-        if (e.isIntersecting && !live) {
-          live = true;
-          if (!reduceMotion) raf = requestAnimationFrame(draw);
-          else draw(0);
-        } else if (!e.isIntersecting && live) { live = false; cancelAnimationFrame(raf); }
-      });
-    }, { threshold: 0.05 });
-    io.observe(card);
-  });
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('in-view');
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.30, rootMargin: '0px 0px -20px 0px' });
+  document.querySelectorAll('.svc-card').forEach(function (card) { io.observe(card); });
 })();
 </script>
 
