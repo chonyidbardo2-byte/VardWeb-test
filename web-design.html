@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Design Services — VardWeb</title>
+  <meta name="description" content="Custom web design services by VardWeb — hand-coded, pixel-precise, conversion-focused. Bronze, Silver, Gold, and Custom tiers." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/gsap.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'vv-cyan':    '#00E5FF',
+            'vv-pink':    '#FF2D78',
+            'vv-gold':    '#FFD700',
+            'vv-base':    '#070910',
+            'vv-surface': '#0f1219',
+            'vv-raised':  '#161b27',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.1);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+      --bronze:  #CD7F32;
+      --silver:  #A8A9AD;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── Grain overlay ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    .grad-cyan-pink {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none;
+      position: relative; padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+
+    /* ── Nav Dropdown ── */
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 180px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+    .dropdown-item.active { color: var(--cyan); }
+
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+
+    /* ── Section tag ── */
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 16px;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+
+    /* ── Footer ── */
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
+    .footer-social-row { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-link.active { color: var(--cyan); }
+    .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
+    }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+
+    /* ── Responsive footer ── */
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (max-width: 560px)  { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
+    @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--cyan); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
+
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute; top: -100px; left: 20px; z-index: 9000;
+      padding: 10px 20px; background: #070910; color: #00E5FF;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.04em; border: 2px solid #00E5FF; border-radius: 8px;
+      text-decoration: none; box-shadow: 0 0 20px rgba(0,229,255,0.3);
+      transition: top 0.15s ease;
+    }
+    .skip-link:focus { top: 20px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
+
+    /* ══════════════════════════════════════
+       PAGE-SPECIFIC STYLES
+    ══════════════════════════════════════ */
+
+    /* ── 5 W's cards ── */
+    .w-card {
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.08);
+      border-radius: 20px;
+      padding: 28px;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .w-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.06);
+      border-color: rgba(0,229,255,0.18);
+    }
+    .w-icon {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,229,255,0.07);
+      border: 1px solid rgba(0,229,255,0.14);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      color: var(--cyan);
+    }
+    .w-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .w-card h3 {
+      font-size: 18px; font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .w-card p {
+      font-size: 14px; line-height: 1.72;
+      color: var(--text-2);
+    }
+
+    /* ── Pricing cards ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+    .pricing-card {
+      position: relative;
+      background: var(--raised);
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.08));
+      border-radius: 24px;
+      padding: 32px;
+      overflow: hidden;
+      isolation: isolate;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+    }
+    .pricing-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 55% at 0% 0%, var(--tier-glow, rgba(0,229,255,0.07)) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .pricing-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 35px var(--tier-shadow, rgba(0,229,255,0.1));
+    }
+    .pricing-card > * { position: relative; z-index: 1; }
+
+    /* ── Corner image — top-right, card clips naturally ── */
+    .pricing-img-wrap {
+      position: absolute; right: 0; top: 0;
+      width: 130px; height: 130px;
+      pointer-events: none; z-index: 2;
+    }
+    .pricing-img {
+      position: absolute;
+      right: 0; top: 0;
+      width: 130px;
+      pointer-events: none;
+      opacity: 0.72;
+      mix-blend-mode: luminosity;
+      filter: saturate(1.1) brightness(0.9);
+      transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      transform: rotate(-8deg) scale(1);
+      transform-origin: top right;
+    }
+    .pricing-card:hover .pricing-img {
+      opacity: 0.92;
+      transform: rotate(-3deg) scale(1.08);
+    }
+
+    /* Tier badge */
+    .tier-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 12px 5px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.1));
+      background: var(--tier-bg, rgba(255,255,255,0.04));
+      margin-bottom: 20px;
+    }
+    .tier-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--tier-color, #00E5FF);
+      box-shadow: 0 0 6px var(--tier-color, #00E5FF);
+      flex-shrink: 0;
+    }
+    .tier-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--tier-color, #00E5FF);
+    }
+
+    .pricing-card h3 {
+      font-size: 22px; font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .pricing-from {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(200,212,232,0.35);
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pricing-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 38px; font-weight: 800;
+      color: var(--tier-color, #00E5FF);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+      display: flex; align-items: baseline; gap: 6px;
+    }
+    .price-suffix {
+      font-size: 14px; font-weight: 600;
+      color: rgba(200,212,232,0.38);
+      letter-spacing: 0;
+      transition: opacity 0.15s ease;
+    }
+    .pricing-pages {
+      font-size: 12px; color: rgba(200,212,232,0.4);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 18px;
+    }
+    .pricing-desc {
+      font-size: 14px; line-height: 1.72;
+      color: var(--text-2);
+      margin-bottom: 22px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .pricing-features {
+      list-style: none; padding: 0; margin: 0 0 28px;
+    }
+    .pricing-features li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13.5px; line-height: 1.55;
+      color: rgba(200,212,232,0.72);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .pricing-features li:last-child { border-bottom: none; }
+    .feat-icon {
+      width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px;
+      color: var(--tier-color, #00E5FF);
+      filter: drop-shadow(0 0 4px var(--tier-color, rgba(0,229,255,0.5)));
+    }
+    .pricing-cta {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 13px 24px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      text-decoration: none; cursor: pointer; border: none;
+      background: linear-gradient(135deg, var(--tier-btn-bg1, rgba(0,229,255,0.12)), var(--tier-btn-bg2, rgba(0,229,255,0.06)));
+      border: 1px solid var(--tier-border, rgba(0,229,255,0.3));
+      color: var(--tier-color, #00E5FF);
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .pricing-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 16px var(--tier-shadow, rgba(0,229,255,0.18));
+      background: linear-gradient(135deg, var(--tier-btn-hover1, rgba(0,229,255,0.2)), var(--tier-btn-hover2, rgba(0,229,255,0.1)));
+    }
+    .pricing-cta:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .pricing-cta:active { transform: translateY(0); }
+
+    /* ── Billing toggle ── */
+    .billing-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      padding: 9px 28px; border-radius: 7px;
+      border: none; cursor: pointer;
+      color: rgba(200,212,232,0.42);
+      background: transparent;
+      transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .billing-btn.active {
+      color: var(--text-1);
+      background: rgba(0,229,255,0.08);
+      box-shadow: 0 0 0 1px rgba(0,229,255,0.22);
+    }
+    .billing-btn:hover:not(.active) { color: rgba(200,212,232,0.75); }
+    .billing-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; border-radius: 7px; }
+
+    /* ── Slot machine price animation ── */
+    .price-slot {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+    .price-slot-track {
+      display: flex;
+      flex-direction: column;
+      will-change: transform;
+    }
+    .price-slot-track.animating {
+      transition: transform 0.26s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .price-slot-val {
+      display: block;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    /* ── Overview highlights ── */
+    .highlight-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.14);
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.75);
+      font-family: 'Inter', sans-serif;
+    }
+    .highlight-pill svg { color: var(--cyan); flex-shrink: 0; }
+
+    /* ── Process steps ── */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .process-grid::before {
+      content: '';
+      position: absolute;
+      top: 28px; left: calc(12.5% + 16px); right: calc(12.5% + 16px);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,229,255,0.25), rgba(255,45,120,0.25));
+    }
+    @media (max-width: 768px) {
+      .process-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+      .process-grid::before { display: none; }
+    }
+    @media (max-width: 480px) {
+      .process-grid { grid-template-columns: 1fr; }
+    }
+    .process-step { text-align: center; padding: 0 16px; }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px; font-weight: 800;
+      color: var(--cyan);
+      position: relative; z-index: 1;
+      box-shadow: 0 0 20px rgba(0,229,255,0.1);
+    }
+    .process-step h4 {
+      font-size: 15px; font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .process-step p {
+      font-size: 13px; line-height: 1.65;
+      color: var(--text-2);
+    }
+
+    /* ── W's grid responsive ── */
+    .ws-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 860px) { .ws-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .ws-grid { grid-template-columns: 1fr; } }
+
+    /* ── Overview grid ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    @media (max-width: 860px) { .overview-grid { grid-template-columns: 1fr; gap: 40px; } }
+  </style>
+
+  <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+        var trigger = dd.querySelector('.nav-dropdown-trigger');
+        if (!trigger) return;
+        dd.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+        dd.addEventListener('focusout', function (e) {
+          if (!dd.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false');
+        });
+        dd.addEventListener('mouseleave', function () {
+          if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+  </script>
+</head>
+
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<!-- ── Nav ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" aria-label="VardWeb Home">
+      <div class="logo-nav-wrap">
+        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+      </div>
+    </a>
+
+    <div class="nav-links">
+      <div class="nav-dropdown">
+        <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
+          Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us</a>
+          <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
+        </div>
+      </div>
+      <a href="faq.html"      class="nav-link">FAQ</a>
+      <a href="blog.html"     class="nav-link">Blog</a>
+      <a href="our-work.html" class="nav-link">Our Work</a>
+      <a href="about.html"    class="nav-link">About</a>
+      <div class="nav-dropdown">
+        <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+          Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+        <div class="dropdown-menu" id="dd-services-menu" role="menu">
+          <a href="web-design.html" class="dropdown-item active" role="menuitem">Web Design</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
+        </div>
+      </div>
+      <a href="contact.html"  class="nav-link">Contact</a>
+    </div>
+
+    <div class="nav-right">
+      <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
+          <circle cx="10" cy="5.5" r="4.5"/>
+          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
+        </svg>
+        Login
+      </a>
+      <a href="contact.html" class="btn btn-primary">
+        Get a Quote <span aria-hidden="true">→</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav-mobile-menu">
+    <div class="mob-section-label">Navigate</div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+      Home
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-home-panel"><div>
+    <a href="index.html"          class="mob-link mob-sub">Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="index.html#services" class="mob-link mob-sub">Services</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+      Company
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-company-panel"><div>
+    <a href="about.html"    class="mob-link mob-sub">About Us</a>
+    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+    <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+    <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+      Services
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-services-panel"><div>
+    <a href="services.html"   class="mob-link mob-sub">All Services</a>
+    <a href="web-design.html" class="mob-link mob-sub active">Web Design</a>
+    <a href="contact.html"    class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html"    class="mob-link mob-sub">App Development</a>
+    <a href="contact.html"    class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="contact.html"    class="mob-link mob-sub">Maintenance</a>
+    <a href="contact.html"    class="mob-link mob-sub">Hosting Services</a>
+    <a href="contact.html"    class="mob-link mob-sub">Content Creation</a>
+    <a href="contact.html"    class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"    class="mob-link mob-sub">Custom Request</a>
+    </div></div>
+    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+      Legal
+      <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+    <a href="privacy.html"         class="mob-link mob-sub">Privacy Policy</a>
+    <a href="terms.html"           class="mob-link mob-sub">Terms of Service</a>
+    <a href="cookie-policy.html"   class="mob-link mob-sub">Cookie Policy</a>
+    <a href="accessibility.html"   class="mob-link mob-sub">Accessibility</a>
+    <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+    </div></div>
+    <div class="mob-divider"></div>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
+    <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
+  </div>
+</nav>
+
+<main id="main-content" tabindex="-1">
+
+<!-- ══════════════════════════════════════
+     HERO HEADER
+══════════════════════════════════════ -->
+<div style="padding:120px 28px 0;text-align:center;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
+    <div style="position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.065) 0%,transparent 68%);"></div>
+    <div style="position:absolute;top:20px;right:0;width:400px;height:340px;background:radial-gradient(ellipse,rgba(255,45,120,0.03) 0%,transparent 70%);"></div>
+    <div style="position:absolute;top:80px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.022) 0%,transparent 70%);"></div>
+  </div>
+  <div style="position:relative;z-index:1;max-width:720px;margin:0 auto;">
+    <p class="sec-tag" style="margin-bottom:14px;">// services / web design</p>
+    <h1 style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:800;line-height:1.05;margin-bottom:20px;color:var(--text-1);">
+      Web Design.
+    </h1>
+    <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 32px;">
+      Websites that convert. Design that captivates. Every pixel hand-crafted — no templates, no shortcuts, no excuses.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="#pricing" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">View Pricing →</a>
+      <a href="contact.html" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">Book Discovery Call</a>
+    </div>
+  </div>
+</div>
+
+<div class="divider" style="margin-top:60px;"></div>
+
+
+<!-- ══════════════════════════════════════
+     PRICING SECTION
+══════════════════════════════════════ -->
+<section id="pricing" style="padding:80px 28px;" aria-label="Pricing tiers">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;max-width:580px;margin:0 auto 36px;">
+      <p class="sec-tag">// investment</p>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+        Choose your tier
+      </h2>
+      <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
+        From first steps to full transformation — every package is custom-coded, never templated. Prices are starting points; final scope is confirmed at discovery.
+      </p>
+    </div>
+
+    <!-- Monthly / Yearly toggle -->
+    <div id="billing-toggle" style="display:flex;justify-content:center;margin-bottom:44px;position:relative;">
+      <div style="display:inline-flex;background:var(--raised);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:4px;gap:4px;">
+        <button id="toggle-monthly" class="billing-btn active" aria-pressed="true">Monthly</button>
+        <button id="toggle-yearly"  class="billing-btn"       aria-pressed="false">Yearly</button>
+      </div>
+    </div>
+
+    <div class="pricing-grid">
+
+      <!-- ── BRONZE ── -->
+      <div class="pricing-card" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);--tier-shadow:rgba(205,127,50,0.12);--tier-bg:rgba(205,127,50,0.05);--tier-btn-bg1:rgba(205,127,50,0.14);--tier-btn-bg2:rgba(205,127,50,0.07);--tier-btn-hover1:rgba(205,127,50,0.22);--tier-btn-hover2:rgba(205,127,50,0.12);">
+        <div class="pricing-img-wrap">
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-gyoxLFpXzRRzVsgPJOKvB2r4tvzpcy.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+        </div>
+        <div class="tier-badge">
+          <span class="tier-dot"></span>
+          <span class="tier-name">Bronze</span>
+        </div>
+        <h3>The Foundation</h3>
+        <p class="pricing-from">Starting from</p>
+        <div class="pricing-price" data-monthly="€499" data-yearly="€5,988">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">€499</span></span></span>
+          <span class="price-suffix">/mo</span>
+        </div>
+        <p class="pricing-pages">1–3 pages · ~2-week delivery</p>
+        <p class="pricing-desc">
+          Your professional starting point. A clean, fast, responsive site that looks the part and loads in a flash — ideal for new brands and solo operators who need to get online right.
+        </p>
+        <ul class="pricing-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Up to 3 custom-designed pages
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Mobile-first responsive design
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            On-page SEO foundations
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Stock imagery &amp; icons included
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            1 revision round + full source handoff
+          </li>
+        </ul>
+        <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
+      </div>
+
+      <!-- ── SILVER ── -->
+      <div class="pricing-card" style="--tier-color:#C0C0C0;--tier-border:rgba(192,192,192,0.25);--tier-glow:rgba(192,192,192,0.06);--tier-shadow:rgba(192,192,192,0.1);--tier-bg:rgba(192,192,192,0.04);--tier-btn-bg1:rgba(192,192,192,0.12);--tier-btn-bg2:rgba(192,192,192,0.06);--tier-btn-hover1:rgba(192,192,192,0.2);--tier-btn-hover2:rgba(192,192,192,0.1);">
+        <div class="pricing-img-wrap">
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-v98BP3EQdx0Yd0NkjHPnWx33WvzwGP.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+        </div>
+        <div class="tier-badge">
+          <span class="tier-dot"></span>
+          <span class="tier-name">Silver</span>
+        </div>
+        <h3>The Business</h3>
+        <p class="pricing-from">Starting from</p>
+        <div class="pricing-price" data-monthly="€999" data-yearly="€11,988">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">€999</span></span></span>
+          <span class="price-suffix">/mo</span>
+        </div>
+        <p class="pricing-pages">5–7 pages · ~3-week delivery</p>
+        <p class="pricing-desc">
+          For businesses ready to make a real impression. A fully custom site with your brand identity, smooth animations, and all the pages you need to build trust and capture leads.
+        </p>
+        <ul class="pricing-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Up to 7 custom-designed pages
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Custom visual identity &amp; brand integration
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Scroll animations &amp; micro-interactions
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Contact form + lead capture integration
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Blog section + 2 revision rounds
+          </li>
+        </ul>
+        <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
+      </div>
+
+      <!-- ── GOLD ── -->
+      <div class="pricing-card" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);">
+        <div class="pricing-img-wrap">
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ryeuGvM9gTW7RJ2wyQfvDWQHMHTExU.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+        </div>
+        <div class="tier-badge">
+          <span class="tier-dot"></span>
+          <span class="tier-name">Gold</span>
+        </div>
+        <h3>The Brand</h3>
+        <p class="pricing-from">Starting from</p>
+        <div class="pricing-price" data-monthly="€1,999" data-yearly="€23,988">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">€1,999</span></span></span>
+          <span class="price-suffix">/mo</span>
+        </div>
+        <p class="pricing-pages">10+ pages · ~5-week delivery</p>
+        <p class="pricing-desc">
+          For brands that refuse to be average. A full-scale bespoke website with a complete design system, advanced GSAP animations, and conversion optimisation built in from the ground up.
+        </p>
+        <ul class="pricing-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            10+ pages with full design system
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            GSAP &amp; CSS micro-interaction animations
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Conversion rate optimisation (CRO)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Custom illustrations &amp; brand photography
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Priority support + 3 revision rounds
+          </li>
+        </ul>
+        <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
+      </div>
+
+      <!-- ── CUSTOM ── -->
+      <div class="pricing-card" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);--tier-shadow:rgba(168,85,247,0.14);--tier-bg:rgba(168,85,247,0.04);--tier-btn-bg1:rgba(168,85,247,0.12);--tier-btn-bg2:rgba(168,85,247,0.06);--tier-btn-hover1:rgba(168,85,247,0.2);--tier-btn-hover2:rgba(168,85,247,0.1);">
+        <div class="pricing-img-wrap">
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-R5X5QqCPQZZLpYRzmikqFircpeR6HJ.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+        </div>
+        <div class="tier-badge">
+          <span class="tier-dot"></span>
+          <span class="tier-name">Custom</span>
+        </div>
+        <h3>The Enterprise</h3>
+        <p class="pricing-from">Contact for pricing</p>
+        <div class="pricing-price" data-monthly="Bespoke" data-yearly="Bespoke">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">Bespoke</span></span></span>
+        </div>
+        <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
+        <p class="pricing-desc">
+          For complex, large-scale requirements that don't fit a package. Multi-brand, enterprise platforms, custom CMS, third-party integrations, and ongoing support — scoped precisely to your needs.
+        </p>
+        <ul class="pricing-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Unlimited pages &amp; feature scope
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Dedicated design &amp; dev team
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Custom CMS &amp; third-party integrations
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Ongoing maintenance &amp; SLA support
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Unlimited revision rounds until perfect
+          </li>
+        </ul>
+        <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
+      </div>
+
+    </div>
+
+    <!-- Not sure? -->
+    <div style="margin-top:28px;padding:28px 32px;background:var(--raised);border:1px solid rgba(0,229,255,0.08);border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+      <div>
+        <h3 style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:6px;letter-spacing:-0.01em;">Not sure which tier is right for you?</h3>
+        <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Every project is different. Book a free 30-minute discovery call and we'll scope the right fit together — no commitment required.</p>
+      </div>
+      <a href="contact.html" class="btn btn-primary" style="white-space:nowrap;padding:12px 28px;font-size:13.5px;flex-shrink:0;">Book Free Call →</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════
+     SERVICE OVERVIEW
+══════════════════════════════════════ -->
+<section style="padding:80px 28px 0;" aria-label="Service overview">
+  <div style="max-width:1200px;margin:0 auto;" class="overview-grid">
+    <div>
+      <p class="sec-tag">// what you get</p>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.18;margin-bottom:20px;color:var(--text-1);">
+        Custom-crafted websites<br>
+        <span class="grad-cyan-pink">built to perform.</span>
+      </h2>
+      <p style="font-size:15px;line-height:1.8;color:var(--text-2);margin-bottom:20px;">
+        We don't use Wix, Squarespace, or WordPress themes. Every site we ship is hand-coded from scratch — optimised for speed, accessibility, and conversion from the first commit.
+      </p>
+      <p style="font-size:15px;line-height:1.8;color:var(--text-2);">
+        Whether you're launching your first brand presence or rebuilding a high-traffic platform, we design and build for real-world results: lower bounce rates, higher time-on-page, and clicks that turn into clients.
+      </p>
+    </div>
+    <div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="highlight-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Hand-coded HTML, CSS &amp; JavaScript — zero bloat
+        </div>
+        <div class="highlight-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Mobile-first, responsive across all screen sizes
+        </div>
+        <div class="highlight-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Core Web Vitals optimised — sub-2s load times
+        </div>
+        <div class="highlight-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          WCAG 2.1 AA accessible by default
+        </div>
+        <div class="highlight-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          On-page SEO foundations baked in from day one
+        </div>
+        <div class="highlight-pill">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Full source code handover — you own everything
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" style="margin-top:80px;"></div>
+
+
+<!-- ══════════════════════════════════════
+     5 W's + HOW
+══════════════════════════════════════ -->
+<section style="padding:80px 28px;" aria-label="5 W's and how">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;max-width:560px;margin:0 auto 52px;">
+      <p class="sec-tag">// the full picture</p>
+      <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
+        Who, what, when, where,<br>why &amp; how
+      </h2>
+    </div>
+    <div class="ws-grid">
+
+      <!-- WHO -->
+      <div class="w-card">
+        <div class="w-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <p class="w-label">Who</p>
+        <h3>Built for ambitious businesses</h3>
+        <p>Solo founders, growing SMBs, and established brands who need a professional web presence that works as hard as they do. If your current site embarrasses you, this is for you.</p>
+      </div>
+
+      <!-- WHAT -->
+      <div class="w-card">
+        <div class="w-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <p class="w-label">What</p>
+        <h3>Custom websites, hand-coded</h3>
+        <p>From brochure sites and portfolios to full business platforms — every project is designed, built, and tested from scratch. No drag-and-drop builders, no pre-made themes, no cookie-cutter layouts.</p>
+      </div>
+
+      <!-- WHEN -->
+      <div class="w-card">
+        <div class="w-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <p class="w-label">When</p>
+        <h3>2–6 weeks from kickoff</h3>
+        <p>Bronze projects launch in as little as 2 weeks. Gold tier typically takes 4–6 weeks for a full bespoke build with revisions and QA. We're currently booking for Q3 2026.</p>
+      </div>
+
+      <!-- WHERE -->
+      <div class="w-card">
+        <div class="w-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <p class="w-label">Where</p>
+        <h3>100% remote, globally</h3>
+        <p>We work with clients worldwide. All collaboration happens async over email and Calendly — no office visits needed. Discovery, design reviews, and handoffs are fully remote-friendly.</p>
+      </div>
+
+      <!-- WHY -->
+      <div class="w-card">
+        <div class="w-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="w-label">Why</p>
+        <h3>Your site is your #1 sales rep</h3>
+        <p>It works 24/7, never calls in sick, and speaks to every visitor at once. A slow, dated, or generic site loses clients before you even know they visited. A great one converts them silently.</p>
+      </div>
+
+      <!-- HOW -->
+      <div class="w-card">
+        <div class="w-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <p class="w-label">How</p>
+        <h3>Discovery → Design → Build → Launch</h3>
+        <p>We start with a discovery call to understand your goals, audience, and brand. Then we wireframe, design in-browser, build production-ready code, and hand off with full documentation.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════
+     PROCESS SECTION
+══════════════════════════════════════ -->
+<section style="padding:80px 28px;" aria-label="Our process">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;max-width:520px;margin:0 auto 60px;">
+      <p class="sec-tag">// how it works</p>
+      <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
+        From idea to live site<br>in four steps
+      </h2>
+    </div>
+
+    <div class="process-grid">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <h4>Discovery Call</h4>
+        <p>We dig into your goals, audience, and brand. 30 minutes, no jargon. You walk away with a clear scope and a fixed quote.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num" style="border-color:rgba(255,45,120,0.3);box-shadow:0 0 20px rgba(255,45,120,0.1);color:var(--pink);">02</div>
+        <h4>Wireframe &amp; Concept</h4>
+        <p>We map out page structure and layout before touching visual design. You approve the architecture before a single pixel is pushed.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num" style="border-color:rgba(255,215,0,0.3);box-shadow:0 0 20px rgba(255,215,0,0.1);color:var(--gold);">03</div>
+        <h4>Design &amp; Build</h4>
+        <p>Your site is designed and built in-browser — what you see is what ships. We send a live preview link for review and feedback.</p>
+      </div>
+      <div class="process-step">
+        <div class="step-num" style="border-color:rgba(0,229,255,0.4);box-shadow:0 0 20px rgba(0,229,255,0.15);">04</div>
+        <h4>QA, Launch &amp; Handoff</h4>
+        <p>Cross-browser testing, speed checks, and accessibility audit before we go live. Full source code handed over on day one post-launch.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════
+     CTA SECTION
+══════════════════════════════════════ -->
+<section style="padding:80px 28px 100px;" aria-label="Call to action">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="position:relative;overflow:hidden;border-radius:28px;padding:72px 60px;background:var(--raised);border:1px solid rgba(0,229,255,0.1);text-align:center;">
+
+      <!-- Background radials -->
+      <div style="position:absolute;inset:0;pointer-events:none;">
+        <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(0,229,255,0.07) 0%,transparent 70%);"></div>
+        <div style="position:absolute;bottom:-80px;right:0;width:400px;height:300px;background:radial-gradient(ellipse,rgba(255,45,120,0.05) 0%,transparent 70%);"></div>
+      </div>
+
+      <div style="position:relative;z-index:1;max-width:580px;margin:0 auto;">
+        <p class="sec-tag">// ready to build?</p>
+        <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:18px;color:var(--text-1);">
+          Let's build something<br>
+          <span class="grad-cyan-pink">worth visiting.</span>
+        </h2>
+        <p style="font-size:16px;line-height:1.78;color:var(--text-2);margin-bottom:36px;">
+          Book a free discovery call, walk us through your project, and get a fixed quote the same day. No long sales process, no hidden fees.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="contact.html" class="btn btn-primary" style="font-size:14px;padding:14px 32px;">
+            Start Your Project <span aria-hidden="true">→</span>
+          </a>
+          <a href="our-work.html" class="btn btn-ghost" style="font-size:14px;padding:14px 32px;">
+            View Our Work
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+
+<!-- ── FOOTER ── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="logo-nav-wrap" style="display:inline-flex;">
+          <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+        </div>
+        <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
+        <div class="footer-social-row">
+          <a href="#" class="social-btn" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+          <a href="#" class="social-btn" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="footer-col-head">Home</p>
+        <a href="index.html#hero"     class="footer-link">Landing</a>
+        <a href="index.html#why-us"   class="footer-link">Why Us</a>
+        <a href="index.html#services" class="footer-link">Services</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
+        <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Company</p>
+        <a href="about.html"    class="footer-link">About Us</a>
+        <a href="our-work.html" class="footer-link">Our Work</a>
+        <a href="blog.html"     class="footer-link">Blog</a>
+        <a href="faq.html"      class="footer-link">FAQ</a>
+        <a href="contact.html"  class="footer-link">Contact</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Services</p>
+        <a href="services.html"   class="footer-link">All Services</a>
+        <a href="web-design.html" class="footer-link active">Web Design</a>
+        <a href="contact.html"    class="footer-link">E-Commerce</a>
+        <a href="contact.html"    class="footer-link">Landing Pages</a>
+        <a href="contact.html"    class="footer-link">Maintenance</a>
+      </div>
+      <div>
+        <p class="footer-col-head">Legal</p>
+        <a href="privacy.html"         class="footer-link">Privacy Policy</a>
+        <a href="terms.html"           class="footer-link">Terms of Service</a>
+        <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
+        <a href="accessibility.html"   class="footer-link">Accessibility</a>
+        <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
+      </div>
+    </div>
+    <div class="footer-divider"></div>
+    <div class="footer-bottom-bar">
+      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <div class="footer-credit">
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+        <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">&#10084;</span>
+        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+        <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Billing toggle: slot machine prices + confetti ── */
+(function () {
+  var mode = 'monthly';
+  var btnM = document.getElementById('toggle-monthly');
+  var btnY = document.getElementById('toggle-yearly');
+  if (!btnM || !btnY) return;
+
+  /* ── Confetti ── */
+  function fireConfetti(originEl) {
+    var r = originEl.getBoundingClientRect();
+    var ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+    var cv = document.createElement('canvas');
+    cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
+    cv.width = window.innerWidth; cv.height = window.innerHeight;
+    document.body.appendChild(cv);
+    var ctx = cv.getContext('2d');
+    var COLORS = ['#00E5FF','#FF2D78','#FFD700','#A855F7','#C084FC','#ffffff'];
+    var P = Array.from({length: 28}, function () {
+      var a = Math.random() * Math.PI * 2;
+      var s = 3 + Math.random() * 5;
+      return { x: ox, y: oy, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 3,
+               w: 5 + Math.random() * 6, h: 5 + Math.random() * 6,
+               c: COLORS[Math.random() * COLORS.length | 0],
+               life: 1, decay: 0.013 + Math.random() * 0.008,
+               round: Math.random() > 0.5, rot: Math.random() * Math.PI * 2, rv: (Math.random() - 0.5) * 0.2 };
+    });
+    (function draw() {
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      var alive = false;
+      P.forEach(function (p) {
+        if (p.life <= 0) return; alive = true;
+        p.vy += 0.18; p.x += p.vx; p.y += p.vy; p.rot += p.rv; p.life -= p.decay;
+        ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.c;
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+        if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); }
+        else { ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+        ctx.restore();
+      });
+      alive ? requestAnimationFrame(draw) : cv.remove();
+    })();
+  }
+
+  /* ── Slot machine roll ── */
+  function rollPrice(priceEl, newVal) {
+    var slot = priceEl.querySelector('.price-slot');
+    if (!slot) return;
+    var track = slot.querySelector('.price-slot-track');
+    if (!track) return;
+
+    /* Measure the current item height */
+    var currentVal = track.querySelector('.price-slot-val');
+    var itemH = currentVal ? currentVal.offsetHeight : 44;
+    slot.style.height = itemH + 'px';
+
+    /* Append new value below */
+    var nextVal = document.createElement('span');
+    nextVal.className = 'price-slot-val';
+    nextVal.textContent = newVal;
+    track.appendChild(nextVal);
+
+    /* Force layout then animate */
+    track.getBoundingClientRect();
+    track.classList.add('animating');
+    track.style.transform = 'translateY(-' + itemH + 'px)';
+
+    track.addEventListener('transitionend', function onDone() {
+      track.removeEventListener('transitionend', onDone);
+      track.classList.remove('animating');
+      track.style.transform = '';
+      if (currentVal && currentVal.parentNode === track) track.removeChild(currentVal);
+    }, { once: true });
+  }
+
+  function switchMode(newMode) {
+    if (newMode === mode) return;
+    mode = newMode;
+
+    /* Update buttons */
+    btnM.classList.toggle('active', mode === 'monthly');
+    btnY.classList.toggle('active', mode === 'yearly');
+    btnM.setAttribute('aria-pressed', String(mode === 'monthly'));
+    btnY.setAttribute('aria-pressed', String(mode === 'yearly'));
+
+    /* Roll all prices */
+    document.querySelectorAll('.pricing-price[data-monthly]').forEach(function (el) {
+      var val = mode === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
+      rollPrice(el, val);
+      /* Update suffix — fade out, swap at midpoint, fade in */
+      var suf = el.querySelector('.price-suffix');
+      if (suf && el.dataset.monthly !== 'Bespoke') {
+        var newSufText = mode === 'monthly' ? '/mo' : '/yr';
+        suf.style.opacity = '0';
+        (function(s, t) {
+          setTimeout(function() { s.textContent = t; s.style.opacity = '1'; }, 130);
+        })(suf, newSufText);
+      }
+    });
+
+    /* Confetti */
+    fireConfetti(document.getElementById('billing-toggle'));
+  }
+
+  btnM.addEventListener('click', function () { switchMode('monthly'); });
+  btnY.addEventListener('click', function () { switchMode('yearly'); });
+})();
+</script>
+
+</body>
+</html>
