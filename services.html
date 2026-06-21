@@ -247,6 +247,7 @@
       background: var(--surface);
       border: 1px solid rgba(255,255,255,0.07);
       min-height: 288px;
+      cursor: default;
       transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
     }
     @media (hover: hover) {
@@ -360,6 +361,8 @@
       font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em;
       color: rgba(255,255,255,0.82);
       text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
     }
     .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
@@ -379,9 +382,30 @@
         opacity: 0.92;
       }
     }
+    /* hero image — base state */
+    .svc-hero-img img {
+      width: 100%; height: auto; display: block;
+      opacity: 0.88;
+      transform: rotate(6deg) scale(1);
+      transform-origin: center center;
+      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+    }
+    .svc-hero-flex.is-hovered .svc-hero-img img {
+      transform: rotate(8deg) scale(1.09);
+      opacity: 0.96;
+    }
+    @media (hover: none) {
+      .svc-hero-img.in-view img {
+        transform: rotate(8deg) scale(1.07);
+        opacity: 0.94;
+      }
+    }
+    @media (max-width: 640px) {
+      .svc-hero-img { display: none; }
+    }
     /* Narrow screens: larger image centred mid-right, emerging from right edge */
     @media (max-width: 480px) {
-      .svc-card-img { width: 80%; right: -22%; bottom: 0%; }
+      .svc-card-img { width: 80%; right: -22%; bottom: 10%; }
       .svc-card-img img { opacity: 0.55; }
     }
 
@@ -616,20 +640,24 @@
 <main id="main-content" tabindex="-1">
 
 <!-- ── Page header ── -->
-<div style="padding:120px 28px 0;text-align:center;position:relative;overflow:hidden;">
+<div style="padding:120px 28px 0;text-align:center;position:relative;">
   <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
     <div style="position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:480px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.055) 0%,transparent 70%);"></div>
     <div style="position:absolute;top:0;right:0;width:440px;height:360px;background:radial-gradient(ellipse,rgba(255,45,120,0.035) 0%,transparent 70%);"></div>
     <div style="position:absolute;top:60px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.025) 0%,transparent 70%);"></div>
   </div>
-  <div style="position:relative;z-index:1;max-width:680px;margin:0 auto;">
-    <p class="sec-tag" style="margin-bottom:14px;">// what we do</p>
-    <h1 style="font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.06;margin-bottom:20px;color:var(--text-1);">
-      Services.
-    </h1>
-    <p style="font-size:16px;line-height:1.82;color:var(--text-2);max-width:500px;margin:0 auto;">
-      Pick your weapon. We'll do the rest.
-    </p>
+  <div class="svc-hero-flex" style="position:relative;z-index:1;max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;">
+    <div style="text-align:center;">
+      <h1 style="font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.06;margin-bottom:20px;color:var(--text-1);">
+        Services
+      </h1>
+      <p style="font-size:16px;line-height:1.82;color:var(--text-2);max-width:500px;margin:0 auto;">
+        Pick your weapon. We'll do the rest.
+      </p>
+    </div>
+    <div class="svc-hero-img" style="flex-shrink:0;width:190px;pointer-events:none;" aria-hidden="true">
+      <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-JUZxbhjFNx0lYfoIu6oeOnyqdF6E3y.png&w=320&q=75" alt="" loading="lazy" style="filter:drop-shadow(0 24px 48px rgba(0,0,0,0.45));"/>
+    </div>
   </div>
 </div>
 
@@ -642,10 +670,10 @@
     <div class="services-page-grid">
 
       <!-- 1. Web Design -->
-      <a href="web-design.html" class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;" aria-label="Web Design — learn more">
+      <div class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-18CRi69lDzJKMJWgH1Mxw41v78Cq20.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-gkeF65nuZ1n83kYnsYLNweiK4tjXz1.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);">
@@ -666,15 +694,15 @@
             <li>Mobile-first &amp; responsive across all devices</li>
             <li>Optimised for speed and conversion</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="web-design.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 2. E-Commerce -->
-      <a href="contact.html" class="svc-card" style="--c1:#FFD700;--c2:#FF9500;--c3:#FFEC80;" aria-label="E-Commerce — learn more">
+      <div class="svc-card" style="--c1:#FFD700;--c2:#FF9500;--c3:#FFEC80;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
           <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-aVMcBoKPxWSQV3iw3xPRFYGVBDZwzN.png&w=320&q=75" alt="" loading="lazy"/>
@@ -691,21 +719,21 @@
             </svg>
           </div>
           <h3>E-Commerce</h3>
-          <p class="svc-card-caption">"A storefront that sells 24/7 without you saying a word.</br>Introvert-approved."</p>
+          <p class="svc-card-caption">"A storefront that sells 24/7 without you saying a word. Introvert-approved."</p>
           <ul class="svc-bullets">
             <li>Full product catalogue &amp; checkout integration</li>
             <li>Payment gateway &amp; inventory management</li>
             <li>Mobile-optimised shopping experience</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 3. Landing Pages -->
-      <a href="contact.html" class="svc-card" style="--c1:#FF2D78;--c2:#C4004F;--c3:#FF8FBA;" aria-label="Landing Pages — learn more">
+      <div class="svc-card" style="--c1:#FF2D78;--c2:#C4004F;--c3:#FF8FBA;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
           <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-CCwIWAzE77jGrCqKZB8s5kfubGGoqy.png&w=320&q=75" alt="" loading="lazy"/>
@@ -729,15 +757,15 @@
             <li>A/B test-ready structure &amp; CTA hierarchy</li>
             <li>Sub-2 second load times, guaranteed</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 4. App Development -->
-      <a href="contact.html" class="svc-card" style="--c1:#A855F7;--c2:#7C3AED;--c3:#D8B4FE;" aria-label="App Development — learn more">
+      <div class="svc-card" style="--c1:#A855F7;--c2:#7C3AED;--c3:#D8B4FE;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
           <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-LxbDZUY1gzuzF4AEv0OHAqsSGpAng8.png&w=320&q=75" alt="" loading="lazy"/>
@@ -763,18 +791,18 @@
             <li>API integrations &amp; real-time features</li>
             <li>Cross-platform, any screen, any device</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 5. SEO & Performance -->
-      <a href="contact.html" class="svc-card" style="--c1:#22D3EE;--c2:#0E7490;--c3:#67E8F9;" aria-label="SEO and Performance — learn more">
+      <div class="svc-card" style="--c1:#22D3EE;--c2:#0E7490;--c3:#67E8F9;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-73pNGHJBFF75t0zRsAgQInW9DAM4vd.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-YxKlwIcjJqTAeRHzfEN0Qra6tvwzNQ.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(34,211,238,0.09);border:1px solid rgba(34,211,238,0.22);">
@@ -796,18 +824,18 @@
             <li>Keyword strategy &amp; on-page optimisation</li>
             <li>Speed audits, tuning &amp; image compression</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 6. Maintenance -->
-      <a href="contact.html" class="svc-card" style="--c1:#60A5FA;--c2:#1D4ED8;--c3:#BFDBFE;" aria-label="Maintenance — learn more">
+      <div class="svc-card" style="--c1:#60A5FA;--c2:#1D4ED8;--c3:#BFDBFE;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-rwEvYLT3gAQ9WJJXFEV6eMrbaB2EaO.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-krpJdmUaFohx12nd4YmkMmcJombnwo.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(96,165,250,0.09);border:1px solid rgba(96,165,250,0.22);">
@@ -826,18 +854,18 @@
             <li>Security patches &amp; real-time threat alerts</li>
             <li>Content edits &amp; feature requests, on demand</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 7. Hosting Services -->
-      <a href="contact.html" class="svc-card" style="--c1:#34D399;--c2:#059669;--c3:#A7F3D0;" aria-label="Hosting Services — learn more">
+      <div class="svc-card" style="--c1:#34D399;--c2:#059669;--c3:#A7F3D0;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-x3jWH9IOEgOOgjk99NJoK1WgftvOP3.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-dV91Dv10GSnCQam0qvqFmuuNRABTg2.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(52,211,153,0.09);border:1px solid rgba(52,211,153,0.22);">
@@ -859,18 +887,18 @@
             <li>SSL, CDN &amp; DDoS protection included</li>
             <li>Auto-scaling for traffic spikes, no downtime</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 8. Content Creation -->
-      <a href="contact.html" class="svc-card" style="--c1:#FBBF24;--c2:#D97706;--c3:#FDE68A;" aria-label="Content Creation — learn more">
+      <div class="svc-card" style="--c1:#FBBF24;--c2:#D97706;--c3:#FDE68A;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-87oIRYgIF8H6g08mymzdY2lCqYFvvU.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-rNgb31NQyjGqcBzNSsAPDd1ITkT193.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(251,191,36,0.09);border:1px solid rgba(251,191,36,0.22);">
@@ -890,18 +918,18 @@
             <li>Brand-voice consistent tone &amp; style guide</li>
             <li>Headlines and CTAs engineered to convert</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 9. Social Media -->
-      <a href="contact.html" class="svc-card" style="--c1:#F472B6;--c2:#DB2777;--c3:#FBCFE8;" aria-label="Social Media — learn more">
+      <div class="svc-card" style="--c1:#F472B6;--c2:#DB2777;--c3:#FBCFE8;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-SvsQzp9loTopQTNCj70C36xeF3x7p2.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-2oWA4MooNeVATmlEtzrHjBiop4AJ8w.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(244,114,182,0.09);border:1px solid rgba(244,114,182,0.22);">
@@ -924,18 +952,18 @@
             <li>Branded graphics &amp; short-form video</li>
             <li>Consistent posting schedule &amp; analytics</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       <!-- 10. Custom Request -->
-      <a href="contact.html" class="svc-card" style="--c1:#00E5FF;--c2:#FF2D78;--c3:#FFD700;" aria-label="Custom Request — learn more">
+      <div class="svc-card" style="--c1:#00E5FF;--c2:#FF2D78;--c3:#FFD700;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-O2xK1uyESsdlH6NyqPH3TnKp0uwtKi.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-xmrlNTMzdMRg1sBGiFIomSFpX0L2gj.png&w=320&q=75" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);">
@@ -954,12 +982,12 @@
             <li>Discovery call to scope your exact vision</li>
             <li>Fixed scope, transparent pricing, no surprises</li>
           </ul>
-          <div class="svc-card-more">
+          <a class="svc-card-more" href="contact.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
     </div><!-- /services-page-grid -->
   </div>
@@ -1069,8 +1097,15 @@
     });
   }, { threshold: 0.30, rootMargin: '0px 0px -20px 0px' });
   document.querySelectorAll('.svc-card').forEach(function (card) { io.observe(card); });
+  document.querySelectorAll('.svc-hero-img').forEach(function (el) { io.observe(el); });
 })();
 </script>
 
+<script>
+  document.querySelectorAll('.svc-hero-flex').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { el.classList.add('is-hovered'); });
+    el.addEventListener('mouseleave', function() { el.classList.remove('is-hovered'); });
+  });
+</script>
 </body>
 </html>
