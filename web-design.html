@@ -358,13 +358,15 @@
 
     .pricing-card {
       position: relative;
+      display: flex;
+      flex-direction: column;
       background: var(--raised);
       border: 1px solid var(--tier-border, rgba(255,255,255,0.08));
       border-radius: 24px;
       padding: 32px;
       overflow: hidden;
       isolation: isolate;
-      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
     }
     .pricing-card::before {
       content: '';
@@ -372,7 +374,7 @@
       background: radial-gradient(ellipse 70% 55% at 0% 0%, var(--tier-glow, rgba(0,229,255,0.07)) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
-    .pricing-card:hover {
+    .pricing-card.is-hovered {
       transform: translateY(-6px);
       box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 35px var(--tier-shadow, rgba(0,229,255,0.1));
     }
@@ -396,9 +398,13 @@
       transform: rotate(-8deg) scale(1);
       transform-origin: top right;
     }
-    .pricing-card:hover .pricing-img {
+    .pricing-card.is-hovered .pricing-img {
       opacity: 0.92;
       transform: rotate(-3deg) scale(1.08);
+    }
+    @media (max-width: 640px) {
+      .pricing-img-wrap { width: 98px; height: 98px; }
+      .pricing-img { width: 98px; }
     }
 
     /* Tier badge */
@@ -409,6 +415,7 @@
       border: 1px solid var(--tier-border, rgba(255,255,255,0.1));
       background: var(--tier-bg, rgba(255,255,255,0.04));
       margin-bottom: 20px;
+      align-self: flex-start;
     }
     .tier-dot {
       width: 7px; height: 7px; border-radius: 50%;
@@ -435,6 +442,17 @@
       color: rgba(200,212,232,0.35);
       margin-bottom: 4px;
       font-family: 'JetBrains Mono', monospace;
+    }
+    .pricing-flat {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(200,212,232,0.35);
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pricing-flat-amt {
+      color: var(--tier-color, #00E5FF);
+      font-weight: 700;
     }
     .pricing-price {
       font-family: 'JetBrains Mono', monospace;
@@ -482,6 +500,7 @@
     .pricing-cta {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; padding: 13px 24px;
+      margin-top: auto;
       border-radius: 10px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px; font-weight: 700;
@@ -596,6 +615,56 @@
       color: var(--text-2);
     }
 
+    /* ── Feature grid (How it works) ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 640px) {
+      .feature-grid { grid-template-columns: 1fr; }
+    }
+    .feature-card {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 24px;
+      border-radius: 14px;
+      background: var(--raised);
+      border: 1px solid var(--border);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.3s ease,
+                  border-color 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0,229,255,0.10),
+                  0 4px 16px rgba(0,0,0,0.4);
+      border-color: rgba(0,229,255,0.2);
+    }
+    .feature-card-img {
+      flex-shrink: 0;
+    }
+    .feature-card-img img {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+    }
+    .feature-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-1);
+      margin: 0 0 8px;
+    }
+    .feature-card p {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--text-2);
+      margin: 0;
+    }
+
     /* ── W's grid responsive ── */
     .ws-grid {
       display: grid;
@@ -613,6 +682,66 @@
       align-items: start;
     }
     @media (max-width: 860px) { .overview-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+    /* ── What-You-Get case study rows ── */
+    .wyg-cases { display:flex; flex-direction:column; gap:0; margin-top:64px; }
+    .wyg-row {
+      display:grid;
+      grid-template-columns: 2fr 1fr;
+      gap:48px;
+      align-items:center;
+      padding:56px 0;
+      border-bottom: 1px solid rgba(0,229,255,0.08);
+    }
+    .wyg-row--rev { grid-template-columns: 1fr 2fr; }
+    .wyg-row--rev .wyg-content { order: 2; }
+    .wyg-row--rev .wyg-metrics { order: 1; }
+    .wyg-content {
+      display:flex; flex-direction:row; gap:32px; align-items:flex-start;
+      padding-right: 48px;
+      border-right: 1px solid rgba(0,229,255,0.08);
+    }
+    .wyg-row--rev .wyg-content {
+      padding-right: 0;
+      padding-left: 48px;
+      border-right: none;
+      border-left: 1px solid rgba(0,229,255,0.08);
+    }
+    .wyg-img {
+      width:180px; flex-shrink:0; border-radius:16px; aspect-ratio:29/35; object-fit:cover;
+      box-shadow: 0 0 0 1px var(--tier-border, rgba(0,229,255,0.25)), 0 8px 32px var(--tier-glow, rgba(0,229,255,0.08));
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .wyg-img:hover { transform: scale(1.05) rotate(-2deg); }
+    .wyg-quote { display:flex; flex-direction:column; gap:16px; justify-content:space-between; flex:1; }
+    .wyg-quote h3 { font-size:clamp(1rem,1.8vw,1.2rem); font-weight:700; color:var(--text-1); line-height:1.35; letter-spacing:-0.02em; }
+    .wyg-quote p { font-size:14px; line-height:1.8; color:var(--text-2); }
+    .wyg-figcaption { display:flex; flex-direction:column; gap:4px; margin-top:8px; }
+    .wyg-figcaption .wyg-name { font-size:14px; font-weight:700; color:var(--tier-color, var(--cyan)); }
+    .wyg-figcaption .wyg-role { font-size:12px; color:var(--text-2); line-height:1.5; }
+    .wyg-metrics { display:flex; flex-direction:column; gap:20px; }
+    .wyg-metric {
+      padding:24px 28px; background:var(--raised); border-radius:16px;
+      border:1px solid rgba(255,255,255,0.05);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .wyg-metric-value {
+      font-size:clamp(2rem,3.5vw,2.6rem); font-weight:800; letter-spacing:-0.03em;
+      color:var(--tier-color, var(--cyan)); line-height:1;
+    }
+    .wyg-metric-label { font-size:13px; font-weight:600; color:var(--text-1); margin-top:8px; }
+    .wyg-metric-sub { font-size:12px; color:var(--text-2); margin-top:4px; line-height:1.55; }
+    @media (max-width:860px) {
+      .wyg-row, .wyg-row--rev { grid-template-columns:1fr; gap:32px; }
+      .wyg-row--rev .wyg-content { order:1; padding-left:0; border-left:none; }
+      .wyg-row--rev .wyg-metrics { order:2; }
+      .wyg-content { padding-right:0; border-right:none; flex-direction:column; }
+      .wyg-img { width:100%; max-width:220px; }
+    }
+    @media (max-width:480px) {
+      .wyg-row { padding:40px 0; }
+      .wyg-metric-value { font-size:2rem; }
+    }
   </style>
 
   <script src="/supabase-config.js"></script>
@@ -786,6 +915,367 @@
 
 <div class="divider" style="margin-top:60px;"></div>
 
+<!-- ══════════════════════════════════════
+     WHAT YOU GET — TIER CASE STUDIES
+══════════════════════════════════════ -->
+<section id="what-you-get" aria-labelledby="wyg-heading" style="padding:100px 28px;">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;max-width:620px;margin:0 auto;">
+      <p class="sec-tag">// what you get</p>
+      <h2 id="wyg-heading" style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.18;margin-bottom:16px;color:var(--text-1);">
+        Custom-crafted websites<br>
+        <span class="grad-cyan-pink">built to perform.</span>
+      </h2>
+      <p style="font-size:15px;line-height:1.8;color:var(--text-2);">
+        We don't use Wix, Squarespace, or WordPress themes. Every site is hand-coded from scratch — optimised for speed, accessibility, and conversion from the first commit.
+      </p>
+    </div>
+
+    <div class="wyg-cases">
+
+      <!-- ── BRONZE ── -->
+      <div class="wyg-row" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);">
+        <div class="wyg-content">
+          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-57TdoPW2tQTCBO8PGaHLRnB77EeRmI.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-quote">
+            <div>
+              <h3>The Foundation</h3>
+              <p style="margin-top:12px;">A complete launch package — mobile-first build with custom SEO, CRM, and a full Google Analytics stack (GA4, GSC, GPR) baked in from day one. Includes AI search optimisation, a lead capture form, dedicated hosting, and 24/7 support so you're never left guessing.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Bronze Tier</span>
+              <span class="wyg-role">Best for new brands and solo operators launching their first site</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-value" data-end="1000" data-prefix="C$">C$0</div>
+            <div class="wyg-metric-label">Starting Price</div>
+            <div class="wyg-metric-sub">Flat rate, one-time build fee</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-value" data-end="300" data-prefix="C$" data-suffix="/mo">C$0/mo</div>
+            <div class="wyg-metric-label">Monthly Rate</div>
+            <div class="wyg-metric-sub">Ongoing support &amp; maintenance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SILVER ── -->
+      <div class="wyg-row wyg-row--rev" style="--tier-color:#C0C0C0;--tier-border:rgba(192,192,192,0.25);--tier-glow:rgba(192,192,192,0.06);">
+        <div class="wyg-content">
+          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-FuyDPaLKBrjIiOmneRjZ5p1n5k6Nw1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-quote">
+            <div>
+              <h3>The Business</h3>
+              <p style="margin-top:12px;">Everything in The Foundation, plus the option for a Progressive Web App or up to 15 total pages — built for businesses that need room to grow. Double the curated imagery, 4 monthly revision cycles, and the same battle-tested SEO and conversion stack.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Silver Tier</span>
+              <span class="wyg-role">Ideal for growing businesses ready to scale their web presence</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-value" data-end="1500" data-prefix="C$">C$0</div>
+            <div class="wyg-metric-label">Starting Price</div>
+            <div class="wyg-metric-sub">Flat rate, one-time build fee</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-value" data-end="400" data-prefix="C$" data-suffix="/mo">C$0/mo</div>
+            <div class="wyg-metric-label">Monthly Rate</div>
+            <div class="wyg-metric-sub">Ongoing support &amp; maintenance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GOLD ── -->
+      <div class="wyg-row" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);">
+        <div class="wyg-content">
+          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ObYG6zcPcX739HLghAbh7vzhtB79g6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-quote">
+            <div>
+              <h3>The Brand</h3>
+              <p style="margin-top:12px;">The full-scale build — optionally expand with a PWA or up to 25 additional pages, or go native with a Google Play or App Store app. Backed by our complete SEO, CRM, and AI search stack with curated content, custom email domain, and priority support at every step.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Gold Tier</span>
+              <span class="wyg-role">For brands that demand a full-scale digital presence</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-value" data-end="2000" data-prefix="C$">C$0</div>
+            <div class="wyg-metric-label">Starting Price</div>
+            <div class="wyg-metric-sub">Flat rate, one-time build fee</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-value" data-end="500" data-prefix="C$" data-suffix="/mo">C$0/mo</div>
+            <div class="wyg-metric-label">Monthly Rate</div>
+            <div class="wyg-metric-sub">Ongoing support &amp; maintenance</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CUSTOM ── -->
+      <div class="wyg-row wyg-row--rev" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);">
+        <div class="wyg-content">
+          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-2XPhzhDWlgdDfeHPPSykPR0p3SBYW6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-quote">
+            <div>
+              <h3>The Enterprise</h3>
+              <p style="margin-top:12px;">For complex, large-scale requirements that don't fit a package. Multi-brand, enterprise platforms, custom CMS, third-party integrations, and ongoing support — scoped precisely to your needs with a timeline agreed at discovery.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Custom Tier</span>
+              <span class="wyg-role">Enterprise projects with unlimited scope and bespoke pricing</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-value">∞</div>
+            <div class="wyg-metric-label">Project Scale</div>
+            <div class="wyg-metric-sub">No ceiling on complexity or scope</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-value">Bespoke</div>
+            <div class="wyg-metric-label">Pricing</div>
+            <div class="wyg-metric-sub">Scoped precisely to your requirements</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     FULL PICTURE SECTION
+══════════════════════════════════════ -->
+<section id="full-picture" style="padding:80px 28px;" aria-label="What's included">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <!-- Header row: title/subtitle left, illustration right -->
+    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:32px;margin-bottom:48px;">
+      <div style="flex:1;min-width:260px;">
+        <p class="sec-tag">// capabilities</p>
+        <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+          Everything your site
+          <span style="position:relative;display:inline-block;">
+            needs.
+            <svg viewBox="0 0 80 6" style="position:absolute;left:0;bottom:-5px;width:100%;" aria-hidden="true" focusable="false">
+              <path d="M1 4.5C17 1.63 55 1.39 79 4.5" stroke="#FF2D78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </span>
+        </h2>
+        <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:480px;">
+          From first pixel to final deployment — every package ships with these pillars built in, not bolted on.
+        </p>
+      </div>
+      <div class="cap-hero-img" style="flex-shrink:0;">
+        <img src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-xAL079qkVulmteXfEWxYlpf0y1NRwD.png" alt="" aria-hidden="true" style="width:192px;height:auto;border-radius:12px;display:block;" loading="lazy" />
+      </div>
+    </div>
+
+    <!-- Card container -->
+    <div style="border-radius:16px;border:1px solid var(--border);background:var(--raised);padding:40px 36px;box-shadow:0 0 40px rgba(0,229,255,0.04),0 4px 24px rgba(0,0,0,0.3);">
+
+      <!-- Feature grid -->
+      <div id="fp-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px 36px;">
+
+        <!-- 1. Visual Design -->
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+          </div>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Visual Design</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Custom layouts</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Brand identity integration</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Typography system</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Responsive grids</li>
+          </ul>
+        </div>
+
+        <!-- 2. Performance -->
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Performance</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Sub-3s load target</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Core Web Vitals</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Image optimisation</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">PWA option</li>
+          </ul>
+        </div>
+
+        <!-- 3. SEO & AI Search -->
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">SEO &amp; AI Search</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Technical SEO</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Schema markup</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">AI search visibility</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">GSC &amp; GPR setup</li>
+          </ul>
+        </div>
+
+        <!-- 4. Analytics -->
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Analytics</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">GA4 implementation</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Conversion tracking</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Google Search Console</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Goal funnels</li>
+          </ul>
+        </div>
+
+        <!-- 5. CRM & Forms -->
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">CRM &amp; Forms</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Lead capture form</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">CRM integration</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Thank-you page</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Email notifications</li>
+          </ul>
+        </div>
+
+        <!-- 6. Support & Hosting -->
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Support &amp; Hosting</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Dedicated hosting</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">24/7 support</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Monthly retainer</li>
+            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Security patches</li>
+          </ul>
+        </div>
+
+      </div><!-- /fp-grid -->
+
+    </div><!-- /card -->
+  </div>
+</section>
+
+<style>
+@media (max-width:860px) { #fp-grid { grid-template-columns: repeat(2,1fr) !important; } }
+@media (max-width:540px) { #fp-grid { grid-template-columns: 1fr !important; } }
+.cap-hero-img { cursor: default; }
+.cap-hero-img img {
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease;
+  transform: rotate(-5deg) scale(1);
+  transform-origin: center center;
+  opacity: 0.85;
+}
+.cap-hero-img.is-hovered img {
+  transform: rotate(-1deg) scale(1.07);
+  opacity: 1;
+}
+</style>
+
+<script>
+(function () {
+  var items = document.querySelectorAll('.fp-item');
+  var ease  = 'cubic-bezier(0.34,1.56,0.64,1)';
+  var obs   = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    items.forEach(function (el, i) {
+      el.style.transition = 'opacity 0.45s ease, transform 0.45s ' + ease;
+      el.style.transitionDelay = (i * 80) + 'ms';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    });
+    obs.disconnect();
+  }, { threshold: 0.15 });
+  var grid = document.getElementById('fp-grid');
+  if (grid) obs.observe(grid);
+})();
+</script>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     PROCESS SECTION
+══════════════════════════════════════ -->
+<section style="padding:80px 28px;" aria-label="Our process">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;max-width:520px;margin:0 auto 60px;">
+      <p class="sec-tag">// how it works</p>
+      <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
+        From idea to live site<br>in four steps
+      </h2>
+    </div>
+
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <div class="feature-card-img">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-OVVSrD4GRutENdVA3QzYLe5KXwBWVq.png&w=320&q=75" alt="Discovery Call" width="96" height="96" style="object-fit:contain;">
+        </div>
+        <div>
+          <h4>01 — Discovery Call</h4>
+          <p>We dig into your goals, audience, and brand. 30 minutes, no jargon. You walk away with a clear scope and a fixed quote.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card-img">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-N7V0aMs36OlOl3QUJEzHT6diM5hJ6Z.png&w=320&q=75" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;">
+        </div>
+        <div>
+          <h4>02 — Wireframe &amp; Concept</h4>
+          <p>We map out page structure and layout before touching visual design. You approve the architecture before a single pixel is pushed.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card-img">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ptreaSKDFQqhY7oF7Qw6s18YOwh68e.png&w=320&q=75" alt="Design & Build" width="96" height="96" style="object-fit:contain;">
+        </div>
+        <div>
+          <h4>03 — Design &amp; Build</h4>
+          <p>Your site is designed and built in-browser — what you see is what ships. We send a live preview link for review and feedback.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card-img">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-l7sGnL4PG73upUHUi2mGVGegEvkNDs.png&w=320&q=75" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;">
+        </div>
+        <div>
+          <h4>04 — QA, Launch &amp; Handoff</h4>
+          <p>Cross-browser testing, speed checks, and accessibility audit before we go live. Full source code handed over on day one post-launch.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
 
 <!-- ══════════════════════════════════════
      PRICING SECTION
@@ -815,7 +1305,7 @@
       <!-- ── BRONZE ── -->
       <div class="pricing-card" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);--tier-shadow:rgba(205,127,50,0.12);--tier-bg:rgba(205,127,50,0.05);--tier-btn-bg1:rgba(205,127,50,0.14);--tier-btn-bg2:rgba(205,127,50,0.07);--tier-btn-hover1:rgba(205,127,50,0.22);--tier-btn-hover2:rgba(205,127,50,0.12);">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-gyoxLFpXzRRzVsgPJOKvB2r4tvzpcy.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-57TdoPW2tQTCBO8PGaHLRnB77EeRmI.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -823,18 +1313,19 @@
         </div>
         <h3>The Foundation</h3>
         <p class="pricing-from">Starting from</p>
-        <div class="pricing-price" data-monthly="€499" data-yearly="€5,988">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">€499</span></span></span>
+        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,000</span></p>
+        <div class="pricing-price" data-monthly="C$300" data-yearly="C$3,600">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$300</span></span></span>
           <span class="price-suffix">/mo</span>
         </div>
-        <p class="pricing-pages">1–3 pages · ~2-week delivery</p>
+        <p class="pricing-pages">1–5 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          Your professional starting point. A clean, fast, responsive site that looks the part and loads in a flash — ideal for new brands and solo operators who need to get online right.
+          A complete launch package — mobile-first build with custom SEO, CRM, and a full Google Analytics stack (GA4, GSC, GPR) baked in from day one. Includes AI search optimisation, a lead capture form, dedicated hosting, and 24/7 support so you're never left guessing.
         </p>
         <ul class="pricing-features">
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Up to 3 custom-designed pages
+            Brand new website, built from scratch
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -842,16 +1333,53 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            On-page SEO foundations
+            Custom SEO, CRM, TCI and Whitelist-CMS built-in
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Stock imagery &amp; icons included
+            Google Implementation GA4, GSC, GS, GPR Setup
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            1 revision round + full source handoff
+            AI Search Visibility & Conversion optimization
           </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            CTA (Calls-to-action) Contact or Lead Capture Form
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Dedicated thank-you or confirmation page
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) SEM, SMM, PPC
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Stock Images (Up to 3)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Business Logo 
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Custom Email Domain (xyz@yourcompany.com)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Domain hosting & delegation
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            24/7 Maintenance & Client support
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Includes 2 Revision Requests a Month
+          </li>
+          
         </ul>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
@@ -859,7 +1387,7 @@
       <!-- ── SILVER ── -->
       <div class="pricing-card" style="--tier-color:#C0C0C0;--tier-border:rgba(192,192,192,0.25);--tier-glow:rgba(192,192,192,0.06);--tier-shadow:rgba(192,192,192,0.1);--tier-bg:rgba(192,192,192,0.04);--tier-btn-bg1:rgba(192,192,192,0.12);--tier-btn-bg2:rgba(192,192,192,0.06);--tier-btn-hover1:rgba(192,192,192,0.2);--tier-btn-hover2:rgba(192,192,192,0.1);">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-v98BP3EQdx0Yd0NkjHPnWx33WvzwGP.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-FuyDPaLKBrjIiOmneRjZ5p1n5k6Nw1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -867,34 +1395,75 @@
         </div>
         <h3>The Business</h3>
         <p class="pricing-from">Starting from</p>
-        <div class="pricing-price" data-monthly="€999" data-yearly="€11,988">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">€999</span></span></span>
+        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,500</span></p>
+        <div class="pricing-price" data-monthly="C$400" data-yearly="C$4,800">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$400</span></span></span>
           <span class="price-suffix">/mo</span>
         </div>
-        <p class="pricing-pages">5–7 pages · ~3-week delivery</p>
+        <p class="pricing-pages">5–10 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          For businesses ready to make a real impression. A fully custom site with your brand identity, smooth animations, and all the pages you need to build trust and capture leads.
+          Everything in The Foundation, plus the option for a Progressive Web App or up to 15 total pages — built for businesses that need room to grow. Double the curated imagery, 4 monthly revision cycles, and the same battle-tested SEO and conversion stack.
         </p>
         <ul class="pricing-features">
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Up to 7 custom-designed pages
+            Brand new website, built from scratch
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Custom visual identity &amp; brand integration
+            (Optional) PWA (Progressive Web App)</br>or Up to 15 Additional Pages Total
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Scroll animations &amp; micro-interactions
+            Mobile-first responsive design
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Contact form + lead capture integration
+            Custom SEO, CRM, TCI and Whitelist-CMS built-in
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Blog section + 2 revision rounds
+            Google Implementation GA4, GSC, GS, GPR Setup
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            AI Search Visibility & Conversion optimization
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            CTA (Calls-to-action) Contact or Lead Capture Form
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Dedicated thank-you or confirmation page
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) SEM, SMM, PPC
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Stock Images (Up to 6)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Business Logo 
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Custom Email Domain (xyz@yourcompany.com)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Domain hosting & delegation
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            24/7 Maintenance & Client support
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Includes 4 Revision Requests a Month
           </li>
         </ul>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
@@ -903,7 +1472,7 @@
       <!-- ── GOLD ── -->
       <div class="pricing-card" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ryeuGvM9gTW7RJ2wyQfvDWQHMHTExU.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ObYG6zcPcX739HLghAbh7vzhtB79g6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -911,34 +1480,79 @@
         </div>
         <h3>The Brand</h3>
         <p class="pricing-from">Starting from</p>
-        <div class="pricing-price" data-monthly="€1,999" data-yearly="€23,988">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">€1,999</span></span></span>
+        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$2,000</span></p>
+        <div class="pricing-price" data-monthly="C$500" data-yearly="C$6,000">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$500</span></span></span>
           <span class="price-suffix">/mo</span>
         </div>
-        <p class="pricing-pages">10+ pages · ~5-week delivery</p>
+        <p class="pricing-pages">10-15 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          For brands that refuse to be average. A full-scale bespoke website with a complete design system, advanced GSAP animations, and conversion optimisation built in from the ground up.
+          The full-scale build — optionally expand with a PWA or up to 25 additional pages, or go native with a Google Play or App Store app or up to 35 pages. Backed by our complete SEO, CRM, and AI search stack, with curated content, custom email domain, and priority support at every step.
         </p>
         <ul class="pricing-features">
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            10+ pages with full design system
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Brand new website, built from scratch
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            GSAP &amp; CSS micro-interaction animations
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) PWA (Progressive Web App)</br>or Up to 25 Additional Pages Total
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Conversion rate optimisation (CRO)
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Google Play/App Store Application</br>or Up to 35 Additional Pages Total
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Custom illustrations &amp; brand photography
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Mobile-first responsive design
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Priority support + 3 revision rounds
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Custom SEO, CRM, TCI and Whitelist-CMS built-in
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Google Implementation GA4, GSC, GS, GPR Setup
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            AI Search Visibility & Conversion optimization
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            CTA (Calls-to-action) Contact or Lead Capture Form
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Dedicated thank-you or confirmation page
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) SEM, SMM, PPC
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Stock Images (Up to 9)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Business Logo
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Custom Email Domain (xyz@yourcompany.com)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Domain hosting & delegation
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            24/7 Maintenance & Client support
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Includes 6 Revision Requests a Month
           </li>
         </ul>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
@@ -947,7 +1561,7 @@
       <!-- ── CUSTOM ── -->
       <div class="pricing-card" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);--tier-shadow:rgba(168,85,247,0.14);--tier-bg:rgba(168,85,247,0.04);--tier-btn-bg1:rgba(168,85,247,0.12);--tier-btn-bg2:rgba(168,85,247,0.06);--tier-btn-hover1:rgba(168,85,247,0.2);--tier-btn-hover2:rgba(168,85,247,0.1);">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-R5X5QqCPQZZLpYRzmikqFircpeR6HJ.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-2XPhzhDWlgdDfeHPPSykPR0p3SBYW6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -955,33 +1569,78 @@
         </div>
         <h3>The Enterprise</h3>
         <p class="pricing-from">Contact for pricing</p>
+        <p class="pricing-flat">Scope: <span class="pricing-flat-amt">Bespoke</span></p>
         <div class="pricing-price" data-monthly="Bespoke" data-yearly="Bespoke">
           <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">Bespoke</span></span></span>
         </div>
         <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
         <p class="pricing-desc">
-          For complex, large-scale requirements that don't fit a package. Multi-brand, enterprise platforms, custom CMS, third-party integrations, and ongoing support — scoped precisely to your needs.
+          Everything in The Brand, plus unlimited scope — build as a PWA, launch on Google Play or the App Store, or scale to any number of pages. Full third-party integrations, multi-brand platforms, and priority support, scoped exactly to your brief.
         </p>
         <ul class="pricing-features">
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Unlimited pages &amp; feature scope
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Brand new website, built from scratch
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Dedicated design &amp; dev team
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) PWA (Progressive Web App)<br>or Unlimited Additional Pages
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Custom CMS &amp; third-party integrations
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Google Play/App Store Application<br>or Unlimited Additional Pages
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Ongoing maintenance &amp; SLA support
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Mobile-first responsive design
           </li>
           <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Unlimited revision rounds until perfect
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Custom SEO, CRM, TCI and Whitelist-CMS built-in
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Google Implementation GA4, GSC, GS, GPR Setup
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            AI Search Visibility & Conversion optimization
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            CTA (Calls-to-action) Contact or Lead Capture Form
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Dedicated thank-you or confirmation page
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) SEM, SMM, PPC
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Stock Images
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Curated Business Logo 
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            (Optional) Custom Email Domain (xyz@yourcompany.com)
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Domain hosting & delegation
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            24/7 Maintenance & Client support
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            Includes "X" Revision Requests a Month
           </li>
         </ul>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
@@ -993,7 +1652,7 @@
     <div style="margin-top:28px;padding:28px 32px;background:var(--raised);border:1px solid rgba(0,229,255,0.08);border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
       <div>
         <h3 style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:6px;letter-spacing:-0.01em;">Not sure which tier is right for you?</h3>
-        <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Every project is different. Book a free 30-minute discovery call and we'll scope the right fit together — no commitment required.</p>
+        <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together — no commitment required.</p>
       </div>
       <a href="contact.html" class="btn btn-primary" style="white-space:nowrap;padding:12px 28px;font-size:13.5px;flex-shrink:0;">Book Free Call →</a>
     </div>
@@ -1001,179 +1660,6 @@
 </section>
 
 <div class="divider"></div>
-
-
-<!-- ══════════════════════════════════════
-     SERVICE OVERVIEW
-══════════════════════════════════════ -->
-<section style="padding:80px 28px 0;" aria-label="Service overview">
-  <div style="max-width:1200px;margin:0 auto;" class="overview-grid">
-    <div>
-      <p class="sec-tag">// what you get</p>
-      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.18;margin-bottom:20px;color:var(--text-1);">
-        Custom-crafted websites<br>
-        <span class="grad-cyan-pink">built to perform.</span>
-      </h2>
-      <p style="font-size:15px;line-height:1.8;color:var(--text-2);margin-bottom:20px;">
-        We don't use Wix, Squarespace, or WordPress themes. Every site we ship is hand-coded from scratch — optimised for speed, accessibility, and conversion from the first commit.
-      </p>
-      <p style="font-size:15px;line-height:1.8;color:var(--text-2);">
-        Whether you're launching your first brand presence or rebuilding a high-traffic platform, we design and build for real-world results: lower bounce rates, higher time-on-page, and clicks that turn into clients.
-      </p>
-    </div>
-    <div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div class="highlight-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Hand-coded HTML, CSS &amp; JavaScript — zero bloat
-        </div>
-        <div class="highlight-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Mobile-first, responsive across all screen sizes
-        </div>
-        <div class="highlight-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Core Web Vitals optimised — sub-2s load times
-        </div>
-        <div class="highlight-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          WCAG 2.1 AA accessible by default
-        </div>
-        <div class="highlight-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          On-page SEO foundations baked in from day one
-        </div>
-        <div class="highlight-pill">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-          Full source code handover — you own everything
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider" style="margin-top:80px;"></div>
-
-
-<!-- ══════════════════════════════════════
-     5 W's + HOW
-══════════════════════════════════════ -->
-<section style="padding:80px 28px;" aria-label="5 W's and how">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;max-width:560px;margin:0 auto 52px;">
-      <p class="sec-tag">// the full picture</p>
-      <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
-        Who, what, when, where,<br>why &amp; how
-      </h2>
-    </div>
-    <div class="ws-grid">
-
-      <!-- WHO -->
-      <div class="w-card">
-        <div class="w-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <p class="w-label">Who</p>
-        <h3>Built for ambitious businesses</h3>
-        <p>Solo founders, growing SMBs, and established brands who need a professional web presence that works as hard as they do. If your current site embarrasses you, this is for you.</p>
-      </div>
-
-      <!-- WHAT -->
-      <div class="w-card">
-        <div class="w-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        </div>
-        <p class="w-label">What</p>
-        <h3>Custom websites, hand-coded</h3>
-        <p>From brochure sites and portfolios to full business platforms — every project is designed, built, and tested from scratch. No drag-and-drop builders, no pre-made themes, no cookie-cutter layouts.</p>
-      </div>
-
-      <!-- WHEN -->
-      <div class="w-card">
-        <div class="w-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <p class="w-label">When</p>
-        <h3>2–6 weeks from kickoff</h3>
-        <p>Bronze projects launch in as little as 2 weeks. Gold tier typically takes 4–6 weeks for a full bespoke build with revisions and QA. We're currently booking for Q3 2026.</p>
-      </div>
-
-      <!-- WHERE -->
-      <div class="w-card">
-        <div class="w-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-        </div>
-        <p class="w-label">Where</p>
-        <h3>100% remote, globally</h3>
-        <p>We work with clients worldwide. All collaboration happens async over email and Calendly — no office visits needed. Discovery, design reviews, and handoffs are fully remote-friendly.</p>
-      </div>
-
-      <!-- WHY -->
-      <div class="w-card">
-        <div class="w-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <p class="w-label">Why</p>
-        <h3>Your site is your #1 sales rep</h3>
-        <p>It works 24/7, never calls in sick, and speaks to every visitor at once. A slow, dated, or generic site loses clients before you even know they visited. A great one converts them silently.</p>
-      </div>
-
-      <!-- HOW -->
-      <div class="w-card">
-        <div class="w-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        </div>
-        <p class="w-label">How</p>
-        <h3>Discovery → Design → Build → Launch</h3>
-        <p>We start with a discovery call to understand your goals, audience, and brand. Then we wireframe, design in-browser, build production-ready code, and hand off with full documentation.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-
-<!-- ══════════════════════════════════════
-     PROCESS SECTION
-══════════════════════════════════════ -->
-<section style="padding:80px 28px;" aria-label="Our process">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;max-width:520px;margin:0 auto 60px;">
-      <p class="sec-tag">// how it works</p>
-      <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
-        From idea to live site<br>in four steps
-      </h2>
-    </div>
-
-    <div class="process-grid">
-      <div class="process-step">
-        <div class="step-num">01</div>
-        <h4>Discovery Call</h4>
-        <p>We dig into your goals, audience, and brand. 30 minutes, no jargon. You walk away with a clear scope and a fixed quote.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-num" style="border-color:rgba(255,45,120,0.3);box-shadow:0 0 20px rgba(255,45,120,0.1);color:var(--pink);">02</div>
-        <h4>Wireframe &amp; Concept</h4>
-        <p>We map out page structure and layout before touching visual design. You approve the architecture before a single pixel is pushed.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-num" style="border-color:rgba(255,215,0,0.3);box-shadow:0 0 20px rgba(255,215,0,0.1);color:var(--gold);">03</div>
-        <h4>Design &amp; Build</h4>
-        <p>Your site is designed and built in-browser — what you see is what ships. We send a live preview link for review and feedback.</p>
-      </div>
-      <div class="process-step">
-        <div class="step-num" style="border-color:rgba(0,229,255,0.4);box-shadow:0 0 20px rgba(0,229,255,0.15);">04</div>
-        <h4>QA, Launch &amp; Handoff</h4>
-        <p>Cross-browser testing, speed checks, and accessibility audit before we go live. Full source code handed over on day one post-launch.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
 
 <!-- ══════════════════════════════════════
      CTA SECTION
@@ -1362,14 +1848,16 @@
     document.querySelectorAll('.pricing-price[data-monthly]').forEach(function (el) {
       var val = mode === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
       rollPrice(el, val);
-      /* Update suffix — fade out, swap at midpoint, fade in */
+      /* Update suffix — force-reflow to commit opacity:0, then fade in */
       var suf = el.querySelector('.price-suffix');
       if (suf && el.dataset.monthly !== 'Bespoke') {
         var newSufText = mode === 'monthly' ? '/mo' : '/yr';
+        suf.style.transition = 'none';
         suf.style.opacity = '0';
-        (function(s, t) {
-          setTimeout(function() { s.textContent = t; s.style.opacity = '1'; }, 130);
-        })(suf, newSufText);
+        suf.textContent = newSufText;
+        void suf.offsetWidth;
+        suf.style.transition = '';
+        suf.style.opacity = '1';
       }
     });
 
@@ -1380,7 +1868,52 @@
   btnM.addEventListener('click', function () { switchMode('monthly'); });
   btnY.addEventListener('click', function () { switchMode('yearly'); });
 })();
+
+/* ── Metric count-up on scroll ── */
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animateCountUp(el) {
+    var end = parseFloat(el.dataset.end || '0');
+    var decimals = parseInt(el.dataset.decimals || '0', 10);
+    var prefix = el.dataset.prefix || '';
+    var suffix = el.dataset.suffix || '';
+    var duration = 1600;
+    var fmt = function (v) {
+      return prefix + v.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+    };
+    if (reduceMotion || isNaN(end)) { el.textContent = fmt(end); return; }
+    var t0 = performance.now();
+    function step(now) {
+      var t = Math.min((now - t0) / duration, 1);
+      var ease = 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(end * ease);
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = fmt(end);
+    }
+    requestAnimationFrame(step);
+  }
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { animateCountUp(e.target); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.wyg-metric-value[data-end]').forEach(function (el) { obs.observe(el); });
+  } else {
+    document.querySelectorAll('.wyg-metric-value[data-end]').forEach(animateCountUp);
+  }
+})();
 </script>
 
+<script>
+  document.querySelectorAll('.pricing-card').forEach(function(card) {
+    card.addEventListener('mouseenter', function() { card.classList.add('is-hovered'); });
+    card.addEventListener('mouseleave', function() { card.classList.remove('is-hovered'); });
+  });
+  document.querySelectorAll('.cap-hero-img').forEach(function(el) {
+    el.addEventListener('mouseenter', function() { el.classList.add('is-hovered'); });
+    el.addEventListener('mouseleave', function() { el.classList.remove('is-hovered'); });
+  });
+</script>
 </body>
 </html>
