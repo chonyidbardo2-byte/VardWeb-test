@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -366,7 +366,7 @@
       padding: 32px;
       overflow: hidden;
       isolation: isolate;
-      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease;
+      transition: box-shadow 0.4s ease, border-color 0.4s ease;
     }
     .pricing-card::before {
       content: '';
@@ -374,9 +374,9 @@
       background: radial-gradient(ellipse 70% 55% at 0% 0%, var(--tier-glow, rgba(0,229,255,0.07)) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
-    .pricing-card.is-hovered {
-      transform: translateY(-6px);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 35px var(--tier-shadow, rgba(0,229,255,0.1));
+    .pricing-card:hover {
+      box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 40px var(--tier-shadow, rgba(0,229,255,0.18));
+      border-color: var(--tier-border, rgba(0,229,255,0.35));
     }
     .pricing-card > * { position: relative; z-index: 1; }
 
@@ -394,11 +394,11 @@
       opacity: 0.72;
       mix-blend-mode: luminosity;
       filter: saturate(1.1) brightness(0.9);
-      transition: opacity 0.35s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
       transform: rotate(-8deg) scale(1);
       transform-origin: top right;
     }
-    .pricing-card.is-hovered .pricing-img {
+    .pricing-card:hover .pricing-img {
       opacity: 0.92;
       transform: rotate(-3deg) scale(1.08);
     }
@@ -508,9 +508,10 @@
       background: linear-gradient(135deg, var(--tier-btn-bg1, rgba(0,229,255,0.12)), var(--tier-btn-bg2, rgba(0,229,255,0.06)));
       border: 1px solid var(--tier-border, rgba(0,229,255,0.3));
       color: var(--tier-color, #00E5FF);
-      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.2s ease, background 0.2s ease;
     }
     .pricing-cta:hover {
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(0,0,0,0.3), 0 0 16px var(--tier-shadow, rgba(0,229,255,0.18));
       background: linear-gradient(135deg, var(--tier-btn-hover1, rgba(0,229,255,0.2)), var(--tier-btn-hover2, rgba(0,229,255,0.1)));
@@ -619,12 +620,12 @@
     .feature-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-    @media (max-width: 640px) {
-      .feature-grid { grid-template-columns: 1fr; }
+      gap: 28px;
+      padding-top: 16px;
     }
     .feature-card {
+      position: relative;
+      overflow: visible;
       display: flex;
       flex-direction: row;
       align-items: flex-start;
@@ -643,8 +644,30 @@
                   0 4px 16px rgba(0,0,0,0.4);
       border-color: rgba(0,229,255,0.2);
     }
+    .stat-bubble {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--cyan);
+      color: #000;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      padding: 4px 13px;
+      border-radius: 20px;
+      white-space: nowrap;
+      box-shadow: 0 0 14px rgba(0,229,255,0.5), 0 2px 6px rgba(0,0,0,0.4);
+      pointer-events: none;
+      z-index: 2;
+    }
     .feature-card-img {
       flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      width: 96px;
+      height: 96px;
     }
     .feature-card-img img {
       width: 96px;
@@ -663,6 +686,28 @@
       line-height: 1.65;
       color: var(--text-2);
       margin: 0;
+    }
+    @media (max-width: 640px) {
+      .feature-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding-top: 20px;
+      }
+      .feature-card {
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+      }
+      .feature-card-img {
+        margin: 0 auto;
+        align-self: center;
+      }
+      .feature-card > div {
+        width: 100%;
+      }
+      .feature-card p + p {
+        margin-top: 10px;
+      }
     }
 
     /* ── W's grid responsive ── */
@@ -684,7 +729,7 @@
     @media (max-width: 860px) { .overview-grid { grid-template-columns: 1fr; gap: 40px; } }
 
     /* ── What-You-Get case study rows ── */
-    .wyg-cases { display:flex; flex-direction:column; gap:0; margin-top:64px; }
+    .wyg-cases { display:flex; flex-direction:column; gap:0; margin-top:0; }
     .wyg-row {
       display:grid;
       grid-template-columns: 2fr 1fr;
@@ -693,6 +738,7 @@
       padding:56px 0;
       border-bottom: 1px solid rgba(0,229,255,0.08);
     }
+    .wyg-cases .wyg-row:last-child { border-bottom: none; }
     .wyg-row--rev { grid-template-columns: 1fr 2fr; }
     .wyg-row--rev .wyg-content { order: 2; }
     .wyg-row--rev .wyg-metrics { order: 1; }
@@ -707,12 +753,32 @@
       border-right: none;
       border-left: 1px solid rgba(0,229,255,0.08);
     }
-    .wyg-img {
-      width:180px; flex-shrink:0; border-radius:16px; aspect-ratio:29/35; object-fit:cover;
-      box-shadow: 0 0 0 1px var(--tier-border, rgba(0,229,255,0.25)), 0 8px 32px var(--tier-glow, rgba(0,229,255,0.08));
-      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    .wyg-img-card {
+      flex-shrink: 0;
+      position: relative;
+      width: 168px;
+      height: 158px;
+      background: var(--raised);
+      border: 1px solid var(--tier-border, rgba(0,229,255,0.25));
+      border-radius: 20px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
+                  0 4px 24px var(--tier-glow, rgba(0,229,255,0.08));
+      overflow: visible;
     }
-    .wyg-img:hover { transform: scale(1.05) rotate(-2deg); }
+    .wyg-img {
+      width: 180px;
+      border-radius: 16px;
+      aspect-ratio: 29/35;
+      object-fit: cover;
+      box-shadow: 0 12px 40px var(--tier-glow, rgba(0,229,255,0.12));
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+    .wyg-img:hover { transform: translateX(-50%) scale(1.05) rotate(-2deg); }
     .wyg-quote { display:flex; flex-direction:column; gap:16px; justify-content:space-between; flex:1; }
     .wyg-quote h3 { font-size:clamp(1rem,1.8vw,1.2rem); font-weight:700; color:var(--text-1); line-height:1.35; letter-spacing:-0.02em; }
     .wyg-quote p { font-size:14px; line-height:1.8; color:var(--text-2); }
@@ -736,7 +802,8 @@
       .wyg-row--rev .wyg-content { order:1; padding-left:0; border-left:none; }
       .wyg-row--rev .wyg-metrics { order:2; }
       .wyg-content { padding-right:0; border-right:none; flex-direction:column; }
-      .wyg-img { width:100%; max-width:220px; }
+      .wyg-img-card { width: 220px; height: 140px; }
+      .wyg-img { width: 230px; }
     }
     @media (max-width:480px) {
       .wyg-row { padding:40px 0; }
@@ -899,12 +966,13 @@
     <div style="position:absolute;top:80px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.022) 0%,transparent 70%);"></div>
   </div>
   <div style="position:relative;z-index:1;max-width:720px;margin:0 auto;">
-    <p class="sec-tag" style="margin-bottom:14px;">// services / web design</p>
+    <p class="sec-tag" style="margin-bottom:14px;">// What you get</p>
     <h1 style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:800;line-height:1.05;margin-bottom:20px;color:var(--text-1);">
-      Web Design.
+      Custom-crafted websites<br>
+      <span class="grad-cyan-pink">built to perform.</span>
     </h1>
     <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 32px;">
-      Websites that convert. Design that captivates. Every pixel hand-crafted — no templates, no shortcuts, no excuses.
+      Instead of paying four different software bills and worrying about data leaks between disjointed systems, you get a single, secure, high-performance digital asset that owns its data, protects its brand, and automates its revenue generation from day one.
     </p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
       <a href="#pricing" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">View Pricing →</a>
@@ -918,134 +986,211 @@
 <!-- ══════════════════════════════════════
      WHAT YOU GET — TIER CASE STUDIES
 ══════════════════════════════════════ -->
-<section id="what-you-get" aria-labelledby="wyg-heading" style="padding:100px 28px;">
+<section id="what-you-get" style="padding:40px 28px 100px;">
   <div style="max-width:1200px;margin:0 auto;">
-
-    <div style="text-align:center;max-width:620px;margin:0 auto;">
-      <p class="sec-tag">// what you get</p>
-      <h2 id="wyg-heading" style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.18;margin-bottom:16px;color:var(--text-1);">
-        Custom-crafted websites<br>
-        <span class="grad-cyan-pink">built to perform.</span>
-      </h2>
-      <p style="font-size:15px;line-height:1.8;color:var(--text-2);">
-        We don't use Wix, Squarespace, or WordPress themes. Every site is hand-coded from scratch — optimised for speed, accessibility, and conversion from the first commit.
-      </p>
-    </div>
 
     <div class="wyg-cases">
 
-      <!-- ── BRONZE ── -->
-      <div class="wyg-row" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);">
+      <!-- ── SEO ── -->
+      <div class="wyg-row" style="--tier-color:#22D3A5;--tier-border:rgba(34,211,165,0.28);--tier-glow:rgba(34,211,165,0.08);">
         <div class="wyg-content">
-          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-57TdoPW2tQTCBO8PGaHLRnB77EeRmI.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-SsfjxCJh43Hr1dqzkbFWUGH3ICZQbH.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
           <div class="wyg-quote">
             <div>
-              <h3>The Foundation</h3>
-              <p style="margin-top:12px;">A complete launch package — mobile-first build with custom SEO, CRM, and a full Google Analytics stack (GA4, GSC, GPR) baked in from day one. Includes AI search optimisation, a lead capture form, dedicated hosting, and 24/7 support so you're never left guessing.</p>
+              <h3>Search Engine Optimization</h3>
+              <p style="margin-top:12px;">Your website automatically optimizes itself, spins up high-ranking landing pages, and tracks keywords without requiring expensive monthly SEO plugins or manual coding.</p>
             </div>
             <div class="wyg-figcaption">
-              <span class="wyg-name">Bronze Tier</span>
-              <span class="wyg-role">Best for new brands and solo operators launching their first site</span>
+              <span class="wyg-name">Custom SEO</span>
+              <span class="wyg-role">Automated Growth Without Effort</span>
             </div>
           </div>
         </div>
         <div class="wyg-metrics">
           <div class="wyg-metric">
-            <div class="wyg-metric-value" data-end="1000" data-prefix="C$">C$0</div>
-            <div class="wyg-metric-label">Starting Price</div>
-            <div class="wyg-metric-sub">Flat rate, one-time build fee</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Lead Close Rate</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With SEO</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">14.6%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">1.7%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Organic search leads close at nearly 9× the rate of cold outbound — SEO turns discovery into revenue, automatically.</div>
           </div>
           <div class="wyg-metric">
-            <div class="wyg-metric-value" data-end="300" data-prefix="C$" data-suffix="/mo">C$0/mo</div>
-            <div class="wyg-metric-label">Monthly Rate</div>
-            <div class="wyg-metric-sub">Ongoing support &amp; maintenance</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Website Traffic Share</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With SEO</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">53%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">15%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Without SEO, paid ads cover just 15% of traffic — and stop delivering the moment you stop paying.</div>
           </div>
         </div>
       </div>
 
-      <!-- ── SILVER ── -->
-      <div class="wyg-row wyg-row--rev" style="--tier-color:#C0C0C0;--tier-border:rgba(192,192,192,0.25);--tier-glow:rgba(192,192,192,0.06);">
+      <!-- ── CRM ── -->
+      <div class="wyg-row wyg-row--rev" style="--tier-color:#4F8EF7;--tier-border:rgba(79,142,247,0.28);--tier-glow:rgba(79,142,247,0.08);">
         <div class="wyg-content">
-          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-FuyDPaLKBrjIiOmneRjZ5p1n5k6Nw1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-X6NHDfd7AMu1XYsXSKxZu25fkTtQJ1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
           <div class="wyg-quote">
             <div>
-              <h3>The Business</h3>
-              <p style="margin-top:12px;">Everything in The Foundation, plus the option for a Progressive Web App or up to 15 total pages — built for businesses that need room to grow. Double the curated imagery, 4 monthly revision cycles, and the same battle-tested SEO and conversion stack.</p>
+              <h3>Customer Relationship Management</h3>
+              <p style="margin-top:12px;">Every click, form submission, and customer interaction is captured instantly inside your own database—no third-party syncing delays, data loss, or expensive per-user licensing fees.</p>
             </div>
             <div class="wyg-figcaption">
-              <span class="wyg-name">Silver Tier</span>
-              <span class="wyg-role">Ideal for growing businesses ready to scale their web presence</span>
+              <span class="wyg-name">Custom CRM</span>
+              <span class="wyg-role">Zero-Leak Lead Conversion</span>
             </div>
           </div>
         </div>
         <div class="wyg-metrics">
           <div class="wyg-metric">
-            <div class="wyg-metric-value" data-end="1500" data-prefix="C$">C$0</div>
-            <div class="wyg-metric-label">Starting Price</div>
-            <div class="wyg-metric-sub">Flat rate, one-time build fee</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Sales Revenue Growth</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CRM</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">+29%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">+10%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">A built-in CRM drives 3× the revenue growth of the industry average by ensuring no lead ever slips through untracked.</div>
           </div>
           <div class="wyg-metric">
-            <div class="wyg-metric-value" data-end="400" data-prefix="C$" data-suffix="/mo">C$0/mo</div>
-            <div class="wyg-metric-label">Monthly Rate</div>
-            <div class="wyg-metric-sub">Ongoing support &amp; maintenance</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Lead Follow-Up Rate</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CRM</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">80%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">22%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Manual follow-up misses 78% of leads. Automated CRM contacts 80% within 24 hours — while you focus on closing.</div>
           </div>
         </div>
       </div>
 
-      <!-- ── GOLD ── -->
-      <div class="wyg-row" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);">
+      <!-- ── TCI ── -->
+      <div class="wyg-row" style="--tier-color:#FF6B35;--tier-border:rgba(255,107,53,0.28);--tier-glow:rgba(255,107,53,0.08);">
         <div class="wyg-content">
-          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ObYG6zcPcX739HLghAbh7vzhtB79g6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-fSMgViPMUbS0kVcbqdCIHuTbarLfB5.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
           <div class="wyg-quote">
             <div>
-              <h3>The Brand</h3>
-              <p style="margin-top:12px;">The full-scale build — optionally expand with a PWA or up to 25 additional pages, or go native with a Google Play or App Store app. Backed by our complete SEO, CRM, and AI search stack with curated content, custom email domain, and priority support at every step.</p>
+              <h3>Telephony Control</h3>
+              <p style="margin-top:12px;">Call and text leads directly from your dashboard with automated routing, while the system automatically verifies business data to keep your outreach 100% compliant.</p>
             </div>
             <div class="wyg-figcaption">
-              <span class="wyg-name">Gold Tier</span>
-              <span class="wyg-role">For brands that demand a full-scale digital presence</span>
+              <span class="wyg-name">Custom TCI</span>
+              <span class="wyg-role">Instant, Compliant Communication</span>
             </div>
           </div>
         </div>
         <div class="wyg-metrics">
           <div class="wyg-metric">
-            <div class="wyg-metric-value" data-end="2000" data-prefix="C$">C$0</div>
-            <div class="wyg-metric-label">Starting Price</div>
-            <div class="wyg-metric-sub">Flat rate, one-time build fee</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">First-Contact Win Rate</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With TCI</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">78%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">22%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">78% of buyers go with the first business to respond. Without integrated telephony, that window closes faster than any human can react.</div>
           </div>
           <div class="wyg-metric">
-            <div class="wyg-metric-value" data-end="500" data-prefix="C$" data-suffix="/mo">C$0/mo</div>
-            <div class="wyg-metric-label">Monthly Rate</div>
-            <div class="wyg-metric-sub">Ongoing support &amp; maintenance</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Contact Rate</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With TCI</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">87%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">32%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Manual outreach reaches just 1 in 3 prospects. Automated telephony starts nearly 3× more conversations per day.</div>
           </div>
         </div>
       </div>
 
-      <!-- ── CUSTOM ── -->
-      <div class="wyg-row wyg-row--rev" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);">
+      <!-- ── CMS ── -->
+      <div class="wyg-row wyg-row--rev" style="--tier-color:#F72585;--tier-border:rgba(247,37,133,0.28);--tier-glow:rgba(247,37,133,0.08);">
         <div class="wyg-content">
-          <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-2XPhzhDWlgdDfeHPPSykPR0p3SBYW6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-Y0bADTeBeWdeCNqMUYn2kiBmGPzOMu.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
           <div class="wyg-quote">
             <div>
-              <h3>The Enterprise</h3>
-              <p style="margin-top:12px;">For complex, large-scale requirements that don't fit a package. Multi-brand, enterprise platforms, custom CMS, third-party integrations, and ongoing support — scoped precisely to your needs with a timeline agreed at discovery.</p>
+              <h3>Whitelist Content Management System</h3>
+              <p style="margin-top:12px;">"You can edit your own website text, swap out images, and publish videos through a beautifully simple, visual dashboard. You never have to wait for a developer or pay a maintenance fee just to make a quick text change.</p>
             </div>
             <div class="wyg-figcaption">
-              <span class="wyg-name">Custom Tier</span>
-              <span class="wyg-role">Enterprise projects with unlimited scope and bespoke pricing</span>
+              <span class="wyg-name">Custom Whitelist-CMS</span>
+              <span class="wyg-role">Visual, "Zero-Training" Site Editing</span>
             </div>
           </div>
         </div>
         <div class="wyg-metrics">
           <div class="wyg-metric">
-            <div class="wyg-metric-value">∞</div>
-            <div class="wyg-metric-label">Project Scale</div>
-            <div class="wyg-metric-sub">No ceiling on complexity or scope</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Lead Generation</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CMS</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">+67%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">+10%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Sites updated through a CMS generate 67% more leads monthly. Static sites grow at 10% — and require a developer for every single change.</div>
           </div>
           <div class="wyg-metric">
-            <div class="wyg-metric-value">Bespoke</div>
-            <div class="wyg-metric-label">Pricing</div>
-            <div class="wyg-metric-sub">Scoped precisely to your requirements</div>
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Website Visitors</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CMS</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">+55%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">+8%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Fresh content attracts 55% more visitors. Without a CMS, static sites average just 8% annual growth and slide down search rankings every month.</div>
           </div>
         </div>
       </div>
@@ -1076,11 +1221,11 @@
           </span>
         </h2>
         <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:480px;">
-          From first pixel to final deployment — every package ships with these pillars built in, not bolted on.
+          Google’s entire growth ecosystem at no extra cost.<br><br>We handle the complex setup of your tracking, SEO monitoring, product feeds, and revenue streams before launch.<br><br>You get an asset that is fully tracked, visible to search engines, and ready to generate revenue from day one.
         </p>
       </div>
       <div class="cap-hero-img" style="flex-shrink:0;">
-        <img src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-xAL079qkVulmteXfEWxYlpf0y1NRwD.png" alt="" aria-hidden="true" style="width:192px;height:auto;border-radius:12px;display:block;" loading="lazy" />
+        <img src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-At8AKNZB4KbOR8I9GDOawl4dmCyYfg.png" alt="" aria-hidden="true" style="width:192px;height:auto;border-radius:12px;display:block;" loading="lazy" />
       </div>
     </div>
 
@@ -1091,86 +1236,86 @@
       <div id="fp-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px 36px;">
 
         <!-- 1. Visual Design -->
-        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:center;">
           <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Visual Design</h3>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Custom layouts</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Brand identity integration</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Typography system</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Responsive grids</li>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GA4</br>(Google Analytics 4)</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Event-based interaction tracking</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Custom conversion goals &amp; funnels</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Real-time audience segmentation</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Cross-device behavior in one view</li>
           </ul>
         </div>
 
         <!-- 2. Performance -->
-        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:center;">
           <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Performance</h3>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Sub-3s load target</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Core Web Vitals</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Image optimisation</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">PWA option</li>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GSC</br>(Google Search Console)</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Index coverage &amp; crawl error monitoring</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Keyword click-through rate reporting</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Core Web Vitals performance data</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Sitemap submission &amp; crawl management</li>
           </ul>
         </div>
 
         <!-- 3. SEO & AI Search -->
-        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:center;">
           <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">SEO &amp; AI Search</h3>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Technical SEO</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Schema markup</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">AI search visibility</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">GSC &amp; GPR setup</li>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GS</br>(Google Shopping)</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Structured product feed creation</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Shopping ad eligibility from launch</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Rich results via schema markup</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Price &amp; inventory sync via Merchant</li>
           </ul>
         </div>
 
         <!-- 4. Analytics -->
-        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:center;">
           <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Analytics</h3>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">GA4 implementation</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Conversion tracking</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Google Search Console</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Goal funnels</li>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GPR</br>(Google Product Ratings)</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Star ratings visible in Shopping ads</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Review aggregation from approved sources</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Higher CTR through visible social proof</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Feed submitted &amp; eligibility verified</li>
           </ul>
         </div>
 
         <!-- 5. CRM & Forms -->
-        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:center;">
           <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">CRM &amp; Forms</h3>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Lead capture form</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">CRM integration</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Thank-you page</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Email notifications</li>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GMC</br>(Google Merchant Center)</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Full product catalog upload &amp; verification</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Shipping &amp; tax rules configured</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Feed health monitoring &amp; error resolution</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Sync with Google Ads campaigns</li>
           </ul>
         </div>
 
         <!-- 6. Support & Hosting -->
-        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:flex-start;">
+        <div class="fp-item" style="opacity:0;transform:translateY(24px);display:flex;flex-direction:column;align-items:center;">
           <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">Support &amp; Hosting</h3>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;">
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Dedicated hosting</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">24/7 support</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Monthly retainer</li>
-            <li style="font-size:13.5px;line-height:1.7;color:var(--text-2);">Security patches</li>
+          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">AS</br>(AdSense)</h3>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Auto &amp; manual ad unit placement</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Ad sizing optimized for viewability</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Content compliance pre-submission review</li>
+            <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Revenue tracking linked to GA4</li>
           </ul>
         </div>
 
@@ -1182,15 +1327,20 @@
 
 <style>
 @media (max-width:860px) { #fp-grid { grid-template-columns: repeat(2,1fr) !important; } }
-@media (max-width:540px) { #fp-grid { grid-template-columns: 1fr !important; } }
+@media (max-width:640px) { #fp-grid { grid-template-columns: 1fr !important; } }
+#fp-grid .fp-item h3 { text-align: center; width: 100%; }
+#fp-grid ul { width: 90% !important; }
+#fp-grid ul li { display:flex; align-items:flex-start; gap:8px; }
+#fp-grid ul li::before { content:''; flex-shrink:0; width:4px; height:4px; border-radius:50%; background:rgba(236,72,153,0.45); margin-top:6px; }
 .cap-hero-img { cursor: default; }
 .cap-hero-img img {
-  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease;
+  transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease;
   transform: rotate(-5deg) scale(1);
   transform-origin: center center;
   opacity: 0.85;
 }
 .cap-hero-img.is-hovered img {
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease;
   transform: rotate(-1deg) scale(1.07);
   opacity: 1;
 }
@@ -1225,49 +1375,57 @@
     <div style="text-align:center;max-width:520px;margin:0 auto 60px;">
       <p class="sec-tag">// how it works</p>
       <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
-        From idea to live site<br>in four steps
+        Absolutely effective,<br>Optional Add-ons.
       </h2>
     </div>
 
     <div class="feature-grid">
 
       <div class="feature-card">
+        <span class="stat-bubble">↑ 180% CTR avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-OVVSrD4GRutENdVA3QzYLe5KXwBWVq.png&w=320&q=75" alt="Discovery Call" width="96" height="96" style="object-fit:contain;">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-UN1NRnC5SEYcBvC7jJ1HjGKB22Q6Eb.png&w=320&q=75" alt="Discovery Call" width="96" height="96" style="object-fit:contain;">
         </div>
         <div>
-          <h4>01 — Discovery Call</h4>
-          <p>We dig into your goals, audience, and brand. 30 minutes, no jargon. You walk away with a clear scope and a fixed quote.</p>
+          <h4>SEM - Search Engine Marketing</h4>
+          <p>SEM places your business at the top of search results precisely when potential customers are actively looking for your solutions.</p>
+          <p>This unique intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.</p>
         </div>
       </div>
 
       <div class="feature-card">
+        <span class="stat-bubble">↑ 78% engagement avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-N7V0aMs36OlOl3QUJEzHT6diM5hJ6Z.png&w=320&q=75" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-6rqerTtgwzIutgGOdsY7OsW09Liojd.png&w=320&q=75" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;transform:scale(1.15);transform-origin:center;">
         </div>
         <div>
-          <h4>02 — Wireframe &amp; Concept</h4>
-          <p>We map out page structure and layout before touching visual design. You approve the architecture before a single pixel is pushed.</p>
+          <h4>SMM - Social Media Marketing</h4>
+          <p>SMM builds human connections and brand awareness by engaging audiences directly on the platforms where they spend their time.</p>
+          <p>Its core value lies in turning casual users into loyal brand advocates through interactive content and community building.</p>
         </div>
       </div>
 
       <div class="feature-card">
+        <span class="stat-bubble">↑ 200% ROAS avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ptreaSKDFQqhY7oF7Qw6s18YOwh68e.png&w=320&q=75" alt="Design & Build" width="96" height="96" style="object-fit:contain;">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-RKtAdyJlJYxfihOlvJIa61FxZtuFHX.png&w=320&q=75" alt="Design & Build" width="96" height="96" style="object-fit:contain;">
         </div>
         <div>
-          <h4>03 — Design &amp; Build</h4>
-          <p>Your site is designed and built in-browser — what you see is what ships. We send a live preview link for review and feedback.</p>
+          <h4>PPC - Pay-Per-Click Advertising</h4>
+          <p>PPC delivers an instant, predictable stream of website traffic by charging you only when a user actively clicks your ad.</p>
+          <p>This model offers total financial accountability, allowing you to scale visibility overnight while strictly controlling your ad spend.</p>
         </div>
       </div>
 
       <div class="feature-card">
+        <span class="stat-bubble">↑ 500% lead gen avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-l7sGnL4PG73upUHUi2mGVGegEvkNDs.png&w=320&q=75" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;">
+          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-n1AUE9vtM2iK5wufbqniEiX1g9L3LV.png&w=320&q=75" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;">
         </div>
         <div>
-          <h4>04 — QA, Launch &amp; Handoff</h4>
-          <p>Cross-browser testing, speed checks, and accessibility audit before we go live. Full source code handed over on day one post-launch.</p>
+          <h4>CM - Content Marketing</h4>
+          <p>Content Marketing builds deep customer trust by publishing valuable, educational media directly on your own website.</p>
+          <p>Unlike paid ads, these assets generate compounding organic traffic and nurture leads for years after they are created.</p>
         </div>
       </div>
 
@@ -1311,7 +1469,7 @@
           <span class="tier-dot"></span>
           <span class="tier-name">Bronze</span>
         </div>
-        <h3>The Foundation</h3>
+        <h3>Essentials</h3>
         <p class="pricing-from">Starting from</p>
         <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,000</span></p>
         <div class="pricing-price" data-monthly="C$300" data-yearly="C$3,600">
@@ -1337,7 +1495,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR Setup
+            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1353,7 +1511,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC
+            (Optional) SEM, SMM, PPC, CM
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1365,7 +1523,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email Domain (xyz@yourcompany.com)
+            (Optional) Custom Email (xyz@yourcompany.com)
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1393,7 +1551,7 @@
           <span class="tier-dot"></span>
           <span class="tier-name">Silver</span>
         </div>
-        <h3>The Business</h3>
+        <h3>Advanced</h3>
         <p class="pricing-from">Starting from</p>
         <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,500</span></p>
         <div class="pricing-price" data-monthly="C$400" data-yearly="C$4,800">
@@ -1402,7 +1560,7 @@
         </div>
         <p class="pricing-pages">5–10 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          Everything in The Foundation, plus the option for a Progressive Web App or up to 15 total pages — built for businesses that need room to grow. Double the curated imagery, 4 monthly revision cycles, and the same battle-tested SEO and conversion stack.
+          Everything in The Bronze Tier, plus the option for a Progressive Web App or up to 15 total pages — built for businesses that need room to grow. Double the curated imagery, 4 monthly revision cycles, and the same battle-tested SEO and conversion stack.
         </p>
         <ul class="pricing-features">
           <li>
@@ -1423,7 +1581,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR Setup
+            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1439,7 +1597,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC
+            (Optional) SEM, SMM, PPC, CM
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1451,7 +1609,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email Domain (xyz@yourcompany.com)
+            (Optional) Custom Email (xyz@yourcompany.com)
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1478,7 +1636,7 @@
           <span class="tier-dot"></span>
           <span class="tier-name">Gold</span>
         </div>
-        <h3>The Brand</h3>
+        <h3>Ultimate</h3>
         <p class="pricing-from">Starting from</p>
         <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$2,000</span></p>
         <div class="pricing-price" data-monthly="C$500" data-yearly="C$6,000">
@@ -1487,7 +1645,7 @@
         </div>
         <p class="pricing-pages">10-15 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          The full-scale build — optionally expand with a PWA or up to 25 additional pages, or go native with a Google Play or App Store app or up to 35 pages. Backed by our complete SEO, CRM, and AI search stack, with curated content, custom email domain, and priority support at every step.
+          Everything in The Silver Tier, plus unlimited scope — build as a PWA, launch on Google Play or the App Store, or scale to 35 Additional Pages. Full third-party integrations, multi-brand platforms, and priority support, scoped exactly to your brief.
         </p>
         <ul class="pricing-features">
           <li>
@@ -1512,7 +1670,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR Setup
+            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1528,7 +1686,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC
+            (Optional) SEM, SMM, PPC, CM
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1540,7 +1698,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email Domain (xyz@yourcompany.com)
+            (Optional) Custom Email (xyz@yourcompany.com)
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1561,13 +1719,13 @@
       <!-- ── CUSTOM ── -->
       <div class="pricing-card" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);--tier-shadow:rgba(168,85,247,0.14);--tier-bg:rgba(168,85,247,0.04);--tier-btn-bg1:rgba(168,85,247,0.12);--tier-btn-bg2:rgba(168,85,247,0.06);--tier-btn-hover1:rgba(168,85,247,0.2);--tier-btn-hover2:rgba(168,85,247,0.1);">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-2XPhzhDWlgdDfeHPPSykPR0p3SBYW6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-WkK9N2UX4NHi2lw4ZiBVRIa9nyMMZj.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
           <span class="tier-name">Custom</span>
         </div>
-        <h3>The Enterprise</h3>
+        <h3>Custom</h3>
         <p class="pricing-from">Contact for pricing</p>
         <p class="pricing-flat">Scope: <span class="pricing-flat-amt">Bespoke</span></p>
         <div class="pricing-price" data-monthly="Bespoke" data-yearly="Bespoke">
@@ -1575,7 +1733,7 @@
         </div>
         <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
         <p class="pricing-desc">
-          Everything in The Brand, plus unlimited scope — build as a PWA, launch on Google Play or the App Store, or scale to any number of pages. Full third-party integrations, multi-brand platforms, and priority support, scoped exactly to your brief.
+          Everything in The Gold Tier, plus unlimited scope — build as a PWA, launch on Google Play or the App Store, or scale to any number of pages. Full third-party integrations, multi-brand platforms, and priority support, scoped exactly to your brief.
         </p>
         <ul class="pricing-features">
           <li>
@@ -1584,11 +1742,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) PWA (Progressive Web App)<br>or Unlimited Additional Pages
+            (Optional) PWA (Progressive Web App)<br>or Up to 25 Additional Pages Total
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Google Play/App Store Application<br>or Unlimited Additional Pages
+            (Optional) Google Play/App Store Application<br>or Up to 35 Additional Pages Total
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1600,7 +1758,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR Setup
+            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1616,7 +1774,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC
+            (Optional) SEM, SMM, PPC, CM
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1628,7 +1786,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email Domain (xyz@yourcompany.com)
+            (Optional) Custom Email (xyz@yourcompany.com)
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1648,14 +1806,6 @@
 
     </div>
 
-    <!-- Not sure? -->
-    <div style="margin-top:28px;padding:28px 32px;background:var(--raised);border:1px solid rgba(0,229,255,0.08);border-radius:20px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;">
-      <div>
-        <h3 style="font-size:17px;font-weight:700;color:var(--text-1);margin-bottom:6px;letter-spacing:-0.01em;">Not sure which tier is right for you?</h3>
-        <p style="font-size:14px;color:var(--text-2);line-height:1.65;">Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together — no commitment required.</p>
-      </div>
-      <a href="contact.html" class="btn btn-primary" style="white-space:nowrap;padding:12px 28px;font-size:13.5px;flex-shrink:0;">Book Free Call →</a>
-    </div>
   </div>
 </section>
 
@@ -1675,21 +1825,19 @@
       </div>
 
       <div style="position:relative;z-index:1;max-width:580px;margin:0 auto;">
-        <p class="sec-tag">// ready to build?</p>
-        <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:18px;color:var(--text-1);">
+        <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:14px;color:var(--text-1);">
           Let's build something<br>
           <span class="grad-cyan-pink">worth visiting.</span>
         </h2>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;">Not sure which tier is right for you?</p>
         <p style="font-size:16px;line-height:1.78;color:var(--text-2);margin-bottom:36px;">
-          Book a free discovery call, walk us through your project, and get a fixed quote the same day. No long sales process, no hidden fees.
+          Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together — no commitment required.
         </p>
         <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
           <a href="contact.html" class="btn btn-primary" style="font-size:14px;padding:14px 32px;">
             Start Your Project <span aria-hidden="true">→</span>
           </a>
-          <a href="our-work.html" class="btn btn-ghost" style="font-size:14px;padding:14px 32px;">
-            View Our Work
-          </a>
+
         </div>
       </div>
     </div>
@@ -1804,34 +1952,59 @@
   }
 
   /* ── Slot machine roll ── */
-  function rollPrice(priceEl, newVal) {
+  function rollPrice(priceEl, newVal, onComplete) {
     var slot = priceEl.querySelector('.price-slot');
     if (!slot) return;
     var track = slot.querySelector('.price-slot-track');
     if (!track) return;
 
-    /* Measure the current item height */
-    var currentVal = track.querySelector('.price-slot-val');
-    var itemH = currentVal ? currentVal.offsetHeight : 44;
+    /* Cancel any in-flight animation — its finish() becomes a no-op */
+    if (track._anim) track._anim.done = true;
+
+    /* Snap track to a single clean element: keep only the last .price-slot-val
+       (the most recently targeted value), remove any stale extras */
+    var allVals = Array.prototype.slice.call(track.querySelectorAll('.price-slot-val'));
+    var currentVal = allVals[allVals.length - 1] || null;
+    for (var i = 0; i < allVals.length - 1; i++) {
+      if (allVals[i].parentNode === track) track.removeChild(allVals[i]);
+    }
+    track.classList.remove('animating');
+    track.style.transition = 'none';
+    track.style.transform = '';
+    track.getBoundingClientRect(); /* commit snap */
+    track.style.transition = '';   /* remove inline override */
+
+    if (!currentVal) return;
+
+    var itemH = currentVal.offsetHeight || 44;
     slot.style.height = itemH + 'px';
 
     /* Append new value below */
-    var nextVal = document.createElement('span');
-    nextVal.className = 'price-slot-val';
-    nextVal.textContent = newVal;
-    track.appendChild(nextVal);
+    var nextEl = document.createElement('span');
+    nextEl.className = 'price-slot-val';
+    nextEl.textContent = newVal;
+    track.appendChild(nextEl);
 
     /* Force layout then animate */
     track.getBoundingClientRect();
     track.classList.add('animating');
     track.style.transform = 'translateY(-' + itemH + 'px)';
 
-    track.addEventListener('transitionend', function onDone() {
-      track.removeEventListener('transitionend', onDone);
+    var anim = { done: false };
+    track._anim = anim;
+
+    function finish() {
+      if (anim.done) return;
+      anim.done = true;
+      if (track._anim === anim) track._anim = null;
       track.classList.remove('animating');
       track.style.transform = '';
       if (currentVal && currentVal.parentNode === track) track.removeChild(currentVal);
-    }, { once: true });
+      if (onComplete) onComplete();
+    }
+
+    track.addEventListener('transitionend', finish, { once: true });
+    setTimeout(finish, 400);
   }
 
   function switchMode(newMode) {
@@ -1847,18 +2020,23 @@
     /* Roll all prices */
     document.querySelectorAll('.pricing-price[data-monthly]').forEach(function (el) {
       var val = mode === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
-      rollPrice(el, val);
-      /* Update suffix — force-reflow to commit opacity:0, then fade in */
       var suf = el.querySelector('.price-suffix');
-      if (suf && el.dataset.monthly !== 'Bespoke') {
+      var sufEl = (suf && el.dataset.monthly !== 'Bespoke') ? suf : null;
+
+      /* Hide suffix immediately and update its text */
+      if (sufEl) {
         var newSufText = mode === 'monthly' ? '/mo' : '/yr';
-        suf.style.transition = 'none';
-        suf.style.opacity = '0';
-        suf.textContent = newSufText;
-        void suf.offsetWidth;
-        suf.style.transition = '';
-        suf.style.opacity = '1';
+        sufEl.style.transition = 'none';
+        sufEl.style.opacity = '0';
+        sufEl.textContent = newSufText;
+        void sufEl.offsetWidth;
       }
+
+      /* Roll price; reveal suffix after slot animation so its position is correct */
+      rollPrice(el, val, sufEl ? function () {
+        sufEl.style.transition = '';
+        sufEl.style.opacity = '1';
+      } : null);
     });
 
     /* Confetti */
@@ -1906,13 +2084,11 @@
 </script>
 
 <script>
-  document.querySelectorAll('.pricing-card').forEach(function(card) {
-    card.addEventListener('mouseenter', function() { card.classList.add('is-hovered'); });
-    card.addEventListener('mouseleave', function() { card.classList.remove('is-hovered'); });
-  });
   document.querySelectorAll('.cap-hero-img').forEach(function(el) {
     el.addEventListener('mouseenter', function() { el.classList.add('is-hovered'); });
-    el.addEventListener('mouseleave', function() { el.classList.remove('is-hovered'); });
+    el.addEventListener('mouseleave', function(e) {
+      if (!el.contains(e.relatedTarget)) el.classList.remove('is-hovered');
+    });
   });
 </script>
 </body>
