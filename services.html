@@ -274,9 +274,9 @@
     /* 3D illustration anchored bottom-right — matches original demo sizing */
     .svc-card-img {
       position: absolute;
-      right: -14%;
-      bottom: -14%;
-      width: 63%;
+      right: -10%;
+      bottom: -10%;
+      width: 60%;
       z-index: 1;
       pointer-events: none;
     }
@@ -367,48 +367,49 @@
     .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
 
-    /* Mobile: scroll-activated hover via IntersectionObserver */
+    /* Mobile: only :active press triggers animation — no scroll-activated states */
     @media (hover: none) {
-      .svc-card.in-view {
-        transform: scale(1.02) translateY(-3px);
-        box-shadow: 0 22px 50px rgba(0,0,0,0.55);
-      }
-      .svc-card.in-view .svc-card-img img {
-        transform: scale(1.08) rotate(3deg);
-        opacity: 0.88;
+      .svc-card:active {
+        transform: scale(1.02) translateY(-2px);
+        box-shadow: 0 18px 44px rgba(0,0,0,0.55);
       }
       .svc-card:active .svc-card-img img {
         transform: scale(1.1) rotate(3deg);
         opacity: 0.92;
       }
     }
-    /* hero image — base state */
+    /* hero image */
     .svc-hero-img img {
       width: 100%; height: auto; display: block;
-      opacity: 0.88;
+      opacity: 1;
       transform: rotate(6deg) scale(1);
       transform-origin: center center;
-      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1);
     }
     .svc-hero-flex.is-hovered .svc-hero-img img {
       transform: rotate(8deg) scale(1.09);
-      opacity: 0.96;
     }
     @media (hover: none) {
       .svc-hero-img.in-view img {
         transform: rotate(8deg) scale(1.07);
-        opacity: 0.94;
       }
     }
     @media (max-width: 640px) {
-      .svc-hero-img { display: none; }
+      .svc-hero-flex { flex-direction: column; gap: 24px; }
+      .svc-hero-img { display: block; width: 140px; margin: 0 auto; }
     }
-    /* Narrow screens: larger image centred mid-right, emerging from right edge */
+    /* Narrow screens: image sized to sit within gradient glow, emerging right-to-left */
     @media (max-width: 480px) {
-      .svc-card-img { width: 80%; right: -22%; bottom: 10%; }
-      .svc-card-img img { opacity: 0.55; }
+      .svc-card-img { width: 72%; right: -25%; bottom: 5%; }
+      .svc-card-img img { opacity: 0.72; }
       .svc-card-caption { max-width: 82%; }
       .svc-bullets { max-width: 70%; }
+      .services-page-grid .svc-card:nth-child(2)  .svc-card-img { right: -30% !important; bottom: 0%  !important; width: 85% !important; }
+      .services-page-grid .svc-card:nth-child(4)  .svc-card-img { right: -23% !important; bottom: 0%  !important; width: 80% !important; }
+      .services-page-grid .svc-card:nth-child(5)  .svc-card-img { right: -15% !important; bottom: 6%  !important; width: 60% !important; }
+      .services-page-grid .svc-card:nth-child(6)  .svc-card-img { right: -10% !important; bottom: 7%  !important; width: 50% !important; }
+      .services-page-grid .svc-card:nth-child(9)  .svc-card-img { right: -17% !important; bottom: 0%  !important; width: 65% !important; }
+      .services-page-grid .svc-card:nth-child(10) .svc-card-img { right: -35% !important; bottom: 0%  !important; width: 75% !important; }
     }
 
     /* ── Services page grid ── */
@@ -601,10 +602,10 @@
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-company-panel"><div>
-    <a href="about.html"    class="mob-link mob-sub">About Us</a>
-    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
-    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
     <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+    <a href="about.html"    class="mob-link mob-sub">About Us</a>
     <a href="contact.html"  class="mob-link mob-sub">Contact</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
@@ -644,11 +645,11 @@
 <main id="main-content" tabindex="-1">
 
 <!-- ── Page header ── -->
-<div style="padding:120px 28px 0;text-align:center;position:relative;overflow:hidden;">
-  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
-    <div style="position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:700px;height:480px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.055) 0%,transparent 70%);"></div>
-    <div style="position:absolute;top:0;right:0;width:440px;height:360px;background:radial-gradient(ellipse,rgba(255,45,120,0.035) 0%,transparent 70%);"></div>
-    <div style="position:absolute;top:60px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.025) 0%,transparent 70%);"></div>
+<div style="padding:140px 28px 80px;text-align:center;position:relative;overflow:visible;">
+  <div style="position:absolute;top:0;left:0;right:0;bottom:-160px;pointer-events:none;z-index:0;overflow:hidden;">
+    <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:860px;height:640px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.06) 0%,transparent 68%);"></div>
+    <div style="position:absolute;top:0;right:0;width:480px;height:400px;background:radial-gradient(ellipse,rgba(255,45,120,0.035) 0%,transparent 70%);"></div>
+    <div style="position:absolute;top:60px;left:0;width:380px;height:300px;background:radial-gradient(ellipse,rgba(255,215,0,0.025) 0%,transparent 70%);"></div>
   </div>
   <div class="svc-hero-flex" style="position:relative;z-index:1;max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;">
     <div style="text-align:center;">
@@ -665,10 +666,8 @@
   </div>
 </div>
 
-<div class="divider" style="margin-top:52px;"></div>
-
 <!-- ── Services grid ── -->
-<section style="padding:72px 28px 100px;" aria-label="All services">
+<section style="padding:16px 28px 100px;" aria-label="All services">
   <div style="max-width:1200px;margin:0 auto;">
 
     <div class="services-page-grid">
@@ -1053,10 +1052,10 @@
       </div>
       <div>
         <p class="footer-col-head">Company</p>
-        <a href="about.html"    class="footer-link">About Us</a>
-        <a href="our-work.html" class="footer-link">Our Work</a>
-        <a href="blog.html"     class="footer-link">Blog</a>
         <a href="faq.html"      class="footer-link">FAQ</a>
+        <a href="blog.html"     class="footer-link">Blog</a>
+        <a href="our-work.html" class="footer-link">Our Work</a>
+        <a href="about.html"    class="footer-link">About Us</a>
         <a href="contact.html"  class="footer-link">Contact</a>
       </div>
       <div>
@@ -1081,7 +1080,7 @@
       <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
       <div class="footer-credit">
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
-        <span class="animate-footer-heartbeat" style="font-size:13px;color:#FF2D78;display:inline-block;">&#10084;</span>
+        <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
         <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
       </div>
@@ -1096,8 +1095,13 @@
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
-      entry.target.classList.add('in-view');
-      io.unobserve(entry.target);
+      var t = entry.target;
+      io.unobserve(t);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          t.classList.add('in-view');
+        });
+      });
     });
   }, { threshold: 0.30, rootMargin: '0px 0px -20px 0px' });
   document.querySelectorAll('.svc-card').forEach(function (card) { io.observe(card); });
