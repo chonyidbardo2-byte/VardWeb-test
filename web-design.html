@@ -355,6 +355,7 @@
       gap: 24px;
     }
     @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 860px) { .pricing-card { --li-pad-y: 7px !important; } }
 
     .pricing-card {
       position: relative;
@@ -488,7 +489,7 @@
       display: flex; align-items: flex-start; gap: 10px;
       font-size: 13.5px; line-height: 1.55;
       color: rgba(200,212,232,0.72);
-      padding: 7px 0;
+      padding: var(--li-pad-y, 7px) 0;
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
     .pricing-features li:last-child { border-bottom: none; }
@@ -726,6 +727,14 @@
     @media (max-width: 860px) { .ws-grid { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 480px) { .ws-grid { grid-template-columns: 1fr; } }
 
+    /* ── Apps section heading responsive break ── */
+    .apps-heading { white-space: nowrap; }
+    .apps-br { display: none; }
+    @media (max-width: 640px) {
+      .apps-heading { white-space: normal; }
+      .apps-br { display: block; }
+    }
+
     /* ── Overview grid ── */
     .overview-grid {
       display: grid;
@@ -816,6 +825,45 @@
       .wyg-row { padding:40px 0; }
       .wyg-metric-value { font-size:2rem; }
     }
+
+    /* ── Marquee ── */
+    @keyframes marquee-left {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes marquee-right {
+      from { transform: translateX(-50%); }
+      to   { transform: translateX(0); }
+    }
+    .mq-track     { display:flex; width:max-content; }
+    .mq-animate-l { animation: marquee-left  var(--dur,45s) linear infinite; }
+    .mq-animate-r { animation: marquee-right var(--dur,50s) linear infinite; }
+    .mq-badge {
+      display:inline-flex; align-items:center;
+      padding:6px 14px;
+      margin-right:0.75rem;
+      font-size:13px; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap;
+      color:var(--text-2);
+      background:rgba(0,229,255,0.055);
+      border:1px solid rgba(0,229,255,0.14);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mq-animate-l, .mq-animate-r { animation: none; }
+    }
+
+    /* ── Hero→Apps divider: desktop margin, gradient-only on mobile ── */
+    .hero-apps-div { margin-top: 60px; }
+    @media (max-width: 640px) {
+      .hero-feat-grid { border-top: none !important; }
+      .hero-feat-grid::before {
+        content: '';
+        display: block;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
+        width: 100%;
+      }
+      .hero-apps-div  { margin-top: 0; }
+    }
   </style>
 
   <script src="/supabase-config.js"></script>
@@ -859,6 +907,7 @@
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
           <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+          <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -914,6 +963,7 @@
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
     <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+    <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -966,35 +1016,245 @@
 <!-- ══════════════════════════════════════
      HERO HEADER
 ══════════════════════════════════════ -->
-<div style="padding:120px 28px 0;text-align:center;position:relative;overflow:hidden;">
+<section style="padding:120px 28px 0;position:relative;overflow:hidden;">
+  <!-- Radial gradient bg orbs -->
   <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
     <div style="position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.065) 0%,transparent 68%);"></div>
     <div style="position:absolute;top:20px;right:0;width:400px;height:340px;background:radial-gradient(ellipse,rgba(255,45,120,0.03) 0%,transparent 70%);"></div>
     <div style="position:absolute;top:80px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.022) 0%,transparent 70%);"></div>
   </div>
-  <div style="position:relative;z-index:1;max-width:720px;margin:0 auto;">
-    <p class="sec-tag" style="margin-bottom:14px;">// What you get</p>
+
+  <!-- Heading + paragraph -->
+  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;text-align:center;">
+    <p class="sec-tag" style="margin-bottom:14px;">// Web Design</p>
     <h1 style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:800;line-height:1.05;margin-bottom:20px;color:var(--text-1);">
       Custom-crafted websites<br>
       <span class="grad-cyan-pink">built to perform.</span>
     </h1>
-    <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 32px;">
-      Instead of paying four different software bills and worrying about data leaks between disjointed systems, you get a single, secure, high-performance digital asset that owns its data, protects its brand, and automates its revenue generation from day one.
+    <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 40px;">
+      We engineer every website from scratch — no templates, no page builders, no compromises. Built to load fast, rank on Google, and convert the visitors that matter most to your business.
     </p>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="#pricing" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">View Pricing →</a>
-      <a href="contact.html" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">Book Discovery Call</a>
+  </div>
+
+  <!-- Marquee: 3 rows of scrolling web-design questions -->
+  <div style="position:relative;z-index:1;overflow:hidden;margin:0 -28px 44px;">
+    <div style="position:absolute;left:0;top:0;bottom:0;width:120px;background:linear-gradient(to right,var(--base),transparent);z-index:10;pointer-events:none;"></div>
+    <div style="position:absolute;right:0;top:0;bottom:0;width:120px;background:linear-gradient(to left,var(--base),transparent);z-index:10;pointer-events:none;"></div>
+    <div style="display:flex;flex-direction:column;gap:10px;padding:6px 0;">
+      <!-- Row 1 → left -->
+      <div style="overflow:hidden;">
+        <div class="mq-track mq-animate-l" style="--dur:44s;">
+          <span class="mq-badge">Should I build on WordPress or go fully custom?</span>
+          <span class="mq-badge">How much does a professional website actually cost?</span>
+          <span class="mq-badge">Will my site rank on Google without a plugin?</span>
+          <span class="mq-badge">How do I know if visitors are converting?</span>
+          <span class="mq-badge">Should I build on WordPress or go fully custom?</span>
+          <span class="mq-badge">How much does a professional website actually cost?</span>
+          <span class="mq-badge">Will my site rank on Google without a plugin?</span>
+          <span class="mq-badge">How do I know if visitors are converting?</span>
+        </div>
+      </div>
+      <!-- Row 2 → right -->
+      <div style="overflow:hidden;">
+        <div class="mq-track mq-animate-r" style="--dur:50s;">
+          <span class="mq-badge">Should I use a template or pay for custom design?</span>
+          <span class="mq-badge">Do I actually own my website if I use a builder?</span>
+          <span class="mq-badge">Why is my competitor ranking above me?</span>
+          <span class="mq-badge">What if my site goes down and I lose sales?</span>
+          <span class="mq-badge">Should I use a template or pay for custom design?</span>
+          <span class="mq-badge">Do I actually own my website if I use a builder?</span>
+          <span class="mq-badge">Why is my competitor ranking above me?</span>
+          <span class="mq-badge">What if my site goes down and I lose sales?</span>
+        </div>
+      </div>
+      <!-- Row 3 → left -->
+      <div style="overflow:hidden;">
+        <div class="mq-track mq-animate-l" style="--dur:42s;">
+          <span class="mq-badge">How long does it really take to build a quality site?</span>
+          <span class="mq-badge">Will my site load fast enough to keep visitors?</span>
+          <span class="mq-badge">How often should I actually update my website?</span>
+          <span class="mq-badge">What makes a website perform versus just look good?</span>
+          <span class="mq-badge">How long does it really take to build a quality site?</span>
+          <span class="mq-badge">Will my site load fast enough to keep visitors?</span>
+          <span class="mq-badge">How often should I actually update my website?</span>
+          <span class="mq-badge">What makes a website perform versus just look good?</span>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="divider" style="margin-top:60px;"></div>
+  <!-- CTA buttons -->
+  <div style="position:relative;z-index:1;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding-bottom:72px;">
+    <a href="#pricing" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">View Pricing →</a>
+    <a href="contact.html" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">Book Discovery Call</a>
+  </div>
+
+  <!-- 4 Feature Cards Grid -->
+  <div class="hero-feat-grid" style="position:relative;z-index:1;border-top:1px dashed rgba(200,212,232,0.12);display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:0 -28px;">
+    <!-- Card 1: Built from scratch -->
+    <div style="padding:36px 28px 44px;border-right:1px dashed rgba(200,212,232,0.12);display:flex;flex-direction:column;gap:20px;">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="4" y="10" width="36" height="26" rx="3" stroke="rgba(0,229,255,0.3)" stroke-width="1.5"/>
+        <path d="M4 16h36" stroke="rgba(0,229,255,0.3)" stroke-width="1.5"/>
+        <circle cx="10" cy="13" r="1.5" fill="#00E5FF"/>
+        <circle cx="16" cy="13" r="1.5" fill="rgba(0,229,255,0.4)"/>
+        <circle cx="22" cy="13" r="1.5" fill="rgba(0,229,255,0.2)"/>
+        <path d="M13 25l5 4 9-8" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Built from scratch</h3>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Every line of code is written for your brand — no bloated templates, no borrowed themes. A site that's truly yours from the ground up.</p>
+      </div>
+    </div>
+    <!-- Card 2: Mobile-first responsive design -->
+    <div style="padding:36px 28px 44px;border-right:1px dashed rgba(200,212,232,0.12);display:flex;flex-direction:column;gap:20px;">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="6" y="8" width="20" height="28" rx="3" stroke="rgba(255,45,120,0.3)" stroke-width="1.5"/>
+        <rect x="28" y="14" width="12" height="20" rx="2" stroke="rgba(255,45,120,0.3)" stroke-width="1.5"/>
+        <circle cx="16" cy="32" r="1.5" fill="#FF2D78"/>
+        <circle cx="34" cy="30" r="1" fill="#FF2D78"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Mobile-first design</h3>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Designed for the device in your customer's hand first. Flawlessly adapts to every screen size without compromise.</p>
+      </div>
+    </div>
+    <!-- Card 3: Domain Hosting & Delegation -->
+    <div style="padding:36px 28px 44px;border-right:1px dashed rgba(200,212,232,0.12);display:flex;flex-direction:column;gap:20px;">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="22" cy="22" r="16" stroke="rgba(255,215,0,0.3)" stroke-width="1.5"/>
+        <path d="M22 6c-4 4-6 10-6 16s2 12 6 16M22 6c4 4 6 10 6 16s-2 12-6 16M6 22h32" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Domain & hosting</h3>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">We handle domain setup, DNS delegation, and hosting configuration — so your site goes live without the technical headache.</p>
+      </div>
+    </div>
+    <!-- Card 4: 24/7 Maintenance & Support -->
+    <div style="padding:36px 28px 44px;display:flex;flex-direction:column;gap:20px;">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="22" cy="22" r="16" stroke="rgba(0,229,255,0.2)" stroke-width="1.5"/>
+        <path d="M22 14v8l5 3" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 34c2-3 6-5 12-5s10 2 12 5" stroke="rgba(0,229,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">24/7 support</h3>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Round-the-clock maintenance and dedicated client support — if something breaks or needs updating, we're already on it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider hero-apps-div"></div>
+
+<!-- ══════════════════════════════════════
+     APPS SECTION
+══════════════════════════════════════ -->
+<section id="apps" style="padding:80px 28px;" aria-label="App distribution options">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;margin:0 auto 56px;">
+      <p class="sec-tag">// apps</p>
+      <h2 class="apps-heading" style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+        Your Site.<span class="apps-br"></span>&nbsp;Every Platform.
+      </h2>
+      <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:500px;margin:0 auto;">
+        Extend your reach beyond the browser. These add-ons wrap your existing web experience into a native-feeling app — no separate codebase required.
+      </p>
+    </div>
+
+    <div class="ws-grid">
+
+      <!-- ── Card 1: PWA ── -->
+      <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
+        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(90,103,250,0.25);margin:0 auto 20px;">
+          <svg width="48" height="48" viewBox="0 0 52 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="pwa-bg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6C72F7"/>
+                <stop offset="100%" stop-color="#3D45CC"/>
+              </linearGradient>
+              <linearGradient id="pwa-hi" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+              </linearGradient>
+            </defs>
+            <path d="M26 2 L48 12 L48 30 C48 42 38 52 26 55 C14 52 4 42 4 30 L4 12 Z" fill="url(#pwa-bg)"/>
+            <path d="M26 2 L48 12 L48 30 C48 42 38 52 26 55 C14 52 4 42 4 30 L4 12 Z" fill="url(#pwa-hi)" opacity="0.5"/>
+            <path d="M26 6 L44 15 L44 30 C44 40 36 49 26 52 C16 49 8 40 8 30 L8 15 Z" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+            <text x="26" y="35" text-anchor="middle" fill="white" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="12" letter-spacing="1">PWA</text>
+          </svg>
+        </div>
+        <p class="w-label">(Optional)</p>
+        <h3>Progressive Web App</h3>
+        <p>Users install your site directly from the browser. Works offline, loads instantly, and feels native on any device. No app store review required.</p>
+      </div>
+
+      <!-- ── Card 2: Google Play ── -->
+      <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
+        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(52,168,83,0.25);margin:0 auto 20px;">
+          <svg width="48" height="48" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <polygon points="6,6 6,28 22,28" fill="#34A853"/>
+            <polygon points="6,6 22,28 50,28" fill="#4285F4"/>
+            <polygon points="6,28 6,50 22,28" fill="#EA4335"/>
+            <polygon points="6,50 50,28 22,28" fill="#FBBC04"/>
+            <polygon points="6,6 6,28 22,28" fill="rgba(255,255,255,0.07)"/>
+          </svg>
+        </div>
+        <p class="w-label">(Optional)</p>
+        <h3>Google Play</h3>
+        <p>Publish to Android's largest distribution platform. Reach billions of users through the Play Store with a listing that drives installs and builds credibility.</p>
+      </div>
+
+      <!-- ── Card 3: App Store ── -->
+      <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
+        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(20,120,220,0.25);margin:0 auto 20px;">
+          <svg width="48" height="48" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="as-bg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2AAFF7"/>
+                <stop offset="100%" stop-color="#0A7FD5"/>
+              </linearGradient>
+              <linearGradient id="as-hi" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
+                <stop offset="50%" stop-color="rgba(255,255,255,0)"/>
+              </linearGradient>
+            </defs>
+            <rect width="52" height="52" rx="13" fill="url(#as-bg)"/>
+            <rect width="52" height="26" rx="13" fill="url(#as-hi)"/>
+            <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="14" y1="40" x2="26" y2="13" stroke-width="4"/>
+              <line x1="26" y1="13" x2="38" y2="40" stroke-width="4"/>
+              <line x1="18.5" y1="30" x2="33.5" y2="30" stroke-width="3.5"/>
+            </g>
+          </svg>
+        </div>
+        <p class="w-label">(Optional)</p>
+        <h3>App Store</h3>
+        <p>Publish to Apple's iOS marketplace and access the highest-spending mobile users. A curated presence on the App Store lends instant trust and discoverability.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
 
 <!-- ══════════════════════════════════════
      WHAT YOU GET — TIER CASE STUDIES
 ══════════════════════════════════════ -->
 <section id="what-you-get" style="padding:40px 28px 40px;">
   <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;max-width:640px;margin:0 auto 60px;">
+      <p class="sec-tag" style="margin-bottom:14px;">// What you get</p>
+      <h2 style="font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;line-height:1.1;letter-spacing:-0.03em;margin-bottom:20px;color:var(--text-1);">
+        One website.<br><span class="grad-cyan-pink">Everything included.</span>
+      </h2>
+      <p style="font-size:16px;line-height:1.78;color:var(--text-2);">
+        Instead of paying four different software bills and worrying about data leaks between disjointed systems, you get a single, secure, high-performance digital asset that owns its data, protects its brand, and automates its revenue generation from day one.
+      </p>
+    </div>
 
     <div class="wyg-cases">
 
@@ -1021,12 +1281,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With SEO</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">14.6%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>14.6%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">1.7%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>1.7%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">Organic search leads close at nearly 9× the rate of cold outbound — SEO turns discovery into revenue, automatically.</div>
@@ -1036,12 +1296,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With SEO</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">53%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>53%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">15%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>15%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">Without SEO, paid ads cover just 15% of traffic — and stop delivering the moment you stop paying.</div>
@@ -1072,12 +1332,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CRM</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">+29%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>+29%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">+10%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+10%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">A built-in CRM drives 3× the revenue growth of the industry average by ensuring no lead ever slips through untracked.</div>
@@ -1087,12 +1347,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CRM</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">80%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>80%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">22%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>22%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">Manual follow-up misses 78% of leads. Automated CRM contacts 80% within 24 hours — while you focus on closing.</div>
@@ -1123,12 +1383,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With TCI</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">78%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>78%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">22%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>22%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">78% of buyers choose the first vendor to reach them — TCI responds in seconds, before competitors see the notification.</div>
@@ -1138,12 +1398,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With TCI</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">100%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>100%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">8%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>8%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">Only 8% of salespeople follow up 5+ times, but 80% of sales require that persistence. TCI runs every sequence automatically.</div>
@@ -1174,12 +1434,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CMS</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">+67%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>+67%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">+10%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+10%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">Sites updated through a CMS generate 67% more leads monthly. Static sites grow at 10% — and require a developer for every single change.</div>
@@ -1189,12 +1449,12 @@
             <div style="display:flex;flex-direction:column;gap:12px;">
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CMS</span>
-                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);">+55%</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>+55%</span>
               </div>
               <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
               <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
                 <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
-                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;">+8%</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+8%</span>
               </div>
             </div>
             <div class="wyg-metric-sub" style="margin-top:14px;">Fresh content attracts 55% more visitors. Without a CMS, static sites average just 8% annual growth and slide down search rankings every month.</div>
@@ -1378,6 +1638,194 @@
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════
+     AI SEARCH VISIBILITY SECTION
+══════════════════════════════════════ -->
+<section style="padding:80px 28px;" aria-label="AI Search Visibility & Conversion Optimization">
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div style="text-align:center;max-width:600px;margin:0 auto 60px;">
+      <p class="sec-tag">// AI search visibility</p>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+        AI Search Visibility &amp;<br>Conversion Optimization
+      </h2>
+      <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
+        Engineered to rank, built to convert — your site powered by AI-driven search intelligence.
+      </p>
+    </div>
+
+    <div id="ai-svc-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+
+      <!-- Card 1: AI Rank Intelligence -->
+      <div class="ai-feat-card" style="opacity:0;transform:translateY(24px);">
+        <div style="color:var(--text-1);" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        </div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;margin:0;">AI Rank Intelligence</h3>
+        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">Our advanced AI models surface ranking signals and keyword gaps before your competitors notice them.</p>
+
+        <!-- Inner: Strategy Session meeting card -->
+        <div class="ai-inner-card">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text-1);margin-bottom:3px;">AI Strategy Meeting</div>
+          <div style="font-size:11px;color:var(--text-2);margin-bottom:12px;">2:30 – 3:45 PM</div>
+          <div style="display:flex;margin-bottom:10px;">
+            <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);overflow:hidden;margin-right:-6px;background:var(--raised);flex-shrink:0;">
+              <img src="https://avatars.githubusercontent.com/u/31113941?v=4" alt="" width="26" height="26" style="border-radius:50%;object-fit:cover;" loading="lazy">
+            </div>
+            <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);overflow:hidden;margin-right:-6px;background:var(--raised);flex-shrink:0;">
+              <img src="https://avatars.githubusercontent.com/u/47919550?v=4" alt="" width="26" height="26" style="border-radius:50%;object-fit:cover;" loading="lazy">
+            </div>
+            <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);overflow:hidden;margin-right:-6px;background:var(--raised);flex-shrink:0;">
+              <img src="https://avatars.githubusercontent.com/u/68236786?v=4" alt="" width="26" height="26" style="border-radius:50%;object-fit:cover;" loading="lazy">
+            </div>
+            <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);overflow:hidden;background:var(--raised);flex-shrink:0;">
+              <img src="https://avatars.githubusercontent.com/u/99137927?v=4" alt="" width="26" height="26" style="border-radius:50%;object-fit:cover;" loading="lazy">
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--text-2);">ML Pipeline Discussion</div>
+        </div>
+      </div>
+
+      <!-- Card 2: Search Signal Monitoring -->
+      <div class="ai-feat-card" style="opacity:0;transform:translateY(24px);">
+        <div style="color:var(--text-1);" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;margin:0;">Search Signal Monitoring</h3>
+        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">Our AI analyzes your search signals for keyword drift, ranking drops, and conversion opportunities in real time.</p>
+
+        <!-- Inner: overlapping review cards -->
+        <div style="position:relative;flex:1;min-height:130px;margin-top:8px;">
+          <!-- Back card: play button -->
+          <div class="ai-review-back" style="position:absolute;top:4px;right:0;width:40%;height:110px;border-radius:10px;background:var(--base);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;">
+            <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(200,212,232,0.5)" stroke="rgba(200,212,232,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          <!-- Front card: reviewer -->
+          <div class="ai-review-front" style="position:absolute;top:0;left:0;width:76%;border-radius:10px;background:var(--base);border:1px solid var(--border);padding:12px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <div style="width:22px;height:22px;border-radius:50%;overflow:hidden;border:1px solid var(--border);flex-shrink:0;">
+                <img src="https://avatars.githubusercontent.com/u/47919550?v=4" alt="" width="22" height="22" style="object-fit:cover;border-radius:50%;" loading="lazy">
+              </div>
+              <span style="font-size:11px;color:var(--text-2);">Méschac Irung</span>
+              <span style="font-size:10px;color:rgba(200,212,232,0.35);">2m</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;padding-left:4px;">
+              <div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.08);width:100%;"></div>
+              <div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.08);width:65%;"></div>
+              <div style="height:5px;border-radius:3px;background:rgba(255,255,255,0.08);width:50%;"></div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(200,212,232,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px;margin-left:4px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Conversion AI Assistant -->
+      <div class="ai-feat-card" style="opacity:0;transform:translateY(24px);">
+        <div style="color:var(--text-1);" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0015.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+        </div>
+        <h3 style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;margin:0;">Conversion AI Assistant</h3>
+        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">A personalized AI companion that understands your funnel and turns traffic into revenue automatically.</p>
+
+        <!-- Inner: AI prompt interface -->
+        <div class="ai-inner-card ai-prompt-slide" style="display:flex;flex-direction:column;justify-content:space-between;">
+          <div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="rgba(167,139,250,0.85)" stroke="rgba(167,139,250,0.85)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:8px;"><path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0015.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
+            <p style="font-size:11px;line-height:1.6;color:var(--text-2);margin:0;">How can I optimize my landing page to reduce bounce rate and increase conversion on mobile devices?</p>
+          </div>
+          <div style="border-top:1px solid rgba(0,229,255,0.06);padding-top:10px;margin-top:10px;">
+            <div style="font-size:10px;color:rgba(200,212,232,0.35);margin-bottom:8px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;">Ask AI Assistant</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div style="display:flex;gap:6px;">
+                <div style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(200,212,232,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <div style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="rgba(200,212,232,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                </div>
+              </div>
+              <div style="width:24px;height:24px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;box-shadow:0 0 10px rgba(0,229,255,0.35);">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /ai-svc-grid -->
+  </div>
+</section>
+
+<style>
+.ai-feat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 24px 24px;
+  border-radius: 16px;
+  background: var(--raised);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.ai-inner-card {
+  margin-top: 4px;
+  border-radius: 12px;
+  background: var(--base);
+  border: 1px solid rgba(0,229,255,0.06);
+  padding: 16px;
+  flex: 1;
+}
+/* Card 2: overlapping cards rotate on parent hover */
+.ai-review-front {
+  transform: translateY(16px);
+  transition: transform 0.2s ease-in-out;
+}
+.ai-review-back {
+  transform: translateY(16px);
+  transition: transform 0.2s ease-in-out;
+}
+.ai-feat-card:hover .ai-review-front {
+  transform: translateY(16px) rotate(-3deg);
+}
+.ai-feat-card:hover .ai-review-back {
+  transform: translateY(16px) rotate(3deg);
+}
+/* Card 3: prompt card slides up on parent hover */
+.ai-prompt-slide {
+  transform: translateY(16px);
+  transition: transform 0.2s ease-in-out;
+}
+.ai-feat-card:hover .ai-prompt-slide {
+  transform: translateY(0);
+}
+@media (max-width:860px) { #ai-svc-grid { grid-template-columns: repeat(2,1fr) !important; } }
+@media (max-width:640px) { #ai-svc-grid { grid-template-columns: 1fr !important; } }
+</style>
+
+<script>
+(function () {
+  var cards = document.querySelectorAll('#ai-svc-grid .ai-feat-card');
+  var ease  = 'cubic-bezier(0.34,1.56,0.64,1)';
+  var obs   = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    cards.forEach(function (el, i) {
+      el.style.transition = 'opacity 0.45s ease, transform 0.45s ' + ease;
+      el.style.transitionDelay = (i * 80) + 'ms';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    });
+    obs.disconnect();
+  }, { threshold: 0.15 });
+  var grid = document.getElementById('ai-svc-grid');
+  if (grid) obs.observe(grid);
+})();
+</script>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
      PROCESS SECTION
 ══════════════════════════════════════ -->
 <section style="padding:80px 28px;" aria-label="Our process">
@@ -1471,7 +1919,7 @@
     <div class="pricing-grid">
 
       <!-- ── BRONZE ── -->
-      <div class="pricing-card" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);--tier-shadow:rgba(205,127,50,0.12);--tier-bg:rgba(205,127,50,0.05);--tier-btn-bg1:rgba(205,127,50,0.14);--tier-btn-bg2:rgba(205,127,50,0.07);--tier-btn-hover1:rgba(205,127,50,0.22);--tier-btn-hover2:rgba(205,127,50,0.12);">
+      <div class="pricing-card" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);--tier-shadow:rgba(205,127,50,0.12);--tier-bg:rgba(205,127,50,0.05);--tier-btn-bg1:rgba(205,127,50,0.14);--tier-btn-bg2:rgba(205,127,50,0.07);--tier-btn-hover1:rgba(205,127,50,0.22);--tier-btn-hover2:rgba(205,127,50,0.12);--li-pad-y:9px;">
         <div class="pricing-img-wrap">
           <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-57TdoPW2tQTCBO8PGaHLRnB77EeRmI.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
@@ -1488,7 +1936,7 @@
         </div>
         <p class="pricing-pages">1–5 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          A complete launch package — mobile-first build with custom SEO, CRM, and a full Google Analytics stack (GA4, GSC, GPR) baked in from day one. Includes AI search optimisation, a lead capture form, dedicated hosting, and 24/7 support so you're never left guessing.
+          Perfect if you know exactly what your business is and just need the world to know it too. One clean, fast, fully-equipped site — no fluff, no filler. Covers the technical stuff most agencies quietly skip, and ships with everything a modern business needs on day one. Great for launches, local businesses, and anyone who's been putting this off long enough.
         </p>
         <ul class="pricing-features">
           <li>
@@ -1501,11 +1949,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Custom SEO, CRM, TCI and</br>Whitelist-CMS built-in
+            <span><span class="block md:inline">Custom SEO, CRM, TCI and</span> <span class="block md:inline">Whitelist-CMS built-in</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR, AS and GMC Setup
+            <span><span class="block md:inline">Google Implementation GA4, GSC,</span> <span class="block md:inline">GS, GPR, AS, GMC Setup</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1525,15 +1973,15 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Stock Images</br>(Up to 3)
+            <span><span class="block md:inline">(Optional) Curated Stock Images</span> <span class="block md:inline">(Up to 3)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Business Logo</br>(Up to 1)
+            <span><span class="block md:inline">(Optional) Curated Business Logo</span> <span class="block md:inline">(Up to 1)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email (Up to 1)</br>(xyz@yourcompany.com)
+            <span><span class="block md:inline">(Optional) Custom Email (Up to 1)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1553,7 +2001,7 @@
       </div>
 
       <!-- ── SILVER ── -->
-      <div class="pricing-card" style="--tier-color:#C0C0C0;--tier-border:rgba(192,192,192,0.25);--tier-glow:rgba(192,192,192,0.06);--tier-shadow:rgba(192,192,192,0.1);--tier-bg:rgba(192,192,192,0.04);--tier-btn-bg1:rgba(192,192,192,0.12);--tier-btn-bg2:rgba(192,192,192,0.06);--tier-btn-hover1:rgba(192,192,192,0.2);--tier-btn-hover2:rgba(192,192,192,0.1);">
+      <div class="pricing-card" style="--tier-color:#C0C0C0;--tier-border:rgba(192,192,192,0.25);--tier-glow:rgba(192,192,192,0.06);--tier-shadow:rgba(192,192,192,0.1);--tier-bg:rgba(192,192,192,0.04);--tier-btn-bg1:rgba(192,192,192,0.12);--tier-btn-bg2:rgba(192,192,192,0.06);--tier-btn-hover1:rgba(192,192,192,0.2);--tier-btn-hover2:rgba(192,192,192,0.1);--li-pad-y:8px;">
         <div class="pricing-img-wrap">
           <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-FuyDPaLKBrjIiOmneRjZ5p1n5k6Nw1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
@@ -1568,9 +2016,9 @@
           <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$400</span></span></span>
           <span class="price-suffix">/mo</span>
         </div>
-        <p class="pricing-pages">5–10 pages · ~1-2 week delivery</p>
+        <p class="pricing-pages">10-25 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          Everything in The Bronze Tier, plus the option for a Progressive Web App or up to 15 total pages — built for businesses that need room to grow. Double the curated imagery, 4 monthly revision cycles, and the same battle-tested SEO and conversion stack.
+          Built for businesses that are clearly going somewhere and need a site that can keep up. More pages, more imagery, more revision cycles — because "almost there" shouldn't be the final answer. A natural fit when you've got multiple offerings, a growing audience, or a team that will definitely have opinions once they see the first draft.
         </p>
         <ul class="pricing-features">
           <li>
@@ -1579,7 +2027,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) PWA (Progressive Web App)</br>or Up to 15 Additional Pages Total
+            <span><span class="block md:inline">(Optional) PWA (Progressive Web</span> <span class="block md:inline">App) or Up to 15 Additional</span> <span class="block md:inline">Pages Total</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1587,11 +2035,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Custom SEO, CRM, TCI and</br>Whitelist-CMS built-in
+            <span><span class="block md:inline">Custom SEO, CRM, TCI and</span> <span class="block md:inline">Whitelist-CMS built-in</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
+            <span><span class="block md:inline">Google Implementation GA4, GSC,</span> <span class="block md:inline">GS, GPR, AS, GMC Setup</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1611,15 +2059,15 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Stock Images</br>(Up to 6)
+            <span><span class="block md:inline">(Optional) Curated Stock Images</span> <span class="block md:inline">(Up to 6)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Business Logo</br>(Up to 2)
+            <span><span class="block md:inline">(Optional) Curated Business Logo</span> <span class="block md:inline">(Up to 2)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email (Up to 2)</br>(xyz@yourcompany.com)
+            <span><span class="block md:inline">(Optional) Custom Email (Up to 2)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1638,7 +2086,7 @@
       </div>
 
       <!-- ── GOLD ── -->
-      <div class="pricing-card" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);">
+      <div class="pricing-card" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);--li-pad-y:15px;">
         <div class="pricing-img-wrap">
           <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ObYG6zcPcX739HLghAbh7vzhtB79g6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
         </div>
@@ -1653,9 +2101,9 @@
           <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$500</span></span></span>
           <span class="price-suffix">/mo</span>
         </div>
-        <p class="pricing-pages">10-15 pages · ~1-2 week delivery</p>
+        <p class="pricing-pages">15-40 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          Everything in The Silver Tier, plus unlimited scope — build as a PWA, launch on Google Play or the App Store, or scale to 35 Additional Pages. Full third-party integrations, multi-brand platforms, and priority support, scoped exactly to your brief.
+          The full toolkit for businesses with serious ambitions and real complexity. Whether you're launching an app, running multiple brands, or just refuse to be boxed in — this tier handles it. Works well when "just a website" would undersell what you actually do.
         </p>
         <ul class="pricing-features">
           <li>
@@ -1664,11 +2112,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) PWA (Progressive Web App)</br>or Up to 25 Additional Pages Total
+            <span><span class="block md:inline">(Optional) PWA (Progressive Web</span> <span class="block md:inline">App) or Up to 15 Additional</span> <span class="block md:inline">Pages Total</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Google Play/App Store</br>Application or Up to 35 Additional Pages Total
+            <span><span class="block md:inline">(Optional) Google Play/App Store</span> <span class="block md:inline">Application or Up to 25 Additional Pages Total</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1676,11 +2124,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Custom SEO, CRM, TCI and</br>Whitelist-CMS built-in
+            <span><span class="block md:inline">Custom SEO, CRM, TCI and</span> <span class="block md:inline">Whitelist-CMS built-in</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
+            <span><span class="block md:inline">Google Implementation GA4, GSC,</span> <span class="block md:inline">GS, GPR, AS, GMC Setup</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1700,15 +2148,15 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Stock Images</br>(Up to 9)
+            <span><span class="block md:inline">(Optional) Curated Stock Images</span> <span class="block md:inline">(Up to 9)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Business Logo</br>(Up to 3)
+            <span><span class="block md:inline">(Optional) Curated Business Logo</span> <span class="block md:inline">(Up to 3)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email (Up to 3)</br>(xyz@yourcompany.com)
+            <span><span class="block md:inline">(Optional) Custom Email (Up to 3)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -1743,72 +2191,72 @@
         </div>
         <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
         <p class="pricing-desc">
-          Everything in The Gold Tier, plus unlimited scope — build as a PWA, launch on Google Play or the App Store, or scale to any number of pages. Full third-party integrations, multi-brand platforms, and priority support, scoped exactly to your brief.
+          For when the brief genuinely doesn't fit anywhere else. Fully scoped around your specific needs — no tier ceiling, no feature wishlist left on the table. If you read the other tiers and thought "sort of, but..." — this is probably the one.
         </p>
         <ul class="pricing-features">
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Brand new website, built from scratch
+            <span><span class="md:inline">Brand new website, built from scratch —</span> <span class="md:inline">no templates, no shortcuts, no apologies</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) PWA (Progressive Web App)</br>or Up to 25 Additional Pages Total
+            <span><span class="md:inline">(Optional) PWA (Progressive Web App)</span> <span class="md:inline">or as many pages as your brief demands —</span> <span class="md:inline">we stopped putting a number here</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Google Play/App Store</br>Application or Up to 35 Additional Pages Total
+            <span><span class="md:inline">(Optional) Full native app</span> <span class="md:inline">(Google Play &amp; App Store) — or pages.</span> <span class="md:inline">All the pages. Unlimited.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Mobile-first responsive design
+            <span><span class="md:inline">Pixel-perfect across every screen — phones,</span> <span class="md:inline">tablets, ultrawide monitors, that one client</span> <span class="md:inline">with a weird resolution</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Custom SEO, CRM, TCI and</br>Whitelist-CMS built-in
+            <span><span class="md:inline">Custom SEO, CRM, TCI &amp;</span> <span class="md:inline">Whitelist-CMS built-in — the full</span> <span class="md:inline">acronym arsenal, deployed</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup
+            <span><span class="md:inline">Complete Google stack: GA4, GSC, GS,</span> <span class="md:inline">GPR, AS &amp; GMC — every dashboard wired,</span> <span class="md:inline">every signal captured</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            AI Search Visibility & Conversion optimization
+            <span><span class="md:inline">AI Search Visibility &amp; Conversion optimization —</span> <span class="md:inline">because ranking on Google AND ChatGPT</span> <span class="md:inline">matters now</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            CTA (Calls-to-action) Contact or Lead Capture Form
+            <span><span class="md:inline">Every CTA, form, and lead funnel —</span> <span class="md:inline">engineered to convert, not just look nice</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Dedicated thank-you or confirmation page
+            <span><span class="md:inline">Dedicated thank-you &amp; confirmation pages —</span> <span class="md:inline">even the post-conversion experience</span> <span class="md:inline">gets the full treatment</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC and CM
+            <span><span class="md:inline">(Optional) Full digital marketing suite:</span> <span class="md:inline">SEM, SMM, PPC &amp; Content Management —</span> <span class="md:inline">the whole playbook</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Stock Images
+            <span><span class="md:inline">(Optional) Unlimited curated stock imagery —</span> <span class="md:inline">no arbitrary cap, because your vision</span> <span class="md:inline">shouldn’t have one</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Curated Business Logo 
+            <span><span class="md:inline">(Optional) Logo concepts without a ceiling —</span> <span class="md:inline">as many iterations as your brand requires</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) Custom Email</br>(xyz@yourcompany.com)
+            <span><span class="md:inline">(Optional) Unlimited custom email addresses —</span> <span class="md:inline">equip every person, every department,</span> <span class="md:inline">every alias (xyz@yourcompany.com)</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Domain hosting & delegation
+            <span><span class="md:inline">Domain hosting &amp; full DNS delegation —</span> <span class="md:inline">handled, managed, never your problem</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            24/7 Maintenance & Client support
+            <span><span class="md:inline">24/7 Maintenance &amp; Client support —</span> <span class="md:inline">we don’t sleep so your site doesn’t</span> <span class="md:inline">have to either</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Includes "X" Revision Requests a Month
+            <span><span class="md:inline">Revision requests negotiated at scope —</span> <span class="md:inline">because “unlimited” is what we say</span> <span class="md:inline">when we mean it</span></span>
           </li>
         </ul>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
@@ -1878,6 +2326,7 @@
         <a href="index.html#why-us"   class="footer-link">Why Us</a>
         <a href="index.html#services" class="footer-link">Services</a>
         <a href="index.html#results"  class="footer-link">Results</a>
+        <a href="index.html#advanced" class="footer-link">Advanced</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -2100,6 +2549,44 @@
       if (!el.contains(e.relatedTarget)) el.classList.remove('is-hovered');
     });
   });
+</script>
+
+<script>
+(function () {
+  function parse(text) {
+    var m = text.trim().match(/^([+\-]?)(\d+(?:\.\d+)?)(.*)$/);
+    if (!m) return null;
+    var dec = (m[2].split('.')[1] || '').length;
+    return { prefix: m[1], target: parseFloat(m[2]), suffix: m[3], decimals: dec, original: text.trim() };
+  }
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animateSpan(el) {
+    var parsed = parse(el.textContent);
+    if (!parsed) return;
+    el.setAttribute('data-count-done', '');
+    var duration = 2000;
+    var start = performance.now();
+    (function tick(now) {
+      var t = Math.min((now - start) / duration, 1);
+      var val = parsed.target * easeOutCubic(t);
+      el.textContent = parsed.prefix + val.toFixed(parsed.decimals) + parsed.suffix;
+      if (t < 1) { requestAnimationFrame(tick); }
+      else { el.textContent = parsed.original; }
+    })(start);
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      entry.target.querySelectorAll('[data-count]:not([data-count-done])').forEach(animateSpan);
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.wyg-metric').forEach(function (card) { observer.observe(card); });
+})();
 </script>
 </body>
 </html>
