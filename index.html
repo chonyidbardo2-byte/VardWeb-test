@@ -386,7 +386,8 @@
       text-decoration: none;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
     }
-    .svc-card:hover {
+    .svc-card:hover,
+    .svc-card.is-scroll-active {
       transform: translateY(-6px);
       box-shadow:
         0 24px 56px rgba(0,0,0,0.55),
@@ -425,7 +426,8 @@
       color: rgba(255,255,255,0.85);
     }
     .svc-card-more svg { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-    .svc-card:hover .svc-card-more svg { transform: translateX(4px); }
+    .svc-card:hover .svc-card-more svg,
+    .svc-card.is-scroll-active .svc-card-more svg { transform: translateX(4px); }
     @media (max-width: 560px) {
       .svc-card { height: auto; min-height: 320px; }
       .svc-card-panel { height: auto; }
@@ -1407,23 +1409,19 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
+      max-width: 75%;
+      margin: 0 auto;
     }
-    @media (max-width: 640px) { .adv-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .adv-grid { grid-template-columns: 1fr; max-width: 100%; } }
     .adv-card {
       position: relative;
-      height: 200px;
+      height: 170px;
       border-radius: 20px;
       overflow: hidden;
       display: flex;
       align-items: flex-start;
-      padding: 32px 28px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+      padding: 24px 28px;
     }
-    .adv-card:hover { transform: translateY(-5px); box-shadow: 0 20px 48px rgba(0,0,0,0.55); }
-    .adv-card:focus-visible { outline: 2px solid #00E5FF; outline-offset: 3px; }
-    .adv-card:active { transform: translateY(-2px); }
     .adv-card-body {
       display: flex;
       flex-direction: column;
@@ -1433,13 +1431,20 @@
       z-index: 1;
     }
     .adv-card-body h3 {
-      font-size: clamp(18px, 1.9vw, 26px);
+      font-size: clamp(16px, 1.6vw, 22px);
       font-weight: 800;
       color: #fff;
       letter-spacing: -0.02em;
       line-height: 1.2;
       margin: 0;
       font-family: 'JetBrains Mono', monospace;
+    }
+    .adv-card-desc {
+      font-size: 12px;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.55;
+      margin: 6px 0 0;
+      max-width: 62%;
     }
     .adv-card-more {
       font-size: 11px;
@@ -1450,18 +1455,30 @@
       display: flex;
       align-items: center;
       gap: 7px;
+      text-decoration: none;
       transition: gap 0.2s ease, opacity 0.2s ease;
     }
-    .adv-card:hover .adv-card-more { gap: 12px; opacity: 1; }
+    .adv-card-more:hover { gap: 12px; opacity: 1; }
+    .adv-card-more:focus-visible { outline: 2px solid #00E5FF; outline-offset: 3px; }
     .adv-card-img {
       position: absolute;
-      right: -4px;
-      bottom: -10px;
-      font-size: 120px;
-      line-height: 1;
+      right: -35px;
+      bottom: -35px;
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
       pointer-events: none;
       filter: drop-shadow(0 6px 20px rgba(0,0,0,0.35));
       user-select: none;
+      transform: rotate(0deg) scale(1);
+      transition: transform 1.05s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .adv-card:hover .adv-card-img,
+    .adv-card.is-scroll-active .adv-card-img {
+      transform: translateY(-10%) scale(1.2) rotate(5deg);
+    }
+    .adv-card:active .adv-card-img {
+      transform: translateY(-10%) scale(1.2) rotate(10deg);
     }
   </style>
   <div style="max-width:1200px;margin:0 auto;">
@@ -1469,56 +1486,106 @@
     <div style="text-align:center;margin-bottom:68px;">
       <p class="sec-tag">// Advanced Capabilities</p>
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-        Take your site<br>further with<br><span class="grad-gold">powerful add-ons</span>
+        Advanced Capabilities<br>that scale<br><span class="grad-gold">with your business</span>
       </h2>
     </div>
 
     <div class="adv-grid">
-      <a href="services.html" class="adv-card" style="background:#009DB5;">
+      <div class="adv-card" style="background:#3EB577;">
         <div class="adv-card-body">
-          <h3>E-Commerce</h3>
-          <span class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <div>
+            <h3>E-Commerce</h3>
+            <p class="adv-card-desc">Sell products or services through a structured, conversion-focused buying experience.</p>
+          </div>
+          <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <span class="adv-card-img" aria-hidden="true">🛒</span>
-      </a>
-      <a href="services.html" class="adv-card" style="background:#111620;border:1px solid rgba(200,212,232,0.09);">
+        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-bjp0aw1YdBEUx14mtm9IQCUABWUxWz.png" alt="" aria-hidden="true">
+      </div>
+      <div class="adv-card" style="background:#C62B2B;">
         <div class="adv-card-body">
-          <h3>Product Catalogs</h3>
-          <span class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <div>
+            <h3>Product Catalogs</h3>
+            <p class="adv-card-desc">Organize and present complex offerings in a way that is clear and easy to navigate.</p>
+          </div>
+          <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <span class="adv-card-img" aria-hidden="true">📋</span>
-      </a>
-      <a href="services.html" class="adv-card" style="background:#D4245F;">
+        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-DFiJBJyUFg9QYTZOWEFeeza18HBnty.png" alt="" aria-hidden="true">
+      </div>
+      <div class="adv-card" style="background:#3D4654;">
         <div class="adv-card-body">
-          <h3>Funnels &amp; Lead Flows</h3>
-          <span class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <div>
+            <h3>Funnels &amp; Lead Flows</h3>
+            <p class="adv-card-desc">Guide visitors through purposeful paths that support inquiries, signups, or sales.</p>
+          </div>
+          <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <span class="adv-card-img" aria-hidden="true">🎯</span>
-      </a>
-      <a href="services.html" class="adv-card" style="background:#111620;border:1px solid rgba(200,212,232,0.09);">
+        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-J7XYh5Cix5CceVeAtkuVXYSGgrhjDL.png" alt="" aria-hidden="true">
+      </div>
+      <div class="adv-card" style="background:#2260A8;">
         <div class="adv-card-body">
-          <h3>Memberships &amp; Portals</h3>
-          <span class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <div>
+            <h3>Memberships &amp; Portals</h3>
+            <p class="adv-card-desc">Provide gated access to content, subscription tiers, client portals, or tools for specific audiences or users.</p>
+          </div>
+          <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <span class="adv-card-img" aria-hidden="true">🔐</span>
-      </a>
-      <a href="services.html" class="adv-card" style="background:#14A874;">
+        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-fQPoDfvDVubJHgM4XlyFBuEY4iubg6.png" alt="" aria-hidden="true">
+      </div>
+      <div class="adv-card" style="background:#1E2128;">
         <div class="adv-card-body">
-          <h3>Integrations</h3>
-          <span class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <div>
+            <h3>Integrations</h3>
+            <p class="adv-card-desc">Connect your website with the systems you rely on to streamline operations, data flow, and enhance functionality.</p>
+          </div>
+          <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <span class="adv-card-img" aria-hidden="true">🔗</span>
-      </a>
-      <a href="services.html" class="adv-card" style="background:#111620;border:1px solid rgba(200,212,232,0.09);">
+        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-SxvnIpN2RVwLK77XxK3MnVCU6Xgc29.png" alt="" aria-hidden="true">
+      </div>
+      <div class="adv-card" style="background:#7B52C8;">
         <div class="adv-card-body">
-          <h3>Custom Functionality</h3>
-          <span class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <div>
+            <h3>Custom Functionality</h3>
+            <p class="adv-card-desc">Support unique business requirements and real-world use cases with tailored features and seamless integration.</p>
+          </div>
+          <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <span class="adv-card-img" aria-hidden="true">⚙️</span>
-      </a>
+        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-GNGLsMOruOXjdF1rtx2ajfpU3YzrIS.png" alt="" aria-hidden="true">
+      </div>
     </div>
 
   </div>
+  <script>
+    document.querySelectorAll('.adv-card').forEach(function(card) {
+      var img = card.querySelector('.adv-card-img');
+      var rafId = null;
+      var timeoutId = null;
+      var T = 2000;
+
+      card.addEventListener('mouseenter', function() {
+        clearTimeout(timeoutId);
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+
+        timeoutId = setTimeout(function() {
+          if (!card.matches(':hover')) return;
+          var start = performance.now();
+
+          (function loop(now) {
+            var phase = Math.cos(((now - start) / T) * Math.PI * 2);
+            var dy = (-10.5 + phase * 0.5).toFixed(3);
+            var dr = (5.5  - phase * 0.5).toFixed(3);
+            img.style.transform = 'translateY(' + dy + '%) scale(1.2) rotate(' + dr + 'deg)';
+            rafId = requestAnimationFrame(loop);
+          }(performance.now()));
+        }, 1050);
+      });
+
+      card.addEventListener('mouseleave', function() {
+        clearTimeout(timeoutId);
+        if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+        img.style.transform = '';
+      });
+    });
+  </script>
 </section>
 
 <div class="divider"></div>
@@ -1539,7 +1606,7 @@
     .testi-fade {
       opacity: 0;
       transform: translateY(22px);
-      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.56,0.64,1);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
     }
     .testi-fade.in { opacity: 1; transform: translateY(0); }
     .testi-card-outer {
@@ -1832,7 +1899,8 @@
       .feat-card { height: auto; padding: 28px 20px 20px; justify-content: flex-start; }
       .feat-card-icon { position: relative; top: auto; left: auto; margin: 8px auto 20px; width: 80px; height: 80px; align-self: center; }
       .feat-card-icon img { width: 80px; height: 80px; }
-      .feat-card:hover .feat-card-icon { transform: scale(1.15) translateY(-6px); }
+      .feat-card:hover .feat-card-icon,
+      .feat-card.is-scroll-active .feat-card-icon { transform: scale(1.15) translateY(-6px); }
       .feat-card-content { width: 100%; }
     }
     @media (max-width: 560px)  { .feat-grid { grid-template-columns: 1fr; } }
@@ -1851,7 +1919,8 @@
       transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1),
                   box-shadow 0.45s ease;
     }
-    .feat-card:hover {
+    .feat-card:hover,
+    .feat-card.is-scroll-active {
       transform: translateY(-10px);
       box-shadow: 0 28px 64px rgba(0,0,0,0.45);
     }
@@ -1883,7 +1952,8 @@
       transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
     }
     .feat-card-icon img { width: 112px; height: 112px; object-fit: contain; }
-    .feat-card:hover .feat-card-icon { transform: scale(1.63) translateY(-18px); }
+    .feat-card:hover .feat-card-icon,
+    .feat-card.is-scroll-active .feat-card-icon { transform: scale(1.63) translateY(-18px); }
     .feat-card-content {
       position: relative;
       z-index: 2;
@@ -2646,8 +2716,8 @@
     return Array.from(el.parentElement.children).indexOf(el) % 2 * 110;
   });
 
-  /* Feature cards and testimonial cards: single-col on mobile, scroll-natural stagger */
-  watch('.svc-card', std);
+  /* Testimonial cards: single-col on mobile, scroll-natural stagger */
+  /* svc-card handled by is-scroll-active center-band observer below */
   watch('.tcard', std);
 
   /* Buttons — skip hero/nav; only content sections */
@@ -2919,6 +2989,77 @@
   document.querySelectorAll('.stat-num[data-target]').forEach(function (el) {
     io.observe(el);
   });
+})();
+</script>
+
+<script>
+/* ── Cinematic entrance reveals ── */
+(function () {
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+
+  function staggerReveal(items, container, threshold) {
+    items.forEach(function (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(32px)';
+    });
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      items.forEach(function (el, i) {
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+        el.style.transitionDelay = (i * 120) + 'ms';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+        el.addEventListener('transitionend', function cleanup(evt) {
+          if (evt.propertyName !== 'transform') return;
+          el.style.opacity = '';
+          el.style.transform = '';
+          el.style.transition = '';
+          el.style.transitionDelay = '';
+          el.removeEventListener('transitionend', cleanup);
+        });
+      });
+      obs.disconnect();
+    }, { threshold: threshold || 0.1 });
+    if (container) obs.observe(container);
+  }
+
+  // Why Us — content blocks (skip canvas .code-block)
+  staggerReveal(
+    [].slice.call(document.querySelectorAll('#why-us .ah-intro, #why-us .ah-outro')),
+    document.querySelector('#why-us .about-grid')
+  );
+
+  // Services
+  staggerReveal(
+    [].slice.call(document.querySelectorAll('#services .svc-card')),
+    document.querySelector('#services .features-grid')
+  );
+
+  // Advanced Capabilities
+  staggerReveal(
+    [].slice.call(document.querySelectorAll('#advanced .adv-card')),
+    document.querySelector('#advanced .adv-grid')
+  );
+
+  // Roadmap
+  staggerReveal(
+    [].slice.call(document.querySelectorAll('#roadmap .feat-card')),
+    document.querySelector('#roadmap .feat-grid')
+  );
+})();
+
+/* ── Mobile-only center-band highlight (touch devices only) ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var targets = [].slice.call(document.querySelectorAll(
+    '#services .svc-card, #advanced .adv-card, #roadmap .feat-card'
+  ));
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+  targets.forEach(function (el) { obs.observe(el); });
 })();
 </script>
 
