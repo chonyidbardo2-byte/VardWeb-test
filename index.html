@@ -347,6 +347,13 @@
       margin-bottom: 16px;
     }
 
+    /* ── Section header block — left on mobile, centered on desktop ── */
+    .sec-header { text-align: left; margin-bottom: 68px; }
+    @media (min-width: 769px) {
+      .sec-header { text-align: center; }
+      .sec-header > p { margin-left: auto; margin-right: auto; }
+    }
+
     /* ── Code block ── */
     .code-block {
       background: #080b12;
@@ -379,7 +386,7 @@
     .svc-card {
       position: relative;
       display: block;
-      height: 350px;
+      min-height: 350px;
       border-radius: 26px;
       overflow: hidden;
       isolation: isolate;
@@ -429,7 +436,7 @@
     .svc-card:hover .svc-card-more svg,
     .svc-card.is-scroll-active .svc-card-more svg { transform: translateX(4px); }
     @media (max-width: 560px) {
-      .svc-card { height: auto; min-height: 320px; }
+      .svc-card { min-height: 320px; }
       .svc-card-panel { height: auto; }
     }
 
@@ -702,6 +709,9 @@
     .tcard-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
 
+    @media (max-width: 1100px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 1024px) {
       .about-grid { grid-template-columns: 1fr; gap: 48px; }
       .about-grid .ah-intro,
@@ -897,6 +907,7 @@
       background-clip: text;
       filter: drop-shadow(0px 0px 20px rgba(200,212,232,0.15));
     }
+    .footer-pill-mobile-row { display: contents; }
     @media (max-width: 768px) {
       .footer-pill-row {
         flex-direction: column;
@@ -910,6 +921,11 @@
       .footer-pill-sec {
         width: 100%;
         max-width: 220px;
+      }
+      .footer-pill-mobile-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
       }
     }
 
@@ -1063,7 +1079,8 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
-          <a href="#why-us"   class="dropdown-item" role="menuitem">Why Us</a>
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
+          <a href="#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="#services" class="dropdown-item" role="menuitem">Services</a>
           <a href="#results"   class="dropdown-item" role="menuitem">Results</a>
           <a href="#advanced" class="dropdown-item" role="menuitem">Advanced</a>
@@ -1118,7 +1135,7 @@
     </button>
     <div class="mob-accordion-panel" id="mob-home-panel"><div>
     <a href="index.html" class="mob-link mob-sub">Landing</a>
-    <a href="#why-us"   class="mob-link mob-sub">Why Us</a>
+    <a href="#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="#services" class="mob-link mob-sub">Services</a>
     <a href="#results"   class="mob-link mob-sub">Results</a>
     <a href="#advanced" class="mob-link mob-sub">Advanced</a>
@@ -1278,7 +1295,7 @@
       <div class="ah-intro">
         <p class="sec-tag">// Why Us?</p>
         <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;margin-bottom:24px;color:var(--text-1);">
-          Rank higher,<br><span class="grad-cyan-pink">convert better</span>
+          Rank higher,<br><span class="grad-cyan-pink">Convert better</span>
         </h2>
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:20px;">
           In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion.</code> VardWeb builds sites that work as hard as you do.
@@ -1320,11 +1337,12 @@
 <section id="services" style="padding:100px 28px;">
   <div style="max-width:1200px;margin:0 auto;">
 
-    <div style="text-align:center;margin-bottom:68px;">
+    <div class="sec-header">
       <p class="sec-tag">// Services</p>
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-        Every site<br>comes with<br><span class="grad-cyan-pink">these by default</span>
+        Engage Your Audience,<br><span class="grad-cyan-pink">Elevate Your Brand</span>
       </h2>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">Everything your site needs to perform, rank, and convert — included as standard, not as an upsell. Mobile-first by default, fast by design, and <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">optimised</code> for search before a single visitor lands.</p>
     </div>
 
     <div class="features-grid">
@@ -1412,7 +1430,8 @@
       max-width: 75%;
       margin: 0 auto;
     }
-    @media (max-width: 640px) { .adv-grid { grid-template-columns: 1fr; max-width: 100%; } }
+    @media (max-width: 1100px) { .adv-grid { max-width: 90%; } }
+    @media (max-width: 900px) { .adv-grid { grid-template-columns: 1fr; max-width: 100%; } }
     .adv-card {
       position: relative;
       height: 170px;
@@ -1444,7 +1463,8 @@
       color: rgba(255,255,255,0.72);
       line-height: 1.55;
       margin: 6px 0 0;
-      max-width: 62%;
+      max-width: 100%;
+      white-space: normal;
     }
     .adv-card-more {
       font-size: 11px;
@@ -1457,6 +1477,7 @@
       gap: 7px;
       text-decoration: none;
       transition: gap 0.2s ease, opacity 0.2s ease;
+      align-self: flex-start;
     }
     .adv-card-more:hover { gap: 12px; opacity: 1; }
     .adv-card-more:focus-visible { outline: 2px solid #00E5FF; outline-offset: 3px; }
@@ -1480,14 +1501,23 @@
     .adv-card:active .adv-card-img {
       transform: translateY(-10%) scale(1.2) rotate(10deg);
     }
+    @keyframes adv-arrow-pulse {
+      0%, 100% { transform: translateX(0); }
+      50%       { transform: translateX(5px); }
+    }
+    .adv-card:hover .adv-card-more svg,
+    .adv-card.is-scroll-active .adv-card-more svg {
+      animation: adv-arrow-pulse 0.6s ease-in-out infinite;
+    }
   </style>
   <div style="max-width:1200px;margin:0 auto;">
 
-    <div style="text-align:center;margin-bottom:68px;">
-      <p class="sec-tag">// Advanced Capabilities</p>
+    <div class="sec-header">
+      <p class="sec-tag">// Advanced</p>
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-        Advanced Capabilities<br>that scale<br><span class="grad-gold">with your business</span>
+        Optimize presence,<br><span class="grad-gold">Transform traffic</span>
       </h2>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">When your business outgrows a simple brochure site, we don't panic — <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">we build.</code> From full e-commerce flows to custom functionality that doesn't have a template, consider it handled.</p>
     </div>
 
     <div class="adv-grid">
@@ -1495,47 +1525,47 @@
         <div class="adv-card-body">
           <div>
             <h3>E-Commerce</h3>
-            <p class="adv-card-desc">Sell products or services through a structured, conversion-focused buying experience.</p>
+            <p class="adv-card-desc">Sell products or services through<br>a structured, conversion-focused<br>buying experience.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
         <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-bjp0aw1YdBEUx14mtm9IQCUABWUxWz.png" alt="" aria-hidden="true">
       </div>
-      <div class="adv-card" style="background:#C62B2B;">
+      <div class="adv-card" style="background:#CC2020;">
         <div class="adv-card-body">
           <div>
             <h3>Product Catalogs</h3>
-            <p class="adv-card-desc">Organize and present complex offerings in a way that is clear and easy to navigate.</p>
+            <p class="adv-card-desc">Organize and present complex<br>offerings in a way that is clear<br>and easy to navigate.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
         <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-DFiJBJyUFg9QYTZOWEFeeza18HBnty.png" alt="" aria-hidden="true">
       </div>
-      <div class="adv-card" style="background:#3D4654;">
+      <div class="adv-card" style="background:#2D3038;">
         <div class="adv-card-body">
           <div>
             <h3>Funnels &amp; Lead Flows</h3>
-            <p class="adv-card-desc">Guide visitors through purposeful paths that support inquiries, signups, or sales.</p>
+            <p class="adv-card-desc">Guide visitors through purposeful<br>paths that support inquiries,<br>signups, or sales.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
         <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-J7XYh5Cix5CceVeAtkuVXYSGgrhjDL.png" alt="" aria-hidden="true">
       </div>
-      <div class="adv-card" style="background:#2260A8;">
+      <div class="adv-card" style="background:#1A6DE8;">
         <div class="adv-card-body">
           <div>
             <h3>Memberships &amp; Portals</h3>
-            <p class="adv-card-desc">Provide gated access to content, subscription tiers, client portals, or tools for specific audiences or users.</p>
+            <p class="adv-card-desc">Provide gated access to content,<br>subscriptions, client portals, and<br>tools for specific audiences/users.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
         <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-fQPoDfvDVubJHgM4XlyFBuEY4iubg6.png" alt="" aria-hidden="true">
       </div>
-      <div class="adv-card" style="background:#1E2128;">
+      <div class="adv-card" style="background:#141820;">
         <div class="adv-card-body">
           <div>
             <h3>Integrations</h3>
-            <p class="adv-card-desc">Connect your website with the systems you rely on to streamline operations, data flow, and enhance functionality.</p>
+            <p class="adv-card-desc">Connect your website with the<br>systems you rely on to streamline<br>operations and data flow.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
@@ -1545,7 +1575,7 @@
         <div class="adv-card-body">
           <div>
             <h3>Custom Functionality</h3>
-            <p class="adv-card-desc">Support unique business requirements and real-world use cases with tailored features and seamless integration.</p>
+            <p class="adv-card-desc">Support unique business requirements<br>with tailored features built around<br>real-world use cases.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
@@ -1732,11 +1762,11 @@
         <p class="sec-tag">// Results</p>
 
         <h2 style="font-size:clamp(28px,4vw,46px);font-weight:800;line-height:1.1;letter-spacing:-0.03em;color:var(--text-1);margin-bottom:20px;">
-          Real businesses,<br><span class="grad-gold">real results</span>
+          Real businesses,<br><span class="grad-gold">Real results</span>
         </h2>
 
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);max-width:400px;margin-bottom:38px;">
-          Don't just take our word for it. See what our clients say after working with VardWeb — from restaurant owners to e-commerce founders.
+          Don't just take <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">our word</code> for it. See what our clients say after working with VardWeb — from restaurant owners to e-commerce founders.
         </p>
 
         <div style="display:flex;align-items:center;gap:10px;" role="tablist" aria-label="Client testimonials">
@@ -1983,11 +2013,12 @@
     }
   </style>
 
-  <div style="text-align:center;margin-bottom:68px;">
+  <div class="sec-header">
     <p class="sec-tag">// The Roadmap</p>
     <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
-      Discovery begins<br>on the<br><span class="grad-gold">yellow brick road</span>
+      Discovery begins on,<br><span class="grad-gold">The yellow brick road</span>
     </h2>
+    <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">Four steps. <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">No surprises.</code> We plan, design, launch, and maintain your site with the kind of discipline that would make a project manager tear up. The yellow brick road has never been this well-paved.</p>
   </div>
 
   <div class="feat-grid">
@@ -2028,7 +2059,7 @@
       <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Wrench/3D/wrench_3d.png" alt="Wrench" draggable="false"></div>
       <div class="feat-card-content">
         <span class="feat-card-tag" style="background:rgba(255,45,120,0.10);color:#FF2D78;border:1px solid rgba(255,45,120,0.20);">MAINTAIN</span>
-        <p class="feat-card-title">Ongoing monthly maintenance, guaranteed updates, SEO analysis, speed checks, and 25/8 support so your site stays sharp.</p>
+        <p class="feat-card-title">Ongoing monthly maintenance, updates, SEO analysis, speed checks, and 4-hour emergency + 24-hour general support.</p>
       </div>
     </div>
 
@@ -2092,37 +2123,42 @@
         </div>
         <!-- Secondary pills -->
         <div class="footer-pill-row footer-pill-row-secondary" style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px;">
-          <!-- Home dropdown pill -->
-          <div class="footer-pill-home-wrap" id="footer-home-wrap">
-            <button type="button" class="footer-glass-pill footer-magnetic footer-pill-home-btn footer-pill-sec"
-              id="footer-home-btn" aria-expanded="false" aria-controls="footer-home-panel" aria-haspopup="menu">
-              Home
-              <svg class="footer-pill-home-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="footer-pill-home-panel" id="footer-home-panel" role="menu">
-              <a href="index.html" class="footer-pill-home-sub" role="menuitem">Landing</a>
-              <a href="#why-us"   class="footer-pill-home-sub" role="menuitem">Why Us</a>
-              <a href="#services" class="footer-pill-home-sub" role="menuitem">Services</a>
-              <a href="#results"   class="footer-pill-home-sub" role="menuitem">Results</a>
-              <a href="#advanced" class="footer-pill-home-sub" role="menuitem">Advanced</a>
-              <a href="#roadmap"  class="footer-pill-home-sub" role="menuitem">Roadmap</a>
+          <!-- Row 1: Home + Company -->
+          <div class="footer-pill-mobile-row">
+            <!-- Home dropdown pill -->
+            <div class="footer-pill-home-wrap" id="footer-home-wrap">
+              <button type="button" class="footer-glass-pill footer-magnetic footer-pill-home-btn footer-pill-sec"
+                id="footer-home-btn" aria-expanded="false" aria-controls="footer-home-panel" aria-haspopup="menu">
+                Home
+                <svg class="footer-pill-home-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="footer-pill-home-panel" id="footer-home-panel" role="menu">
+                <a href="index.html" class="footer-pill-home-sub" role="menuitem">Landing</a>
+                <a href="#why-us"   class="footer-pill-home-sub" role="menuitem">Why Us?</a>
+                <a href="#services" class="footer-pill-home-sub" role="menuitem">Services</a>
+                <a href="#results"   class="footer-pill-home-sub" role="menuitem">Results</a>
+                <a href="#advanced" class="footer-pill-home-sub" role="menuitem">Advanced</a>
+                <a href="#roadmap"  class="footer-pill-home-sub" role="menuitem">Roadmap</a>
+              </div>
+            </div>
+            <!-- Company dropdown pill -->
+            <div class="footer-pill-home-wrap" id="footer-company-wrap">
+              <button type="button" class="footer-glass-pill footer-magnetic footer-pill-home-btn footer-pill-sec"
+                id="footer-company-btn" aria-expanded="false" aria-controls="footer-company-panel" aria-haspopup="menu">
+                Company
+                <svg class="footer-pill-home-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="footer-pill-home-panel" id="footer-company-panel" role="menu">
+                <a href="about.html"    class="footer-pill-home-sub" role="menuitem">About Us</a>
+                <a href="our-work.html" class="footer-pill-home-sub" role="menuitem">Our Work</a>
+                <a href="blog.html"     class="footer-pill-home-sub" role="menuitem">Blog</a>
+                <a href="faq.html"      class="footer-pill-home-sub" role="menuitem">FAQ</a>
+                <a href="contact.html"  class="footer-pill-home-sub" role="menuitem">Contact</a>
+              </div>
             </div>
           </div>
-          <!-- Company dropdown pill -->
-          <div class="footer-pill-home-wrap" id="footer-company-wrap">
-            <button type="button" class="footer-glass-pill footer-magnetic footer-pill-home-btn footer-pill-sec"
-              id="footer-company-btn" aria-expanded="false" aria-controls="footer-company-panel" aria-haspopup="menu">
-              Company
-              <svg class="footer-pill-home-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div class="footer-pill-home-panel" id="footer-company-panel" role="menu">
-              <a href="about.html"    class="footer-pill-home-sub" role="menuitem">About Us</a>
-              <a href="our-work.html" class="footer-pill-home-sub" role="menuitem">Our Work</a>
-              <a href="blog.html"     class="footer-pill-home-sub" role="menuitem">Blog</a>
-              <a href="faq.html"      class="footer-pill-home-sub" role="menuitem">FAQ</a>
-              <a href="contact.html"  class="footer-pill-home-sub" role="menuitem">Contact</a>
-            </div>
-          </div>
+          <!-- Row 2: Services + Legal -->
+          <div class="footer-pill-mobile-row">
           <!-- Services dropdown pill -->
           <div class="footer-pill-home-wrap" id="footer-services-wrap">
             <button type="button" class="footer-glass-pill footer-magnetic footer-pill-home-btn footer-pill-sec"
@@ -2159,6 +2195,7 @@
               <a href="wcag-compliance.html" class="footer-pill-home-sub" role="menuitem">WCAG Compliance</a>
             </div>
           </div>
+          </div><!-- /footer-pill-mobile-row row 2 -->
         </div>
       </div>
     </div>
@@ -2947,13 +2984,13 @@
 /* ── Stat counter: smooth roll-up on first view ── */
 (function () {
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function easeOutExpo(t) { return t >= 1 ? 1 : 1 - Math.pow(2, -10 * t); }
+  function easeOutQuad(t) { return t * (2 - t); }
 
   function animateStat(el) {
     var target   = parseFloat(el.dataset.target);
     var suffix   = el.dataset.suffix   || '';
     var decimals = parseInt(el.dataset.decimals || '0', 10);
-    var DURATION = 5000;
+    var DURATION = 3000;
     var start    = null;
 
     if (reduceMotion) {
@@ -2964,7 +3001,7 @@
     function frame(ts) {
       if (!start) start = ts;
       var progress = Math.min((ts - start) / DURATION, 1);
-      var val      = easeOutExpo(progress) * target;
+      var val      = easeOutQuad(progress) * target;
 
       el.textContent = (decimals > 0 ? val.toFixed(decimals) : Math.floor(val)) + suffix;
 
@@ -3023,9 +3060,9 @@
     if (container) obs.observe(container);
   }
 
-  // Why Us — content blocks (skip canvas .code-block)
+  // Why Us — all three layout blocks
   staggerReveal(
-    [].slice.call(document.querySelectorAll('#why-us .ah-intro, #why-us .ah-outro')),
+    [].slice.call(document.querySelectorAll('#why-us .ah-intro, #why-us .code-block, #why-us .ah-outro')),
     document.querySelector('#why-us .about-grid')
   );
 
@@ -3051,15 +3088,49 @@
 /* ── Mobile-only center-band highlight (touch devices only) ── */
 (function () {
   if (!window.matchMedia('(hover: none)').matches) return;
-  var targets = [].slice.call(document.querySelectorAll(
-    '#services .svc-card, #advanced .adv-card, #roadmap .feat-card'
-  ));
-  var obs = new IntersectionObserver(function (entries) {
+  var ioOpts = { rootMargin: '-35% 0px -35% 0px', threshold: 0 };
+
+  /* Simple toggle for svc-cards and feat-cards */
+  var simpleObs = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
     });
-  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-  targets.forEach(function (el) { obs.observe(el); });
+  }, ioOpts);
+  [].slice.call(document.querySelectorAll('#services .svc-card, #roadmap .feat-card'))
+    .forEach(function (el) { simpleObs.observe(el); });
+
+  /* rAF oscillation for adv-cards — mirrors desktop mouseenter/mouseleave exactly */
+  var T = 2000;
+  var stateMap = new Map();
+  var advObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var card = entry.target;
+      var img = card.querySelector('.adv-card-img');
+      if (!img) return;
+      var s = stateMap.get(card);
+      if (!s) { s = { rafId: null, timeoutId: null }; stateMap.set(card, s); }
+
+      clearTimeout(s.timeoutId);
+      if (s.rafId) { cancelAnimationFrame(s.rafId); s.rafId = null; }
+
+      if (entry.isIntersecting) {
+        card.classList.add('is-scroll-active');
+        s.timeoutId = setTimeout(function () {
+          var start = performance.now();
+          (function loop(now) {
+            var phase = Math.cos(((now - start) / T) * Math.PI * 2);
+            img.style.transform = 'translateY(' + (-10.5 + phase * 0.5).toFixed(3) + '%) scale(1.2) rotate(' + (5.5 - phase * 0.5).toFixed(3) + 'deg)';
+            s.rafId = requestAnimationFrame(loop);
+          }(performance.now()));
+        }, 1050);
+      } else {
+        card.classList.remove('is-scroll-active');
+        img.style.transform = '';
+      }
+    });
+  }, ioOpts);
+  [].slice.call(document.querySelectorAll('#advanced .adv-card'))
+    .forEach(function (el) { advObs.observe(el); });
 })();
 </script>
 
