@@ -1,13 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accessibility Statement — VardWeb</title>
+  <title>SEM &amp; SEO — Paid Search &amp; Organic Growth — VardWeb</title>
+  <meta name="description" content="SEM (Search Engine Marketing) and SEO (Search Engine Optimization) — VardWeb's intent-targeted paid search and organic growth services that put your business in front of buyers ready to convert." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
 
   <style>
     :root {
@@ -176,6 +180,88 @@
       margin-bottom: 16px;
     }
 
+    /* Hero (animated mesh-gradient shader background) */
+    .hero-pill {
+      position: relative;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      filter: url(#hero-glass-effect);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      color: rgba(238,240,248,0.9); letter-spacing: 0.06em;
+    }
+    .hero-pill::before {
+      content: ''; position: absolute; top: 0; left: 6px; right: 6px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,229,255,0.3), transparent);
+    }
+    .hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); display: inline-block; flex-shrink: 0; }
+    .hero-kicker {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--cyan) 0%, #ffffff 30%, var(--pink) 70%, var(--cyan) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: url(#hero-text-glow);
+      animation: hero-gradient-shift 8s linear infinite;
+    }
+    @keyframes hero-gradient-shift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .hero-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(40px, 7vw, 88px); font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.98;
+      color: var(--text-1);
+      margin-bottom: 22px;
+      text-shadow: 0 0 40px rgba(0,229,255,0.22);
+    }
+    .hero-sub {
+      font-size: 17px; color: var(--text-2); line-height: 1.75;
+      max-width: 480px; margin: 0 0 32px;
+    }
+    .hero-cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .hero-btn {
+      padding: 14px 30px; border-radius: 999px; font-size: 13px;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+    }
+    .hero-btn:hover { transform: translateY(-2px) scale(1.03); }
+    .hero-btn-white {
+      background: #ffffff; border: 1px solid #ffffff; color: var(--base);
+      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+    }
+    .hero-btn-white:hover { background: #f2f5fa; box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5); }
+    .hero-btn-gradient {
+      background: linear-gradient(120deg, var(--cyan) 0%, var(--pink) 100%);
+      border: 1px solid transparent; color: #070910;
+      box-shadow: 0 10px 30px -8px rgba(0,229,255,0.35), 0 4px 16px -4px rgba(255,45,120,0.3);
+    }
+    .hero-btn-gradient:hover {
+      background: linear-gradient(120deg, #4df0ff 0%, #ff5c95 100%);
+      box-shadow: 0 12px 34px -6px rgba(0,229,255,0.45), 0 6px 20px -4px rgba(255,45,120,0.4);
+    }
+
+    .hero-content > * {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .hero-content.hero-in > *:nth-child(1) { transition-delay: 0.05s; }
+    .hero-content.hero-in > *:nth-child(2) { transition-delay: 0.2s; }
+    .hero-content.hero-in > *:nth-child(3) { transition-delay: 0.35s; }
+    .hero-content.hero-in > *:nth-child(4) { transition-delay: 0.5s; }
+    .hero-content.hero-in > *:nth-child(5) { transition-delay: 0.65s; }
+    .hero-content.hero-in > * { opacity: 1; transform: translateY(0); }
+    @media (max-width: 640px) {
+      .hero-heading { font-size: clamp(34px, 11vw, 56px); }
+    }
+
     /* Divider */
     .divider {
       height: 1px;
@@ -183,109 +269,54 @@
       margin: 0 auto; max-width: 1200px;
     }
 
-    /* Policy card */
-    .policy-card {
-      background: var(--surface);
-      border: 1px solid rgba(0,229,255,0.08);
+    /* Content section — 2-column layout ported from the reference component's
+       "Content Section" (text + paragraph on the left, boxed visual on the right) */
+    .content-2col {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr; gap: 40px;
+      padding: 70px 28px;
+    }
+    @media (min-width: 768px) {
+      .content-2col { grid-template-columns: 1fr 1fr; padding: 100px 28px; align-items: center; }
+      .content-2col.flip .content-2col-text   { order: 2; }
+      .content-2col.flip .content-2col-visual { order: 1; }
+    }
+    .content-2col-text { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+    .content-2col-visual {
+      position: relative;
       border-radius: 18px;
-      padding: 36px 40px;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .policy-card:hover,
-    .policy-card.is-scroll-active {
-      border-color: rgba(0,229,255,0.18);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.04);
-    }
-    .policy-card h3 {
-      font-size: 18px; font-weight: 700; color: var(--text-1);
-      margin-bottom: 14px; letter-spacing: -0.02em;
-    }
-    .policy-card p, .policy-card li {
-      font-size: 14.5px; line-height: 1.85; color: var(--text-2);
-    }
-    .policy-card ul {
-      list-style: none; padding: 0; margin-top: 12px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .policy-card li {
-      display: flex; gap: 12px; align-items: flex-start;
-    }
-    .policy-card li::before {
-      content: '—';
-      color: var(--cyan);
-      opacity: 0.6;
-      flex-shrink: 0;
-      margin-top: 1px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .policy-card .sub-section {
-      padding: 18px 20px;
-      background: rgba(0,229,255,0.03);
-      border: 1px solid rgba(0,229,255,0.07);
-      border-radius: 12px;
-      margin-top: 16px;
-    }
-    .policy-card .sub-section + .sub-section { margin-top: 10px; }
-    .policy-card .sub-section h4 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px; font-weight: 700;
-      color: var(--cyan); margin-bottom: 8px;
-      letter-spacing: 0.01em;
-    }
-
-    /* Scroll-triggered entrance reveal */
-    .reveal-fade {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
-    }
-    .reveal-fade.in { opacity: 1; transform: translateY(0); }
-
-    /* Gold notice banner */
-    .no-share-banner {
-      display: flex; align-items: center; gap: 14px;
-      background: rgba(255,215,0,0.05);
-      border: 1px solid rgba(255,215,0,0.15);
-      border-radius: 14px; padding: 20px 24px;
-    }
-    .no-share-icon { font-size: 28px; flex-shrink: 0; }
-    .no-share-banner p { font-size: 14.5px; line-height: 1.7; color: var(--text-2); }
-    .no-share-banner strong { color: #FFD700; font-weight: 600; }
-
-    /* Pink warning banner */
-    .warn-banner {
-      display: flex; align-items: flex-start; gap: 14px;
-      background: rgba(255,45,120,0.05);
-      border: 1px solid rgba(255,45,120,0.18);
-      border-radius: 14px; padding: 20px 24px;
-      margin-top: 16px;
-    }
-    .warn-banner p { font-size: 14.5px; line-height: 1.7; color: var(--text-2); }
-    .warn-banner strong { color: var(--pink); font-weight: 600; }
-
-    /* AT compatibility grid */
-    .at-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
-    }
-    @media (max-width: 600px) { .at-grid { grid-template-columns: 1fr; } }
-    .at-chip {
-      display: flex; align-items: flex-start; gap: 12px;
-      background: rgba(0,229,255,0.04);
-      border: 1px solid rgba(0,229,255,0.1);
-      border-radius: 12px; padding: 14px 18px;
-    }
-    .at-chip-icon {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: var(--raised);
+      border: 1px solid var(--border);
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      background: rgba(0,229,255,0.08);
-      border: 1px solid rgba(0,229,255,0.12);
+      padding: 0;
+      text-align: center;
     }
-    .at-chip-text { font-size: 13px; color: var(--text-2); line-height: 1.45; }
-    .at-chip-text strong { color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px; }
+    .visual-shot {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 17px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    .wf-box-clip {
+      position: absolute; inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .wf-box-block { position: absolute; inset: 0; }
+
+    /* Hero + content word-fall overlay (GSAP SplitText + ScrollTrigger port) */
+    /* .wf-outer is the per-instance clipping wrapper the reference gives every
+       AnimatedFall (position:relative + overflow:hidden), so falling color
+       blocks clip out of view rather than fading. */
+    .wf-outer { position: relative; overflow: hidden; }
+    .wf-word { position: relative; display: inline-block; }
+    .wf-block {
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      pointer-events: none; border-radius: 3px; z-index: 3;
+    }
 
     /* Footer */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -317,7 +348,6 @@
 
     @media (max-width: 768px) {
       .nav-links { display: none; }
-      .policy-card { padding: 28px 24px; }
     }
 
     /* Mobile Nav */
@@ -361,8 +391,7 @@
       .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
       .mob-cta-primary::before { display: none; }
     }
-  
-    /* ── WCAG Accessibility Additions ── */
+
     .skip-link {
       position: absolute; top: -100px; left: 20px; z-index: 9000;
       padding: 10px 20px; background: #070910; color: #00E5FF;
@@ -431,7 +460,9 @@
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
-      <a href="faq.html"     class="nav-link">FAQ</a>
+      <a href="faq.html"      class="nav-link">FAQ</a>
+      <a href="blog.html"     class="nav-link">Blog</a>
+      <a href="our-work.html" class="nav-link">Our Work</a>
       <a href="about.html"    class="nav-link">About</a>
       <div class="nav-dropdown">
         <a href="services.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
@@ -514,7 +545,7 @@
     <a href="privacy.html"        class="mob-link mob-sub">Privacy Policy</a>
     <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
     <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
-    <a href="accessibility.html"  class="mob-link mob-sub active">Accessibility</a>
+    <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
     <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
     </div></div>
     <div class="mob-divider"></div>
@@ -525,246 +556,181 @@
 <main id="main-content" tabindex="-1">
 
 <!-- ── HERO ── -->
-<section style="
-  padding: 160px 28px 90px;
-  text-align: center;
-  background:
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,229,255,0.06) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255,45,120,0.05) 0%, transparent 65%),
-    var(--base);
+<section id="hero-shader-section" style="
   position: relative; overflow: hidden;
+  min-height: calc(100vh - 64px);
+  display: flex; align-items: flex-end;
+  padding: 160px 28px 90px;
 ">
-  <div style="position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 44px 44px;"></div>
-  <div id="legal-hero" style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
-    <p class="sec-tag" style="margin-bottom: 20px;">// legal &amp; transparency</p>
-    <h1 style="font-size: clamp(36px, 6vw, 68px); font-weight: 900; line-height: 1.04; color: var(--text-1); margin-bottom: 22px;">
-      Accessibility<br><span class="grad-cyan-pink">Statement</span>
-    </h1>
-    <p style="font-size: 17px; color: var(--text-2); line-height: 1.75; max-width: 520px; margin: 0 auto 32px;">
-      We are committed to building an inclusive web experience that works for everyone — regardless of ability, device, or assistive technology.
-    </p>
-    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.18); border-radius: 999px; padding: 6px 18px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(0,229,255,0.75); letter-spacing: 0.06em;">
-      <span style="width:6px;height:6px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
-      Last updated: 19 June 2026 — Full AA conformance
+  <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
+    <defs>
+      <filter id="hero-glass-effect" x="-50%" y="-50%" width="200%" height="200%">
+        <feTurbulence baseFrequency="0.005" numOctaves="1" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.3" />
+      </filter>
+      <filter id="hero-text-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- static fallback (visible immediately + if the shader module can't load) -->
+  <div style="position: absolute; inset: 0; z-index: 0; background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,229,255,0.08) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255,45,120,0.07) 0%, transparent 65%),
+    var(--base);"></div>
+
+  <!-- animated mesh-gradient shader mount points -->
+  <div id="hero-shader-bg-1" style="position: absolute; inset: 0; z-index: 1;"></div>
+  <div id="hero-shader-bg-2" style="position: absolute; inset: 0; z-index: 2; opacity: 0.6;"></div>
+
+  <div style="position: absolute; inset: 0; z-index: 3; pointer-events: none; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 44px 44px;"></div>
+
+  <div id="sem-seo-hero" class="hero-content" style="position: relative; z-index: 4; max-width: 640px;">
+    <div class="hero-pill">
+      <span class="hero-pill-dot"></span>
+      Advertising Add-On — SEM + SEO
+    </div>
+    <div class="wf-outer">
+      <p class="hero-kicker">// SEM &amp; SEO</p>
+    </div>
+    <div class="wf-outer">
+      <h1 id="wf-heading" class="hero-heading">SEM &amp; SEO</h1>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-sub" class="hero-sub">
+        Paid search and Google's native ad surfaces, engineered to put your business in front of buyers at the exact moment they're ready to convert.
+      </p>
+    </div>
+    <div class="hero-cta-row">
+      <a href="services.html" class="btn hero-btn hero-btn-white">View Services</a>
+      <a href="contact.html" class="btn hero-btn hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- ── CONTENT ── -->
-<section style="padding: 80px 28px 100px;">
-  <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
-
-    <!-- 01 — Our Commitment -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 01 — our commitment</p>
-      <h3>Built for everyone. No exceptions.</h3>
-      <p>VardWeb is committed to ensuring that our websites — <a href="https://vardweb.ca" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.ca</a> and <a href="https://vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.com</a> — are accessible to all people, including those with visual, auditory, motor, or cognitive disabilities. Accessibility is not a feature we add at the end — it is a design principle we build in from the start.</p>
-      <p style="margin-top: 12px;">We target conformance with the <strong style="color: var(--text-1); font-weight: 600;">Web Content Accessibility Guidelines (WCAG) 2.1 Level AA</strong>, as published by the World Wide Web Consortium (W3C). We are also guided by Ontario's <strong style="color: var(--text-1); font-weight: 600;">Accessibility for Ontarians with Disabilities Act (AODA)</strong>, including the Integrated Accessibility Standards Regulation (IASR).</p>
-      <p style="margin-top: 12px;">Accessibility is an ongoing commitment. We continuously evaluate and improve our sites based on user feedback, automated audits, and manual testing. This document is a living record of that effort.</p>
+<!-- ── CONTENT: Google Search Ads (2-column, ported from the reference's Content Section) ── -->
+<section class="content-2col">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-gsa-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Google Search Ads
+      </h2>
     </div>
-
-    <!-- 02 — Conformance Status -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 02 — conformance status</p>
-      <h3>Where we stand today.</h3>
-      <div class="no-share-banner" style="margin-top: 16px; margin-bottom: 20px;">
-        <div class="no-share-icon">📋</div>
-        <p>
-          <strong>Conformance Status: Conformant — WCAG 2.1 Level AA.</strong> Our sites conform to WCAG 2.1 Level AA. All Level A and Level AA success criteria are met as of June 2026. No known gaps remain.
-        </p>
-      </div>
-      <p>We have implemented all WCAG 2.1 Level A and AA success criteria across all public pages. The standard referenced is the <a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Web Content Accessibility Guidelines (WCAG) version 2.1</a>, published by the W3C Web Accessibility Initiative (WAI). A full criterion-by-criterion breakdown is available in our <a href="wcag-compliance.html" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">WCAG Compliance Report</a>.</p>
-    </div>
-
-    <!-- 03 — Technical Specifications -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 03 — technical specifications</p>
-      <h3>The technologies our sites rely on.</h3>
-      <p style="margin-bottom: 4px;">Our sites are built with the following web technologies, each of which is relied upon for accessibility conformance:</p>
-      <ul>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">HTML5</strong> — Semantic markup including landmarks (<code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">nav</code>, <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">main</code>, <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">footer</code>), heading hierarchy, and descriptive link text.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">CSS3</strong> — Responsive layout, focus-visible states on all interactive elements, print styles, and sufficient colour contrast ratios.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">WAI-ARIA</strong> — ARIA roles, states, and properties on custom interactive components including the mobile navigation accordion (<code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">aria-expanded</code>, <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">aria-controls</code>) and navigation buttons (<code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">aria-label</code>).</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">JavaScript (ES Modules)</strong> — Used for progressive enhancement only. Core content and navigation remain accessible without JavaScript.</span></li>
-      </ul>
-    </div>
-
-    <!-- 04 — Supported Assistive Technologies -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 04 — supported assistive technologies</p>
-      <h3>Tested across the tools your users rely on.</h3>
-      <p style="margin-bottom: 4px;">We test our sites with the following assistive technologies and browser combinations to verify that content is operable and understandable:</p>
-      <div class="at-grid">
-        <div class="at-chip">
-          <div class="at-chip-icon">🖥️</div>
-          <span class="at-chip-text"><strong>NVDA + Chrome</strong>Windows screen reader. Our most commonly tested combination for desktop users.</span>
-        </div>
-        <div class="at-chip">
-          <div class="at-chip-icon">🖥️</div>
-          <span class="at-chip-text"><strong>JAWS + Microsoft Edge</strong>Industry-standard screen reader used in enterprise and professional settings.</span>
-        </div>
-        <div class="at-chip">
-          <div class="at-chip-icon">🍎</div>
-          <span class="at-chip-text"><strong>VoiceOver + Safari</strong>Native Apple screen reader tested on macOS and iOS devices.</span>
-        </div>
-        <div class="at-chip">
-          <div class="at-chip-icon">📱</div>
-          <span class="at-chip-text"><strong>TalkBack + Chrome Mobile</strong>Android's built-in screen reader for mobile browsing coverage.</span>
-        </div>
-        <div class="at-chip">
-          <div class="at-chip-icon">🔍</div>
-          <span class="at-chip-text"><strong>ZoomText / Screen Magnifiers</strong>Tested at up to 400% zoom. Content reflows and remains operable.</span>
-        </div>
-        <div class="at-chip">
-          <div class="at-chip-icon">🎙️</div>
-          <span class="at-chip-text"><strong>Dragon NaturallySpeaking</strong>Voice control software — all interactive elements are reachable by voice command.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 05 — Keyboard Navigation -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 05 — keyboard navigation</p>
-      <h3>Fully navigable without a mouse.</h3>
-      <p style="margin-bottom: 4px;">Our sites are designed to be fully operable via keyboard alone. A "Skip to main content" link appears on the first Tab keypress on every page, allowing keyboard users to bypass repeated navigation blocks directly. The following additional accessibility features are implemented:</p>
-      <ul>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Skip link</strong> — A visually hidden "Skip to main content" link is the first focusable element on every page. Appears on Tab keypress, moves focus directly to main content.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Tab / Shift+Tab</strong> — Navigate between all interactive elements in logical document order.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Enter / Space</strong> — Activate buttons, links, and form controls.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Arrow keys</strong> — Navigate within composite widgets (e.g., mobile menu accordion).</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Escape</strong> — Closes open menus and overlays.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Focus indicators</strong> — All interactive elements display a visible cyan focus outline (<code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">focus-visible</code>) that meets the WCAG 2.1 AA contrast requirement. We do not suppress focus styles.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Logical focus order</strong> — Tab order follows the visual reading order of each page. Focus is never lost or trapped in an unexpected element.</span></li>
-      </ul>
-      <p style="margin-top: 14px;">No time limits are imposed on keyboard interactions. No features require simultaneous keystrokes beyond standard Tab and Enter usage.</p>
-    </div>
-
-    <!-- 06 — Visual Design & Colour Contrast -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 06 — visual design &amp; colour contrast</p>
-      <h3>Contrast ratios that exceed the standard.</h3>
-      <p style="margin-bottom: 4px;">We have designed our colour palette with accessibility as a primary constraint. Key contrast measurements:</p>
-      <div class="sub-section">
-        <h4>Primary Text (#eef0f8 on #070910)</h4>
-        <p>Contrast ratio: <strong style="color: var(--text-1);">19.7:1</strong> — exceeds WCAG AA (4.5:1) and AAA (7:1) requirements for normal text.</p>
-      </div>
-      <div class="sub-section">
-        <h4>Secondary Text (rgba(200,212,232,0.62) on #070910)</h4>
-        <p>Effective contrast ratio: approximately <strong style="color: var(--text-1);">5.1:1</strong> — passes WCAG AA (4.5:1) for normal text. We are working to improve this further toward AAA where layout permits.</p>
-      </div>
-      <div class="sub-section">
-        <h4>Accent / Cyan (#00E5FF on #070910)</h4>
-        <p>Contrast ratio: <strong style="color: var(--text-1);">15.4:1</strong> — significantly exceeds WCAG AAA requirements. Used for links, interactive indicators, and focus rings.</p>
-      </div>
-      <p style="margin-top: 16px;">Colour is never used as the <em>only</em> means of conveying information. All states (error, success, active) include a textual or structural cue in addition to colour. Text is resizable to 200% browser zoom without loss of content or functionality.</p>
-    </div>
-
-    <!-- 07 — Images & Media -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 07 — images &amp; media</p>
-      <h3>Alternative text and media standards.</h3>
-      <ul>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Informative images</strong> — All images that convey content include descriptive <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">alt</code> text that communicates the purpose of the image in context.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Decorative images</strong> — Images used purely for visual decoration are marked with an empty <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">alt=""</code> attribute so screen readers skip them.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Logo</strong> — The VardWeb logo includes alt text <code style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--cyan);">"VardWeb"</code> on all pages.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">No autoplay</strong> — We do not use any auto-playing audio or video. No content flashes more than three times per second (WCAG 2.3.1).</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Third-party embeds</strong> — Where third-party content is embedded, we include accessible labelling. We cannot guarantee the accessibility of third-party content itself.</span></li>
-      </ul>
-    </div>
-
-    <!-- 08 — Forms & Interactive Elements -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 08 — forms &amp; interactive elements</p>
-      <h3>Forms that work for everyone.</h3>
-      <ul>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Labels</strong> — All form fields include programmatically associated labels via for/id pairing. Toggle groups use fieldset/legend for semantic grouping. No field is identified by placeholder text alone.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Error identification</strong> — Errors are described in text, not only by colour. Error messages identify the specific field affected and describe what is required to resolve the issue.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">No time limits</strong> — No forms or interactive elements impose session time limits that would prevent users with disabilities from completing tasks.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">ARIA on custom controls</strong> — Custom interactive components (mobile accordion, desktop dropdown, FAQ accordion) use WAI-ARIA roles, states, and properties including aria-expanded, aria-controls, aria-haspopup, and role=menu.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Status messages</strong> — Form submission success and error responses are announced to screen readers via aria-live="polite" regions, without requiring visual focus change.</span></li>
-        <li><span><strong style="color: var(--text-1); font-weight: 600;">Touch targets</strong> — All interactive elements on mobile meet a minimum touch target size of 44×44 CSS pixels, consistent with WCAG 2.5.5 (AAA target) and platform guidelines.</span></li>
-      </ul>
-    </div>
-
-    <!-- 09 — Known Limitations -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 09 — known limitations</p>
-      <h3>No known limitations remain as of June 2026.</h3>
-      <p>We believe in transparent disclosure over vague assurances. All previously documented gaps have been fully remediated:</p>
-      <div class="no-share-banner" style="background: rgba(0,229,255,0.05); border-color: rgba(0,229,255,0.2);">
-        <div class="no-share-icon">✅</div>
-        <div>
-          <p><strong>All previously documented limitations have been resolved ahead of the Q3 2026 target:</strong></p>
-          <ul style="margin-top: 10px; padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
-            <li style="font-size: 13.5px; color: var(--text-2);">Desktop dropdown navigation — Fully ARIA-compliant with aria-haspopup, aria-expanded, aria-controls, and role=menu on all pages (June 2026)</li>
-            <li style="font-size: 13.5px; color: var(--text-2);">Reduced motion preference — prefers-reduced-motion CSS and JavaScript RAF guards implemented site-wide (June 2026)</li>
-            <li style="font-size: 13.5px; color: var(--text-2);">Skip navigation link — Added to all 31 pages; visible on first Tab press, moves focus to main content (June 2026)</li>
-            <li style="font-size: 13.5px; color: var(--text-2);">Decorative SVG labelling — All decorative inline SVGs carry aria-hidden="true" across all pages (June 2026)</li>
-            <li style="font-size: 13.5px; color: var(--text-2);">Form status messages — aria-live="polite" regions added; screen readers announce success and error states (June 2026)</li>
-            <li style="font-size: 13.5px; color: var(--text-2);">UI component contrast — Input borders and social button borders raised to meet 3:1 non-text contrast threshold (June 2026)</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- 10 — Assessment Approach -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 10 — assessment approach</p>
-      <h3>How we test for conformance.</h3>
-      <p style="margin-bottom: 4px;">VardWeb assesses accessibility through a combination of automated and manual methods:</p>
-      <div class="sub-section">
-        <h4>Automated Tools</h4>
-        <p>We use the following tools to identify and monitor accessibility issues across our sites: <strong style="color: var(--text-1);">axe-core</strong> (browser extension and CI integration), <strong style="color: var(--text-1);">WAVE Web Accessibility Evaluator</strong>, <strong style="color: var(--text-1);">Google Lighthouse Accessibility Audit</strong>, and <strong style="color: var(--text-1);">Colour Contrast Analyser</strong> for manual contrast verification.</p>
-      </div>
-      <div class="sub-section">
-        <h4>Manual Testing</h4>
-        <p>Automated tools identify approximately 30–40% of all accessibility issues. We supplement automated testing with manual keyboard-only traversal of all pages, screen reader testing using NVDA (Windows) and VoiceOver (macOS/iOS), and review of all interactive component ARIA semantics against WAI-ARIA Authoring Practices Guide 1.2.</p>
-      </div>
-      <div class="sub-section">
-        <h4>Self-Assessment</h4>
-        <p>This statement is based on a self-assessment conducted by VardWeb. We have not engaged an independent third-party accessibility auditor for the current assessment cycle. We intend to commission an external audit in 2027.</p>
-      </div>
-    </div>
-
-    <!-- 11 — Feedback & Contact -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 11 — feedback &amp; contact</p>
-      <h3>Your feedback makes us better.</h3>
-      <p>If you experience an accessibility barrier on vardweb.ca or vardweb.com, we want to know about it. Please be as specific as possible — the page, the element, your assistive technology and browser, and the nature of the barrier. We respond to all accessibility feedback within <strong style="color: var(--text-1); font-weight: 600;">2 business days</strong> and aim to resolve substantiated issues within 30 days.</p>
-      <p style="margin-top: 12px;">When reporting an issue, please include:</p>
-      <ul>
-        <li><span>The URL of the affected page on vardweb.ca or vardweb.com</span></li>
-        <li><span>A description of the barrier and the task you were trying to complete</span></li>
-        <li><span>The assistive technology and browser you are using (if applicable)</span></li>
-        <li><span>Your preferred format for a response</span></li>
-      </ul>
-    </div>
-
-    <!-- 12 — Formal Complaints -->
-    <div class="policy-card reveal-fade" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
-      <p class="sec-tag">// 12 — formal complaints &amp; escalation</p>
-      <h3>If we don't resolve it, here's where to go.</h3>
-      <p style="margin-bottom: 20px;">
-        We take all accessibility complaints seriously. If you have reported an issue to us and are not satisfied with our response, you have the right to escalate to the relevant regulatory body.
-      </p>
-      <p style="margin-bottom: 16px; font-size: 14.5px; color: var(--text-2);">
-        <strong style="color: var(--text-1); font-weight: 600;">Ontario Residents (AODA):</strong> You may file a complaint with the Accessibility Directorate of Ontario at <a href="https://www.ontario.ca/page/accessibility-directorate-ontario" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">ontario.ca/accessibility</a>.
-      </p>
-      <p style="margin-bottom: 16px; font-size: 14.5px; color: var(--text-2);">
-        <strong style="color: var(--text-1); font-weight: 600;">Human Rights Complaints (Canada):</strong> Complaints relating to disability-based discrimination in accessing our services may be made to the <a href="https://www.ohrc.on.ca" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Ontario Human Rights Commission</a> or the <a href="https://www.chrc-ccdp.gc.ca" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Canadian Human Rights Commission</a>.
-      </p>
-      <p style="margin-bottom: 24px; font-size: 14.5px; color: var(--text-2);">
-        <strong style="color: var(--text-1); font-weight: 600;">EU Users (EAA):</strong> From June 2025, VardWeb's digital services are subject to the European Accessibility Act (EAA / EN 301 549) for EU users. Complaints may be directed to the competent authority in your EU member state.
-      </p>
-      <a href="contact.html" class="btn btn-primary" style="font-size: 13px;">Report an Accessibility Issue →</a>
-      <p style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <a href="mailto:support@vardweb.com" style="color: rgba(0,229,255,0.55); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.35);">support@vardweb.com</a>
+    <div class="wf-outer">
+      <p id="wf-gsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.
       </p>
     </div>
-
   </div>
+  <div class="content-2col-visual" id="wf-gsa-box">
+    <img src="images/sem-seo/google-search-ads.png" alt="Example sponsored Google Search Ads result highlighted at the top of a search results page" class="visual-shot" />
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Google Ad Sense (2-column, flipped) ── -->
+<section class="content-2col flip">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-adsense-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Google Ad Sense
+      </h2>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-adsense-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site. Placements are tuned to protect user experience while maximizing yield per page view.
+      </p>
+    </div>
+  </div>
+  <div class="content-2col-visual" id="wf-adsense-box">
+    <img src="images/sem-seo/google-ad-sense.png" alt="Example Google Ad Sense display ad placements shown on a video page and a news article" class="visual-shot" />
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Google Shopping Ads (2-column) ── -->
+<section class="content-2col">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-shopping-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Google Shopping Ads
+      </h2>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-shopping-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Google Shopping Ads showcase your products with image, price, and reviews directly in search results, putting your catalog in front of shoppers who are already comparing and ready to buy.
+      </p>
+    </div>
+  </div>
+  <div class="content-2col-visual" id="wf-shopping-box">
+    <img src="images/sem-seo/google-shopping-ads.png" alt="Example Google Shopping Ads product listings shown at the top of a Google search" class="visual-shot" />
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Local Service Ads (2-column, flipped) ── -->
+<section class="content-2col flip">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-lsa-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Local Service Ads
+      </h2>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-lsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Local Service Ads put your business at the top of local search with a Google Guaranteed badge, connecting you with nearby customers who are ready to book — and you only pay for genuine leads.
+      </p>
+    </div>
+  </div>
+  <div class="content-2col-visual" id="wf-lsa-box">
+    <img src="images/sem-seo/local-service-ads.png" alt="Example Local Service Ads listings with Google Guaranteed badges for local plumbers" class="visual-shot" />
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Amazon Sponsored Products (2-column) ── -->
+<section class="content-2col">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-asp-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Amazon Sponsored Products
+      </h2>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-asp-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace.
+      </p>
+    </div>
+  </div>
+  <div class="content-2col-visual" id="wf-asp-box">
+    <img src="images/sem-seo/amazon-sponsored-products.png" alt="Example Amazon Sponsored Products listings highlighted among search results" class="visual-shot" />
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CTA ── -->
+<section style="padding: 70px 28px 100px; text-align: center;">
+  <p class="sec-tag" style="display: inline-flex;">// ready to launch</p>
+  <h3 style="font-size: 22px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; margin: 10px 0 18px;">Add SEM or SEO to any package.</h3>
+  <p style="color: var(--text-2); max-width: 480px; margin: 0 auto 26px; font-size: 14.5px; line-height: 1.8;">Both services are available as add-ons to any VardWeb web design engagement, or standalone for existing sites.</p>
+  <a href="contact.html" class="btn btn-primary">Get a Quote →</a>
 </section>
 
 <div class="divider"></div>
@@ -810,7 +776,7 @@
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
-        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
+        <a href="sem-seo.html" class="footer-link active">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
         <a href="contact.html" class="footer-link">Hosting Services</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
@@ -822,7 +788,7 @@
         <a href="privacy.html"         class="footer-link">Privacy Policy</a>
         <a href="terms.html"           class="footer-link">Terms of Service</a>
         <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
-        <a href="accessibility.html"   class="footer-link active">Accessibility</a>
+        <a href="accessibility.html"   class="footer-link">Accessibility</a>
         <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
       </div>
     </div>
@@ -840,51 +806,182 @@
 </footer>
 
 <script>
-/* ── Hero entrance reveal ── */
+/* ── Hero entrance reveal (staggers each direct child via .hero-in, see CSS) ── */
 (function () {
-  var el = document.getElementById('legal-hero');
+  var el = document.getElementById('sem-seo-hero');
   if (!el) return;
-  var ease = 'cubic-bezier(0.22,1,0.36,1)';
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(32px)';
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    el.classList.add('hero-in');
+    return;
+  }
   var obs = new IntersectionObserver(function (entries) {
     if (!entries[0].isIntersecting) return;
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-    el.style.opacity = '1';
-    el.style.transform = 'translateY(0)';
+    el.classList.add('hero-in');
     obs.disconnect();
-    el.addEventListener('transitionend', function cleanup(evt) {
-      if (evt.propertyName !== 'transform') return;
-      el.style.opacity = '';
-      el.style.transform = '';
-      el.style.transition = '';
-      el.removeEventListener('transitionend', cleanup);
-    });
   }, { threshold: 0.01 });
   obs.observe(el);
 })();
 
-/* ── Policy sections: individual scroll-reveal ── */
+/* ── Hero animated mesh-gradient background (vanilla port of @paper-design/shaders,
+   the same shader engine the reference React component used — no React/build step
+   needed). Falls back silently to the static CSS gradient already under the canvases
+   if the module fails to load or WebGL is unavailable. ── */
 (function () {
-  var els = document.querySelectorAll('.reveal-fade');
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
-    });
-  }, { threshold: 0.15 });
-  els.forEach(function (el) { io.observe(el); });
+  var layer1 = document.getElementById('hero-shader-bg-1');
+  var layer2 = document.getElementById('hero-shader-bg-2');
+  if (!layer1 || !layer2) return;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  import('https://cdn.jsdelivr.net/npm/@paper-design/shaders@0.0.77/+esm').then(function (mod) {
+    var ShaderMount = mod.ShaderMount;
+    var meshGradientFragmentShader = mod.meshGradientFragmentShader;
+    var getShaderColorFromString = mod.getShaderColorFromString;
+
+    function buildColors(hexList) {
+      var colors = hexList.map(function (hex) { return getShaderColorFromString(hex); });
+      while (colors.length < 10) colors.push([0, 0, 0, 0]);
+      return colors;
+    }
+
+    // Darkened variant of --cyan (same hue, reduced luminance) for a mid-tone
+    // stop between the base and the full-brightness accent, same role the
+    // reference fills with its two-tone cyan (#06b6d4 / #0891b2).
+    function darken(hex, factor) {
+      var n = parseInt(hex.slice(1), 16);
+      var r = Math.round(((n >> 16) & 255) * factor);
+      var g = Math.round(((n >> 8) & 255) * factor);
+      var b = Math.round((n & 255) * factor);
+      return 'rgb(' + r + ',' + g + ',' + b + ')';
+    }
+
+    // Matches the reference MeshGradient's own defaults (distortion 0.8,
+    // swirl 0.1, no grain) — the demo only ever overrode colors/speed.
+    var baseUniforms = {
+      u_fit: 1, u_scale: 1, u_rotation: 0,
+      u_originX: 0.5, u_originY: 0.5,
+      u_offsetX: 0, u_offsetY: 0,
+      u_worldWidth: 0, u_worldHeight: 0,
+      u_distortion: 0.8, u_swirl: 0.1,
+      u_grainMixer: 0, u_grainOverlay: 0
+    };
+
+    new ShaderMount(layer1, meshGradientFragmentShader, Object.assign({}, baseUniforms, {
+      u_colors: buildColors(['#070910', '#00E5FF', darken('#00E5FF', 0.45), '#161b27', '#FF2D78']),
+      u_colorsCount: 5
+    }), undefined, reduceMotion ? 0 : 0.3);
+
+    new ShaderMount(layer2, meshGradientFragmentShader, Object.assign({}, baseUniforms, {
+      u_colors: buildColors(['#070910', '#ffffff', '#00E5FF', '#FF2D78']),
+      u_colorsCount: 4
+    }), undefined, reduceMotion ? 0 : 0.2);
+  }).catch(function (err) {
+    console.warn('Hero shader background unavailable, using static fallback gradient.', err);
+  });
 })();
 
-/* ── Mobile-only touch-hover parity for policy cards ── */
+/* ── Word-fall reveal (GSAP SplitText + ScrollTrigger, ported from the
+   reference AnimatedFall component). Each target's word gets a color-block
+   overlay appended inside itself, sized to word.width*1.1 / word.height*0.9,
+   centered via left:50%/translateX(-50%) — matching the reference's
+   `gsap.set` + colorBox construction exactly. The block falls away on
+   scroll-into-view and reassembles on scroll-back (toggleActions "play none
+   none reverse"), same as the reference; only the color values are swapped
+   for VardWeb's palette. ── */
 (function () {
-  if (!window.matchMedia('(hover: none)').matches) return;
-  var targets = [].slice.call(document.querySelectorAll('.policy-card'));
-  var obs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+  if (typeof gsap === 'undefined') return;
+  if (typeof SplitText === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  var targets = [
+    { el: document.getElementById('wf-heading'),          color: 'var(--cyan)' },
+    { el: document.getElementById('wf-sub'),               color: 'var(--pink)', delay: 0.5 },
+    { el: document.getElementById('wf-gsa-heading'),       color: 'var(--cyan)' },
+    { el: document.getElementById('wf-gsa-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-adsense-heading'),   color: 'var(--pink)' },
+    { el: document.getElementById('wf-adsense-para'),      color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-shopping-heading'),  color: 'var(--cyan)' },
+    { el: document.getElementById('wf-shopping-para'),     color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-lsa-heading'),       color: 'var(--pink)' },
+    { el: document.getElementById('wf-lsa-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-asp-heading'),       color: 'var(--cyan)' },
+    { el: document.getElementById('wf-asp-para'),          color: '#C8D4E8', delay: 0.2 }
+  ];
+
+  function run() {
+    targets.forEach(function (t) {
+      if (!t.el) return;
+      var outer = t.el.closest('.wf-outer');
+      if (!outer) return;
+
+      var split = new SplitText(t.el, { type: 'words', wordsClass: 'wf-word' });
+      var colorBoxes = split.words.map(function (word) {
+        var rect = word.getBoundingClientRect();
+        var block = document.createElement('div');
+        block.className = 'wf-block';
+        block.style.width = (rect.width * 1.1) + 'px';
+        block.style.height = (rect.height * 0.9) + 'px';
+        block.style.background = t.color;
+        word.appendChild(block);
+        return block;
+      });
+
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: outer,
+          start: 'top 80%',
+          end: 'bottom 30%',
+          toggleActions: 'play none none reverse'
+        },
+        delay: t.delay || 0
+      }).to(colorBoxes, {
+        y: function () { return gsap.utils.random(1200, 1600); },
+        x: function () { return gsap.utils.random(-150, 150); },
+        rotation: function () { return gsap.utils.random(-360, 360); },
+        duration: 1,
+        ease: 'power2.in',
+        stagger: 0.02
+      });
     });
-  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-  targets.forEach(function (el) { obs.observe(el); });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(run);
+  } else {
+    run();
+  }
+
+  /* ── Whole-box drop-frame reveal for the 5 image boxes (no text to
+     split, so a single block covers the box and falls away, same
+     fall mechanic/timing as the word blocks above). ── */
+  var boxTargets = [
+    { id: 'wf-gsa-box',      color: 'var(--cyan)' },
+    { id: 'wf-adsense-box',  color: 'var(--pink)' },
+    { id: 'wf-shopping-box', color: 'var(--gold)' },
+    { id: 'wf-lsa-box',      color: 'var(--cyan)' },
+    { id: 'wf-asp-box',      color: 'var(--pink)' }
+  ];
+  boxTargets.forEach(function (t) {
+    var box = document.getElementById(t.id);
+    var block = box && box.querySelector('.wf-box-block');
+    if (!block) return;
+    block.style.background = t.color;
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: box,
+        start: 'top 80%',
+        end: 'bottom 30%',
+        toggleActions: 'play none none reverse'
+      }
+    }).to(block, {
+      y: function () { return gsap.utils.random(1200, 1600); },
+      x: function () { return gsap.utils.random(-150, 150); },
+      rotation: function () { return gsap.utils.random(-360, 360); },
+      duration: 1,
+      ease: 'power2.in'
+    });
+  });
 })();
 </script>
 </body>

@@ -25,6 +25,11 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
 
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
+
     body {
       background: var(--base);
       color: var(--text-1);
@@ -186,7 +191,8 @@
       padding: 36px 40px;
       transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
-    .policy-card:hover {
+    .policy-card:hover,
+    .policy-card.is-scroll-active {
       border-color: rgba(0,229,255,0.18);
       box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.04);
     }
@@ -226,6 +232,14 @@
       color: var(--cyan); margin-bottom: 8px;
       letter-spacing: 0.01em;
     }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     /* Gold notice banner */
     .no-share-banner {
@@ -439,10 +453,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -457,11 +473,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -488,8 +504,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -513,11 +530,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -549,7 +566,7 @@
   position: relative; overflow: hidden;
 ">
   <div style="position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 44px 44px;"></div>
-  <div style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
+  <div id="legal-hero" style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
     <p class="sec-tag" style="margin-bottom: 20px;">// legal &amp; transparency</p>
     <h1 style="font-size: clamp(36px, 6vw, 68px); font-weight: 900; line-height: 1.04; color: var(--text-1); margin-bottom: 22px;">
       WCAG<br><span class="grad-cyan-pink">Compliance Report</span>
@@ -571,7 +588,7 @@
   <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
 
     <!-- Legend -->
-    <div class="policy-card" style="padding: 24px 32px;">
+    <div class="policy-card reveal-fade" style="padding: 24px 32px;">
       <p style="font-size: 13px; color: var(--text-2); margin-bottom: 14px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; text-transform: uppercase; font-size: 10.5px; font-weight: 600; color: rgba(0,229,255,0.5);">// status legend</p>
       <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
         <span class="status-pass">Pass</span> <span style="font-size: 12.5px; color: var(--text-2); margin-right: 8px;">Fully meets the criterion</span>
@@ -582,7 +599,7 @@
     </div>
 
     <!-- 01 — Scope -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 01 — scope of this report</p>
       <h3>What this report covers.</h3>
       <p><strong style="color: var(--text-1); font-weight: 600;">Covered URLs:</strong> All pages on <a href="https://vardweb.ca" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.ca</a> and <a href="https://vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.com</a>, including the main landing page, About, FAQ, Blog, Contact, Our Work, and all legal pages.</p>
@@ -593,7 +610,7 @@
     </div>
 
     <!-- 02 — Conformance Claim -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 02 — conformance claim</p>
       <h3>Our formal accessibility declaration.</h3>
       <div class="no-share-banner" style="margin-top: 16px; margin-bottom: 20px;">
@@ -606,7 +623,7 @@
     </div>
 
     <!-- 03 — Principle 1: Perceivable -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 03 — principle 1 — perceivable</p>
       <h3>Information must be presentable to users in ways they can perceive.</h3>
 
@@ -650,7 +667,7 @@
     </div>
 
     <!-- 04 — Principle 2: Operable -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 04 — principle 2 — operable</p>
       <h3>Interface components must be operable by all users.</h3>
 
@@ -693,7 +710,7 @@
     </div>
 
     <!-- 05 — Principle 3: Understandable -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 05 — principle 3 — understandable</p>
       <h3>Information and operation of the interface must be understandable.</h3>
 
@@ -721,7 +738,7 @@
     </div>
 
     <!-- 06 — Principle 4: Robust -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 06 — principle 4 — robust</p>
       <h3>Content must be robust enough for a wide variety of user agents.</h3>
 
@@ -734,7 +751,7 @@
     </div>
 
     <!-- 07 — Level AAA (Partial) -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 07 — level aaa (voluntary partial)</p>
       <h3>AAA criteria where we go beyond the standard.</h3>
       <p style="margin-bottom: 16px;">We do not claim AAA conformance. However, several AAA success criteria are met voluntarily in the current implementation:</p>
@@ -747,7 +764,7 @@
     </div>
 
     <!-- 08 — Known Non-Conformances -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 08 — known exceptions &amp; non-conformances</p>
       <h3>All previously documented gaps have been resolved.</h3>
       <div class="no-share-banner" style="margin-top: 0; background: rgba(0,229,255,0.05); border-color: rgba(0,229,255,0.2);">
@@ -769,7 +786,7 @@
     </div>
 
     <!-- 09 — Testing Methodology -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 09 — testing methodology</p>
       <h3>How this report was produced.</h3>
       <div class="sub-section">
@@ -787,7 +804,7 @@
     </div>
 
     <!-- 10 — AT Matrix -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 10 — assistive technology compatibility matrix</p>
       <h3>Tested combinations and results.</h3>
       <div style="overflow-x: auto;">
@@ -856,7 +873,7 @@
     </div>
 
     <!-- 11 — Remediation Schedule -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 11 — remediation &amp; update schedule</p>
       <h3>Our commitment to continuous improvement.</h3>
       <div class="no-share-banner" style="margin-bottom: 20px;">
@@ -880,7 +897,7 @@
     </div>
 
     <!-- 12 — Contact -->
-    <div class="policy-card" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
+    <div class="policy-card reveal-fade" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
       <p class="sec-tag">// 12 — contact &amp; formal feedback</p>
       <h3>Dispute a finding. Flag a gap. We respond.</h3>
       <p style="margin-bottom: 20px;">
@@ -921,8 +938,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -935,11 +953,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -963,5 +987,53 @@
   </div>
 </footer>
 
+<script>
+/* ── Hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('legal-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Policy sections: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
+/* ── Mobile-only touch-hover parity for policy cards ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var targets = [].slice.call(document.querySelectorAll('.policy-card'));
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+  targets.forEach(function (el) { obs.observe(el); });
+})();
+</script>
 </body>
 </html>

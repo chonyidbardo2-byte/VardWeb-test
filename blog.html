@@ -24,6 +24,11 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body {
       background: var(--base);
       color: var(--text-1);
@@ -147,7 +152,8 @@
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
                   box-shadow 0.25s ease, border-color 0.25s ease;
     }
-    .post-card:hover {
+    .post-card:hover,
+    .post-card.is-scroll-active {
       transform: translateY(-6px);
       border-color: rgba(0,229,255,0.18);
       box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 24px rgba(0,229,255,0.04);
@@ -165,7 +171,8 @@
       background-size: cover; background-position: center;
       transition: transform 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
     }
-    .post-card:hover .post-thumb-inner { transform: scale(1.04); }
+    .post-card:hover .post-thumb-inner,
+    .post-card.is-scroll-active .post-thumb-inner { transform: scale(1.04); }
 
     .post-body { padding: 24px 28px 28px; }
 
@@ -257,6 +264,8 @@
     @media (max-width: 600px) {
       .post-body { padding: 18px 20px 22px; }
       .post-title { font-size: 17px; }
+      .post-meta { gap: 8px; font-size: 10.5px; }
+      .post-meta > span { white-space: nowrap; }
     }
       .btn-ghost {
       background: transparent;
@@ -386,10 +395,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -406,11 +417,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -442,8 +453,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -467,11 +479,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -494,7 +506,7 @@
 <main id="main-content" tabindex="-1">
 
 <!-- ── HERO ── -->
-<section style="
+<section id="blog-hero" style="
   padding: 160px 28px 88px;
   text-align: center;
   background:
@@ -529,7 +541,7 @@
   <div style="max-width: 1140px; margin: 0 auto;">
 
     <!-- Category Filters -->
-    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 52px;">
+    <div id="blog-filter-row" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 52px;">
       <button class="filter-btn active" data-filter="all">All Posts</button>
       <button class="filter-btn" data-filter="business">Business</button>
       <button class="filter-btn" data-filter="design">Design</button>
@@ -538,7 +550,7 @@
     </div>
 
     <!-- ── FEATURED POST ── -->
-    <a href="blog-professional-website.html" class="post-card post-card-featured" data-category="business" style="margin-bottom: 32px; display: block;">
+    <a href="blog-professional-website.html" id="blog-featured" class="post-card post-card-featured" data-category="business" style="margin-bottom: 32px; display: block;">
       <div class="post-thumb">
         <div class="post-thumb-inner" style="
           background:
@@ -584,7 +596,7 @@
     </a>
 
     <!-- ── POST GRID ── -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+    <div id="blog-post-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
 
       <!-- Post 2 -->
       <a href="blog-design-principles.html" class="post-card" data-category="design">
@@ -806,7 +818,7 @@
     </div><!-- /post grid -->
 
     <!-- Newsletter strip -->
-    <div style="
+    <div id="blog-newsletter" style="
       margin-top: 72px;
       background: var(--surface);
       border: 1px solid rgba(0,229,255,0.1);
@@ -861,8 +873,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -875,11 +888,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -915,6 +934,79 @@
       });
     });
   });
+</script>
+
+<script>
+/* ── Single-element reveals: hero, filter row, featured post, newsletter ── */
+(function () {
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  function revealOne(el, threshold) {
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(32px)';
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      obs.disconnect();
+      el.addEventListener('transitionend', function cleanup(evt) {
+        if (evt.propertyName !== 'transform') return;
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.transition = '';
+        el.removeEventListener('transitionend', cleanup);
+      });
+    }, { threshold: threshold || 0.15 });
+    obs.observe(el);
+  }
+  revealOne(document.getElementById('blog-hero'), 0.01);
+  revealOne(document.getElementById('blog-filter-row'));
+  revealOne(document.getElementById('blog-featured'));
+  revealOne(document.getElementById('blog-newsletter'));
+})();
+
+/* ── Post grid: stagger reveal ── */
+(function () {
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  var items = [].slice.call(document.querySelectorAll('.post-card'));
+  var container = document.getElementById('blog-post-grid');
+  items.forEach(function (el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(32px)';
+  });
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    items.forEach(function (el, i) {
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+      el.style.transitionDelay = (i * 120) + 'ms';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      el.addEventListener('transitionend', function cleanup(evt) {
+        if (evt.propertyName !== 'transform') return;
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.transition = '';
+        el.style.transitionDelay = '';
+        el.removeEventListener('transitionend', cleanup);
+      });
+    });
+    obs.disconnect();
+  }, { threshold: 0.1 });
+  if (container) obs.observe(container);
+})();
+
+/* ── Mobile-only touch-hover parity for post cards (excludes disabled "coming soon" card) ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var targets = [].slice.call(document.querySelectorAll('.post-card:not([aria-label="Coming soon"])'));
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+  targets.forEach(function (el) { obs.observe(el); });
+})();
 </script>
 
 </body>

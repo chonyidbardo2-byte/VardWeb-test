@@ -25,6 +25,11 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
 
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
+
     body {
       background: var(--base);
       color: var(--text-1);
@@ -186,7 +191,8 @@
       padding: 36px 40px;
       transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
-    .policy-card:hover {
+    .policy-card:hover,
+    .policy-card.is-scroll-active {
       border-color: rgba(0,229,255,0.18);
       box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.04);
     }
@@ -234,6 +240,14 @@
       color: var(--cyan); margin-bottom: 8px;
       letter-spacing: 0.01em;
     }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     /* Rights chips */
     .rights-grid {
@@ -466,10 +480,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -484,11 +500,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -515,8 +531,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -540,11 +557,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -577,7 +594,7 @@
   position: relative; overflow: hidden;
 ">
   <div style="position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 44px 44px;"></div>
-  <div style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
+  <div id="legal-hero" style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
     <p class="sec-tag" style="margin-bottom: 20px;">// legal &amp; transparency</p>
     <h1 style="font-size: clamp(36px, 6vw, 68px); font-weight: 900; line-height: 1.04; color: var(--text-1); margin-bottom: 22px;">
       Cookie<br><span class="grad-cyan-pink">Policy</span>
@@ -599,7 +616,7 @@
   <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
 
     <!-- 01 — What Are Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 01 — what are cookies</p>
       <h3>Small files. Big transparency.</h3>
       <p>Cookies are small text files that a website places on your device — computer, phone, or tablet — when you visit. They are stored by your browser and sent back to the originating website on subsequent visits. Cookies allow websites to remember information about you, such as your preferences or authentication state.</p>
@@ -614,7 +631,7 @@
     </div>
 
     <!-- 02 — Why We Use Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 02 — why we use cookies</p>
       <h3>Every cookie has a reason. Here's each one.</h3>
       <p style="margin-bottom: 4px;">We use cookies for a narrow set of legitimate purposes. We do not use cookies to build advertising profiles, fingerprint devices, or sell data. Our cookie usage falls into four categories, only two of which require your consent:</p>
@@ -627,7 +644,7 @@
     </div>
 
     <!-- 03 — Strictly Necessary Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 03 — strictly necessary cookies</p>
       <h3>The cookies the site cannot function without.</h3>
       <p>These cookies are essential for you to browse the site and use its features — including accessing secure areas of the site. They do not require your consent under the Canadian <em>Personal Information Protection and Electronic Documents Act</em> (PIPEDA), the EU ePrivacy Directive, or the UK PECR, as they are required for the delivery of a service you have explicitly requested.</p>
@@ -672,7 +689,7 @@
     </div>
 
     <!-- 04 — Functional Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 04 — functional cookies</p>
       <h3>Remembering your preferences. Nothing more.</h3>
       <p>Functional cookies allow the site to remember choices you make — such as saving your contact form details for convenience — so you don't have to re-enter them on every visit. These cookies do not track your activity across other websites and do not collect any personal data beyond what you explicitly provide.</p>
@@ -702,7 +719,7 @@
     </div>
 
     <!-- 05 — Analytics Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 05 — analytics cookies</p>
       <h3>Understanding traffic. Never tracking people.</h3>
       <p style="margin-bottom: 4px;">We use analytics cookies to understand aggregate patterns in how visitors interact with vardweb.ca and vardweb.com. This data is anonymized and aggregated — it tells us which pages are popular, not who you are. We use this insight to improve site performance and content quality.</p>
@@ -754,7 +771,7 @@
     </div>
 
     <!-- 06 — Marketing Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 06 — marketing &amp; advertising cookies</p>
       <h3>We don't use them. Full stop.</h3>
       <div class="no-share-banner" style="margin-top: 16px;">
@@ -766,7 +783,7 @@
     </div>
 
     <!-- 07 — Third-Party Cookies -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 07 — third-party cookies</p>
       <h3>Vendors who may set cookies. Named individually.</h3>
       <p style="margin-bottom: 4px;">Some functionality on our sites is provided by third-party services. These services may set their own cookies, subject to their own privacy policies. We have carefully selected vendors with strong privacy practices. Below is a complete list.</p>
@@ -791,7 +808,7 @@
     </div>
 
     <!-- 08 — Cookie Duration Summary -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 08 — cookie duration</p>
       <h3>How long cookies last on your device.</h3>
       <p>The table below summarizes all cookies by maximum duration. You may clear any or all cookies at any time through your browser settings.</p>
@@ -851,7 +868,7 @@
     </div>
 
     <!-- 09 — Managing Preferences -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 09 — managing your preferences</p>
       <h3>You are always in control.</h3>
       <p style="margin-bottom: 4px;">You have the right to accept, reject, or withdraw consent for non-essential cookies at any time. There are several ways to exercise this right:</p>
@@ -864,7 +881,7 @@
     </div>
 
     <!-- 10 — Browser Controls -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 10 — browser controls</p>
       <h3>How to manage cookies in your browser.</h3>
       <p style="margin-bottom: 4px;">All major browsers allow you to view, delete, and block cookies. Instructions for the most common browsers:</p>
@@ -891,7 +908,7 @@
     </div>
 
     <!-- 11 — Do Not Track & GPC -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 11 — do not track &amp; global privacy control</p>
       <h3>We respect your browser's privacy signals.</h3>
       <div class="sub-section">
@@ -905,7 +922,7 @@
     </div>
 
     <!-- 12 — Your Rights -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 12 — your rights</p>
       <h3>Rights that apply regardless of where you are.</h3>
       <p style="margin-bottom: 4px;">Depending on your jurisdiction, you have specific rights regarding cookies and the data they generate. We honour these rights without friction and without requiring you to justify your request.</p>
@@ -931,7 +948,7 @@
     </div>
 
     <!-- 13 — Cross-Border Transfers -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 13 — cross-border data transfers</p>
       <h3>Where your cookie data is processed.</h3>
       <p>VardWeb is a Canadian business. However, some of our third-party service providers process data in other jurisdictions. Specifically:</p>
@@ -944,7 +961,7 @@
     </div>
 
     <!-- 14 — Children's Privacy -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 14 — children's privacy</p>
       <h3>Our sites are not directed at children.</h3>
       <p>VardWeb's websites — vardweb.ca and vardweb.com — are directed at businesses and adult professionals. We do not knowingly set cookies on the devices of children under the age of 13, nor do we knowingly collect personal information from children under 13 through our cookie mechanisms or otherwise.</p>
@@ -952,7 +969,7 @@
     </div>
 
     <!-- 15 — Changes to This Policy -->
-    <div class="policy-card">
+    <div class="policy-card reveal-fade">
       <p class="sec-tag">// 15 — changes to this policy</p>
       <h3>We'll tell you when things change.</h3>
       <p>We review this Cookie Policy periodically and update it as our practices evolve or as required by law. The "Last updated" date at the top of this page reflects the date of the most recent revision.</p>
@@ -960,7 +977,7 @@
     </div>
 
     <!-- 16 — Contact -->
-    <div class="policy-card" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
+    <div class="policy-card reveal-fade" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
       <p class="sec-tag">// 16 — contact &amp; consent withdrawal</p>
       <h3>Questions? We answer them.</h3>
       <p style="margin-bottom: 20px;">
@@ -998,8 +1015,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -1012,11 +1030,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -1040,5 +1064,53 @@
   </div>
 </footer>
 
+<script>
+/* ── Hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('legal-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Policy sections: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
+/* ── Mobile-only touch-hover parity for policy cards ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var targets = [].slice.call(document.querySelectorAll('.policy-card'));
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+  targets.forEach(function (el) { obs.observe(el); });
+})();
+</script>
 </body>
 </html>

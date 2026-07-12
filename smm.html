@@ -1,13 +1,35 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy — VardWeb</title>
+  <title>Social Media Marketing — VardWeb</title>
+  <meta name="description" content="Social Media Marketing by VardWeb — build real engagement, real reach, and real ROI across every platform your customers scroll." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/gsap.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'vv-cyan':    '#00E5FF',
+            'vv-pink':    '#FF2D78',
+            'vv-gold':    '#FFD700',
+            'vv-base':    '#070910',
+            'vv-surface': '#0f1219',
+            'vv-raised':  '#161b27',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'Consolas', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
 
   <style>
     :root {
@@ -20,16 +42,12 @@
       --border:  rgba(0,229,255,0.1);
       --text-1:  #eef0f8;
       --text-2:  rgba(200,212,232,0.62);
+      --bronze:  #CD7F32;
+      --silver:  #A8A9AD;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
-
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--base); }
-    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
-
     body {
       background: var(--base);
       color: var(--text-1);
@@ -38,7 +56,7 @@
       line-height: 1.6;
     }
 
-    /* Grain overlay */
+    /* ── Grain overlay ── */
     body::after {
       content: '';
       position: fixed; inset: 0;
@@ -57,7 +75,7 @@
       background-clip: text;
     }
 
-    /* Nav */
+    /* ── Nav ── */
     .nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       background: rgba(7,9,16,0.78);
@@ -76,7 +94,8 @@
     .nav-link {
       font-size: 13.5px; font-weight: 500;
       color: rgba(200,212,232,0.58);
-      text-decoration: none; position: relative; padding-bottom: 2px;
+      text-decoration: none;
+      position: relative; padding-bottom: 2px;
       transition: color 0.2s ease;
     }
     .nav-link::after {
@@ -84,7 +103,7 @@
       position: absolute; bottom: 0; left: 0;
       width: 0; height: 1px;
       background: var(--cyan);
-      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transition: width 0.25s cubic-bezier(0.22,1,0.36,1);
     }
     .nav-link:hover { color: #fff; }
     .nav-link:hover::after { width: 100%; }
@@ -106,7 +125,7 @@
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(0,229,255,0.12);
       border-radius: 14px; padding: 14px 8px 8px;
-      min-width: 152px;
+      min-width: 180px;
       opacity: 0; pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
       z-index: 200;
@@ -128,6 +147,7 @@
     }
     .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+    .dropdown-item.active { color: var(--cyan); }
 
     .logo-nav-wrap {
       display: inline-flex;
@@ -136,15 +156,15 @@
       padding: 4px 10px;
     }
 
-    /* Buttons */
+    /* ── Buttons ── */
     .btn {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 600; font-size: 13px;
       display: inline-flex; align-items: center; gap: 8px;
       text-decoration: none; border: none; cursor: pointer;
       padding: 9px 22px; border-radius: 8px;
-      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
-                  box-shadow 0.2s ease, background 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.22,1,0.36,1),
+                  box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
     }
     .btn:active { transform: translateY(0) !important; }
     .btn:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 2px; }
@@ -158,8 +178,19 @@
       box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
       transform: translateY(-2px);
     }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
 
-    /* Section tag */
+    /* ── Section tag ── */
     .sec-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px; font-weight: 600;
@@ -168,119 +199,12 @@
       margin-bottom: 16px;
     }
 
-    /* Divider */
+    /* ── Divider ── */
     .divider {
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(0,229,255,0.18), transparent);
       margin: 0 auto; max-width: 1200px;
     }
-
-    /* Policy card */
-    .policy-card {
-      background: var(--surface);
-      border: 1px solid rgba(0,229,255,0.08);
-      border-radius: 18px;
-      padding: 36px 40px;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .policy-card:hover,
-    .policy-card.is-scroll-active {
-      border-color: rgba(0,229,255,0.18);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.04);
-    }
-    .policy-card h3 {
-      font-size: 18px; font-weight: 700; color: var(--text-1);
-      margin-bottom: 14px; letter-spacing: -0.02em;
-    }
-    .policy-card p, .policy-card li {
-      font-size: 14.5px; line-height: 1.85; color: var(--text-2);
-    }
-    .policy-card ul {
-      list-style: none; padding: 0; margin-top: 12px;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .policy-card li {
-      display: flex; gap: 12px; align-items: flex-start;
-    }
-    .policy-card li::before {
-      content: '—';
-      color: var(--cyan);
-      opacity: 0.6;
-      flex-shrink: 0;
-      margin-top: 1px;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .policy-card .sub-label {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: rgba(200,212,232,0.38);
-      margin-bottom: 8px;
-    }
-    .policy-card .sub-section {
-      padding: 18px 20px;
-      background: rgba(0,229,255,0.03);
-      border: 1px solid rgba(0,229,255,0.07);
-      border-radius: 12px;
-      margin-top: 16px;
-    }
-    .policy-card .sub-section + .sub-section { margin-top: 10px; }
-    .policy-card .sub-section h4 {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px; font-weight: 700;
-      color: var(--cyan); margin-bottom: 8px;
-      letter-spacing: 0.01em;
-    }
-
-    /* Scroll-triggered entrance reveal */
-    .reveal-fade {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
-    }
-    .reveal-fade.in { opacity: 1; transform: translateY(0); }
-
-    /* Rights chips */
-    .rights-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
-    }
-    @media (max-width: 600px) { .rights-grid { grid-template-columns: 1fr; } }
-    .rights-chip {
-      display: flex; align-items: center; gap: 12px;
-      background: rgba(0,229,255,0.04);
-      border: 1px solid rgba(0,229,255,0.1);
-      border-radius: 12px; padding: 14px 18px;
-    }
-    .rights-chip-icon {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px;
-      background: rgba(0,229,255,0.08);
-      border: 1px solid rgba(0,229,255,0.12);
-    }
-    .rights-chip-text {
-      font-size: 13.5px; color: var(--text-2); line-height: 1.45;
-    }
-
-    /* Highlight pill (no-share banner) */
-    .no-share-banner {
-      display: flex; align-items: center; gap: 14px;
-      background: rgba(255,215,0,0.05);
-      border: 1px solid rgba(255,215,0,0.15);
-      border-radius: 14px; padding: 20px 24px;
-      margin-bottom: 0;
-    }
-    .no-share-icon {
-      font-size: 28px; flex-shrink: 0;
-    }
-    .no-share-banner p {
-      font-size: 14.5px; line-height: 1.7; color: var(--text-2);
-    }
-    .no-share-banner strong { color: #FFD700; font-weight: 600; }
 
     /* ── Footer ── */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -305,47 +229,32 @@
       30%     { transform: scale(1); }
     }
     .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
-    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: background 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1), color 0.4s cubic-bezier(0.16,1,0.3,1); }
-    @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
-    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
-    @media (max-width: 560px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .policy-card { padding: 28px 24px; }
-    }
-      .btn-ghost {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(200,212,232,0.72);
-    }
-    .btn-ghost:hover {
-      border-color: rgba(255,255,255,0.3);
-      color: #fff;
-      background: rgba(255,255,255,0.05);
-      transform: translateY(-2px);
-    }
+    /* ── Responsive footer ── */
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; } }
+    @media (max-width: 560px)  { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
+    @media (max-width: 768px) { .footer-bottom-bar { flex-direction: column; align-items: center; text-align: center; gap: 12px; } .footer-credit { order: -1; } }
 
     /* ── Mobile Nav ── */
     .nav-hamburger { display: none; }
     .nav-mobile-menu { display: none; }
     .nav-right { display: flex; align-items: center; gap: 10px; }
     @media (max-width: 1024px) {
-      .nav-inner { position: relative; }
       .nav-links { display: none; }
       .nav-right .btn { display: none; }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
-      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
-      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
-      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); -webkit-transform: translateY(-8px) rotate(-45deg); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
       .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
       .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
       @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
       .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
       .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
-      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.22,1,0.36,1); transform-origin: bottom; }
       .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
       .mob-link:hover::before { transform: scaleY(1); }
       .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
@@ -355,10 +264,10 @@
       .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
       .mob-sub:hover { color: rgba(0,229,255,0.9); }
       .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
-      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.22,1,0.36,1); opacity: 0.5; flex-shrink: 0; }
       .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
       .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
-      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.22,1,0.36,1); }
       .mob-accordion-panel > div { overflow: hidden; }
       .mob-accordion-panel.open { grid-template-rows: 1fr; }
       .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
@@ -368,34 +277,18 @@
       .mob-cta-primary::before { display: none; }
     }
 
-    /* ── Skip link (WCAG 2.4.1) ── */
+    /* ── Skip link ── */
     .skip-link {
-      position: absolute;
-      top: -100px;
-      left: 20px;
-      z-index: 9000;
-      padding: 10px 20px;
-      background: #070910;
-      color: #00E5FF;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      border: 2px solid #00E5FF;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 0 20px rgba(0,229,255,0.3);
+      position: absolute; top: -100px; left: 20px; z-index: 9000;
+      padding: 10px 20px; background: #070910; color: #00E5FF;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      letter-spacing: 0.04em; border: 2px solid #00E5FF; border-radius: 8px;
+      text-decoration: none; box-shadow: 0 0 20px rgba(0,229,255,0.3);
       transition: top 0.15s ease;
     }
     .skip-link:focus { top: 20px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
 
-    /* ── Screen-reader-only utility (WCAG 1.3.1) ── */
-    .sr-only {
-      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-      overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
-    }
-
-    /* ── WCAG 2.2.2 — Respect reduced-motion preference ── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -404,12 +297,111 @@
         scroll-behavior: auto !important;
       }
     }
+
+    ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
+
+    /* ══════════════════════════════════════
+       PAGE-SPECIFIC STYLES — SMM Hero
+    ══════════════════════════════════════ */
+
+    .smm-hero {
+      position: relative;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 140px 28px 96px;
+      background: var(--base);
+    }
+
+    /* Background mechanic matches the source component exactly: a perspective-tilted
+       wrapper holding 3 independently-spinning square image layers, each a single
+       rigid unit — same sizes, opacities, fixed initial rotation, and spin
+       direction/duration as the original, using the exact image URLs from the
+       source (no custom icon design). */
+    .smm-orbit-wrap {
+      position: absolute; inset: 0; z-index: 0;
+      pointer-events: none; overflow: hidden;
+    }
+    .smm-orbit-inner {
+      position: absolute; inset: 0;
+      transform: perspective(1200px) rotateX(15deg);
+      transform-origin: center bottom;
+    }
+
+    /* Outer spin wrapper — one per layer, matches the source's
+       `absolute inset-0 animate-spin-slow(-reverse)` div exactly. */
+    .smm-layer { position: absolute; inset: 0; }
+    .smm-layer-back  { z-index: 0; animation: smm-spin-slow 60s linear infinite; }
+    .smm-layer-mid   { z-index: 1; animation: smm-spin-slow-rev 60s linear infinite; }
+    .smm-layer-front { z-index: 2; animation: smm-spin-slow 60s linear infinite; }
+    @keyframes smm-spin-slow     { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes smm-spin-slow-rev { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+
+    /* Inner square — static size/position/baked rotation, matches the
+       source's per-layer image div (`top-1/2 left-1/2` + fixed rotate). */
+    .smm-layer-inner { position: absolute; top: 50%; left: 50%; }
+    .smm-layer-back  .smm-layer-inner { width: 2000px; height: 2000px; transform: translate(-50%,-50%) rotate(279.05deg); }
+    .smm-layer-mid   .smm-layer-inner { width: 1000px; height: 1000px; transform: translate(-50%,-50%) rotate(304.42deg); }
+    .smm-layer-front .smm-layer-inner { width: 800px;  height: 800px;  transform: translate(-50%,-50%) rotate(48.33deg); }
+    .smm-layer-back  .smm-layer-inner img { opacity: 0.5; }
+    .smm-layer-mid   .smm-layer-inner img { opacity: 0.6; }
+    .smm-layer-front .smm-layer-inner img { opacity: 0.8; }
+    .smm-layer-inner img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+    /* Patched-in replacement icons — sit inside the same rotating
+       .smm-layer-inner as the composite image, so they inherit its
+       spin + base rotation and stay locked to the same ring position. */
+    .smm-icon-patch {
+      position: absolute;
+      border-radius: 22%;
+      overflow: hidden;
+      box-shadow: 0 6px 16px -4px rgba(0,0,0,0.45);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .smm-icon-patch img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .smm-layer-back .smm-icon-patch img,
+    .smm-layer-mid .smm-icon-patch img,
+    .smm-layer-front .smm-icon-patch img { opacity: 1; }
+    /* Match each ring's native softness — front's icons are crisp in the
+       source art, mid's are a touch softer; blur on the patch (not the img)
+       so it doesn't clash with the badge color-swap filters below. */
+    .smm-layer-mid .smm-icon-patch { filter: blur(0.6px); }
+    .smm-badge-stripe { background: #635BFF; }
+    .smm-badge-stripe img { width: 44%; height: 44%; object-fit: contain; filter: brightness(0) invert(1); }
+    .smm-badge-ms { background: #ffffff; }
+    .smm-badge-ms img { width: 58%; height: 58%; object-fit: contain; }
+
+    /* Opaque cover-up for the old icon underneath a resized patch — sized to
+       fully hide the old artwork's diamond-rotated footprint regardless of
+       its own rotation, so the visible logo on top can be a smaller, uniform
+       size matching the rest of the ring. */
+    .smm-icon-mask { position: absolute; border-radius: 22%; background: #070910; }
+
+    .smm-hero-gradient {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: linear-gradient(to top, var(--base) 10%, rgba(7,9,16,0.8) 40%, transparent 100%);
+    }
+
+    /* ── Scroll-fade reveal (stub section) ── */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.is-visible { opacity: 1; transform: translateY(0); }
   </style>
+
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
   <script>
-    /* ── Nav dropdown: sync aria-expanded on focus/blur (WCAG 4.1.2) ── */
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
         var trigger = dd.querySelector('.nav-dropdown-trigger');
@@ -425,10 +417,11 @@
     });
   </script>
 </head>
+
 <body>
 <a class="skip-link" href="#main-content">Skip to main content</a>
 
-<!-- ── NAV ── -->
+<!-- ── Nav ── -->
 <nav class="nav">
   <div class="nav-inner">
     <a href="index.html" aria-label="VardWeb Home">
@@ -436,6 +429,7 @@
         <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
       </div>
     </a>
+
     <div class="nav-links">
       <div class="nav-dropdown">
         <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
@@ -451,10 +445,12 @@
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
-      <a href="faq.html"            class="nav-link">FAQ</a>
-      <a href="about.html"          class="nav-link">About</a>
+      <a href="faq.html"      class="nav-link">FAQ</a>
+      <a href="blog.html"     class="nav-link">Blog</a>
+      <a href="our-work.html" class="nav-link">Our Work</a>
+      <a href="about.html"    class="nav-link">About</a>
       <div class="nav-dropdown">
-        <a href="services.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+        <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
@@ -470,8 +466,9 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
-      <a href="contact.html"        class="nav-link">Contact</a>
+      <a href="contact.html"  class="nav-link">Contact</a>
     </div>
+
     <div class="nav-right">
       <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
         <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;">
@@ -488,6 +485,7 @@
       </button>
     </div>
   </div>
+
   <div class="nav-mobile-menu">
     <div class="mob-section-label">Navigate</div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
@@ -519,27 +517,27 @@
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
-    <a href="services.html" class="mob-link mob-sub">All Services</a>
+    <a href="services.html"   class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
-    <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
-    <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
-    <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
-    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
-    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
-    <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
+    <a href="contact.html"    class="mob-link mob-sub">E-Commerce</a>
+    <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
+    <a href="contact.html"    class="mob-link mob-sub">App Development</a>
+    <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
+    <a href="contact.html"    class="mob-link mob-sub">Maintenance</a>
+    <a href="contact.html"    class="mob-link mob-sub">Hosting Services</a>
+    <a href="contact.html"    class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"    class="mob-link mob-sub">Social Media &amp; SMM</a>
+    <a href="contact.html"    class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
       Legal
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-legal-panel"><div>
-    <a href="privacy.html" class="mob-link mob-sub active">Privacy Policy</a>
-    <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
-    <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
-    <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+    <a href="privacy.html"         class="mob-link mob-sub">Privacy Policy</a>
+    <a href="terms.html"           class="mob-link mob-sub">Terms of Service</a>
+    <a href="cookie-policy.html"   class="mob-link mob-sub">Cookie Policy</a>
+    <a href="accessibility.html"   class="mob-link mob-sub">Accessibility</a>
     <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
     </div></div>
     <div class="mob-divider"></div>
@@ -550,178 +548,110 @@
 
 <main id="main-content" tabindex="-1">
 
-<!-- ── HERO ── -->
-<section style="
-  padding: 160px 28px 90px;
-  text-align: center;
-  background:
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,229,255,0.06) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255,45,120,0.05) 0%, transparent 65%),
-    var(--base);
-  position: relative; overflow: hidden;
-">
-  <!-- Grid lines -->
-  <div style="
-    position: absolute; inset: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
-    background-size: 44px 44px;
-  "></div>
+<!-- ══════════════════════════════════════
+     SMM HERO
+══════════════════════════════════════ -->
+<section class="smm-hero" aria-label="Social Media Marketing">
 
-  <div id="legal-hero" style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
-    <p class="sec-tag" style="margin-bottom: 20px;">// legal &amp; transparency</p>
-    <h1 style="
-      font-size: clamp(36px, 6vw, 68px);
-      font-weight: 900; line-height: 1.04;
-      color: var(--text-1); margin-bottom: 22px;
-    ">
-      Privacy<br><span class="grad-cyan-pink">Policy</span>
+  <div class="smm-orbit-wrap">
+    <div class="smm-orbit-inner">
+
+      <div class="smm-layer smm-layer-back">
+        <div class="smm-layer-inner">
+          <img src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048" alt="" />
+        </div>
+      </div>
+      <div class="smm-layer smm-layer-mid">
+        <div class="smm-layer-inner">
+          <img src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024" alt="" />
+
+          <div class="smm-icon-patch smm-badge-stripe" style="top:5.3%; left:50.1%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(0.1deg);">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/stripe.svg" alt="Stripe" />
+          </div>
+          <div class="smm-icon-mask" style="top:72.5%; left:88.9%; width:126px; height:126px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch" style="top:72.5%; left:88.9%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(120deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/e3/c5/7f/e3c57fa0-64ff-acd0-6a48-4973b061718c/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/512x512bb.jpg" alt="Uber" />
+          </div>
+          <div class="smm-icon-mask" style="top:95.1%; left:50.1%; width:100px; height:100px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch" style="top:95.1%; left:50.1%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(-180.0deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/65/60/c4/6560c49b-c31d-a5d6-a84d-105344dfb019/BOEAppIcon-0-0-1x_U007epad-0-1-0-0-0-0-GLES2_U002c0-85-220.png/512x512bb.jpg" alt="Etsy" />
+          </div>
+          <div class="smm-icon-mask" style="top:72.5%; left:11.3%; width:126px; height:126px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch" style="top:72.5%; left:11.3%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(59.9deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/86/e4/58/86e45873-4d8a-7487-8612-eb155289e681/AppIcon-0-0-1x_U007emarketing-0-11-0-sRGB-0-85-220.png/512x512bb.jpg" alt="Netflix" />
+          </div>
+          <div class="smm-icon-mask" style="top:27.7%; left:11.1%; width:112px; height:112px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch smm-badge-ms" style="top:27.7%; left:11.1%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(119.8deg);">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Microsoft_icon.svg" alt="Microsoft" />
+          </div>
+        </div>
+      </div>
+      <div class="smm-layer smm-layer-front">
+        <div class="smm-layer-inner">
+          <img src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png" alt="" />
+
+          <div class="smm-icon-patch" style="top:40.4%; left:86.2%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(99.4deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d6/5b/f9/d65bf909-367e-9381-fbf3-1f15c6ff36ce/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg" alt="eBay" />
+          </div>
+          <div class="smm-icon-mask" style="top:59.8%; left:86.2%; width:80px; height:80px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch" style="top:59.8%; left:86.2%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(74.4deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/90/06/94/900694e8-378d-c4ed-7922-82fe3eb8c245/AppIcon-0-0-1x_U007ephone-0-1-0-GLES2_U002c0-85-220.png/512x512bb.jpg" alt="PayPal" />
+          </div>
+          <div class="smm-icon-mask" style="top:76.5%; left:23.7%; width:80px; height:80px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch" style="top:76.5%; left:23.7%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(-135.2deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3d/77/75/3d7775af-f82f-6eb2-3e03-49ec4c77dd2b/Icon-Production-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg" alt="Facebook" />
+          </div>
+          <div class="smm-icon-patch" style="top:59.8%; left:14.2%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(-105.3deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5f/22/44/5f2244c7-6500-6b2f-f508-3c6f83e75c92/SuperG_ios26-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-0-0-85-220.png/512x512bb.jpg" alt="Google" />
+          </div>
+          <div class="smm-icon-mask" style="top:23.7%; left:23.7%; width:80px; height:80px; transform:translate(-50%,-50%);"></div>
+          <div class="smm-icon-patch" style="top:23.7%; left:23.7%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(-45.0deg);">
+            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/54/13/00/54130033-a2ee-af7a-9365-8025080b7891/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg" alt="Airbnb" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="smm-hero-gradient"></div>
+
+  <div style="position:relative;z-index:2;max-width:620px;margin:0 auto;text-align:center;">
+    <div style="width:64px;height:64px;border-radius:16px;box-shadow:0 8px 24px -6px rgba(0,0,0,0.5);overflow:hidden;margin:0 auto 8px;border:1px solid rgba(255,255,255,0.1);">
+      <img src="https://images.unsplash.com/photo-1684369175833-4b445ad6bfb5?q=80&w=1696&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="App Icon" style="width:100%;height:100%;object-fit:cover;display:block;" />
+    </div>
+    <h1 style="font-size:clamp(2.4rem,6vw,4rem);font-weight:800;line-height:1.08;margin-bottom:20px;color:var(--text-1);">
+    <span class="grad-cyan-pink">Social Media Marketing</span>
     </h1>
-    <p style="font-size: 17px; color: var(--text-2); line-height: 1.75; max-width: 520px; margin: 0 auto 32px;">
-      We collect only what we need, protect everything you give us,
-      and never play games with your data. Here is exactly what that means.
+    <p style="font-size:16px;line-height:1.75;color:var(--text-2);max-width:480px;margin:0 auto 36px;">
+      Taking concepts out of your head and into the real world.
     </p>
-    <div style="
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(0,229,255,0.07);
-      border: 1px solid rgba(0,229,255,0.18);
-      border-radius: 999px; padding: 6px 18px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; color: rgba(0,229,255,0.75); letter-spacing: 0.06em;
-    ">
-      <span style="width:6px;height:6px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
-      Last updated: April 2026
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="contact.html" class="btn btn-primary">View Pricing →</a>
+      <a href="contact.html" class="btn btn-ghost">Book Discovery Call</a>
     </div>
   </div>
+
 </section>
 
-<div class="divider"></div>
-
-<!-- ── CONTENT ── -->
-<section style="padding: 80px 28px 100px;">
-  <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
-
-    <!-- Who We Are -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 01 — who we are</p>
-      <h3>Built for the web. Accountable to you.</h3>
-      <p>
-        VardWeb is a Canadian web design and development studio — homegrown and proudly so — that builds
-        precision-crafted digital experiences for businesses that take their online presence seriously.
-        We operate at
-        <a href="https://vardweb.ca" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.ca</a>
-        and
-        <a href="https://vardweb.com" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">vardweb.com</a>,
-        both of which are subject to this Privacy Policy.
-        The same exacting standards we bring to every website we build apply equally to how we handle your data.
-      </p>
-    </div>
-
-    <!-- What We Collect -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 02 — what we collect &amp; why</p>
-      <h3>Only what's necessary. Nothing more.</h3>
-      <p style="margin-bottom: 4px;">We do not collect data for sport. Every piece of information we receive serves a specific, transparent purpose.</p>
-
-      <div class="sub-section">
-        <h4>Contact Forms</h4>
-        <p>When you submit a form on vardweb.ca or vardweb.com, we collect your name, email address, and message. This information is used exclusively to respond to your inquiry and follow up on your request. It is never sold, rented, or disclosed to any third party — for any reason.</p>
-      </div>
-
-      <div class="sub-section">
-        <h4>Cookies</h4>
-        <p>We use a minimal set of cookies to keep the site running correctly:</p>
-        <ul style="margin-top: 12px;">
-          <li><span><strong style="color: var(--text-1); font-weight: 600;">Session cookies</strong> — created when you interact with the site and discarded the moment you close your browser. These carry no personal data.</span></li>
-          <li><span><strong style="color: var(--text-1); font-weight: 600;">Preference cookies</strong> (opt-in only) — if you choose to save your details for convenience, these persist for up to one year and can be cleared at any time.</span></li>
-        </ul>
-      </div>
-
-      <div class="sub-section">
-        <h4>Analytics</h4>
-        <p>We use Google Analytics to collect anonymized, aggregated data about how visitors interact with vardweb.ca and vardweb.com. This helps us identify what is working and where we can improve. No personally identifiable information is tied to analytics data. Google processes this data under their own <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style="color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.3);">Privacy Policy</a>.</p>
-      </div>
-
-      <div class="sub-section">
-        <h4>Media Uploads</h4>
-        <p>If you upload images to the site, ensure they do not contain embedded location data (EXIF GPS). Uploaded images are publicly accessible and their metadata can be extracted by anyone who downloads them.</p>
-      </div>
-
-      <div class="sub-section">
-        <h4>Embedded Content</h4>
-        <p>Some pages may include embedded content from third-party platforms — videos, maps, or previews. This content behaves as if you visited those platforms directly and may collect data or use cookies under their own independent privacy policies.</p>
-      </div>
-    </div>
-
-    <!-- Who We Share With -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 03 — data sharing</p>
-      <h3>We don't share. Full stop.</h3>
-      <div class="no-share-banner" style="margin-top: 16px;">
-        <div class="no-share-icon">🔒</div>
-        <p>
-          <strong>Your personal data is never sold, rented, or disclosed to any third party.</strong>
-          The only data that leaves our control is anonymized analytics, processed by Google Analytics
-          under their own terms — and even that cannot be traced back to you as an individual.
-        </p>
-      </div>
-    </div>
-
-    <!-- Retention -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 04 — data retention</p>
-      <h3>We hold what we need, no longer.</h3>
-      <p>Contact form submissions are retained only as long as necessary to address your request. Anonymized analytics data follows Google Analytics' default retention policy. You may request deletion of any personal data we hold about you at any time — see your rights below.</p>
-    </div>
-
-    <!-- Your Rights -->
-    <div class="policy-card reveal-fade">
-      <p class="sec-tag">// 05 — your rights</p>
-      <h3>Your data. Your call.</h3>
-      <p style="margin-bottom: 4px;">Regardless of where you are in the world, you have meaningful rights over your personal information. We honour them without friction.</p>
-      <div class="rights-grid">
-        <div class="rights-chip">
-          <div class="rights-chip-icon">📋</div>
-          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Access</strong>Request a copy of any personal data we hold about you.</span>
-        </div>
-        <div class="rights-chip">
-          <div class="rights-chip-icon">✏️</div>
-          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Correction</strong>Request that inaccurate information be updated.</span>
-        </div>
-        <div class="rights-chip">
-          <div class="rights-chip-icon">🗑️</div>
-          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Erasure</strong>Request deletion of your data, subject to legal obligations.</span>
-        </div>
-        <div class="rights-chip">
-          <div class="rights-chip-icon">↩️</div>
-          <span class="rights-chip-text"><strong style="color: var(--text-1); font-weight: 600; display: block; margin-bottom: 2px;">Withdrawal</strong>Withdraw any consent you have given, at any time.</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Contact -->
-    <div class="policy-card reveal-fade" style="background: rgba(0,229,255,0.03); border-color: rgba(0,229,255,0.14);">
-      <p class="sec-tag">// 06 — reach out</p>
-      <h3>Questions? We're a message away.</h3>
-      <p style="margin-bottom: 20px;">
-        If you have any questions, concerns, or requests relating to this Privacy Policy or the personal
-        data we hold, don't hesitate to contact us directly. We respond promptly.
-      </p>
-      <a href="contact.html" class="btn btn-primary" style="font-size: 13px;">
-        Contact Us →
-      </a>
-      <p style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
-        <a href="mailto:support@vardweb.com" style="color: rgba(0,229,255,0.55); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.35);">support@vardweb.com</a>
-      </p>
-    </div>
-
+<!-- ══════════════════════════════════════
+     STUB SECTION
+══════════════════════════════════════ -->
+<section aria-label="More coming soon" style="padding:100px 28px;position:relative;background:var(--base);">
+  <div class="reveal-fade" style="max-width:640px;margin:0 auto;text-align:center;">
+    <p class="sec-tag">// Coming Soon</p>
+    <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);margin-bottom:16px;">
+      The full SMM playbook is on its way.
+    </h2>
+    <p style="font-size:15px;line-height:1.75;color:var(--text-2);margin-bottom:32px;">
+      Platform strategy, content calendars, paid social, and performance reporting — all built around your brand. Want the details now?
+    </p>
+    <a href="contact.html" class="btn btn-primary">Book Discovery Call →</a>
   </div>
 </section>
-
-<div class="divider"></div>
 
 </main>
+
 <!-- ── FOOTER ── -->
 <footer class="site-footer">
   <div class="footer-inner">
@@ -766,12 +696,12 @@
         <a href="contact.html" class="footer-link">Maintenance</a>
         <a href="contact.html" class="footer-link">Hosting Services</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
-        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="smm.html" class="footer-link active">Social Media &amp; SMM</a>
         <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
-        <a href="privacy.html" class="footer-link active">Privacy Policy</a>
+        <a href="privacy.html"         class="footer-link">Privacy Policy</a>
         <a href="terms.html"           class="footer-link">Terms of Service</a>
         <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
         <a href="accessibility.html"   class="footer-link">Accessibility</a>
@@ -792,52 +722,15 @@
 </footer>
 
 <script>
-/* ── Hero entrance reveal ── */
-(function () {
-  var el = document.getElementById('legal-hero');
-  if (!el) return;
-  var ease = 'cubic-bezier(0.22,1,0.36,1)';
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(32px)';
-  var obs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-    el.style.opacity = '1';
-    el.style.transform = 'translateY(0)';
-    obs.disconnect();
-    el.addEventListener('transitionend', function cleanup(evt) {
-      if (evt.propertyName !== 'transform') return;
-      el.style.opacity = '';
-      el.style.transform = '';
-      el.style.transition = '';
-      el.removeEventListener('transitionend', cleanup);
-    });
-  }, { threshold: 0.01 });
-  obs.observe(el);
-})();
-
-/* ── Policy sections: individual scroll-reveal ── */
-(function () {
-  var els = document.querySelectorAll('.reveal-fade');
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
-    });
-  }, { threshold: 0.15 });
-  els.forEach(function (el) { io.observe(el); });
-})();
-
-/* ── Mobile-only touch-hover parity for policy cards ── */
-(function () {
-  if (!window.matchMedia('(hover: none)').matches) return;
-  var targets = [].slice.call(document.querySelectorAll('.policy-card'));
-  var obs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
-    });
-  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-  targets.forEach(function (el) { obs.observe(el); });
-})();
+  (function () {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+  })();
 </script>
+
 </body>
 </html>
