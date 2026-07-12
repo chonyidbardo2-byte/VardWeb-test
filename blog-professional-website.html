@@ -16,6 +16,11 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.7; }
     body::after {
       content: ''; position: fixed; inset: 0;
@@ -73,6 +78,14 @@
       color: var(--cyan); font-family: 'JetBrains Mono', monospace;
       font-size: 13px; top: 10px;
     }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     .stat-callout {
       background: var(--surface);
@@ -264,10 +277,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -284,11 +299,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -320,8 +335,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -345,11 +361,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -379,7 +395,7 @@
     radial-gradient(ellipse 50% 50% at 20% 100%, rgba(255,45,120,0.04) 0%, transparent 65%),
     var(--base);
   position: relative; overflow: hidden;
-">
+" id="post-hero">
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.022) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;"></div>
   <div style="max-width: 720px; margin: 0 auto; position: relative; z-index: 1;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -416,63 +432,63 @@
 <article style="padding: 72px 28px 100px;">
   <div class="article-body">
 
-    <p>
+    <p class="reveal-fade">
       We've heard it before: <strong>"We get all our business through word of mouth."</strong>
       And maybe that was enough in 2015. But today, even your warmest referral will Google you
       before they call. What they find in those first five seconds determines whether they
       pick up the phone — or quietly move on.
     </p>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">0.05s</div>
       <div class="stat-desc">That's how long it takes users to form an opinion about your website. Less than a blink. First impressions are irreversible.</div>
     </div>
 
-    <h2>The Stakes Are Higher Than You Think</h2>
+    <h2 class="reveal-fade">The Stakes Are Higher Than You Think</h2>
 
-    <p>
+    <p class="reveal-fade">
       A Stanford study found that <strong>75% of people judge a business's credibility based on its website design.</strong>
       Not its reviews. Not its years in business. Its website. That means three out of four potential
       customers have already decided if they trust you before reading a single word of your content.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       And it gets more pointed: users who land on a poor website don't just leave — they form a
       lasting negative association with your brand. You don't get a second chance at a first impression,
       and on the web, bad impressions compound silently while you're unaware they're happening.
     </p>
 
-    <h2>What "No Website" Actually Costs You</h2>
+    <h2 class="reveal-fade">What "No Website" Actually Costs You</h2>
 
-    <p>If you're operating without a professional web presence — or with an outdated one — here's what's actively happening right now:</p>
+    <p class="reveal-fade">If you're operating without a professional web presence — or with an outdated one — here's what's actively happening right now:</p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Referrals are dying in the funnel.</strong> Someone gets referred to you, searches your name, finds nothing credible, and calls your competitor instead. You never know it happened.</li>
       <li><strong>You're invisible to Google.</strong> Local search has exploded. People search "web designer near me" or "best [service] in [city]" constantly. No optimized website means you don't exist for them.</li>
       <li><strong>You're paying for traffic you can't convert.</strong> Running ads? Social posts? Every dollar you spend driving traffic hits a dead end if there's no credible destination to land on.</li>
       <li><strong>Your competitors are eating your lunch.</strong> If your competitor has a fast, beautiful, mobile-optimized website and you don't, price stops being the differentiator — perceived quality is.</li>
     </ul>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">60%</div>
       <div class="stat-desc">Of all web searches now happen on mobile. If your site isn't built mobile-first, you're actively broken for the majority of your audience.</div>
     </div>
 
-    <h2>The DIY Website Trap</h2>
+    <h2 class="reveal-fade">The DIY Website Trap</h2>
 
-    <p>
+    <p class="reveal-fade">
       Many business owners have tried to solve this with Wix, Squarespace, or a website-builder template.
       And while those tools have improved, they come with hidden costs most people don't anticipate:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Template fatigue.</strong> Your site looks like twelve other businesses in your industry. There's no differentiation — and differentiation is the only thing that justifies a premium price.</li>
       <li><strong>Performance ceiling.</strong> DIY platforms often score poorly on Core Web Vitals — the performance metrics Google uses to rank your site. You're building on a foundation that actively limits your SEO.</li>
       <li><strong>No conversion architecture.</strong> A beautiful homepage that doesn't guide visitors toward a call, form, or purchase is just expensive art. Good web design is intentional from the very first scroll.</li>
       <li><strong>You're still doing the work.</strong> "Easy" website builders are only easy if you know what you're doing. Business owners routinely spend 40+ hours building a site they're not happy with.</li>
     </ul>
 
-    <div class="callout-box pink-callout">
+    <div class="callout-box pink-callout reveal-fade">
       <p>
         <strong style="color:var(--text-1);">The real cost of a bad website isn't what you paid to build it.</strong>
         It's every customer who landed on it, didn't trust what they saw, and quietly chose someone else.
@@ -480,14 +496,14 @@
       </p>
     </div>
 
-    <h2>What a Professional Website Actually Does</h2>
+    <h2 class="reveal-fade">What a Professional Website Actually Does</h2>
 
-    <p>
+    <p class="reveal-fade">
       A well-built professional website isn't just a digital brochure. When done right, it's a
       conversion engine that works around the clock:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Establishes authority instantly.</strong> Premium design communicates premium service. Visitors infer the quality of your work from the quality of your digital presence.</li>
       <li><strong>Answers the right questions at the right moment.</strong> Good information architecture means your visitor finds what they need without friction — and friction is the #1 reason people leave.</li>
       <li><strong>Drives measurable action.</strong> Strategic CTAs, contact forms, and booking flows convert passive browsers into actual leads. Every page should have a clear next step.</li>
@@ -495,31 +511,31 @@
       <li><strong>Works on every device.</strong> Responsive, mobile-first design ensures the experience is flawless whether someone is on a desktop at work or a phone on the subway.</li>
     </ul>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">94%</div>
       <div class="stat-desc">Of first impressions are design-related. That's not a marketing stat — it's a conversion reality. Design isn't decoration. It's trust.</div>
     </div>
 
-    <h2>The Right Investment</h2>
+    <h2 class="reveal-fade">The Right Investment</h2>
 
-    <p>
+    <p class="reveal-fade">
       The question most business owners ask is: <em>"How much does a website cost?"</em>
       The better question is: <em>"How much is it costing me not to have one?"</em>
     </p>
 
-    <p>
+    <p class="reveal-fade">
       If your average client is worth $2,000 and you're losing even two potential clients a month
       to a poor web presence, that's $48,000 a year walking out the door — silently, invisibly,
       without a single complaint you could act on.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       A professional website, built right and optimized for conversion, pays for itself many times over.
       Not eventually — within months.
     </p>
 
     <!-- CTA -->
-    <div style="
+    <div class="reveal-fade" style="
       margin-top: 60px;
       background: var(--surface);
       border: 1px solid rgba(0,229,255,0.12);
@@ -543,7 +559,7 @@
     </div>
 
     <!-- Back to blog -->
-    <div style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
+    <div class="reveal-fade" style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
       <a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;opacity:0.7;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         ← Back to All Posts
       </a>
@@ -573,8 +589,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -587,11 +604,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -615,5 +638,41 @@
   </div>
 </footer>
 
+<script>
+/* ── Post hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('post-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Article body: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

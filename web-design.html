@@ -475,6 +475,44 @@
       color: var(--tier-color, #00E5FF);
       font-weight: 700;
     }
+    .cheaper-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.18);
+      border: 1px solid #166534;
+      color: #4ade80;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      position: relative;
+      margin-top: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+      white-space: nowrap;
+      justify-content: center;
+    }
+    .cheaper-pill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 25%,
+        rgba(255,255,255,0.55) 50%,
+        transparent 75%
+      );
+      transform: translateX(-160%) skewX(-15deg);
+      animation: pill-glare 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+    @keyframes pill-glare {
+      0%   { transform: translateX(-160%) skewX(-15deg); }
+      27%  { transform: translateX(160%) skewX(-15deg); }
+      100% { transform: translateX(160%) skewX(-15deg); }
+    }
     .pricing-price {
       font-family: 'JetBrains Mono', monospace;
       font-size: 38px; font-weight: 800;
@@ -518,6 +556,55 @@
       color: var(--tier-color, #00E5FF);
       filter: drop-shadow(0 0 4px var(--tier-color, rgba(0,229,255,0.5)));
     }
+
+    /* ── Add-ons box ── */
+    .pricing-addons {
+      border-radius: 14px;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.15));
+      background: linear-gradient(135deg, var(--tier-btn-bg1, rgba(0,229,255,0.12)), var(--tier-btn-bg2, rgba(0,229,255,0.05)));
+      padding: 14px 16px 8px;
+      margin-bottom: 24px;
+    }
+    .pricing-addons-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px; font-weight: 800;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--tier-color, #00E5FF);
+      margin: 0 0 10px;
+    }
+    .pricing-addons-list { list-style: none; padding: 0; margin: 0; }
+    .pricing-addons-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; line-height: 1.55;
+      color: rgba(200,212,232,0.68);
+      padding: 8px 0;
+      border-top: 1px solid var(--tier-border, rgba(255,255,255,0.08));
+    }
+    .pricing-addons-list li:first-child { border-top: none; }
+    .addon-toggle {
+      width: 22px; height: 22px; flex-shrink: 0; margin-top: -1px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.25));
+      background: rgba(255,255,255,0.03);
+      color: var(--tier-color, #00E5FF);
+      cursor: pointer; padding: 0;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    }
+    .addon-toggle:hover { background: var(--tier-btn-hover2, rgba(255,255,255,0.08)); transform: translateY(-1px); }
+    .addon-toggle:focus-visible { outline: 2px solid var(--tier-color, #00E5FF); outline-offset: 2px; }
+    .addon-toggle:active { transform: translateY(0); }
+    .addon-icon-plus, .addon-icon-check { width: 13px; height: 13px; }
+    .addon-toggle .addon-icon-check { display: none; }
+    .addon-toggle.selected {
+      border-color: #166534;
+      background: rgba(22,163,74,0.16);
+      color: #4ade80;
+    }
+    .addon-toggle.selected .addon-icon-plus { display: none; }
+    .addon-toggle.selected .addon-icon-check { display: block; }
+    @media (max-width: 860px) { .pricing-addons { margin-bottom: 16px; } }
+
     .pricing-cta {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; padding: 13px 24px;
@@ -710,6 +797,30 @@
       color: var(--text-2);
       margin: 0;
     }
+    .feature-card-more {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: fit-content;
+      margin-top: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      text-decoration: none;
+      transition: gap 0.2s ease, opacity 0.2s ease;
+    }
+    .feature-card-more:hover { gap: 12px; }
+    .feature-card-more:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    @keyframes feature-arrow-pulse {
+      0%, 100% { transform: translateX(0); }
+      50%      { transform: translateX(5px); }
+    }
+    .feature-card:hover .feature-card-more svg,
+    .feature-card.is-scroll-active .feature-card-more svg {
+      animation: feature-arrow-pulse 0.6s ease-in-out infinite;
+    }
     @media (max-width: 640px) {
       .feature-grid {
         grid-template-columns: 1fr;
@@ -736,6 +847,10 @@
       }
       .feature-card p + p {
         margin-top: 10px;
+      }
+      .feature-card-more {
+        margin-left: auto;
+        margin-right: auto;
       }
     }
 
@@ -808,7 +923,6 @@
       max-width: none;
       border-radius: 16px;
       object-fit: cover;
-      transition: transform 1s cubic-bezier(0.22,1,0.36,1), opacity 0.8s ease;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -818,7 +932,7 @@
       pointer-events: none;
     }
     .wyg-img.is-visible {
-      transform: translate(-50%, -50%) scale(1.30) rotate(2deg);
+      transform: translate(-50%, -50%) scale(1.30) rotate(2deg) translateY(0px);
       opacity: 1;
     }
     .wyg-quote { display:flex; flex-direction:column; gap:16px; justify-content:space-between; flex:1; }
@@ -930,10 +1044,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -950,11 +1066,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -988,8 +1104,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -1013,11 +1130,11 @@
     <a href="contact.html"    class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"    class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"    class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"    class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"    class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"    class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"    class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"    class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"    class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -1185,7 +1302,7 @@
         Your Site.<span class="apps-br"></span>&nbsp;Every Platform.
       </h2>
       <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:500px;margin:0 auto;">
-        Extend your reach beyond the browser. These add-ons wrap your existing web experience into a native-feeling app — no separate codebase required.
+        Extend your reach beyond the browser. These add-ons wrap your existing web experience into a native-feeling app.
       </p>
     </div>
 
@@ -1211,7 +1328,7 @@
             <text x="26" y="35" text-anchor="middle" fill="white" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="12" letter-spacing="1">PWA</text>
           </svg>
         </div>
-        <p class="w-label">(Optional)</p>
+        <p class="w-label">(Add-On)</p>
         <h3>Progressive Web App</h3>
         <p>Users install your site directly from the browser. Works offline, loads instantly, and feels native on any device. No app store review required.</p>
       </div>
@@ -1227,7 +1344,7 @@
             <polygon points="6,6 6,28 22,28" fill="rgba(255,255,255,0.07)"/>
           </svg>
         </div>
-        <p class="w-label">(Optional)</p>
+        <p class="w-label">(Add-On)</p>
         <h3>Google Play</h3>
         <p>Publish to Android's largest distribution platform. Reach billions of users through the Play Store with a listing that drives installs and builds credibility.</p>
       </div>
@@ -1255,7 +1372,7 @@
             </g>
           </svg>
         </div>
-        <p class="w-label">(Optional)</p>
+        <p class="w-label">(Add-On)</p>
         <h3>App Store</h3>
         <p>Publish to Apple's iOS marketplace and access the highest-spending mobile users. A curated presence on the App Store lends instant trust and discoverability.</p>
       </div>
@@ -1267,13 +1384,13 @@
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════
-     WHAT YOU GET — TIER CASE STUDIES
+     MERGING COMPLETE — SEO, CRM, TCI, CMS STUDIES
 ══════════════════════════════════════ -->
 <section id="what-you-get" style="padding:40px 28px 40px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <div style="text-align:center;max-width:640px;margin:0 auto 60px;">
-      <p class="sec-tag" style="margin-bottom:14px;">// What you get</p>
+      <p class="sec-tag" style="margin-bottom:14px;">// Merging Complete</p>
       <h2 style="font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;line-height:1.1;letter-spacing:-0.03em;margin-bottom:20px;color:var(--text-1);">
         One website.<br><span class="grad-cyan-pink">Everything included.</span>
       </h2>
@@ -1514,7 +1631,7 @@
           </span>
         </h2>
         <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:480px;">
-          Google’s entire growth ecosystem at no extra cost.<br><br>We handle the complex setup of your tracking, SEO monitoring, product feeds, and revenue streams before launch.<br><br>You get an asset that is fully tracked, visible to search engines, and ready to generate revenue from day one.
+          Empower with Google’s entire growth ecosystem.<br><br>We handle the complex setup of your tracking, SEO monitoring, product feeds, and revenue streams before launch.<br><br>You get an asset that is fully tracked, visible to search engines, and ready to generate revenue from day one.
         </p>
       </div>
       <div class="cap-hero-img" style="flex-shrink:0;">
@@ -1630,14 +1747,13 @@
 @media (min-width:861px) { .cap-hdr-row { justify-content:flex-start; gap:260px; } .cap-hdr-row > div:first-child { max-width:480px; } }
 .cap-hero-img { cursor: default; }
 .cap-hero-img img {
-  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
   transform: rotate(-5deg) scale(0.82);
   transform-origin: center center;
   opacity: 0.6;
   pointer-events: none;
 }
 .cap-hero-img.is-visible img {
-  transform: rotate(-1deg) scale(1.17);
+  transform: rotate(-1deg) scale(1.17) translateY(0px);
   opacity: 1;
 }
 </style>
@@ -1672,15 +1788,15 @@
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════
-     AI SEARCH VISIBILITY SECTION
+     AI SECTION
 ══════════════════════════════════════ -->
-<section style="padding:80px 28px;" aria-label="AI Search Visibility & Conversion Optimization">
+<section style="padding:80px 28px;" aria-label="AI Search & Conversion Optimization">
   <div style="max-width:1200px;margin:0 auto;">
 
     <div style="text-align:center;max-width:600px;margin:0 auto 60px;">
-      <p class="sec-tag">// AI search visibility</p>
+      <p class="sec-tag">// AI</p>
       <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        AI Search Visibility &amp;<br>Conversion Optimization
+        AI Search &amp;<br>Conversion Optimization
       </h2>
       <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
         Position your store to be discovered inside AI tools, where more buyers now start their shopping journey before ever reaching a traditional search engine.
@@ -1885,14 +2001,14 @@
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════
-     EXCLUSIVE SECTION
+     ADVERTISING SECTION
 ══════════════════════════════════════ -->
 <section style="padding:80px 28px;" aria-label="Our process">
   <div style="max-width:1200px;margin:0 auto;">
     <div style="text-align:center;max-width:520px;margin:0 auto 60px;">
-      <p class="sec-tag">// Exclusive</p>
+      <p class="sec-tag">// Advertising</p>
       <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
-        Absolutely effective,<br>Optional Add-ons.
+        Paid Search, Social &<br>Content That Delivers
       </h2>
     </div>
 
@@ -1906,7 +2022,8 @@
         <div>
           <h4>SEM - Search Engine Marketing</h4>
           <p>SEM places your business at the top of search results precisely when potential customers are actively looking for your solutions.</p>
-          <p>This unique intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.</p>
+          <p>Unique intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.</p>
+          <a href="sem-seo.html" class="feature-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
 
@@ -1919,18 +2036,7 @@
           <h4>SMM - Social Media Marketing</h4>
           <p>SMM builds human connections and brand awareness by engaging audiences directly on the platforms where they spend their time.</p>
           <p>Its core value lies in turning casual users into loyal brand advocates through interactive content and community building.</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <span class="stat-bubble">↑ 200% ROAS avg.</span>
-        <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-RKtAdyJlJYxfihOlvJIa61FxZtuFHX.png&w=320&q=75" alt="Design & Build" width="96" height="96" style="object-fit:contain;">
-        </div>
-        <div>
-          <h4>PPC - Pay-Per-Click Advertising</h4>
-          <p>PPC delivers an instant, predictable stream of website traffic by charging you only when a user actively clicks your ad.</p>
-          <p>This model offers total financial accountability, allowing you to scale visibility overnight while strictly controlling your ad spend.</p>
+          <a href="smm.html" class="feature-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
 
@@ -1943,6 +2049,7 @@
           <h4>CM - Content Marketing</h4>
           <p>Content Marketing builds deep customer trust by publishing valuable, educational media directly on your own website.</p>
           <p>Unlike paid ads, these assets generate compounding organic traffic and nurture leads for years after they are created.</p>
+          <a href="services.html" class="feature-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
 
@@ -1988,12 +2095,12 @@
         </div>
         <h3>Essential</h3>
         <p class="pricing-from">Starting from</p>
-        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,000</span></p>
-        <div class="pricing-price" data-monthly="C$300" data-yearly="C$3,600">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$300</span></span></span>
+        <p class="pricing-flat" style="display:flex;align-items:center;gap:8px;">Flat Rate <span class="pricing-flat-amt">C$1,000</span><span class="cheaper-pill">70% Cheaper</span></p>
+        <div class="pricing-price" data-monthly="C$200" data-yearly="C$2,400">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$200</span></span></span>
           <span class="price-suffix">/mo + tax</span>
         </div>
-        <p class="pricing-pages">1–5 pages · ~1-2 week delivery</p>
+        <p class="pricing-pages">1–10 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
           Perfect if you know exactly what your business is and just need the world to know it too. One clean, fast, fully-equipped site — no fluff, no filler. Covers the technical stuff most agencies quietly skip, and ships with everything a modern business needs on day one. Great for launches, local businesses, and anyone who's been putting this off long enough.
         </p>
@@ -2028,37 +2135,63 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC and CM
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Curated Stock Images</span> <span class="block md:inline">(Up to 3)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Curated Business Logo</span> <span class="block md:inline">(Up to 1)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Custom Email (Up to 1)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Domain hosting & delegation
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="md:block">Emergency technical fixes within 4 hours;</span> <span>general support requests within 24 hours</span></span>
+            <span><span class="md:block">Emergency technical fixes within 12 hours;</span> <span>general support requests within 24 hours</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Includes 2 Revision Requests a Month
+            <span><span class="md:block">Includes 1 Revision Request a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each request</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Active Growth & Optimization Partnership
           </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to 3)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Business Logo</span> <span class="block md:inline">(Up to 1)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Website Favicon</span> <span class="block md:inline">(Up to 1)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
+          </li>
         </ul>
+        <div class="pricing-addons">
+          <p class="pricing-addons-label">Available Add-ons</p>
+          <ul class="pricing-addons-list">
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SEM &amp; SEO, SMM and CM
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+            </li>
+          </ul>
+        </div>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
 
@@ -2073,12 +2206,12 @@
         </div>
         <h3>Advanced</h3>
         <p class="pricing-from">Starting from</p>
-        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,500</span></p>
-        <div class="pricing-price" data-monthly="C$400" data-yearly="C$4,800">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$400</span></span></span>
+        <p class="pricing-flat" style="display:flex;align-items:center;gap:8px;">Flat Rate <span class="pricing-flat-amt">C$2,000</span><span class="cheaper-pill">54% Cheaper</span></p>
+        <div class="pricing-price" data-monthly="C$250" data-yearly="C$3,000">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$250</span></span></span>
           <span class="price-suffix">/mo + tax</span>
         </div>
-        <p class="pricing-pages">10-25 pages · ~1-2 week delivery</p>
+        <p class="pricing-pages">10-20 pages · ~1-3 week delivery</p>
         <p class="pricing-desc">
           Built for businesses that are clearly going somewhere and need a site that can keep up. More pages, more imagery, more revision cycles — because "almost there" shouldn't be the final answer. A natural fit when you've got multiple offerings, a growing audience, or a team that will definitely have opinions once they see the first draft.
         </p>
@@ -2086,10 +2219,6 @@
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Brand new website, built from scratch
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) PWA (Progressive Web</span> <span class="block md:inline">App) or Up to 15 Additional</span> <span class="block md:inline">Pages Total</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -2117,37 +2246,63 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC and CM
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Curated Stock Images</span> <span class="block md:inline">(Up to 6)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Curated Business Logo</span> <span class="block md:inline">(Up to 2)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Custom Email (Up to 2)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Domain hosting & delegation
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="md:block">Emergency technical fixes within 4 hours;</span> <span>general support requests within 24 hours</span></span>
+            <span><span class="md:block">Emergency technical fixes within 8 hours;</span> <span>general support requests within 24 hours</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Includes 4 Revision Requests a Month
+            <span><span class="md:block">Includes 2 Revision Requests a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each request</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Active Growth & Optimization Partnership
           </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to 6)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Business Logo</span> <span class="block md:inline">(Up to 2)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Website Favicon</span> <span class="block md:inline">(Up to 1)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
+          </li>
         </ul>
+        <div class="pricing-addons">
+          <p class="pricing-addons-label">Available Add-ons</p>
+          <ul class="pricing-addons-list">
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SEM &amp; SEO, SMM and CM
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+            </li>
+          </ul>
+        </div>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
 
@@ -2162,12 +2317,12 @@
         </div>
         <h3>Ultimate</h3>
         <p class="pricing-from">Starting from</p>
-        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$2,000</span></p>
-        <div class="pricing-price" data-monthly="C$500" data-yearly="C$6,000">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$500</span></span></span>
+        <p class="pricing-flat" style="display:flex;align-items:center;gap:8px;">Flat Rate <span class="pricing-flat-amt">C$3,000</span><span class="cheaper-pill">33% Cheaper</span></p>
+        <div class="pricing-price" data-monthly="C$300" data-yearly="C$3,600">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$300</span></span></span>
           <span class="price-suffix">/mo + tax</span>
         </div>
-        <p class="pricing-pages">15-40 pages · ~1-2 week delivery</p>
+        <p class="pricing-pages">20-30 pages · ~1-4 week delivery</p>
         <p class="pricing-desc">
           The full toolkit for businesses with serious ambitions and real complexity. Whether you're launching an app, running multiple brands, or just refuse to be boxed in — this tier handles it. Works well when "just a website" would undersell what you actually do.
         </p>
@@ -2175,14 +2330,6 @@
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Brand new website, built from scratch
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) PWA (Progressive Web</span> <span class="block md:inline">App) or Up to 15 Additional</span> <span class="block md:inline">Pages Total</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Google Play/App Store</span> <span class="block md:inline">Application or Up to 25 Additional Pages Total</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -2210,22 +2357,6 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            (Optional) SEM, SMM, PPC and CM
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Curated Stock Images</span> <span class="block md:inline">(Up to 9)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Curated Business Logo</span> <span class="block md:inline">(Up to 3)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Custom Email (Up to 3)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Domain hosting & delegation
           </li>
           <li>
@@ -2234,13 +2365,55 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            Includes 6 Revision Requests a Month
+            <span><span class="md:block">Includes 3 Revision Requests a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each request</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             Active Growth & Optimization Partnership
           </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to 9)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Business Logo</span> <span class="block md:inline">(Up to 3)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Website Favicon</span> <span class="block md:inline">(Up to 1)</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
+          </li>
         </ul>
+        <div class="pricing-addons">
+          <p class="pricing-addons-label">Available Add-ons</p>
+          <ul class="pricing-addons-list">
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SEM &amp; SEO, SMM and CM
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+            </li>
+          </ul>
+        </div>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
 
@@ -2270,14 +2443,6 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) PWA (Progressive Web App)</span> <span class="block md:inline">or as many pages as your brief demands —</span> <span class="block md:inline">we stopped putting a number here.</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Full native app</span> <span class="block md:inline">(Google Play &amp; App Store) — or pages.</span> <span class="block md:inline">All the pages!</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span><span class="block md:inline">Pixel-perfect across every screen — phones,</span> <span class="block md:inline">tablets, ultrawide monitors, that one client</span> <span class="block md:inline">with a weird resolution...</span></span>
           </li>
           <li>
@@ -2302,37 +2467,63 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Full digital marketing suite:</span> <span class="block md:inline">SEM, SMM, PPC &amp; Content Management —</span> <span class="block md:inline">the whole playbook.</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Unlimited curated stock imagery —</span> <span class="block md:inline">no arbitrary cap, because your vision</span> <span class="block md:inline">shouldn’t have one.</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Logo concepts without a ceiling —</span> <span class="block md:inline">as many iterations as your brand requires!</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">(Optional) Unlimited custom email addresses —</span> <span class="block md:inline">equip every person, every department,</span> <span class="block md:inline">every alias (xyz@yourcompany.com)</span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span><span class="block md:inline">Domain hosting &amp; full DNS delegation —</span> <span class="block md:inline">handled, managed, never your problem.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Emergency technical fixes within 4 hours;</span> <span class="block md:inline">general support requests within 24 hours —</span> <span class="block md:inline">we don’t sleep so your site doesn’t have to either.</span></span>
+            <span><span class="block md:inline">Emergency technical fixes within 4, 8 or 12 hours;</span> <span class="block md:inline">general support requests within 24 hours —</span> <span class="block md:inline">we don’t sleep so your site doesn’t have to either.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Revision requests negotiated at scope —</span> <span class="block md:inline">because “unlimited” is what we say</span> <span class="block md:inline">when we mean it.</span></span>
+            <span><span class="block md:inline">Revision requests negotiated at scope —</span> <span class="block md:inline">Limited to under 1 hour of</span> <span class="block md:inline">execution time each request.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span><span class="block md:inline">Active Growth &amp; Optimization Partnership —</span> <span class="block md:inline">we’re not just building your site, we’re growing it.</span></span>
           </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated stock imagery —</span> <span class="block md:inline">premium, vibrant, aesthetically pleasing.</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Unique logo concepts —</span> <span class="block md:inline">elegant, modern and authentic.</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Curated Website Favicon —</span> <span class="block md:inline">Users will be glad to pick this tab out of the 45 open ones.</span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span><span class="block md:inline">Custom email addresses —</span> <span class="block md:inline">equip every person, every department,</span> <span class="block md:inline">every alias (xyz@yourcompany.com)</span></span>
+          </li>
         </ul>
+        <div class="pricing-addons">
+          <p class="pricing-addons-label">Available Add-ons</p>
+          <ul class="pricing-addons-list">
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SEM &amp; SEO, SMM and CM
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+            </li>
+          </ul>
+        </div>
         <a href="contact.html" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
 
@@ -2359,7 +2550,7 @@
       <div style="position:relative;z-index:1;max-width:580px;margin:0 auto;">
         <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:14px;color:var(--text-1);">
           Let's build something<br>
-          <span class="grad-cyan-pink">worth visiting.</span>
+          <span class="grad-cyan-pink">worth visiting</span>
         </h2>
         <p style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;">Not sure which tier is right for you?</p>
         <p style="font-size:16px;line-height:1.78;color:var(--text-2);margin-bottom:36px;">
@@ -2399,8 +2590,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -2413,11 +2605,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
-        <a href="services.html"   class="footer-link">All Services</a>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link active">Web Design</a>
-        <a href="contact.html"    class="footer-link">E-Commerce</a>
-        <a href="contact.html"    class="footer-link">Landing Pages</a>
-        <a href="contact.html"    class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">E-Commerce</a>
+        <a href="contact.html" class="footer-link">Landing Pages</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
+        <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -2622,6 +2820,8 @@
     entries.forEach(function (entry) {
       if (!entry.isIntersecting) return;
       capObs.unobserve(entry.target);
+      var capImg = entry.target.querySelector('img');
+      if (capImg) capImg.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease';
       entry.target.classList.add('is-visible');
     });
   }, { threshold: 0.2 });
@@ -2677,8 +2877,19 @@
       var img = entry.target.querySelector('.wyg-img');
       if (!img) return;
       var delay = allCards.indexOf(entry.target) * 80;
+      img.style.transition = 'transform 1s cubic-bezier(0.22,1,0.36,1), opacity 0.8s ease';
       img.style.transitionDelay = delay + 'ms';
       img.classList.add('is-visible');
+      setTimeout(function () {
+        img.style.transition = '';
+        img.style.transitionDelay = '';
+        img._floatReady = true;
+        if (typeof img._beginFloat === 'function') {
+          var fn = img._beginFloat;
+          img._beginFloat = null;
+          fn();
+        }
+      }, delay + 1000);
     });
   }, { threshold: 0.25 });
   allCards.forEach(function (card) { imgObs.observe(card); });
@@ -2885,14 +3096,47 @@
 </script>
 
 <script>
-/* ── wyg-img rAF float: hover on desktop (.wyg-row), auto-play on mobile ── */
+/* ── Add-on toggles: build the "Let's Talk" URL from selected tier + add-ons ── */
+(function () {
+  document.querySelectorAll('.pricing-card').forEach(function (card) {
+    var cta = card.querySelector('.pricing-cta');
+    var buttons = card.querySelectorAll('.addon-toggle');
+    if (!cta) return;
+    var tierName = (card.querySelector('.tier-name') || {}).textContent || '';
+
+    function updateHref() {
+      var params = new URLSearchParams();
+      params.set('type', 'Web Design');
+      if (tierName.trim()) params.set('tier', tierName.trim());
+      var selected = [];
+      buttons.forEach(function (b) {
+        if (b.classList.contains('selected')) selected.push(b.getAttribute('data-addon-label'));
+      });
+      if (selected.length) params.set('addons', selected.join('|'));
+      cta.href = 'contact.html?' + params.toString();
+    }
+
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        b.classList.toggle('selected');
+        b.setAttribute('aria-pressed', b.classList.contains('selected') ? 'true' : 'false');
+        updateHref();
+      });
+    });
+
+    updateHref();
+  });
+})();
+</script>
+
+<script>
+/* ── wyg-img rAF float: auto-play on scroll for all devices ── */
 (function () {
   var T = 2000;
-  var isHoverDevice = window.matchMedia('(hover: hover)').matches;
   var stateMap = new WeakMap();
 
   function getState(el) {
-    if (!stateMap.has(el)) stateMap.set(el, { rid: null, tid: null, onEnd: null, leaveTimer: null });
+    if (!stateMap.has(el)) stateMap.set(el, { rid: null, tid: null, onEnd: null });
     return stateMap.get(el);
   }
 
@@ -2902,8 +3146,6 @@
     if (s.onEnd) { img.removeEventListener('transitionend', s.onEnd); s.onEnd = null; }
 
     function begin() {
-      img.style.transition = 'none';
-      img.style.transitionDelay = '';
       var start = performance.now();
       (function loop(now) {
         var phase = Math.sin(((now - start) / T) * Math.PI * 2);
@@ -2912,73 +3154,41 @@
       }(performance.now()));
     }
 
-    function listenForEnd() {
-      s.onEnd = function(e) {
-        if (e.propertyName !== 'transform') return;
-        img.removeEventListener('transitionend', s.onEnd);
-        s.onEnd = null;
-        begin();
-      };
-      img.addEventListener('transitionend', s.onEnd);
-    }
-
-    function waitForPop() {
-      var running = img.getAnimations().some(function(a) {
-        return a.playState === 'running' || a.playState === 'pending';
-      });
-      if (!running) { begin(); } else { listenForEnd(); }
-    }
-
-    if (img.classList.contains('is-visible')) {
-      waitForPop();
+    if (img._floatReady) {
+      begin();
     } else {
-      listenForEnd();
+      img._beginFloat = begin;
     }
   }
 
   function stopFloat(img, s) {
     clearTimeout(s.tid);
-    if (s.onEnd) { img.removeEventListener('transitionend', s.onEnd); s.onEnd = null; }
+    img._beginFloat = null;
     if (s.rid) { cancelAnimationFrame(s.rid); s.rid = null; }
-    img.style.transition = '';
-    img.style.transitionDelay = '';
-    img.style.transform = '';
-  }
-
-  /* Mobile: auto-play via IntersectionObserver */
-  if (!isHoverDevice) {
-    var allCards = Array.from(document.querySelectorAll('.wyg-img-card'));
-    var wygRafObs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        var card = entry.target;
-        var img = card.querySelector('.wyg-img');
-        if (!img) return;
-        var s = getState(card);
-        if (entry.isIntersecting) {
-          if (!s.rid) startFloat(img, s);
-        } else {
-          stopFloat(img, s);
-        }
-      });
-    }, { threshold: 0, rootMargin: '-10% 0px -10% 0px' });
-    allCards.forEach(function (card) { wygRafObs.observe(card); });
-  }
-
-  /* Desktop: hover on full wyg-row, debounced leave to prevent stutter */
-  if (isHoverDevice) {
-    document.querySelectorAll('.wyg-row').forEach(function (row) {
-      var img = row.querySelector('.wyg-img');
-      if (!img) return;
-      var s = getState(row);
-      row.addEventListener('mouseenter', function () {
-        clearTimeout(s.leaveTimer);
-        if (!s.rid) startFloat(img, s);
-      });
-      row.addEventListener('mouseleave', function () {
-        s.leaveTimer = setTimeout(function () { stopFloat(img, s); }, 120);
-      });
+    img.style.transform = 'translate(-50%,-50%) scale(1.30) rotate(2deg) translateY(0px)';
+    requestAnimationFrame(function () {
+      if (!s.rid) {
+        img.style.transform = '';
+      }
     });
   }
+
+  /* Auto-play via IntersectionObserver — all devices */
+  var allCards = Array.from(document.querySelectorAll('.wyg-img-card'));
+  var wygRafObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var card = entry.target;
+      var img = card.querySelector('.wyg-img');
+      if (!img) return;
+      var s = getState(card);
+      if (entry.isIntersecting) {
+        if (!s.rid) startFloat(img, s);
+      } else {
+        stopFloat(img, s);
+      }
+    });
+  }, { threshold: 0, rootMargin: '-10% 0px -10% 0px' });
+  allCards.forEach(function (card) { wygRafObs.observe(card); });
 })();
 </script>
 
@@ -2995,6 +3205,7 @@
     clearTimeout(hs.tid);
     if (hs.rid) { cancelAnimationFrame(hs.rid); hs.rid = null; }
     hs.tid = setTimeout(function () {
+      heroImg.style.transition = '';
       var start = performance.now();
       (function loop(now) {
         var phase = Math.sin(((now - start) / T) * Math.PI * 2);

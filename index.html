@@ -666,27 +666,15 @@
       object-fit: cover; object-position: top;
     }
 
-    /* Both mocks link out to the live site: lift + cursor-tracked light on hover */
+    /* Both mocks link out to the live site: lift on hover */
     .mock-link {
       display: block;
-      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
     }
     .mock-link:hover {
       transform: translateY(-6px);
-      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 28px rgba(0,229,255,0.1);
     }
     .mock-link:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 4px; }
-    /* Spotlight: bright at the cursor, soft dark vignette at the edges so it
-       reads clearly over both light and dark parts of the screenshot. */
-    .mock-sheen {
-      position: absolute; inset: 0; z-index: 6; pointer-events: none;
-      border-radius: inherit;
-      background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%),
-        rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.06) 35%, rgba(0,0,0,0.32) 100%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .mock-link:hover .mock-sheen { opacity: 1; }
 
     @media (max-width: 860px) {
       .hero-mock-row { grid-template-columns: 1fr; justify-content: center; }
@@ -708,6 +696,7 @@
     .about-grid .code-block { grid-column: 2; grid-row: 1 / span 2; }
     .tcard-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-bottom-actions { display: contents; }
 
     @media (max-width: 1100px) {
       .features-grid { grid-template-columns: repeat(2, 1fr); }
@@ -719,10 +708,11 @@
       .about-grid .code-block { grid-column: auto; grid-row: auto; }
       .contact-grid { grid-template-columns: 1fr; gap: 52px; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
-      #footer-bottom-bar { flex-direction: column; justify-content: center; align-items: center; text-align: center; padding-bottom: 17vh; }
-      #footer-bottom-bar > * { order: 2; margin-left: auto; margin-right: auto; }
-      #footer-back-top   { order: 0; }
-      #footer-credit     { order: 1; }
+      #footer-bottom-bar { flex-direction: column !important; justify-content: center !important; align-items: flex-start !important; text-align: left; padding-bottom: 17vh; }
+      #footer-bottom-bar > * { margin-left: 0; margin-right: 0; }
+      #footer-bottom-bar > p { order: 2; align-self: center; text-align: center; }
+      .footer-bottom-actions { order: 1; display: flex; align-items: center; gap: 14px; }
+      #footer-credit { flex-shrink: 0; white-space: nowrap; }
       .footer-giant-bg-text {
         -webkit-text-stroke: 1px rgba(200,212,232,0.18);
         background: linear-gradient(180deg, rgba(200,212,232,0.32) 0%, rgba(200,212,232,0.1) 70%, transparent 100%);
@@ -927,6 +917,7 @@
         justify-content: center;
         gap: 10px;
       }
+      .footer-pill-row-secondary { gap: 14px !important; }
     }
 
     /* ── Mobile: hover states triggered by scroll instead of pointer ── */
@@ -1082,8 +1073,9 @@
           <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="#results"   class="dropdown-item" role="menuitem">Results</a>
           <a href="#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="#results"   class="dropdown-item" role="menuitem">Results</a>
           <a href="#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -1100,11 +1092,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -1137,8 +1129,9 @@
     <a href="index.html" class="mob-link mob-sub">Landing</a>
     <a href="#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="#services" class="mob-link mob-sub">Services</a>
-    <a href="#results"   class="mob-link mob-sub">Results</a>
     <a href="#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="#investment" class="mob-link mob-sub">Investment</a>
+    <a href="#results"   class="mob-link mob-sub">Results</a>
     <a href="#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -1162,11 +1155,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -1248,7 +1241,6 @@
         <div class="browser-body">
           <img src="brand_assets/vardedveins.com_Desktop.webp" alt="VardedVeins desktop site preview" loading="lazy">
         </div>
-        <div class="mock-sheen" aria-hidden="true"></div>
       </a>
 
       <a href="https://vardedveins.com" target="_blank" rel="noopener noreferrer" class="phone-mock mock-link" aria-label="Visit VardedVeins (opens in a new tab)">
@@ -1256,7 +1248,6 @@
           <div class="phone-mock-notch"></div>
           <img src="brand_assets/vardedveins.com_Mobile_cropped.webp" alt="VardedVeins mobile site preview" loading="lazy">
         </div>
-        <div class="mock-sheen" aria-hidden="true"></div>
       </a>
     </div>
   </div>
@@ -1485,8 +1476,8 @@
       position: absolute;
       right: -35px;
       bottom: -35px;
-      width: 160px;
-      height: 160px;
+      width: 150px;
+      height: 150px;
       object-fit: contain;
       pointer-events: none;
       filter: drop-shadow(0 6px 20px rgba(0,0,0,0.35));
@@ -1517,7 +1508,7 @@
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
         Optimize presence,<br><span class="grad-gold">Transform traffic</span>
       </h2>
-      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">When your business outgrows a simple brochure site, we don't panic — <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">we build.</code> From full e-commerce flows to custom functionality that doesn't have a template, consider it handled.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">When your business outgrows a simple brochure site, we don't panic — </br><code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">we build.</code> From full e-commerce flows to custom functionality that doesn't have a template, consider it handled.</p>
     </div>
 
     <div class="adv-grid">
@@ -1575,7 +1566,7 @@
         <div class="adv-card-body">
           <div>
             <h3>Custom Functionality</h3>
-            <p class="adv-card-desc">Support unique business requirements<br>with tailored features built around<br>real-world use cases.</p>
+            <p class="adv-card-desc">Support unique business require-<br>ments with tailored features built<br>around real-world use cases.</p>
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
@@ -1621,6 +1612,820 @@
 <div class="divider"></div>
 
 
+<!-- ────────────────────── INVESTMENT ────────────────────── -->
+<section id="investment" style="padding:100px 28px;">
+  <style>
+    .inv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 1100px;
+      margin: 48px auto 0;
+    }
+    @media (max-width: 900px)  { .inv-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px)  { .inv-grid { grid-template-columns: 1fr; } }
+
+    .inv-card {
+      background: var(--raised);
+      border: 1px solid rgba(0,229,255,0.1);
+      border-radius: 20px;
+      padding: 28px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: box-shadow 0.2s ease,
+                  transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow:
+        0 2px 8px rgba(0,0,0,0.3),
+        0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    @media (hover: none) {
+      .inv-card.is-scroll-active {
+        transform: translateY(2px);
+        box-shadow:
+          0 0 0 1px rgba(0,229,255,0.15),
+          0 24px 60px rgba(0,0,0,0.4),
+          0 2px 0 rgba(255,255,255,0.03) inset;
+      }
+    }
+    .inv-card:hover {
+      transform: translateY(2px);
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,0.15),
+        0 24px 60px rgba(0,0,0,0.4),
+        0 2px 0 rgba(255,255,255,0.03) inset;
+    }
+    .inv-card:active { transform: translateY(3px); }
+    .inv-card:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .inv-card-viz {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 150px;
+    }
+    .inv-card-meta { margin-top: 20px; }
+    .inv-card-meta h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-1);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .inv-card-meta p {
+      font-size: 13px;
+      color: var(--text-2);
+      margin: 4px 0 0;
+      line-height: 1.6;
+    }
+
+    /* TypeTester */
+    .inv-type-tester {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 72px;
+      color: var(--text-1);
+      display: block;
+      transform: scale(1) translateZ(0);
+      will-change: transform;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      line-height: 1;
+    }
+
+    /* LayoutAnimation */
+    .inv-layout-anim {
+      position: relative;
+      width: 140px;
+      height: 106px;
+    }
+    .inv-layout-block {
+      position: absolute;
+      background: rgba(0,229,255,0.18);
+      border-radius: 6px;
+      height: 30px;
+      transition: left  0.5s cubic-bezier(0.16,1,0.3,1),
+                  top   0.5s cubic-bezier(0.16,1,0.3,1),
+                  width 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+
+    /* SpeedIndicator */
+    .inv-speed-viz {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 100%;
+    }
+    .inv-speed-num {
+      font-size: 38px;
+      font-weight: 600;
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .inv-speed-label {
+      font-size: 12px;
+      color: var(--text-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .inv-speed-track {
+      width: 120px;
+      height: 6px;
+      background: rgba(238,240,248,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .inv-speed-bar {
+      height: 100%;
+      background: var(--cyan);
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.1s ease;
+      box-shadow: 0 0 10px rgba(0,229,255,0.5);
+    }
+
+    /* WireAnimation */
+    .inv-wire-scene {
+      width: 160px;
+      height: 90px;
+      overflow: visible;
+    }
+    .inv-w-plug, .inv-w-socket {
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .inv-w-node-l, .inv-w-node-r {
+      transition: fill 0.4s ease, stroke 0.4s ease;
+    }
+    .inv-w-axe {
+      transition: transform 0.42s cubic-bezier(0.16,1,0.3,1), opacity 0.28s ease;
+      transform-origin: 80px 45px;
+      opacity: 0;
+      transform: translateY(-62px);
+    }
+    .inv-w-scissors-l {
+      transition: transform 0.14s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: 80px 33px;
+      transform: rotate(-22deg);
+    }
+    .inv-w-scissors-r {
+      transition: transform 0.14s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: 80px 33px;
+      transform: rotate(22deg);
+    }
+    .inv-w-zap-a {
+      transition: opacity 0.48s ease, transform 0.38s cubic-bezier(0.34,1.56,0.64,1);
+      opacity: 0;
+      transform: scale(0.3);
+      transform-origin: 80px 45px;
+    }
+    .inv-w-zap-b {
+      transition: opacity 0.48s ease, transform 0.38s cubic-bezier(0.34,1.56,0.64,1);
+      opacity: 0;
+      transform: scale(0.3);
+      transform-origin: 80px 45px;
+    }
+    .inv-w-wand {
+      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease;
+      opacity: 0;
+      transform: rotate(0deg);
+      transform-origin: 20px 83px;
+    }
+    .inv-w-spark {
+      transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: 80px 45px;
+    }
+    .inv-w-halo {
+      transition: transform 0.55s cubic-bezier(0.16,1,0.3,1), opacity 0.45s ease;
+      transform-origin: 80px 45px;
+    }
+
+    /* DeviceAnimation */
+    .inv-device-scene {
+      width: 140px;
+      height: 106px;
+      overflow: visible;
+    }
+    .inv-d-desktop {
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+      transform-origin: 70px 47px;
+    }
+    .inv-d-mobile {
+      transition: transform 0.45s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    .inv-d-bug {
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.35s ease;
+      opacity: 0;
+      transform: translateY(35px);
+      transform-origin: 70px 62px;
+    }
+    .inv-d-boot {
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.3s ease;
+      opacity: 0;
+      transform: translateY(-55px);
+      transform-origin: 70px 60px;
+    }
+    .inv-d-squash {
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+      opacity: 0;
+      transform: scaleX(0.3);
+      transform-origin: 70px 70px;
+    }
+
+    /* JourneyAnimation — Card 6 */
+    .inv-journey-scene {
+      width: 160px;
+      height: 100px;
+      overflow: visible;
+    }
+    .inv-j-store,
+    .inv-j-phone,
+    .inv-j-calendar,
+    .inv-j-ball-scene {
+      transition: opacity 0.45s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+    .inv-j-phone,
+    .inv-j-calendar,
+    .inv-j-ball-scene {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    @keyframes inv-j-ball-roll {
+      from { transform: translateX(0px)   rotate(0deg); }
+      to   { transform: translateX(110px) rotate(540deg); }
+    }
+    .inv-j-ball-roll {
+      animation: inv-j-ball-roll 1.8s cubic-bezier(0.16,1,0.3,1) forwards;
+      transform-origin: 24px 65px;
+    }
+    @keyframes inv-j-shadow-roll {
+      from { transform: translateX(0px); }
+      to   { transform: translateX(110px); }
+    }
+    .inv-j-shadow-roll {
+      animation: inv-j-shadow-roll 1.8s cubic-bezier(0.16,1,0.3,1) forwards;
+      transform-origin: 24px 80px;
+    }
+  </style>
+
+  <div style="max-width:1200px;margin:0 auto;">
+
+    <div class="sec-header">
+      <p class="sec-tag">// Investment</p>
+      <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
+        From overhead cost,<br><span class="grad-cyan-pink">To unfair advantage</span>
+      </h2>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">A monthly maintenance fee is not an optional line item; it is a critical <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">business investment</code> that safeguards your operations, prevents costly emergencies, drives long-term value, and ensures your business remains competitive.</p>
+    </div>
+
+    <div class="inv-grid">
+
+      <!-- Card 1 — Typography -->
+      <div class="inv-card" tabindex="0">
+        <div class="inv-card-viz">
+          <span class="inv-type-tester">Aa</span>
+        </div>
+        <div class="inv-card-meta">
+          <h3>Eliminating Admin Mistakes</h3>
+          <p>Software updates <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">frequently break</code> integrations, CRM, and booking tools. Regular maintenance ensures data syncs perfectly.<br><br>Permanently stopping expensive administrative typos, broken forms, and lost customer files.</p>
+        </div>
+      </div>
+
+      <!-- Card 2 — Layouts -->
+      <div class="inv-card" tabindex="0">
+        <div class="inv-card-viz">
+          <div class="inv-layout-anim">
+            <div class="inv-layout-block" style="top:19px;left:0px;width:66px;"></div>
+            <div class="inv-layout-block" style="top:19px;left:74px;width:66px;"></div>
+            <div class="inv-layout-block" style="top:57px;left:0px;width:140px;"></div>
+          </div>
+        </div>
+        <div class="inv-card-meta">
+          <h3>Ending Brand Embarrassment</h3>
+          <p>Websites <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">naturally decay</code> over time. Links break, images corrupt, and layouts misalign after browser updates.<br><br>Routine visual audits keep your platform looking sharp, modern, and worthy of premium pricing.</p>
+        </div>
+      </div>
+
+      <!-- Card 3 — Speed -->
+      <div class="inv-card" tabindex="0">
+        <div class="inv-card-viz">
+          <div class="inv-speed-viz">
+            <span class="inv-speed-num">100ms</span>
+            <span class="inv-speed-label">Load Time</span>
+            <div class="inv-speed-track">
+              <div class="inv-speed-bar"></div>
+            </div>
+          </div>
+        </div>
+        <div class="inv-card-meta">
+          <h3>Instant Lead Capture</h3>
+          <p>Contact forms or automated auto-responders <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">fail</code> due to an unpatched plugins, and hot leads cool down instantly.<br><br>Continuous uptime monitoring ensures you never miss a high-value customer inquiry.</p>
+        </div>
+      </div>
+
+      <!-- Card 4 — Wire Animation -->
+      <div class="inv-card" tabindex="0">
+        <div class="inv-card-viz">
+          <svg class="inv-wire-scene" viewBox="0 0 160 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Left node: plain block + wire left half -->
+            <g class="inv-w-plug">
+              <line x1="25" y1="45" x2="78" y2="45" stroke="rgba(0,229,255,0.3)" stroke-width="2" stroke-linecap="round"/>
+              <rect class="inv-w-node-l" x="5" y="32" width="20" height="26" rx="4" fill="rgba(0,210,80,0.15)" stroke="rgba(0,210,80,0.7)" stroke-width="1.5"/>
+            </g>
+            <!-- Right node: plain block + wire right half -->
+            <g class="inv-w-socket">
+              <line x1="82" y1="45" x2="135" y2="45" stroke="rgba(0,229,255,0.3)" stroke-width="2" stroke-linecap="round"/>
+              <rect class="inv-w-node-r" x="135" y="32" width="20" height="26" rx="4" fill="rgba(0,210,80,0.15)" stroke="rgba(0,210,80,0.7)" stroke-width="1.5"/>
+            </g>
+            <!-- Connection spark -->
+            <circle class="inv-w-spark" cx="80" cy="45" r="5" fill="var(--cyan)" opacity="0.9"/>
+            <!-- Restoration halo -->
+            <circle class="inv-w-halo" cx="80" cy="45" r="12" fill="none" stroke="var(--cyan)" stroke-width="1.5" opacity="0"/>
+            <!-- Scissors: descend from above, blades snap shut to cut wire -->
+            <g class="inv-w-axe">
+              <!-- Handle rings + stems (fixed, don't rotate with blades) -->
+              <circle cx="63" cy="15" r="8" fill="none" stroke="rgba(185,193,200,0.82)" stroke-width="2"/>
+              <circle cx="97" cy="15" r="8" fill="none" stroke="rgba(185,193,200,0.82)" stroke-width="2"/>
+              <line x1="70" y1="20" x2="77" y2="31" stroke="rgba(185,193,200,0.8)" stroke-width="2" stroke-linecap="round"/>
+              <line x1="90" y1="20" x2="83" y2="31" stroke="rgba(185,193,200,0.8)" stroke-width="2" stroke-linecap="round"/>
+              <!-- Left blade: rotates around pivot at (80,33) -->
+              <g class="inv-w-scissors-l">
+                <path d="M 77 32 L 83 32 L 79 62 L 77 59 Z" fill="rgba(185,193,200,0.88)" stroke="rgba(148,158,165,0.6)" stroke-width="0.8"/>
+              </g>
+              <!-- Right blade: on top, rotates mirrored -->
+              <g class="inv-w-scissors-r">
+                <path d="M 77 32 L 83 32 L 83 62 L 81 59 Z" fill="rgba(200,207,214,0.92)" stroke="rgba(155,165,172,0.65)" stroke-width="0.8"/>
+              </g>
+              <!-- Pivot screw (always on top of both blades) -->
+              <circle cx="80" cy="33" r="3.5" fill="rgba(115,125,132,0.95)" stroke="rgba(255,255,255,0.28)" stroke-width="0.8"/>
+            </g>
+            <!-- Yellow lightning bolt zaps: independent bolts, shoot in opposite directions -->
+            <g class="inv-w-zap-a">
+              <polyline points="80,45 73,37 77,31 69,22"
+                        stroke="#FFD740" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <g class="inv-w-zap-b">
+              <polyline points="80,45 87,53 83,59 91,68"
+                        stroke="#FFD740" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </g>
+            <!-- Magic wand: enlarged, handle pushed to bottom-left corner -->
+            <g class="inv-w-wand">
+              <line x1="20" y1="83" x2="64" y2="55" stroke="rgba(238,240,248,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+              <circle cx="64" cy="55" r="7" fill="var(--cyan)" opacity="0.9"/>
+              <line x1="64" y1="45" x2="64" y2="41" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="73" y1="49" x2="77" y2="45" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="72" y1="60" x2="76" y2="63" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="inv-card-meta">
+          <h3>Predictable Maintenance</h3>
+          <p>Skipping updates leaves your site <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">vulnerable</code> to security breaches, malware, and sudden crashes.<br><br>A fixed maintenance fee completely eliminates unexpected, expensive emergency developer bills when things inevitably break.</p>
+        </div>
+      </div>
+
+      <!-- Card 5 — Device Animation -->
+      <div class="inv-card" tabindex="0">
+        <div class="inv-card-viz">
+          <svg class="inv-device-scene" viewBox="0 0 140 106" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Desktop monitor -->
+            <g class="inv-d-desktop">
+              <rect x="10" y="10" width="120" height="74" rx="6" fill="rgba(0,229,255,0.1)" stroke="rgba(0,229,255,0.45)" stroke-width="1.5"/>
+              <rect x="16" y="16" width="108" height="62" rx="3" fill="rgba(0,229,255,0.06)"/>
+              <line x1="70" y1="84" x2="70" y2="94" stroke="rgba(0,229,255,0.4)" stroke-width="2"/>
+              <rect x="50" y="94" width="40" height="5" rx="2.5" fill="rgba(0,229,255,0.3)"/>
+            </g>
+            <!-- Mobile phone -->
+            <g class="inv-d-mobile">
+              <rect x="47" y="6" width="46" height="80" rx="8" fill="rgba(0,229,255,0.1)" stroke="rgba(0,229,255,0.45)" stroke-width="1.5"/>
+              <rect x="53" y="13" width="34" height="62" rx="3" fill="rgba(0,229,255,0.06)"/>
+              <circle cx="70" cy="82" r="3.5" fill="rgba(0,229,255,0.35)"/>
+            </g>
+            <!-- Bug -->
+            <g class="inv-d-bug">
+              <line x1="65" y1="47" x2="57" y2="38" stroke="rgba(255,140,80,0.75)" stroke-width="1.3" stroke-linecap="round"/>
+              <line x1="75" y1="47" x2="83" y2="38" stroke="rgba(255,140,80,0.75)" stroke-width="1.3" stroke-linecap="round"/>
+              <circle cx="57" cy="38" r="2" fill="rgba(255,100,60,0.7)"/>
+              <circle cx="83" cy="38" r="2" fill="rgba(255,100,60,0.7)"/>
+              <ellipse cx="70" cy="51" rx="9" ry="7" fill="rgba(255,80,60,0.55)" stroke="rgba(255,130,80,0.85)" stroke-width="1.5"/>
+              <ellipse cx="70" cy="66" rx="20" ry="14" fill="rgba(255,70,60,0.45)" stroke="rgba(255,120,70,0.85)" stroke-width="1.5"/>
+              <line x1="70" y1="53" x2="70" y2="79" stroke="rgba(255,150,100,0.45)" stroke-width="1" stroke-linecap="round"/>
+              <line x1="51" y1="58" x2="38" y2="51" stroke="rgba(255,130,80,0.75)" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="50" y1="66" x2="36" y2="66" stroke="rgba(255,130,80,0.75)" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="51" y1="74" x2="38" y2="81" stroke="rgba(255,130,80,0.75)" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="89" y1="58" x2="102" y2="51" stroke="rgba(255,130,80,0.75)" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="90" y1="66" x2="104" y2="66" stroke="rgba(255,130,80,0.75)" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="89" y1="74" x2="102" y2="81" stroke="rgba(255,130,80,0.75)" stroke-width="1.4" stroke-linecap="round"/>
+            </g>
+            <!-- Squashed bug (renders below boot) -->
+            <g class="inv-d-squash">
+              <ellipse cx="70" cy="70" rx="30" ry="5" fill="rgba(255,80,60,0.55)" stroke="rgba(255,130,80,0.75)" stroke-width="1.2"/>
+              <line x1="52" y1="67" x2="34" y2="59" stroke="rgba(255,130,80,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="48" y1="70" x2="28" y2="70" stroke="rgba(255,130,80,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="52" y1="73" x2="34" y2="81" stroke="rgba(255,130,80,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="88" y1="67" x2="106" y2="59" stroke="rgba(255,130,80,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="92" y1="70" x2="112" y2="70" stroke="rgba(255,130,80,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="88" y1="73" x2="106" y2="81" stroke="rgba(255,130,80,0.9)" stroke-width="1.5" stroke-linecap="round"/>
+            </g>
+            <!-- ∞ Weight (renders on top of squashed bug) -->
+            <g class="inv-d-boot">
+              <!-- Layer 1: Right side depth panel (darkest, drawn first) -->
+              <path d="M 92 12 L 100 8 L 100 58 L 92 62 Z" fill="#1E1E26"/>
+              <!-- Layer 2: Top cap face (lightest, catches overhead light) -->
+              <path d="M 46 12 L 54 8 L 100 8 L 92 12 Z" fill="#80808A"/>
+              <!-- Layer 3: Main front face (steel grey) -->
+              <rect x="46" y="12" width="46" height="50" rx="4" fill="#58585F" stroke="#38383E" stroke-width="1.5"/>
+              <!-- Layer 4: Inner inset rim (machined face look) -->
+              <rect x="50" y="16" width="38" height="42" rx="3" fill="#505058" stroke="#484850" stroke-width="1" stroke-opacity="0.7"/>
+              <!-- Layer 5: Center label disc -->
+              <circle cx="69" cy="37" r="16" fill="#484850" stroke="#404048" stroke-width="1"/>
+              <!-- Layer 6: ∞ symbol as SVG path (immune to scaleY rendering shifts) -->
+              <path d="M 69 37 C 71.5 31 77 28.5 82 32 C 87 35.5 87 38.5 82 42 C 77 45.5 71.5 43 69 37 C 66.5 31 61 28.5 56 32 C 51 35.5 51 38.5 56 42 C 61 45.5 66.5 43 69 37"
+                    fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+              <!-- Layer 7: Left-edge sheen highlight -->
+              <rect x="46" y="12" width="4" height="50" rx="2" fill="rgba(255,255,255,0.06)"/>
+              <!-- Layer 8: Top-cap left corner highlight -->
+              <path d="M 46 12 L 54 8 L 60 8 L 52 12 Z" fill="rgba(255,255,255,0.09)"/>
+              <!-- Layer 9: U-ring hook on top (metal lifting ring) -->
+              <path d="M 64 12 L 64 6 Q 64 2 70 2 Q 76 2 76 6 L 76 12" fill="none" stroke="#2A2A32" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M 65.5 12 L 65.5 6 Q 65.5 3.5 70 3.5 Q 74.5 3.5 74.5 6 L 74.5 12" fill="none" stroke="#50505C" stroke-width="1.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+        </div>
+        <div class="inv-card-meta">
+          <h3>Capturing Existing Demand</h3>
+          <p>Apple and Google <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">constantly</code> update mobile browser standards. Monthly checks ensure your mobile layout remains flawless.<br><br>Stop mobile traffic from bouncing to a competitor due to a broken button, shifted text or an easily fixable bug. *Squash*</p>
+        </div>
+      </div>
+
+      <!-- Card 6 — Journey Animation -->
+      <div class="inv-card" tabindex="0">
+        <div class="inv-card-viz">
+          <svg class="inv-journey-scene" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- Scene 1: Store front -->
+            <g class="inv-j-store">
+              <rect x="20" y="14" width="120" height="78" rx="4" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.45)" stroke-width="1.5"/>
+              <rect x="20" y="14" width="120" height="17" rx="4" fill="rgba(0,229,255,0.15)" stroke="rgba(0,229,255,0.5)" stroke-width="1.5"/>
+              <line x1="38" y1="22.5" x2="90" y2="22.5" stroke="rgba(0,229,255,0.65)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="94" y1="22.5" x2="108" y2="22.5" stroke="rgba(0,229,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+              <rect x="30" y="43" width="30" height="24" rx="3" fill="rgba(0,229,255,0.1)" stroke="rgba(0,229,255,0.4)" stroke-width="1.2"/>
+              <rect x="68" y="43" width="30" height="24" rx="3" fill="rgba(0,229,255,0.1)" stroke="rgba(0,229,255,0.4)" stroke-width="1.2"/>
+              <rect x="108" y="51" width="24" height="41" rx="2" fill="rgba(0,229,255,0.07)" stroke="rgba(0,229,255,0.45)" stroke-width="1.2"/>
+              <circle cx="126" cy="73" r="2" fill="rgba(0,229,255,0.65)"/>
+              <rect x="14" y="91" width="132" height="3.5" rx="1.5" fill="rgba(0,229,255,0.2)"/>
+              <rect x="8" y="94.5" width="144" height="4" rx="2" fill="rgba(0,229,255,0.13)"/>
+            </g>
+
+            <!-- Scene 2: Phone handset icon + number -->
+            <g class="inv-j-phone">
+              <g transform="translate(15, 32) scale(0.068)">
+                <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6L304.7 368C234.3 334.7 177.3 277.7 144 207.3L193.3 167c13.7-11.2 18.4-30 11.6-46.3l-40-96z" fill="rgba(0,229,255,0.7)"/>
+              </g>
+              <text x="60" y="54" font-family="'JetBrains Mono', monospace" font-size="12" fill="rgba(0,229,255,0.9)" letter-spacing="0.5">012-345-6789</text>
+            </g>
+
+            <!-- Scene 3: Calendar -->
+            <g class="inv-j-calendar">
+              <rect x="15" y="8" width="130" height="86" rx="5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.45)" stroke-width="1.5"/>
+              <rect x="15" y="8" width="130" height="20" rx="5" fill="rgba(0,229,255,0.15)" stroke="rgba(0,229,255,0.5)" stroke-width="1.5"/>
+              <circle cx="28" cy="18" r="3" fill="rgba(0,229,255,0.5)"/>
+              <circle cx="132" cy="18" r="3" fill="rgba(0,229,255,0.5)"/>
+              <line x1="50" y1="18" x2="110" y2="18" stroke="rgba(0,229,255,0.55)" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="15" y1="36" x2="145" y2="36" stroke="rgba(0,229,255,0.2)" stroke-width="1"/>
+              <circle cx="32"  cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="50"  cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="68"  cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="86"  cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="104" cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="122" cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="140" cy="44" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="32"  cy="58" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="50"  cy="58" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="68"  cy="58" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="86"  cy="58" r="7"   fill="rgba(0,229,255,0.28)" stroke="var(--cyan)" stroke-width="1.5"/>
+              <circle cx="104" cy="58" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="122" cy="58" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="140" cy="58" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="32"  cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="50"  cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="68"  cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="86"  cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="104" cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="122" cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="140" cy="72" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="32"  cy="86" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="50"  cy="86" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="68"  cy="86" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+              <circle cx="86"  cy="86" r="4.5" fill="rgba(0,229,255,0.08)" stroke="rgba(0,229,255,0.2)" stroke-width="0.75"/>
+            </g>
+
+            <!-- Scene 4: Rolling ball -->
+            <g class="inv-j-ball-scene">
+              <line x1="5" y1="78" x2="155" y2="78" stroke="rgba(0,229,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+              <ellipse class="inv-j-shadow" cx="24" cy="80" rx="11" ry="3" fill="rgba(0,229,255,0.1)"/>
+              <g class="inv-j-ball">
+                <circle cx="24" cy="65" r="13" fill="rgba(0,229,255,0.13)" stroke="rgba(0,229,255,0.55)" stroke-width="1.5"/>
+                <line x1="24" y1="52" x2="24" y2="78" stroke="rgba(0,229,255,0.3)" stroke-width="1" stroke-linecap="round"/>
+                <line x1="11" y1="65" x2="37" y2="65" stroke="rgba(0,229,255,0.3)" stroke-width="1" stroke-linecap="round"/>
+              </g>
+            </g>
+
+          </svg>
+        </div>
+        <div class="inv-card-meta">
+          <h3>Frictionless Buying Journey</h3>
+          <p>Your address, phone number, and booking links <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">must work</code> 100% of the time. Protecting your daily sales volume.<br><br>Poor navigation sours customer experience. Continuous link-testing and speed optimization keeps your customer path entirely friction-free.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // TypeTester — original spring toggle; translateZ(0) keeps GPU layer pinned at both endpoints
+      var typeTesterScale = 1;
+      setInterval(function() {
+        typeTesterScale = typeTesterScale === 1 ? 1.5 : 1;
+        document.querySelectorAll('.inv-type-tester').forEach(function(el) {
+          el.style.transform = 'scale(' + typeTesterScale + ') translateZ(0)';
+        });
+      }, 2000);
+
+      // LayoutAnimation — cycle 3 states every 2.5s (absolute positions, no flex reflow)
+      var layoutState = 0;
+      var layoutConfigs = [
+        // State 0: 2×2 — centered in 106px container (content height 68px, offset 19px)
+        [{top:'19px',left:'0px',width:'66px'},{top:'19px',left:'74px',width:'66px'},{top:'57px',left:'0px',width:'140px'}],
+        // State 1: 3×1 — centered in 106px container (content height 30px, offset 38px)
+        [{top:'38px',left:'0px',width:'41px'},{top:'38px',left:'49px',width:'41px'},{top:'38px',left:'98px',width:'42px'}],
+        // State 2: 1×3 — fills container
+        [{top:'0px',left:'0px',width:'140px'},{top:'38px',left:'0px',width:'140px'},{top:'76px',left:'0px',width:'140px'}]
+      ];
+      setInterval(function() {
+        layoutState = (layoutState + 1) % 3;
+        var config = layoutConfigs[layoutState];
+        document.querySelectorAll('.inv-layout-anim').forEach(function(anim) {
+          var blocks = anim.querySelectorAll('.inv-layout-block');
+          blocks.forEach(function(block, i) {
+            block.style.top   = config[i].top;
+            block.style.left  = config[i].left;
+            block.style.width = config[i].width;
+          });
+        });
+      }, 2500);
+
+      // SpeedIndicator — fill bar to 100% after 500ms
+      setTimeout(function() {
+        document.querySelectorAll('.inv-speed-bar').forEach(function(bar) {
+          bar.style.width = '100%';
+        });
+      }, 500);
+
+      // WireAnimation — Predictable Maintenance (Card 4)
+      var wireScene = document.querySelector('.inv-wire-scene');
+      if (wireScene) {
+        var wPlug   = wireScene.querySelector('.inv-w-plug');
+        var wSocket = wireScene.querySelector('.inv-w-socket');
+        var wNodeL  = wireScene.querySelector('.inv-w-node-l');
+        var wNodeR  = wireScene.querySelector('.inv-w-node-r');
+        var wAxe    = wireScene.querySelector('.inv-w-axe');
+        var wScissL = wireScene.querySelector('.inv-w-scissors-l');
+        var wScissR = wireScene.querySelector('.inv-w-scissors-r');
+        var wZapA   = wireScene.querySelector('.inv-w-zap-a');
+        var wZapB   = wireScene.querySelector('.inv-w-zap-b');
+        var wWand   = wireScene.querySelector('.inv-w-wand');
+        var wSpark  = wireScene.querySelector('.inv-w-spark');
+        var wHalo   = wireScene.querySelector('.inv-w-halo');
+        var GF  = 'rgba(0,210,80,0.15)',   GS  = 'rgba(0,210,80,0.7)';
+        var GBF = 'rgba(0,255,120,0.4)',   GBS = 'rgba(0,255,160,0.95)';
+        var RF  = 'rgba(220,40,40,0.2)',   RS  = 'rgba(255,65,65,0.85)';
+        function wireRun() {
+          // Phase 0: Connected — green nodes, scissors hidden above
+          wPlug.style.transform    = 'translateX(0)';
+          wSocket.style.transform  = 'translateX(0)';
+          wNodeL.style.fill        = GF;  wNodeL.style.stroke = GS;
+          wNodeR.style.fill        = GF;  wNodeR.style.stroke = GS;
+          wSpark.style.opacity     = '0.9';
+          wSpark.style.transform   = 'scale(1)';
+          wAxe.style.opacity       = '0';
+          wAxe.style.transform     = 'translateY(-62px)';
+          wScissL.style.transform  = 'rotate(-22deg)';
+          wScissR.style.transform  = 'rotate(22deg)';
+          wZapA.style.opacity      = '0';
+          wZapA.style.transform    = 'scale(0.3)';
+          wZapB.style.opacity      = '0';
+          wZapB.style.transform    = 'scale(0.3)';
+          wWand.style.opacity      = '0';
+          wWand.style.transform    = 'rotate(0deg)';
+          wHalo.style.opacity      = '0';
+          wHalo.style.transform    = 'scale(1)';
+          setTimeout(function() {
+            // Phase 1: Scissors descend to wire (CSS 420ms)
+            wAxe.style.opacity   = '1';
+            wAxe.style.transform = 'translateY(0)';
+            setTimeout(function() {
+              // Phase 2: Blades snap shut — SNIP (CSS 140ms)
+              wScissL.style.transform = 'rotate(7deg)';
+              wScissR.style.transform = 'rotate(-7deg)';
+              setTimeout(function() {
+                // Phase 3: Impact — wire severs, nodes red, zap sparks burst
+                wPlug.style.transform    = 'translateX(-26px)';
+                wSocket.style.transform  = 'translateX(26px)';
+                wNodeL.style.fill        = RF;  wNodeL.style.stroke = RS;
+                wNodeR.style.fill        = RF;  wNodeR.style.stroke = RS;
+                wSpark.style.opacity     = '0';
+                wZapA.style.opacity      = '1';
+                wZapA.style.transform    = 'scale(1)';
+                wZapB.style.opacity      = '1';
+                wZapB.style.transform    = 'scale(1)';
+                setTimeout(function() {
+                  // Phase 4: Scissors open + rise up; zap pops out and fades
+                  wScissL.style.transform = 'rotate(-22deg)';
+                  wScissR.style.transform = 'rotate(22deg)';
+                  wAxe.style.transform    = 'translateY(-62px)';
+                  wAxe.style.opacity      = '0';
+                  wZapA.style.opacity     = '0';
+                  wZapA.style.transform   = 'translate(-12px, -12px) scale(1.7)';
+                  wZapB.style.opacity     = '0';
+                  wZapB.style.transform   = 'translate(12px, 12px) scale(1.7)';
+                  setTimeout(function() {
+                    // Phase 5: Broken hold (700ms)
+                    setTimeout(function() {
+                      // Phase 6a: Wand appears, sweeps in
+                      wWand.style.opacity   = '1';
+                      wWand.style.transform = 'rotate(-14deg)';
+                      setTimeout(function() {
+                        // Phase 6b: Wand sweeps forward (orb aims at wire)
+                        wWand.style.transform = 'rotate(10deg)';
+                        setTimeout(function() {
+                          // Phase 7: Wire reconnects, nodes bright-green flash, halo appears
+                          wPlug.style.transform    = 'translateX(0)';
+                          wSocket.style.transform  = 'translateX(0)';
+                          wNodeL.style.fill        = GBF; wNodeL.style.stroke = GBS;
+                          wNodeR.style.fill        = GBF; wNodeR.style.stroke = GBS;
+                          wSpark.style.opacity     = '0.9';
+                          wSpark.style.transform   = 'scale(1.5)';
+                          wHalo.style.opacity      = '0.85';
+                          wHalo.style.transform    = 'scale(1)';
+                          setTimeout(function() {
+                            // Phase 8: Nodes settle, spark shrinks, halo expands+fades
+                            wNodeL.style.fill        = GF; wNodeL.style.stroke = GS;
+                            wNodeR.style.fill        = GF; wNodeR.style.stroke = GS;
+                            wSpark.style.transform   = 'scale(1)';
+                            wHalo.style.opacity      = '0';
+                            wHalo.style.transform    = 'scale(2.2)';
+                            setTimeout(function() {
+                              // Phase 9: Wand exits → loop
+                              wWand.style.opacity   = '0';
+                              wWand.style.transform = 'rotate(0deg)';
+                              setTimeout(wireRun, 500);
+                            }, 350);
+                          }, 250);
+                        }, 350);
+                      }, 380);
+                    }, 700);
+                  }, 350);
+                }, 280);
+              }, 130);
+            }, 380);
+          }, 1800);
+        }
+        wireRun();
+      }
+
+      // DeviceAnimation — Capturing Existing Demand (Card 5)
+      var devScene = document.querySelector('.inv-device-scene');
+      if (devScene) {
+        var dDesktop = devScene.querySelector('.inv-d-desktop');
+        var dMobile  = devScene.querySelector('.inv-d-mobile');
+        var dBug     = devScene.querySelector('.inv-d-bug');
+        var dBoot    = devScene.querySelector('.inv-d-boot');
+        var dSquash  = devScene.querySelector('.inv-d-squash');
+        function devRun() {
+          // Phase 0: Desktop
+          dDesktop.style.opacity   = '1';
+          dDesktop.style.transform = 'scale(1)';
+          dMobile.style.opacity    = '0';
+          dMobile.style.transform  = 'translateY(16px)';
+          dBug.style.opacity       = '0';
+          dBug.style.transform     = 'translateY(35px)';
+          dBoot.style.opacity      = '0';
+          dBoot.style.transform    = 'translateY(-55px)';
+          dSquash.style.opacity    = '0';
+          dSquash.style.transform  = 'scaleX(0.3)';
+          setTimeout(function() {
+            // Phase 1: Desktop→Mobile
+            dDesktop.style.opacity   = '0';
+            dDesktop.style.transform = 'scale(0.85)';
+            dMobile.style.opacity    = '1';
+            dMobile.style.transform  = 'translateY(0)';
+            setTimeout(function() {
+              // Phase 2: Mobile hold
+              setTimeout(function() {
+                // Phase 3: Mobile→Bug rises
+                dMobile.style.opacity   = '0';
+                dMobile.style.transform = 'translateY(-12px)';
+                dBug.style.opacity      = '1';
+                dBug.style.transform    = 'translateY(0)';
+                setTimeout(function() {
+                  // Phase 4: Boot drops
+                  dBoot.style.opacity   = '1';
+                  dBoot.style.transform = 'translateY(0)';
+                  setTimeout(function() {
+                    // Phase 5: Squash
+                    dBoot.style.transform   = 'translateY(10px) scaleY(0.75)';
+                    dBug.style.opacity      = '0';
+                    dSquash.style.opacity   = '1';
+                    dSquash.style.transform = 'scaleX(1)';
+                    setTimeout(function() {
+                      // Phase 6: Clear → loop
+                      dBoot.style.opacity   = '0';
+                      dSquash.style.opacity = '0';
+                      setTimeout(devRun, 600);
+                    }, 1000);
+                  }, 250);
+                }, 500);
+              }, 1500);
+            }, 450);
+          }, 2000);
+        }
+        devRun();
+      }
+
+      // JourneyAnimation — Frictionless Buying Journeys (Card 6)
+      var jScene = document.querySelector('.inv-journey-scene');
+      if (jScene) {
+        var jStore    = jScene.querySelector('.inv-j-store');
+        var jPhone    = jScene.querySelector('.inv-j-phone');
+        var jCalendar = jScene.querySelector('.inv-j-calendar');
+        var jBallWrap = jScene.querySelector('.inv-j-ball-scene');
+        var jBall     = jScene.querySelector('.inv-j-ball');
+        var jShadow   = jScene.querySelector('.inv-j-shadow');
+        function jRun() {
+          jStore.style.opacity      = '1';
+          jStore.style.transform    = 'translateY(0)';
+          jPhone.style.opacity      = '0';
+          jPhone.style.transform    = 'translateY(12px)';
+          jCalendar.style.opacity   = '0';
+          jCalendar.style.transform = 'translateY(12px)';
+          jBallWrap.style.opacity   = '0';
+          jBallWrap.style.transform = 'translateY(12px)';
+          jBall.classList.remove('inv-j-ball-roll');
+          jShadow.classList.remove('inv-j-shadow-roll');
+          void jBall.offsetWidth;
+          setTimeout(function() {
+            jStore.style.opacity   = '0';
+            jStore.style.transform = 'translateY(-10px)';
+            setTimeout(function() {
+              jPhone.style.opacity    = '1';
+              jPhone.style.transform  = 'translateY(0)';
+              setTimeout(function() {
+                jPhone.style.opacity    = '0';
+                jPhone.style.transform  = 'translateY(-10px)';
+                setTimeout(function() {
+                  jCalendar.style.opacity   = '1';
+                  jCalendar.style.transform = 'translateY(0)';
+                  setTimeout(function() {
+                    jCalendar.style.opacity   = '0';
+                    jCalendar.style.transform = 'translateY(-10px)';
+                    setTimeout(function() {
+                      jBallWrap.style.opacity   = '1';
+                      jBallWrap.style.transform = 'translateY(0)';
+                      setTimeout(function() {
+                        jBall.classList.add('inv-j-ball-roll');
+                        jShadow.classList.add('inv-j-shadow-roll');
+                      }, 250);
+                      setTimeout(function() {
+                        jBallWrap.style.opacity   = '0';
+                        jBallWrap.style.transform = 'translateY(-10px)';
+                        setTimeout(jRun, 450);
+                      }, 2400);
+                    }, 350);
+                  }, 2200);
+                }, 350);
+              }, 2200);
+            }, 350);
+          }, 2200);
+        }
+        jRun();
+      }
+    })();
+  </script>
+</section>
+
+<div class="divider"></div>
+
+
 <!-- ────────────────────── RESULTS / TESTIMONIALS ────────────────────── -->
 <section id="results" style="padding:100px 0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(255,215,0,0.028) 0%,transparent 65%),var(--base);">
   <style>
@@ -1643,8 +2448,8 @@
       position: relative;
       min-height: 400px;
     }
-    @media (max-width: 860px) { .testi-card-outer { min-height: 500px; } }
-    @media (max-width: 480px)  { .testi-card-outer { min-height: 540px; } }
+    @media (max-width: 860px) { .testi-card-outer { min-height: 420px; } }
+    @media (max-width: 480px)  { .testi-card-outer { min-height: 480px; } }
     .testi-card {
       position: absolute;
       inset: 0;
@@ -1676,6 +2481,10 @@
       z-index: 10;
     }
     .testi-stars { display: flex; gap: 6px; margin-bottom: 28px; }
+    .testi-quote-wrap { position: relative; flex: 1; }
+    @media (max-width: 860px) {
+      .testi-quote-wrap { display: flex; flex-direction: column; justify-content: center; }
+    }
     .testi-quote-svg {
       position: absolute;
       top: -5px; left: -5px;
@@ -1715,6 +2524,10 @@
       font-size: 14px;
       flex-shrink: 0;
       font-family: 'JetBrains Mono', monospace;
+      box-shadow:
+        inset 0 0 0 1.5px rgba(255,255,255,0.3),
+        0 0 0 2px var(--ring, rgba(255,255,255,0.15)),
+        0 6px 14px rgba(0,0,0,0.35);
     }
     .testi-name {
       font-weight: 600;
@@ -1766,13 +2579,20 @@
         </h2>
 
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);max-width:400px;margin-bottom:38px;">
-          Don't just take <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">our word</code> for it. See what our clients say after working with VardWeb — from restaurant owners to e-commerce founders.
+          Don't just take <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">our word</code> for it. See what our clients say after working with VardWeb — from local owners to domestic founders and international entrepreneurs.
         </p>
 
         <div style="display:flex;align-items:center;gap:10px;" role="tablist" aria-label="Client testimonials">
           <button class="testi-dot active" data-ti="0" role="tab" aria-selected="true"  aria-label="Testimonial 1"></button>
           <button class="testi-dot"        data-ti="1" role="tab" aria-selected="false" aria-label="Testimonial 2"></button>
           <button class="testi-dot"        data-ti="2" role="tab" aria-selected="false" aria-label="Testimonial 3"></button>
+          <button class="testi-dot"        data-ti="3" role="tab" aria-selected="false" aria-label="Testimonial 4"></button>
+          <button class="testi-dot"        data-ti="4" role="tab" aria-selected="false" aria-label="Testimonial 5"></button>
+          <button class="testi-dot"        data-ti="5" role="tab" aria-selected="false" aria-label="Testimonial 6"></button>
+          <button class="testi-dot"        data-ti="6" role="tab" aria-selected="false" aria-label="Testimonial 7"></button>
+          <button class="testi-dot"        data-ti="7" role="tab" aria-selected="false" aria-label="Testimonial 8"></button>
+          <button class="testi-dot"        data-ti="8" role="tab" aria-selected="false" aria-label="Testimonial 9"></button>
+          <button class="testi-dot"        data-ti="9" role="tab" aria-selected="false" aria-label="Testimonial 10"></button>
         </div>
       </div>
 
@@ -1792,16 +2612,16 @@
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
-          <div style="position:relative;flex:1;">
+          <div class="testi-quote-wrap">
             <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(0,229,255,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
-            <p class="testi-quote-text">"VardWeb transformed our online presence. Our new site loads twice as fast, and we've seen a 40% increase in enquiries since launch. The branding is sharp and consistent throughout."</p>
+            <p class="testi-quote-text">"Our eBay store still drives most of our volume, but bigger buyers wanted a real website before wiring a deposit for a bulk order.<br><br>Having one now closes that conversation in a single email."</p>
           </div>
           <div class="testi-sep"></div>
           <div class="testi-avatar-row">
-            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;border:2px solid rgba(0,229,255,0.25);">MR</div>
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;--ring:rgba(0,229,255,0.4);">MR</div>
             <div>
               <div class="testi-name">Marcus R.</div>
-              <div class="testi-role">Restaurant Owner</div>
+              <div class="testi-role">eBay Store Owner</div>
             </div>
           </div>
         </div>
@@ -1815,16 +2635,16 @@
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
-          <div style="position:relative;flex:1;">
+          <div class="testi-quote-wrap">
             <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,45,120,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
-            <p class="testi-quote-text">"They nailed the brief on the first round. Beautiful design, perfect on mobile, and the SEO work means we're ranking on page one for our key terms. Incredible team to work with."</p>
+            <p class="testi-quote-text">"Amazon is still where most people find us first, but our own site is where they check we're a real company before reordering wholesale.<br><br>It's paid for itself in fewer 'is this legit' emails alone."</p>
           </div>
           <div class="testi-sep"></div>
           <div class="testi-avatar-row">
-            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;border:2px solid rgba(255,45,120,0.25);">PS</div>
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;--ring:rgba(255,45,120,0.4);">PS</div>
             <div>
               <div class="testi-name">Priya S.</div>
-              <div class="testi-role">E-Commerce Founder</div>
+              <div class="testi-role">Amazon Marketplace Seller</div>
             </div>
           </div>
         </div>
@@ -1838,16 +2658,177 @@
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </div>
-          <div style="position:relative;flex:1;">
+          <div class="testi-quote-wrap">
             <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
-            <p class="testi-quote-text">"I was skeptical about investing in a professional site, but the ROI has been undeniable. More traffic, more leads, better trust signals — our brand finally looks the part it deserves."</p>
+            <p class="testi-quote-text">"Most of my leads still start with a LinkedIn message, but people look at the website before they'll get on a call.<br><br>Having something that actually looks like a consultancy changed how those calls go."</p>
           </div>
           <div class="testi-sep"></div>
           <div class="testi-avatar-row">
-            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;border:2px solid rgba(255,215,0,0.25);">DW</div>
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;--ring:rgba(255,215,0,0.4);">DW</div>
             <div>
               <div class="testi-name">Daniel W.</div>
-              <div class="testi-role">Marketing Consultant</div>
+              <div class="testi-role">LinkedIn Consultant</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 — Aisha K. -->
+        <div class="testi-card" data-card="3">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(0,229,255,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"We built the business on a Facebook Shop and it still gets us orders every day.<br><br>But customers kept asking if we had 'a real site,' and now we finally have an answer for them."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;--ring:rgba(0,229,255,0.4);">AK</div>
+            <div>
+              <div class="testi-name">Aisha K.</div>
+              <div class="testi-role">Facebook Shop Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 — Tom H. -->
+        <div class="testi-card" data-card="4">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,45,120,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"Half my quote requests used to get lost in email threads.<br><br>Now they come through a form that tells me what the job actually is before I call anyone back."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;--ring:rgba(255,45,120,0.4);">TH</div>
+            <div>
+              <div class="testi-name">Tom H.</div>
+              <div class="testi-role">Independent Contractor</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 — Lena B. -->
+        <div class="testi-card" data-card="5">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"Guests still book almost everything through Airbnb, but a few regulars wanted to book direct without the fees.<br><br>Our own booking page made that possible without losing the reviews we'd built up."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;--ring:rgba(255,215,0,0.4);">LB</div>
+            <div>
+              <div class="testi-name">Lena B.</div>
+              <div class="testi-role">Airbnb Host</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 — Carlos M. -->
+        <div class="testi-card" data-card="6">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(0,229,255,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"Uber still fills most of the schedule, but corporate clients wanted a direct line for airport accounts and monthly billing.<br><br>The site gave them a place to do that without going through the app."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;--ring:rgba(0,229,255,0.4);">CM</div>
+            <div>
+              <div class="testi-name">Carlos M.</div>
+              <div class="testi-role">Rideshare Fleet Owner</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7 — Sophie N. -->
+        <div class="testi-card" data-card="7">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,45,120,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"Spotify is where people actually listen, but it's not where they find tour dates or merch.<br><br>Having a real site to link from my bio finally gave fans one place to check everything."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;--ring:rgba(255,45,120,0.4);">SN</div>
+            <div>
+              <div class="testi-name">Sophie N.</div>
+              <div class="testi-role">Independent Musician</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8 — Ben O. -->
+        <div class="testi-card" data-card="8">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,215,0,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"Most of our orders ship south to the US now, plus a handful of overseas markets, so a generic template site was creating more confusion than it solved.<br><br>Now shipping and returns are actually clear no matter where someone's ordering from."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;--ring:rgba(255,215,0,0.4);">BO</div>
+            <div>
+              <div class="testi-name">Ben O.</div>
+              <div class="testi-role">International E-Commerce Founder</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9 — Grace L. -->
+        <div class="testi-card" data-card="9">
+          <div class="testi-stars">
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="#FFD700"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <div class="testi-quote-wrap">
+            <svg aria-hidden="true" class="testi-quote-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(0,229,255,0.16)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
+            <p class="testi-quote-text">"We're a small shop in Toronto, and most people still find us on foot or by word of mouth.<br><br>But a proper site made it easy for local press and catering clients to actually book us instead of just calling and hoping."</p>
+          </div>
+          <div class="testi-sep"></div>
+          <div class="testi-avatar-row">
+            <div class="testi-avatar-circle" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;--ring:rgba(0,229,255,0.4);">GL</div>
+            <div>
+              <div class="testi-name">Grace L.</div>
+              <div class="testi-role">Local Bakery Owner, Toronto ON</div>
             </div>
           </div>
         </div>
@@ -1856,14 +2837,261 @@
     </div>
 
     <!-- Logo cloud -->
+    <style>
+      .logo-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 18px;
+        max-width: 1120px;
+        margin: 0 auto;
+      }
+      .logo-cell {
+        position: relative;
+        height: 84px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.02);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: border-color 0.4s ease, background 0.4s ease;
+      }
+      .logo-cell:hover {
+        border-color: rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.045);
+      }
+      .logo-cell canvas {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .logo-mark {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        filter: grayscale(1);
+        opacity: 0.4;
+        transition: filter 0.4s ease, opacity 0.4s ease;
+      }
+      .logo-cell:hover .logo-mark { filter: grayscale(0); opacity: 1; }
+      .logo-svg, .logo-icon { display: block; width: auto; }
+      @media (max-width: 900px) {
+        .logo-grid { grid-template-columns: repeat(4, 1fr); }
+      }
+      @media (max-width: 560px) {
+        .logo-grid { grid-template-columns: repeat(2, 1fr); }
+        .logo-cell { height: 72px; }
+      }
+    </style>
     <div class="testi-fade" style="margin-top:80px;text-align:center;transition-delay:0.3s;">
       <p style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(200,212,232,0.3);margin-bottom:32px;">Trusted by businesses using companies worldwide</p>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:40px 56px;">
-        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Google</span>
-        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Microsoft</span>
-        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Airbnb</span>
-        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Spotify</span>
-        <span style="font-size:20px;font-weight:700;color:rgba(200,212,232,0.22);letter-spacing:-0.01em;font-family:'Plus Jakarta Sans',sans-serif;">Amazon</span>
+      <div class="logo-grid">
+
+        <div class="logo-cell" data-colors="#E53238,#0064D2,#F5AF02,#86B817">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 100 32" xmlns="http://www.w3.org/2000/svg" style="height:24px;">
+              <text x="50" y="24" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="28" letter-spacing="-1">
+                <tspan fill="#E53238">e</tspan><tspan fill="#0064D2">b</tspan><tspan fill="#F5AF02">a</tspan><tspan fill="#86B817">y</tspan>
+              </text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#635BFF,#8C85FF">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 69 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:33px;color:#635BFF;">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M59 16.3338C59 12.9159 57.3122 10.219 54.0864 10.219C50.8469 10.219 48.8869 12.9159 48.8869 16.3071C48.8869 20.3258 51.2008 22.3551 54.5219 22.3551C56.1417 22.3551 57.3667 21.9947 58.2922 21.4873V18.8171C57.3667 19.271 56.305 19.5514 54.9575 19.5514C53.6372 19.5514 52.4667 19.0975 52.3169 17.522H58.9728C58.9728 17.3485 59 16.6542 59 16.3338ZM52.2761 15.0654C52.2761 13.5568 53.2153 12.9293 54.0728 12.9293C54.9031 12.9293 55.7878 13.5568 55.7878 15.0654H52.2761Z" fill="currentColor"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M43.633 10.219C42.2992 10.219 41.4417 10.8331 40.9653 11.2604L40.7883 10.4326H37.7939V26L41.1967 25.2924L41.2103 21.514C41.7003 21.8611 42.4217 22.3551 43.6194 22.3551C46.0558 22.3551 48.2744 20.4326 48.2744 16.2003C48.2608 12.3285 46.015 10.219 43.633 10.219ZM42.8164 19.4179C42.0133 19.4179 41.5369 19.1375 41.2103 18.7904L41.1967 13.8371C41.5505 13.45 42.0405 13.1829 42.8164 13.1829C44.055 13.1829 44.9125 14.5447 44.9125 16.2937C44.9125 18.0828 44.0686 19.4179 42.8164 19.4179Z" fill="currentColor"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M33.1117 9.43124L36.5281 8.71028V6L33.1117 6.70761V9.43124Z" fill="currentColor"/>
+              <path d="M36.5281 10.4459H33.1117V22.1282H36.5281V10.4459Z" fill="currentColor"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M29.4503 11.4339L29.2325 10.4459H26.2925V22.1282H29.6953V14.211C30.4983 13.1829 31.8595 13.3698 32.2814 13.5167V10.4459C31.8458 10.2857 30.2533 9.99199 29.4503 11.4339Z" fill="currentColor"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M22.6447 7.5487L19.3236 8.24296L19.31 18.9372C19.31 20.9132 20.8208 22.3684 22.8353 22.3684C23.9514 22.3684 24.7681 22.1682 25.2172 21.9279V19.2176C24.7817 19.3911 22.6311 20.0053 22.6311 18.0293V13.2897H25.2172V10.4459H22.6311L22.6447 7.5487Z" fill="currentColor"/>
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M13.4436 13.8371C13.4436 13.3164 13.8792 13.1162 14.6006 13.1162C15.635 13.1162 16.9417 13.4233 17.9761 13.9706V10.8331C16.8464 10.3925 15.7303 10.219 14.6006 10.219C11.8375 10.219 10 11.6342 10 13.9974C10 17.6823 15.1722 17.0948 15.1722 18.6836C15.1722 19.2977 14.6278 19.498 13.8656 19.498C12.7358 19.498 11.2931 19.0441 10.1497 18.4299V21.6075C11.4156 22.1415 12.695 22.3685 13.8656 22.3685C16.6967 22.3685 18.6431 20.9933 18.6431 18.6035C18.6294 14.6249 13.4436 15.3325 13.4436 13.8371Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#FFFFFF,#B5B5B5">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 120 32" xmlns="http://www.w3.org/2000/svg" style="height:24px;color:#FFFFFF;">
+              <text x="60" y="23" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="24" letter-spacing="1" fill="currentColor">UBER</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#F1641E,#FF9466">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 100 32" xmlns="http://www.w3.org/2000/svg" style="height:23px;color:#F1641E;">
+              <text x="50" y="24" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="27" fill="currentColor">Etsy</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#E50914,#FF4D5E">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 94 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:30px;color:#E50914;">
+              <path d="M20.1758 24.7109C19.0625 24.9063 17.9297 24.965 16.7578 25.1211L13.1835 14.6524V25.5704C12.0703 25.6875 11.0547 25.8438 10 26V6H12.9688L17.0312 17.3478V6H20.1758V24.7109ZM26.3281 13.3242C27.5392 13.3242 29.3946 13.2656 30.5078 13.2656V16.3905C29.1211 16.3905 27.5001 16.3905 26.3281 16.4492V21.0977C28.1641 20.9805 30.0001 20.8241 31.8554 20.7655V23.7732L23.2031 24.4569V6H31.8554V9.125H26.3281V13.3242ZM43.4765 9.12508H40.2344V23.5001C39.1797 23.5001 38.125 23.5001 37.1095 23.539V9.12508H33.8674V6H43.4767L43.4765 9.12508ZM48.5546 13.1094H52.832V16.2344H48.5546V23.3243H45.488V6H54.2187V9.125H48.5546V13.1094ZM59.2968 20.5898C61.0742 20.6288 62.871 20.7657 64.6093 20.8632V23.9492C61.8164 23.7733 59.0234 23.5978 56.1719 23.539V6H59.2968V20.5898ZM67.246 24.1641C68.2421 24.2227 69.2968 24.2814 70.3124 24.3984V6H67.246V24.1641ZM84.0039 6L80.039 15.5117L84.0039 26C82.8319 25.8438 81.6601 25.6289 80.4882 25.4335L78.2422 19.6524L75.9572 24.965C74.8242 24.7695 73.7305 24.7109 72.5979 24.5546L76.6213 15.3945L72.9883 6H76.3476L78.3984 11.2539L80.586 6H84.0039V6Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#F25022,#7FBA00,#00A4EF,#FFB900">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 114 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:30px;">
+              <path d="M49 9.99999V22H46.9166V12.5833H46.8889L43.1666 22H41.7777L37.9722 12.5833H37.9444V22H36.0278V9.99999H39.0277L42.4722 18.8889H42.5277L46.1666 9.99999H49ZM50.7222 10.9167C50.7222 10.5833 50.8333 10.3055 51.0833 10.0833C51.3333 9.8611 51.6111 9.74999 51.9444 9.74999C52.3055 9.74999 52.6111 9.8611 52.8333 10.0833C53.0555 10.3055 53.1944 10.5833 53.1944 10.9167C53.1944 11.25 53.0833 11.5278 52.8333 11.75C52.5833 11.9722 52.3055 12.0833 51.9444 12.0833C51.5833 12.0833 51.3055 11.9722 51.0833 11.75C50.8611 11.5 50.7222 11.2222 50.7222 10.9167ZM52.9722 13.3889V22H50.9444V13.3889H52.9722ZM59.1111 20.5277C59.4166 20.5277 59.75 20.4722 60.1111 20.3055C60.4722 20.1667 60.8055 19.9722 61.1111 19.75V21.6389C60.7777 21.8333 60.4166 21.9722 60 22.0555C59.5833 22.1389 59.1389 22.1944 58.6389 22.1944C57.3611 22.1944 56.3333 21.8055 55.5555 21C54.75 20.1944 54.3611 19.1667 54.3611 17.9444C54.3611 16.5555 54.7777 15.4167 55.5833 14.5278C56.3889 13.6389 57.5277 13.1944 59.0277 13.1944C59.4166 13.1944 59.8055 13.25 60.1666 13.3333C60.5555 13.4167 60.8611 13.5555 61.0833 13.6667V15.6111C60.7777 15.3889 60.4444 15.1944 60.1389 15.0833C59.8055 14.9722 59.4722 14.8889 59.1389 14.8889C58.3333 14.8889 57.6944 15.1389 57.1944 15.6666C56.6944 16.1944 56.4722 16.8889 56.4722 17.7778C56.4722 18.6389 56.7222 19.3333 57.1944 19.8055C57.6666 20.2778 58.3055 20.5277 59.1111 20.5277ZM66.8611 13.25C67.0277 13.25 67.1666 13.25 67.3055 13.2778C67.4444 13.3055 67.5555 13.3333 67.6389 13.3611V15.4167C67.5277 15.3333 67.3889 15.25 67.1666 15.1944C66.9444 15.1389 66.7222 15.0833 66.4166 15.0833C65.9166 15.0833 65.5 15.3055 65.1666 15.7222C64.8333 16.1389 64.6389 16.7778 64.6389 17.6667V22H62.6111V13.3889H64.6389V14.75H64.6666C64.8611 14.2778 65.1389 13.9167 65.5 13.6389C65.8889 13.3889 66.3333 13.25 66.8611 13.25ZM67.75 17.8333C67.75 16.4166 68.1666 15.2778 68.9444 14.4444C69.75 13.6111 70.8611 13.1944 72.2777 13.1944C73.6111 13.1944 74.6666 13.5833 75.4166 14.3889C76.1666 15.1944 76.5555 16.2778 76.5555 17.6389C76.5555 19.0278 76.1389 20.1389 75.3611 20.9722C74.5555 21.8055 73.4722 22.2222 72.0833 22.2222C70.75 22.2222 69.6944 21.8333 68.9166 21.0555C68.1389 20.25 67.75 19.1666 67.75 17.8333ZM69.8611 17.75C69.8611 18.6389 70.0555 19.3333 70.4722 19.8055C70.8889 20.2778 71.4722 20.5277 72.2222 20.5277C72.9444 20.5277 73.5278 20.3055 73.9166 19.8055C74.3055 19.3333 74.5 18.6389 74.5 17.6944C74.5 16.7777 74.3055 16.0833 73.9166 15.5833C73.5278 15.1111 72.9444 14.8611 72.25 14.8611C71.5 14.8611 70.9444 15.1111 70.5277 15.6111C70.0555 16.1389 69.8611 16.8333 69.8611 17.75ZM79.5833 15.6666C79.5833 15.9444 79.6666 16.1944 79.8611 16.3611C80.0555 16.5277 80.4444 16.7222 81.0833 16.9722C81.8889 17.3055 82.4722 17.6667 82.7777 18.0555C83.1111 18.4722 83.2777 18.9444 83.2777 19.5278C83.2777 20.3333 82.9722 20.9722 82.3333 21.4722C81.7222 21.9722 80.8611 22.1944 79.8055 22.1944C79.4444 22.1944 79.0555 22.1389 78.6111 22.0555C78.1666 21.9722 77.8055 21.8611 77.5 21.7222V19.7222C77.8611 19.9722 78.2777 20.1944 78.6944 20.3333C79.1111 20.4722 79.5 20.5555 79.8611 20.5555C80.3055 20.5555 80.6666 20.5 80.8611 20.3611C81.0833 20.2222 81.1944 20.0278 81.1944 19.7222C81.1944 19.4444 81.0833 19.2222 80.8611 19C80.6389 18.8055 80.1944 18.5833 79.5833 18.3333C78.8333 18.0278 78.3055 17.6666 78 17.2777C77.6944 16.8889 77.5277 16.3889 77.5277 15.7778C77.5277 15 77.8333 14.3611 78.4444 13.8611C79.0555 13.3611 79.8611 13.1111 80.8333 13.1111C81.1389 13.1111 81.4722 13.1389 81.8333 13.2222C82.1944 13.3055 82.5277 13.3889 82.7777 13.4722V15.4444C82.5 15.2778 82.1944 15.1111 81.8333 14.9722C81.4722 14.8333 81.1111 14.7778 80.7777 14.7778C80.3889 14.7778 80.0833 14.8611 79.8889 15C79.6944 15.1944 79.5833 15.3889 79.5833 15.6666ZM84.1389 17.8333C84.1389 16.4166 84.5555 15.2778 85.3333 14.4444C86.1389 13.6111 87.25 13.1944 88.6666 13.1944C90 13.1944 91.0555 13.5833 91.8055 14.3889C92.5555 15.1944 92.9444 16.2778 92.9444 17.6389C92.9444 19.0278 92.5277 20.1389 91.75 20.9722C90.9444 21.8055 89.8611 22.2222 88.4722 22.2222C87.1389 22.2222 86.0833 21.8333 85.3055 21.0555C84.5555 20.25 84.1389 19.1666 84.1389 17.8333ZM86.25 17.75C86.25 18.6389 86.4444 19.3333 86.8611 19.8055C87.2777 20.2778 87.8611 20.5277 88.6111 20.5277C89.3333 20.5277 89.9166 20.3055 90.3055 19.8055C90.6944 19.3333 90.8889 18.6389 90.8889 17.6944C90.8889 16.7777 90.6944 16.0833 90.3055 15.5833C89.9166 15.1111 89.3333 14.8611 88.6389 14.8611C87.8889 14.8611 87.3333 15.1111 86.9166 15.6111C86.4722 16.1389 86.25 16.8333 86.25 17.75ZM99.6944 15.0555H96.6666V22H94.6111V15.0555H93.1666V13.3889H94.6111V12.1944C94.6111 11.3055 94.9166 10.5555 95.5 9.97221C96.0833 9.38888 96.8333 9.1111 97.75 9.1111C98 9.1111 98.2222 9.13888 98.4166 9.13888C98.6111 9.13888 98.7778 9.19443 98.9166 9.24999V11C98.8611 10.9722 98.7222 10.9167 98.5555 10.8611C98.3889 10.8055 98.1944 10.7778 97.9722 10.7778C97.5555 10.7778 97.2222 10.9167 97 11.1667C96.7777 11.4167 96.6666 11.8333 96.6666 12.3333V13.3611H99.6944V11.4167L101.722 10.8055V13.3611H103.778V15.0278H101.722V19.0555C101.722 19.5833 101.833 19.9444 102 20.1667C102.194 20.3889 102.5 20.5 102.917 20.5C103.028 20.5 103.167 20.4722 103.333 20.4167C103.5 20.3611 103.639 20.3055 103.75 20.2222V21.8889C103.611 21.9722 103.417 22.0278 103.111 22.0833C102.806 22.1389 102.528 22.1667 102.222 22.1667C101.361 22.1667 100.722 21.9444 100.306 21.5C99.8889 21.0555 99.6666 20.3611 99.6666 19.4444L99.6944 15.0555Z" fill="#737373"/>
+              <path d="M19.5 6H10V15.5H19.5V6Z" fill="#F25022"/>
+              <path d="M29.9999 6H20.4999V15.5H29.9999V6Z" fill="#7FBA00"/>
+              <path d="M19.5 16.5H10V26H19.5V16.5Z" fill="#00A4EF"/>
+              <path d="M29.9999 16.5H20.4999V26H29.9999V16.5Z" fill="#FFB900"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#FF5A5F,#FF8589">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <img class="logo-svg" src="temporary%20screenshots/airbnb-logo-final.png" alt="Airbnb" style="height:28px;width:auto;">
+
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#FF9900,#FFC266">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="-150 -75.3385 1300 452.031" xmlns="http://www.w3.org/2000/svg" style="height:30px;color:#FFFFFF;">
+              <path d="M620.38 235.668c-58.111 42.833-142.34 65.686-214.86 65.686-101.685 0-193.227-37.61-262.483-100.161-5.44-4.92-.565-11.623 5.964-7.792 74.74 43.486 167.153 69.647 262.613 69.647 64.38 0 135.202-13.32 200.322-40.961 9.837-4.179 18.064 6.442 8.444 13.581" fill="#FF9900" fill-rule="evenodd"/>
+              <path d="M644.54 208.027c-7.4-9.49-49.102-4.484-67.82-2.264-5.702.697-6.572-4.266-1.436-7.835 33.213-23.375 87.712-16.628 94.067-8.793 6.355 7.879-1.654 62.508-32.865 88.582-4.788 4.005-9.359 1.872-7.226-3.439 7.009-17.498 22.723-56.718 15.28-66.251" fill="#FF9900" fill-rule="evenodd"/>
+              <path d="M578.026 32.908V10.186c0-3.439 2.612-5.746 5.746-5.746H685.5c3.265 0 5.877 2.35 5.877 5.746v19.457c-.044 3.265-2.786 7.531-7.661 14.278l-52.714 75.262c19.588-.478 40.264 2.438 58.024 12.45 4.005 2.263 5.093 5.572 5.398 8.836v24.246c0 3.308-3.657 7.182-7.487 5.18-31.298-16.41-72.868-18.195-107.474.174-3.526 1.916-7.226-1.915-7.226-5.223v-23.027c0-3.7.043-10.012 3.743-15.627l61.072-87.581h-53.15c-3.264 0-5.876-2.307-5.876-5.703M206.939 174.683h-30.95c-2.96-.217-5.31-2.437-5.528-5.267V10.578c0-3.178 2.655-5.703 5.963-5.703h28.86c3.004.13 5.398 2.438 5.616 5.31V30.95h.566c7.53-20.067 21.677-29.425 40.743-29.425 19.37 0 31.472 9.358 40.178 29.425 7.487-20.067 24.507-29.425 42.746-29.425 12.971 0 27.162 5.354 35.824 17.368 9.794 13.363 7.792 32.777 7.792 49.797l-.044 100.248c0 3.178-2.655 5.746-5.963 5.746h-30.906c-3.09-.217-5.572-2.698-5.572-5.746V84.752c0-6.704.61-23.42-.87-29.774-2.307-10.665-9.228-13.669-18.196-13.669-7.487 0-15.322 5.006-18.5 13.016-3.177 8.01-2.872 21.416-2.872 30.427v84.185c0 3.178-2.656 5.746-5.964 5.746h-30.906c-3.134-.217-5.572-2.698-5.572-5.746l-.043-84.185c0-17.717 2.916-43.79-19.066-43.79-22.243 0-21.373 25.42-21.373 43.79v84.185c0 3.178-2.655 5.746-5.963 5.746M778.958 1.524c45.923 0 70.779 39.437 70.779 89.583 0 48.448-27.467 86.885-70.78 86.885-45.096 0-69.646-39.438-69.646-88.583 0-49.449 24.855-87.885 69.647-87.885m.261 32.429c-22.81 0-24.246 31.08-24.246 50.45 0 19.415-.304 60.854 23.985 60.854 23.985 0 25.116-33.43 25.116-53.802 0-13.407-.566-29.426-4.614-42.136-3.482-11.057-10.403-15.366-20.24-15.366m130.065 140.73h-30.819c-3.09-.217-5.572-2.698-5.572-5.746l-.043-158.882c.26-2.916 2.83-5.18 5.963-5.18H907.5c2.699.13 4.919 1.96 5.528 4.44v24.29h.566c8.663-21.721 20.807-32.081 42.18-32.081 13.886 0 27.424 5.005 36.13 18.717C1000 32.951 1000 54.325 1000 69.691v99.986c-.348 2.786-2.916 5.006-5.963 5.006H963c-2.83-.217-5.18-2.307-5.485-5.006V83.402c0-17.368 2.003-42.79-19.37-42.79-7.53 0-14.452 5.05-17.89 12.711-4.354 9.708-4.92 19.371-4.92 30.08v85.534c-.043 3.178-2.742 5.746-6.05 5.746M496.931 98.812c0 12.057.305 22.113-5.79 32.82-4.918 8.707-12.753 14.06-21.416 14.06-11.883 0-18.848-9.053-18.848-22.417 0-26.379 23.637-31.167 46.054-31.167v6.704m31.21 75.436c-2.045 1.828-5.005 1.959-7.312.74-10.273-8.532-12.145-12.493-17.76-20.633-16.977 17.325-29.034 22.505-51.017 22.505-26.074 0-46.315-16.063-46.315-48.23 0-25.117 13.581-42.224 32.995-50.582 16.803-7.4 40.265-8.706 58.2-10.752v-4.004c0-7.357.565-16.063-3.788-22.418-3.743-5.702-10.97-8.053-17.368-8.053-11.797 0-22.287 6.05-24.855 18.587-.523 2.786-2.569 5.528-5.398 5.659l-29.992-3.221c-2.524-.566-5.354-2.612-4.614-6.486C417.795 10.97 450.703 0 480.13 0c15.061 0 34.736 4.005 46.62 15.41 15.06 14.06 13.624 32.82 13.624 53.236v48.23c0 14.496 6.008 20.85 11.666 28.686 1.96 2.786 2.394 6.138-.13 8.227-6.312 5.267-17.543 15.061-23.724 20.546l-.043-.087M91.194 98.812c0 12.057.305 22.113-5.79 32.82-4.918 8.707-12.71 14.06-21.416 14.06-11.883 0-18.805-9.053-18.805-22.417 0-26.379 23.637-31.167 46.011-31.167v6.704m31.21 75.436c-2.045 1.828-5.005 1.959-7.312.74-10.273-8.532-12.102-12.493-17.76-20.633-16.977 17.325-28.99 22.505-51.017 22.505C20.285 176.86 0 160.797 0 128.63c0-25.117 13.625-42.224 32.995-50.582 16.803-7.4 40.265-8.706 58.199-10.752v-4.004c0-7.357.566-16.063-3.744-22.418-3.787-5.702-11.012-8.053-17.368-8.053-11.796 0-22.33 6.05-24.899 18.587-.522 2.786-2.568 5.528-5.354 5.659L9.794 53.846c-2.525-.566-5.31-2.612-4.614-6.486C12.101 10.97 44.966 0 74.392 0c15.06 0 34.736 4.005 46.62 15.41 15.06 14.06 13.624 32.82 13.624 53.236v48.23c0 14.496 6.007 20.85 11.666 28.686 2.003 2.786 2.438 6.138-.087 8.227-6.312 5.267-17.542 15.061-23.723 20.546l-.087-.087" fill="currentColor" fill-rule="evenodd"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#FF4500,#FF7A47">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 717 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="height:25px;width:auto;fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+              <g transform="matrix(0.926357,0,0,0.925926,0,0)">
+                <path d="M108,0C48.35,0 0,48.35 0,108C0,137.82 12.09,164.82 31.63,184.37L11.06,204.94C6.98,209.02 9.87,216 15.64,216L108,216C167.65,216 216,167.65 216,108C216,48.35 167.65,0 108,0Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+              </g>
+              <g id="Snoo" transform="matrix(0.370543,0,0,0.37037,19.972248,29.212963)">
+                <g>
+                  <circle cx="369.16" cy="188.55" r="63.05" style="fill:url(#_Radial1);"/>
+                  <circle cx="63.05" cy="188.55" r="63.05" style="fill:url(#_Radial2);"/>
+                  <ellipse cx="216.26" cy="242.72" rx="180" ry="135" style="fill:url(#_Radial3);"/>
+                  <g>
+                    <path d="M163.04,229.59C161.99,252.46 146.81,260.76 129.13,260.76C111.45,260.76 97.98,249.05 99.04,226.18C100.09,203.31 115.27,188.17 132.95,188.17C150.63,188.17 164.1,206.71 163.04,229.59Z" style="fill:rgb(132,33,35);fill-rule:nonzero;"/>
+                    <path d="M333.48,226.18C334.53,249.05 321.06,260.76 303.39,260.76C285.72,260.76 270.54,252.46 269.48,229.59C268.43,206.72 281.9,188.17 299.57,188.17C317.24,188.17 332.42,203.3 333.48,226.18Z" style="fill:rgb(132,33,35);fill-rule:nonzero;"/>
+                  </g>
+                  <path d="M163.05,231.59C162.06,253 147.86,260.76 131.32,260.76C114.78,260.76 102.17,249.13 103.16,227.73C104.15,206.32 118.35,192.32 134.89,192.32C151.43,192.32 164.04,210.18 163.05,231.59Z" style="fill:url(#_Radial4);fill-rule:nonzero;"/>
+                  <path d="M269.47,231.59C270.46,253 284.66,260.76 301.2,260.76C317.74,260.76 330.35,249.13 329.36,227.73C328.37,206.32 314.17,192.32 297.63,192.32C281.09,192.32 268.48,210.18 269.47,231.59Z" style="fill:url(#_Radial5);fill-rule:nonzero;"/>
+                  <ellipse cx="145.19" cy="212.04" rx="7" ry="7.64" style="fill:rgb(255,196,156);"/>
+                  <ellipse cx="311.64" cy="212.04" rx="7" ry="7.64" style="fill:rgb(255,196,156);"/>
+                  <path d="M216.26,276.02C193.94,276.02 172.55,277.1 152.77,279.06C149.39,279.4 147.25,282.84 148.56,285.92C159.64,311.89 185.78,330.13 216.26,330.13C246.74,330.13 272.88,311.89 283.96,285.92C285.27,282.84 283.13,279.4 279.75,279.06C259.97,277.09 238.58,276.02 216.26,276.02Z" style="fill:rgb(187,207,218);fill-rule:nonzero;"/>
+                  <path d="M216.26,280.98C194.01,280.98 172.69,282.07 152.97,284.07C149.6,284.41 147.46,287.91 148.77,291.04C159.82,317.42 185.87,335.95 216.26,335.95C246.65,335.95 272.7,317.42 283.75,291.04C285.06,287.92 282.92,284.42 279.55,284.07C259.83,282.07 238.51,280.98 216.26,280.98Z" style="fill:white;fill-rule:nonzero;"/>
+                  <path d="M216.26,278.4C194.36,278.4 173.37,279.48 153.96,281.44C150.64,281.78 148.54,285.22 149.83,288.3C160.7,314.27 186.35,332.51 216.27,332.51C246.19,332.51 271.83,314.27 282.71,288.3C284,285.22 281.9,281.78 278.58,281.44C259.17,279.47 238.18,278.4 216.27,278.4L216.26,278.4Z" style="fill:url(#_Radial6);fill-rule:nonzero;"/>
+                  <circle cx="314.84" cy="44.68" r="44.68" style="fill:url(#_Radial7);"/>
+                  <path d="M215.62,113.41C210.27,113.41 205.93,111.17 205.93,107.72C205.93,67.69 238.49,35.13 278.52,35.13C283.87,35.13 288.21,39.47 288.21,44.82C288.21,50.17 283.87,54.51 278.52,54.51C249.18,54.51 225.3,78.38 225.3,107.73C225.3,111.18 220.96,113.42 215.61,113.42L215.62,113.41Z" style="fill:url(#_Radial8);fill-rule:nonzero;"/>
+                  <path d="M151.29,242.18C151.29,250.46 142.48,254.18 131.6,254.18C120.72,254.18 111.91,250.46 111.91,242.18C111.91,233.9 120.72,227.18 131.6,227.18C142.48,227.18 151.29,233.9 151.29,242.18Z" style="fill:rgb(255,97,1);fill-rule:nonzero;"/>
+                  <path d="M320.6,242.18C320.6,250.46 311.79,254.18 300.91,254.18C290.03,254.18 281.22,250.46 281.22,242.18C281.22,233.9 290.03,227.18 300.91,227.18C311.79,227.18 320.6,233.9 320.6,242.18Z" style="fill:rgb(255,97,1);fill-rule:nonzero;"/>
+                </g>
+              </g>
+              <g transform="matrix(0.926357,0,0,0.925926,0,0)">
+                <path d="M331.62,77.92L319.61,106.48C318.1,105.72 314.5,104.87 311.1,104.87C307.7,104.87 304.29,105.72 300.98,107.33C294.45,110.64 289.63,117.26 289.63,126.81L289.63,179.11L259.74,179.11L259.74,77.34L288.78,77.34L288.78,91.62L289.35,91.62C296.16,82.54 306.56,75.83 320.09,75.83C325.01,75.83 329.74,76.78 331.63,77.91L331.62,77.92Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+                <path d="M325.84,128.52C325.84,99.11 345.99,75.84 376.16,75.84C403.49,75.84 423.07,95.8 423.07,123.89C423.07,128.81 422.6,133.44 421.56,137.89L353.08,137.89C356.2,148.58 365.47,156.9 379.37,156.9C387.03,156.9 397.91,154.16 403.77,149.62L413.04,171.94C404.43,177.8 391.29,180.64 379.75,180.64C347.5,180.64 325.84,159.83 325.84,128.53L325.84,128.52ZM352.5,119.16L395.54,119.16C395.54,106.11 386.65,99.2 375.77,99.2C363.47,99.2 355.15,107.14 352.5,119.16Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+                <path d="M679.53,31.63C689.56,31.63 697.78,39.86 697.78,49.88C697.78,59.9 689.55,68.13 679.53,68.13C669.51,68.13 661.28,59.9 661.28,49.88C661.28,39.86 669.51,31.63 679.53,31.63ZM694.47,179.12L664.58,179.12L664.58,77.35L694.47,77.35L694.47,179.12Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+                <path d="M506,33.47L505.91,87L505.34,87C497.11,79.15 488.22,75.93 476.59,75.93C447.93,75.93 428.92,99.01 428.92,128.23C428.92,157.45 446.7,180.63 475.64,180.63C487.75,180.63 499.19,176.47 506.57,167.01L507.42,167.01L507.42,179.12L535.89,179.12L535.89,33.47L506,33.47ZM507.42,154.86L506.43,154.86L499.76,147.93C495.42,152.26 489.48,154.86 482.54,154.86C467.9,154.86 457.66,143.28 457.66,128.26C457.66,113.24 467.9,101.66 482.54,101.66C497.18,101.66 507.42,113.24 507.42,128.26L507.42,154.86Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+                <path d="M620.15,33.47L620.06,87L619.49,87C611.26,79.15 602.37,75.93 590.74,75.93C562.08,75.93 543.07,99.01 543.07,128.23C543.07,157.45 560.85,180.63 589.79,180.63C601.9,180.63 613.34,176.47 620.72,167.01L621.57,167.01L621.57,179.12L650.04,179.12L650.04,33.47L620.15,33.47ZM621.43,154.86L620.44,154.86L613.77,147.93C609.43,152.26 603.49,154.86 596.55,154.86C581.91,154.86 571.67,143.28 571.67,128.26C571.67,113.24 581.91,101.66 596.55,101.66C611.19,101.66 621.43,113.24 621.43,128.26L621.43,154.86Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+                <path d="M752.44,77.35L774.29,77.35L774.29,102.79L752.44,102.79L752.44,179.12L722.55,179.12L722.55,102.79L700.8,102.79L700.8,77.35L722.55,77.35L722.55,49.69L752.44,49.69L752.44,77.35Z" style="fill:rgb(255,69,0);fill-rule:nonzero;"/>
+              </g>
+              <defs>
+                <radialGradient id="_Radial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(127.45,0,0,110.8815,370.49,151.0133)"><stop offset="0" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.4" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.51" style="stop-color:rgb(249,252,252);stop-opacity:1"/><stop offset="0.62" style="stop-color:rgb(237,243,245);stop-opacity:1"/><stop offset="0.7" style="stop-color:rgb(222,233,236);stop-opacity:1"/><stop offset="0.72" style="stop-color:rgb(216,228,232);stop-opacity:1"/><stop offset="0.76" style="stop-color:rgb(204,216,223);stop-opacity:1"/><stop offset="0.8" style="stop-color:rgb(200,213,221);stop-opacity:1"/><stop offset="0.83" style="stop-color:rgb(204,214,222);stop-opacity:1"/><stop offset="0.85" style="stop-color:rgb(216,219,226);stop-opacity:1"/><stop offset="0.88" style="stop-color:rgb(237,227,233);stop-opacity:1"/><stop offset="0.9" style="stop-color:rgb(255,235,239);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,235,239);stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(16071.445,0,0,16071.445,8118.318,188.55)"><stop offset="0" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.4" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.51" style="stop-color:rgb(249,252,252);stop-opacity:1"/><stop offset="0.62" style="stop-color:rgb(237,243,245);stop-opacity:1"/><stop offset="0.7" style="stop-color:rgb(222,233,236);stop-opacity:1"/><stop offset="0.72" style="stop-color:rgb(216,228,232);stop-opacity:1"/><stop offset="0.76" style="stop-color:rgb(204,216,223);stop-opacity:1"/><stop offset="0.8" style="stop-color:rgb(200,213,221);stop-opacity:1"/><stop offset="0.83" style="stop-color:rgb(204,214,222);stop-opacity:1"/><stop offset="0.85" style="stop-color:rgb(216,219,226);stop-opacity:1"/><stop offset="0.88" style="stop-color:rgb(237,227,233);stop-opacity:1"/><stop offset="0.9" style="stop-color:rgb(255,235,239);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,235,239);stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(138398.4,0,0,96878.88,79286.66,36532.34)"><stop offset="0" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.4" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.51" style="stop-color:rgb(249,252,252);stop-opacity:1"/><stop offset="0.62" style="stop-color:rgb(237,243,245);stop-opacity:1"/><stop offset="0.7" style="stop-color:rgb(222,233,236);stop-opacity:1"/><stop offset="0.72" style="stop-color:rgb(216,228,232);stop-opacity:1"/><stop offset="0.76" style="stop-color:rgb(204,216,223);stop-opacity:1"/><stop offset="0.8" style="stop-color:rgb(200,213,221);stop-opacity:1"/><stop offset="0.83" style="stop-color:rgb(204,214,222);stop-opacity:1"/><stop offset="0.85" style="stop-color:rgb(216,219,226);stop-opacity:1"/><stop offset="0.88" style="stop-color:rgb(237,227,233);stop-opacity:1"/><stop offset="0.9" style="stop-color:rgb(255,235,239);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,235,239);stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(32.12,0,0,46.8952,134.7,241.0608)"><stop offset="0" style="stop-color:rgb(255,102,0);stop-opacity:1"/><stop offset="0.5" style="stop-color:rgb(255,69,0);stop-opacity:1"/><stop offset="0.7" style="stop-color:rgb(252,67,1);stop-opacity:1"/><stop offset="0.82" style="stop-color:rgb(244,63,7);stop-opacity:1"/><stop offset="0.92" style="stop-color:rgb(229,56,18);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(212,48,31);stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial5" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-2198.2928,0,0,3209.507488,18138.332653,16690.521152)"><stop offset="0" style="stop-color:rgb(255,102,0);stop-opacity:1"/><stop offset="0.5" style="stop-color:rgb(255,69,0);stop-opacity:1"/><stop offset="0.7" style="stop-color:rgb(252,67,1);stop-opacity:1"/><stop offset="0.82" style="stop-color:rgb(244,63,7);stop-opacity:1"/><stop offset="0.92" style="stop-color:rgb(229,56,18);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(212,48,31);stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial6" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(113.26,0,0,74.7516,215.93,339.8132)"><stop offset="0" style="stop-color:rgb(23,46,53);stop-opacity:1"/><stop offset="0.29" style="stop-color:rgb(14,28,33);stop-opacity:1"/><stop offset="0.73" style="stop-color:rgb(3,7,8);stop-opacity:1"/><stop offset="1" style="stop-color:black;stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial7" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(8884.1712,0,0,8706.487776,28490.9416,309.239216)"><stop offset="0" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.4" style="stop-color:rgb(254,255,255);stop-opacity:1"/><stop offset="0.51" style="stop-color:rgb(249,252,252);stop-opacity:1"/><stop offset="0.62" style="stop-color:rgb(237,243,245);stop-opacity:1"/><stop offset="0.7" style="stop-color:rgb(222,233,236);stop-opacity:1"/><stop offset="0.72" style="stop-color:rgb(216,228,232);stop-opacity:1"/><stop offset="0.76" style="stop-color:rgb(204,216,223);stop-opacity:1"/><stop offset="0.8" style="stop-color:rgb(200,213,221);stop-opacity:1"/><stop offset="0.83" style="stop-color:rgb(204,214,222);stop-opacity:1"/><stop offset="0.85" style="stop-color:rgb(216,219,226);stop-opacity:1"/><stop offset="0.88" style="stop-color:rgb(237,227,233);stop-opacity:1"/><stop offset="0.9" style="stop-color:rgb(255,235,239);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(255,235,239);stop-opacity:1"/></radialGradient>
+                <radialGradient id="_Radial8" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(81.49,0,0,81.49,274.38,103.82)"><stop offset="0" style="stop-color:rgb(122,146,153);stop-opacity:1"/><stop offset="0.48" style="stop-color:rgb(122,146,153);stop-opacity:1"/><stop offset="0.67" style="stop-color:rgb(23,46,53);stop-opacity:1"/><stop offset="0.75" style="stop-color:black;stop-opacity:1"/><stop offset="0.82" style="stop-color:rgb(23,46,53);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(23,46,53);stop-opacity:1"/></radialGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#253B80,#179BD7">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-icon" viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg" style="height:21px;">
+              <text x="3" y="22" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="#253B80">P</text>
+              <text x="8" y="19" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="#179BD7">P</text>
+            </svg>
+            <svg class="logo-svg" viewBox="0 0 92 32" xmlns="http://www.w3.org/2000/svg" style="height:20px;">
+              <g transform="skewX(-10)">
+                <text x="2" y="23" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="24">
+                  <tspan fill="#253B80">Pay</tspan><tspan fill="#179BD7">Pal</tspan>
+                </text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#1877F2,#5B9BF5">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 150 32" xmlns="http://www.w3.org/2000/svg" style="height:26px;color:#1877F2;">
+              <text x="75" y="23" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="24" fill="currentColor">facebook</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#1DB954,#4DE383">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="height:26px;width:26px;">
+              <circle cx="16" cy="16" r="14" fill="#1DB954"/>
+              <path d="M9 13c5-1.5 10-1.5 14 0.5" stroke="#0B1A0F" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M9.5 17c4.3-1.2 8.7-1.2 12.5 0.4" stroke="#0B1A0F" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <path d="M10 21c3.5-1 7-1 10 0.3" stroke="#0B1A0F" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            </svg>
+            <svg class="logo-svg" viewBox="0 0 96 32" xmlns="http://www.w3.org/2000/svg" style="height:20px;color:#1DB954;">
+              <text x="2" y="23" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="24" fill="currentColor">Spotify</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#0A66C2,#4E9FE0">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:34px;color:#0A66C2;">
+              <path d="M96.7784 23.0413H93.8149V18.4004C93.8149 17.2937 93.7951 15.8691 92.2736 15.8691C90.7301 15.8691 90.4939 17.0749 90.4939 18.3198V23.041H87.5305V13.4974H90.3754V14.8016H90.4152C90.6999 14.3149 91.1113 13.9144 91.6056 13.6429C92.1001 13.3714 92.6585 13.2391 93.2222 13.26C96.2258 13.26 96.7796 15.2357 96.7796 17.8059L96.7784 23.0413ZM84.1867 12.1929C83.8465 12.1929 83.514 12.0921 83.2313 11.9032C82.9482 11.7143 82.7278 11.4458 82.5975 11.1315C82.4676 10.8173 82.4333 10.4715 82.4997 10.1379C82.566 9.80433 82.7296 9.49786 82.9701 9.25729C83.2106 9.01675 83.5171 8.8529 83.8505 8.78649C84.1842 8.72007 84.53 8.75407 84.8442 8.88417C85.1585 9.01428 85.427 9.23466 85.6163 9.51743C85.8052 9.80019 85.9061 10.1327 85.9061 10.4728C85.9061 10.6987 85.8617 10.9223 85.7752 11.1309C85.6888 11.3396 85.5622 11.5292 85.4026 11.6889C85.243 11.8487 85.0535 11.9754 84.8448 12.0618C84.6361 12.1483 84.4127 12.1928 84.1867 12.1929ZM85.6684 23.0413H82.7019V13.4974H85.6684V23.0413ZM98.2558 6.00136H81.2127C80.8259 5.997 80.453 6.14639 80.1764 6.4167C79.8995 6.68702 79.7415 7.05615 79.7368 7.44297V24.5567C79.7415 24.9437 79.8995 25.3131 80.1761 25.5837C80.453 25.8543 80.8256 26.004 81.2127 25.9999H98.2558C98.6435 26.0048 99.0173 25.8555 99.2952 25.5849C99.573 25.3143 99.7323 24.9445 99.7375 24.5567V7.44173C99.732 7.05414 99.5727 6.6846 99.2949 6.41429C99.017 6.14398 98.6435 5.99502 98.2558 6.00013V6.00136ZM71.6709 15.8009C70.1892 15.8009 69.3002 16.7903 69.3002 18.2319C69.3002 19.6735 70.1889 20.6638 71.6709 20.6638C73.153 20.6638 74.0439 19.6759 74.0439 18.2319C74.0439 16.7878 73.1545 15.8009 71.6709 15.8009ZM76.7721 23.0358H74.0439V21.7701H74.0034C73.6611 22.2305 73.2172 22.6056 72.7063 22.8663C72.1951 23.1269 71.6308 23.2661 71.0572 23.2729C68.2098 23.2729 66.3342 21.2179 66.3342 18.3118C66.3342 15.6428 67.9941 13.1921 70.7226 13.1921C71.9491 13.1921 73.0946 13.5277 73.7667 14.4578H73.8056V8.9565H76.7718L76.7721 23.0358ZM62.5292 17.1558C62.5348 16.9153 62.4916 16.6763 62.4024 16.453C62.3128 16.2298 62.1789 16.027 62.0088 15.857C61.8387 15.687 61.6359 15.5534 61.4127 15.464C61.1892 15.3747 60.9503 15.3317 60.7098 15.3375C60.1921 15.3053 59.6821 15.4779 59.2904 15.818C58.8987 16.1581 58.6563 16.6386 58.6156 17.1558H62.5292ZM65.0395 21.3849C64.5472 21.9821 63.9279 22.4622 63.2272 22.7907C62.5261 23.119 61.7609 23.2875 60.987 23.2837C58.0235 23.2837 55.6509 21.3056 55.6509 18.2424C55.6509 15.1792 58.0232 13.202 60.987 13.202C63.7569 13.202 65.4939 15.1776 65.4939 18.2424V19.1715H58.6156C58.7011 19.6985 58.9743 20.1768 59.3849 20.5182C59.7951 20.8596 60.3153 21.0413 60.849 21.0296C61.2707 21.027 61.6853 20.9189 62.0548 20.7152C62.424 20.5115 62.7367 20.2187 62.9639 19.8633L65.0395 21.3849ZM35.5795 13.4949H38.4254V14.7992H38.4658C38.75 14.3122 39.1612 13.9115 39.6554 13.64C40.1497 13.3685 40.7083 13.2363 41.2718 13.2576C44.277 13.2576 44.8302 15.2347 44.8302 17.8034V23.037H41.8667V18.397C41.8667 17.2894 41.8463 15.8657 40.3232 15.8657C38.7828 15.8657 38.5451 17.0718 38.5451 18.3165V23.0358H35.5817L35.5795 13.4949ZM46.3329 8.95743H49.2964V17.374L52.655 13.4897H56.2883L52.3988 17.908L56.2065 23.0417H52.4818L49.3359 18.3242H49.297V23.041H46.3335L46.3329 8.95743ZM30.9728 13.494H33.9363V23.0376H30.9728V13.494ZM32.4546 8.74937C32.7946 8.74943 33.1269 8.85031 33.4096 9.03925C33.6923 9.22818 33.9125 9.49668 34.0426 9.81084C34.1727 10.125 34.2067 10.4706 34.1403 10.8041C34.074 11.1375 33.9102 11.4438 33.6698 11.6842C33.4293 11.9246 33.123 12.0883 32.7895 12.1546C32.4561 12.2209 32.1104 12.1868 31.7963 12.0567C31.4822 11.9266 31.2137 11.7063 31.0248 11.4236C30.836 11.1409 30.7351 10.8085 30.7351 10.4685C30.7351 10.2427 30.7796 10.0192 30.866 9.81053C30.9524 9.60195 31.0791 9.41241 31.2388 9.25278C31.3984 9.09316 31.588 8.96652 31.7966 8.88014C32.0052 8.79376 32.2288 8.74933 32.4546 8.74937ZM20.8134 8.95959H23.8981V20.1961H29.609V23.0429H20.8134V8.95959Z" fill="currentColor"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="logo-cell" data-colors="#3780FF,#38B137,#FA3913,#FCBD06">
+          <canvas></canvas>
+          <div class="logo-mark">
+            <svg class="logo-svg" viewBox="0 0 81 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:34px;">
+              <path d="M17.4389 6H17.9802C19.8593 6.04112 21.7079 6.80187 23.0356 8.1486C22.5454 8.65234 22.0449 9.13552 21.5649 9.63926C20.8194 8.96075 19.9206 8.43645 18.9402 8.2514C17.4899 7.94299 15.9274 8.22056 14.712 9.05327C13.3843 9.92711 12.4856 11.4075 12.2915 12.9907C12.0771 14.5533 12.5162 16.1981 13.5273 17.4112C14.4975 18.5935 15.9784 19.3337 17.5104 19.3851C18.9402 19.4673 20.4313 19.0252 21.473 18.0178C22.29 17.3084 22.6679 16.229 22.7905 15.1804C21.0951 15.1804 19.3998 15.1907 17.7044 15.1804V13.0626H24.8433C25.2109 15.3346 24.6799 17.8944 22.9641 19.5187C21.8202 20.6701 20.2372 21.3486 18.6236 21.4823C17.061 21.6365 15.4473 21.3383 14.0584 20.5776C12.3937 19.6832 11.066 18.172 10.4124 16.3935C9.79958 14.7589 9.78936 12.9084 10.3613 11.2636C10.8822 9.76262 11.883 8.43645 13.1699 7.51122C14.4056 6.59626 15.9069 6.09252 17.4389 6Z" fill="#3780FF"/>
+              <path d="M58.3929 6.53455H60.5784V21.2149C59.8533 21.2149 59.118 21.2252 58.3929 21.2047C58.4031 16.3215 58.3929 11.428 58.3929 6.53455Z" fill="#38B137"/>
+              <path d="M29.7046 11.6233C31.0528 11.3663 32.5132 11.6542 33.6264 12.4663C34.6375 13.1859 35.3422 14.3168 35.5567 15.5504C35.8324 16.9794 35.4852 18.542 34.566 19.6729C33.5754 20.9373 31.9515 21.6158 30.3685 21.513C28.9182 21.4308 27.5089 20.7009 26.651 19.5084C25.6807 18.1925 25.4458 16.3831 25.9769 14.8411C26.508 13.1859 28.0093 11.9214 29.7046 11.6233ZM30.011 13.5766C29.4595 13.7205 28.9489 14.0392 28.5812 14.4915C27.5906 15.6841 27.6518 17.6271 28.7446 18.7373C29.3676 19.3747 30.3072 19.6729 31.1753 19.4981C31.9821 19.3542 32.6868 18.8093 33.0749 18.0897C33.749 16.8663 33.5549 15.1803 32.5234 14.2243C31.8596 13.6074 30.8894 13.3504 30.011 13.5766Z" fill="#FA3913"/>
+              <path d="M40.5304 11.6233C42.0725 11.3252 43.7577 11.757 44.9117 12.8467C46.7909 14.543 46.9952 17.7196 45.3918 19.6729C44.4215 20.9065 42.8487 21.585 41.2964 21.5131C39.8155 21.4719 38.355 20.7317 37.4767 19.5084C36.486 18.1616 36.2716 16.3112 36.8333 14.7383C37.395 13.1345 38.8657 11.9112 40.5304 11.6233ZM40.8368 13.5766C40.2853 13.7205 39.7746 14.0392 39.407 14.4813C38.4265 15.6532 38.4674 17.5654 39.5193 18.6859C40.1423 19.3542 41.1125 19.6831 42.0113 19.4981C42.8079 19.3439 43.5228 18.8093 43.9109 18.0897C44.5747 16.856 44.3807 15.1701 43.3389 14.214C42.6751 13.5972 41.7049 13.3504 40.8368 13.5766Z" fill="#FCBD06"/>
+              <path d="M49.7118 12.2196C50.8863 11.4794 52.4489 11.2738 53.7153 11.9112C54.1136 12.086 54.4404 12.3841 54.757 12.6822C54.7673 12.4047 54.757 12.1168 54.7673 11.829C55.4515 11.8392 56.1358 11.829 56.8303 11.8392V20.9065C56.8201 22.2738 56.4728 23.7234 55.4924 24.7206C54.42 25.8206 52.7757 26.1598 51.2949 25.9336C49.7118 25.6972 48.3331 24.5355 47.7203 23.0654C48.3331 22.7673 48.9765 22.5308 49.6097 22.2533C49.9672 23.0963 50.6923 23.8159 51.6012 23.9804C52.5102 24.1449 53.5621 23.9187 54.1545 23.1579C54.7877 22.3766 54.7877 21.3075 54.757 20.3514C54.2873 20.814 53.746 21.2252 53.0923 21.3794C51.6727 21.7804 50.1101 21.2869 49.0174 20.3206C47.9144 19.3542 47.2607 17.8635 47.322 16.3832C47.3526 14.7075 48.2922 13.0934 49.7118 12.2196ZM51.8259 13.5355C51.2029 13.6383 50.6208 13.9878 50.2225 14.471C49.2625 15.6224 49.2625 17.4626 50.2327 18.5934C50.7842 19.2617 51.6727 19.6318 52.5306 19.5392C53.3374 19.457 54.083 18.943 54.4813 18.2336C55.1554 17.0308 55.043 15.3962 54.1341 14.3476C53.5723 13.7 52.6736 13.3813 51.8259 13.5355Z" fill="#3780FF"/>
+              <path d="M63.2032 12.7439C64.4287 11.5925 66.3181 11.2018 67.8909 11.8084C69.382 12.3738 70.3318 13.8028 70.8118 15.2729C68.5956 16.1981 66.3896 17.1131 64.1734 18.0383C64.4798 18.6243 64.9496 19.1589 65.5828 19.3747C66.4713 19.6934 67.5335 19.5803 68.279 18.9841C68.5752 18.7579 68.8101 18.4598 69.0348 18.1719C69.5965 18.5523 70.1582 18.9224 70.7199 19.3028C69.9233 20.5056 68.5854 21.3486 67.1454 21.4822C65.5521 21.6775 63.8568 21.0607 62.8253 19.8065C61.1299 17.8327 61.2933 14.5224 63.2032 12.7439ZM64.296 14.6458C63.9487 15.1495 63.8057 15.7663 63.8159 16.3729C65.2968 15.756 66.7777 15.1392 68.2586 14.5121C68.0135 13.9364 67.4211 13.5869 66.8186 13.4944C65.8483 13.3196 64.8372 13.8439 64.296 14.6458Z" fill="#FA3913"/>
+            </svg>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1907,6 +3135,114 @@
     fadeEls.forEach(function (el) { io.observe(el); });
 
     timer = setInterval(next, 6000);
+  })();
+  </script>
+
+  <script>
+  (function () {
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    function createPixel(ctx, canvas, x, y, color, baseSpeed, delay) {
+      var p = {
+        x: x, y: y, color: color,
+        speed: rand(0.1, 0.9) * baseSpeed,
+        size: 0,
+        sizeStep: Math.random() * 0.4,
+        minSize: 0.5,
+        maxSizeInt: 2,
+        maxSize: rand(0.5, 2),
+        delay: delay,
+        counter: 0,
+        counterStep: Math.random() * 4 + (canvas.width + canvas.height) * 0.01,
+        isIdle: false,
+        isReverse: false,
+        isShimmer: false,
+      };
+      p.draw = function () {
+        var offset = p.maxSizeInt * 0.5 - p.size * 0.5;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x + offset, p.y + offset, p.size, p.size);
+      };
+      p.appear = function () {
+        p.isIdle = false;
+        if (p.counter <= p.delay) { p.counter += p.counterStep; return; }
+        if (p.size >= p.maxSize) p.isShimmer = true;
+        if (p.isShimmer) p.shimmer(); else p.size += p.sizeStep;
+        p.draw();
+      };
+      p.disappear = function () {
+        p.isShimmer = false;
+        p.counter = 0;
+        if (p.size <= 0) { p.isIdle = true; return; }
+        p.size -= 0.1;
+        p.draw();
+      };
+      p.shimmer = function () {
+        if (p.size >= p.maxSize) p.isReverse = true;
+        else if (p.size <= p.minSize) p.isReverse = false;
+        if (p.isReverse) p.size -= p.speed; else p.size += p.speed;
+      };
+      return p;
+    }
+
+    function initPixelCell(cell) {
+      var canvas = cell.querySelector('canvas');
+      var ctx = canvas.getContext('2d');
+      var colors = cell.dataset.colors.split(',');
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var gap = 5;
+      var pixels = [];
+      var animationId = 0;
+      var lastFrame = performance.now();
+
+      function init() {
+        var rect = cell.getBoundingClientRect();
+        var w = Math.floor(rect.width);
+        var h = Math.floor(rect.height);
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        var speed = reducedMotion ? 0 : 0.03;
+        pixels = [];
+        for (var x = 0; x < w; x += gap) {
+          for (var y = 0; y < h; y += gap) {
+            var color = colors[Math.floor(Math.random() * colors.length)];
+            var dx = x - w / 2, dy = y - h / 2;
+            var delay = reducedMotion ? 0 : Math.sqrt(dx * dx + dy * dy);
+            pixels.push(createPixel(ctx, canvas, x, y, color, speed, delay));
+          }
+        }
+      }
+
+      function animate(mode) {
+        cancelAnimationFrame(animationId);
+        var frameInterval = 1000 / 60;
+        function loop() {
+          animationId = requestAnimationFrame(loop);
+          var now = performance.now();
+          var elapsed = now - lastFrame;
+          if (elapsed < frameInterval) return;
+          lastFrame = now - (elapsed % frameInterval);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          var allIdle = true;
+          for (var i = 0; i < pixels.length; i++) {
+            pixels[i][mode]();
+            if (!pixels[i].isIdle) allIdle = false;
+          }
+          if (mode === 'disappear' && allIdle) cancelAnimationFrame(animationId);
+        }
+        animationId = requestAnimationFrame(loop);
+      }
+
+      init();
+      var ro = new ResizeObserver(init);
+      ro.observe(cell);
+      cell.addEventListener('mouseenter', function () { animate('appear'); });
+      cell.addEventListener('mouseleave', function () { animate('disappear'); });
+    }
+
+    Array.from(document.querySelectorAll('.logo-cell')).forEach(initPixelCell);
   })();
   </script>
 </section>
@@ -2059,7 +3395,7 @@
       <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Wrench/3D/wrench_3d.png" alt="Wrench" draggable="false"></div>
       <div class="feat-card-content">
         <span class="feat-card-tag" style="background:rgba(255,45,120,0.10);color:#FF2D78;border:1px solid rgba(255,45,120,0.20);">MAINTAIN</span>
-        <p class="feat-card-title">Ongoing monthly maintenance, updates, SEO analysis, speed checks, and 4-hour emergency + 24-hour general support.</p>
+        <p class="feat-card-title">Ongoing monthly maintenance, updates, analysis, revisions, and 4, 8 or 12-hour emergency + 24-hour general support.</p>
       </div>
     </div>
 
@@ -2136,9 +3472,10 @@
                 <a href="index.html" class="footer-pill-home-sub" role="menuitem">Landing</a>
                 <a href="#why-us"   class="footer-pill-home-sub" role="menuitem">Why Us?</a>
                 <a href="#services" class="footer-pill-home-sub" role="menuitem">Services</a>
+                <a href="#advanced"   class="footer-pill-home-sub" role="menuitem">Advanced</a>
+                <a href="#investment" class="footer-pill-home-sub" role="menuitem">Investment</a>
                 <a href="#results"   class="footer-pill-home-sub" role="menuitem">Results</a>
-                <a href="#advanced" class="footer-pill-home-sub" role="menuitem">Advanced</a>
-                <a href="#roadmap"  class="footer-pill-home-sub" role="menuitem">Roadmap</a>
+                <a href="#roadmap"    class="footer-pill-home-sub" role="menuitem">Roadmap</a>
               </div>
             </div>
             <!-- Company dropdown pill -->
@@ -2172,11 +3509,11 @@
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">E-Commerce</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Landing Pages</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">App Development</a>
-              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">SEO &amp; Performance</a>
+              <a href="sem-seo.html"    class="footer-pill-home-sub" role="menuitem">SEM &amp; SEO</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Maintenance</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Hosting Services</a>
-              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Content Creation</a>
-              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Social Media</a>
+              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Content Creation &amp; CM</a>
+              <a href="smm.html"    class="footer-pill-home-sub" role="menuitem">Social Media &amp; SMM</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Custom Request</a>
             </div>
           </div>
@@ -2204,18 +3541,20 @@
     <div id="footer-bottom-bar" style="position:relative;z-index:20;width:100%;padding:0 48px 32px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
       <p style="color:rgba(200,212,232,0.28);font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">© 2026 VardWeb. All rights reserved.</p>
 
-      <div id="footer-credit" class="footer-glass-pill" style="padding:11px 22px;border-radius:9999px;display:flex;align-items:center;gap:8px;cursor:default;">
-        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
-        <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
-        <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
-        <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
-      </div>
+      <div class="footer-bottom-actions">
+        <div id="footer-credit" class="footer-glass-pill" style="padding:11px 22px;border-radius:9999px;display:flex;align-items:center;gap:8px;cursor:default;">
+          <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+          <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
+          <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+          <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+        </div>
 
-      <button id="footer-back-top" class="footer-glass-pill footer-magnetic" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(200,212,232,0.45);background:none;cursor:pointer;border:none;padding:0;flex-shrink:0;" aria-label="Back to top">
-        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M5 10l7-7m0 0l7 7m-7-7v18"/>
-        </svg>
-      </button>
+        <button id="footer-back-top" class="footer-glass-pill footer-magnetic" style="width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:rgba(200,212,232,0.45);background:none;cursor:pointer;border:none;padding:0;flex-shrink:0;" aria-label="Back to top">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
   </footer>
@@ -2229,6 +3568,7 @@
   if (!canvas || !hero) return;
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isTouch = window.matchMedia('(hover: none)').matches;
   var ctx = canvas.getContext('2d');
 
   var DOT_SPACING       = 28;
@@ -2240,11 +3580,15 @@
   var OPACITY_BOOST = 0.5;
   var RADIUS_BOOST  = 2;
   var GRID_CELL_SIZE = Math.max(50, Math.floor(INTERACTION_RADIUS / 1.5));
+  var RIPPLE_DURATION   = 2600;
+  var RIPPLE_RING_WIDTH = 90;
+  var RIPPLE_MAX_COUNT  = 6;
 
   var dots = [];
   var grid = {};
   var size = { width: 0, height: 0 };
   var mouse = { x: null, y: null };
+  var ripples = [];
   var rafId = 0;
 
   function createDots() {
@@ -2290,6 +3634,24 @@
     mouse.y = e.clientY - rect.top;
   }
 
+  function handleTouchStart(e) {
+    var rect = canvas.getBoundingClientRect();
+    var now = performance.now();
+    for (var k = 0; k < e.changedTouches.length; k++) {
+      var touch = e.changedTouches[k];
+      ripples.push({
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top,
+        start: now,
+        duration: RIPPLE_DURATION,
+        maxRadius: Math.sqrt(size.width * size.width + size.height * size.height) * 0.5
+      });
+    }
+    if (ripples.length > RIPPLE_MAX_COUNT) {
+      ripples.splice(0, ripples.length - RIPPLE_MAX_COUNT);
+    }
+  }
+
   function drawStatic() {
     ctx.clearRect(0, 0, size.width, size.height);
     dots.forEach(function (dot) {
@@ -2317,6 +3679,21 @@
       }
     }
 
+    var now = performance.now();
+    for (var r = ripples.length - 1; r >= 0; r--) {
+      if (now - ripples[r].start >= ripples[r].duration) ripples.splice(r, 1);
+    }
+    var rippleFrames = ripples.map(function (rp) {
+      var progress = (now - rp.start) / rp.duration;
+      var eased = Math.sqrt(progress);
+      return {
+        x: rp.x,
+        y: rp.y,
+        ringRadius: eased * rp.maxRadius,
+        temporalFactor: Math.pow(1 - progress, 1.2)
+      };
+    });
+
     dots.forEach(function (dot, index) {
       dot.currentOpacity += dot.opacitySpeed;
       if (dot.currentOpacity >= dot.targetOpacity || dot.currentOpacity <= BASE_OPACITY_MIN) {
@@ -2335,8 +3712,20 @@
         }
       }
 
-      var finalOpacity = Math.min(1, dot.currentOpacity + interactionFactor * OPACITY_BOOST);
-      dot.currentRadius = BASE_RADIUS + interactionFactor * RADIUS_BOOST;
+      var rippleFactor = 0;
+      for (var rf = 0; rf < rippleFrames.length; rf++) {
+        var frame = rippleFrames[rf];
+        var rdx = dot.x - frame.x, rdy = dot.y - frame.y;
+        var dist = Math.sqrt(rdx * rdx + rdy * rdy);
+        var ringDelta = Math.abs(dist - frame.ringRadius);
+        var spatial = Math.max(0, 1 - ringDelta / RIPPLE_RING_WIDTH);
+        rippleFactor += spatial * spatial * frame.temporalFactor;
+      }
+      rippleFactor = Math.min(1, rippleFactor);
+
+      var totalFactor = Math.min(1, interactionFactor + rippleFactor);
+      var finalOpacity = Math.min(1, dot.currentOpacity + totalFactor * OPACITY_BOOST);
+      dot.currentRadius = BASE_RADIUS + totalFactor * RADIUS_BOOST;
 
       ctx.beginPath();
       ctx.fillStyle = 'rgba(0,229,255,' + finalOpacity.toFixed(3) + ')';
@@ -2355,10 +3744,14 @@
     return;
   }
 
-  window.addEventListener('mousemove', handleMouseMove, { passive: true });
-  document.documentElement.addEventListener('mouseleave', function () {
-    mouse.x = null; mouse.y = null;
-  });
+  if (isTouch) {
+    hero.addEventListener('touchstart', handleTouchStart, { passive: true });
+  } else {
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    document.documentElement.addEventListener('mouseleave', function () {
+      mouse.x = null; mouse.y = null;
+    });
+  }
   rafId = requestAnimationFrame(animate);
 })();
 </script>
@@ -2432,19 +3825,6 @@
   window.addEventListener('load', sync);
   var img = desktop.querySelector('img');
   if (img.complete) sync(); else img.addEventListener('load', sync);
-})();
-</script>
-
-<script>
-/* ── Hero: cursor-tracked light sheen on the site mockups ── */
-(function () {
-  document.querySelectorAll('.mock-link').forEach(function (el) {
-    el.addEventListener('mousemove', function (e) {
-      var rect = el.getBoundingClientRect();
-      el.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width) * 100 + '%');
-      el.style.setProperty('--my', ((e.clientY - rect.top) / rect.height) * 100 + '%');
-    });
-  });
 })();
 </script>
 
@@ -3083,6 +4463,12 @@
     [].slice.call(document.querySelectorAll('#roadmap .feat-card')),
     document.querySelector('#roadmap .feat-grid')
   );
+
+  // Investment
+  staggerReveal(
+    [].slice.call(document.querySelectorAll('#investment .inv-card')),
+    document.querySelector('#investment .inv-grid')
+  );
 })();
 
 /* ── Mobile-only center-band highlight (touch devices only) ── */
@@ -3096,7 +4482,7 @@
       entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
     });
   }, ioOpts);
-  [].slice.call(document.querySelectorAll('#services .svc-card, #roadmap .feat-card'))
+  [].slice.call(document.querySelectorAll('#services .svc-card, #roadmap .feat-card, #investment .inv-card'))
     .forEach(function (el) { simpleObs.observe(el); });
 
   /* rAF oscillation for adv-cards — mirrors desktop mouseenter/mouseleave exactly */

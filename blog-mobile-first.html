@@ -16,6 +16,11 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.7; }
     body::after {
       content: ''; position: fixed; inset: 0;
@@ -63,6 +68,14 @@
     .article-body ul li { font-size: 15.5px; line-height: 1.8; color: var(--text-2); padding: 8px 0 8px 24px; position: relative; border-bottom: 1px solid rgba(255,215,0,0.04); }
     .article-body ul li:last-child { border-bottom: none; }
     .article-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--gold); font-family: 'JetBrains Mono', monospace; font-size: 13px; top: 10px; }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     .stat-callout { background: var(--surface); border: 1px solid rgba(255,215,0,0.12); border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0; }
     .stat-callout .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 6px; }
@@ -215,10 +228,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -235,11 +250,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -265,8 +280,9 @@
       <a href="index.html"          class="mob-link mob-sub">Landing</a>
       <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
       <a href="index.html#services" class="mob-link mob-sub">Services</a>
-      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
       <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+      <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
       <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <a href="faq.html"      class="mob-link">FAQ</a>
@@ -291,7 +307,7 @@
     radial-gradient(ellipse 50% 50% at 20% 100%, rgba(255,45,120,0.04) 0%, transparent 65%),
     var(--base);
   position: relative; overflow: hidden;
-">
+" id="post-hero">
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,215,0,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,215,0,0.02) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;"></div>
   <div style="max-width: 720px; margin: 0 auto; position: relative; z-index: 1;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -325,54 +341,54 @@
 <article style="padding: 72px 28px 100px;">
   <div class="article-body">
 
-    <p>
+    <p class="reveal-fade">
       Here's something most web agencies won't tell you: if you're designing a website on a 27-inch monitor and then "checking it on mobile" afterward, you've already made the wrong decision. <strong>Mobile-first isn't a checkbox — it's a foundational philosophy that changes how every design decision gets made.</strong>
     </p>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">63%</div>
       <div class="stat-desc">Of all internet traffic now originates from mobile devices globally. In Canada, that figure is even higher during evenings and weekends — exactly when your customers are browsing.</div>
     </div>
 
-    <h2>What "Mobile-First" Actually Means</h2>
+    <h2 class="reveal-fade">What "Mobile-First" Actually Means</h2>
 
-    <p>
+    <p class="reveal-fade">
       Mobile-first is a design strategy where you build the mobile experience first — with its constraints, its vertical layout, its touch targets — and then scale up to larger screens. It's the inverse of what most teams do, which is design for desktop and then shrink it.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       The difference matters more than it sounds. When you design desktop-first, every compromise you make adapting down to mobile is a compromise in quality. You're not optimizing for mobile — you're tolerating it. Mobile-first means the smallest screen gets the best thinking, and everything else is an enhancement.
     </p>
 
-    <h2>Google Made the Decision For You</h2>
+    <h2 class="reveal-fade">Google Made the Decision For You</h2>
 
-    <p>
+    <p class="reveal-fade">
       In 2019, Google switched to mobile-first indexing — meaning Google's crawlers now use the mobile version of your website as the primary source for ranking and indexing. Your desktop site is essentially irrelevant to search engines.
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>If your mobile site is slower than your desktop site</strong>, Google sees your site as slow — full stop.</li>
       <li><strong>If content exists on desktop but is hidden or truncated on mobile</strong>, Google treats it as if it doesn't exist.</li>
       <li><strong>If your mobile layout breaks or shifts during load</strong>, your Core Web Vitals score drops and so does your ranking.</li>
       <li><strong>If navigation is hard to use on a small screen</strong>, your bounce rate climbs and Google interprets that as low-quality content.</li>
     </ul>
 
-    <p>
+    <p class="reveal-fade">
       A mobile experience that's been bolted on after the fact almost always fails at least one of these criteria. Mobile-first design eliminates this category of problem before it begins.
     </p>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">53%</div>
       <div class="stat-desc">Of mobile users abandon a site that takes longer than 3 seconds to load. On mobile networks, that threshold is reached faster than most developers expect.</div>
     </div>
 
-    <h2>The Hidden UX Cost of Desktop-First Thinking</h2>
+    <h2 class="reveal-fade">The Hidden UX Cost of Desktop-First Thinking</h2>
 
-    <p>
+    <p class="reveal-fade">
       Beyond search rankings, the user experience difference between a site designed for mobile versus one adapted to it is immediately felt by your visitors — even if they can't articulate why.
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Touch targets that are too small.</strong> Buttons sized for a mouse pointer are frustrating on a fingertip. Rage-taps don't convert.</li>
       <li><strong>Text that requires pinching.</strong> If someone has to zoom to read your pricing page, your pricing page isn't doing its job.</li>
       <li><strong>Navigation that doesn't translate.</strong> A horizontal mega-menu crammed into a hamburger doesn't work. Mobile nav needs to be rebuilt from scratch — not compressed.</li>
@@ -380,36 +396,36 @@
       <li><strong>Forms that are painful to fill.</strong> Every unnecessary field feels twice as annoying on mobile. Every wrong keyboard type (showing a text keyboard for a phone number field) is a small trust failure.</li>
     </ul>
 
-    <div class="callout-box">
+    <div class="callout-box reveal-fade">
       <p>
         <strong style="color:var(--text-1);">The mobile experience is where your customer actually is.</strong> When they're on the couch researching a service. When they're on their lunch break comparing options. When they get your referral and Google you on the spot. That moment is mobile — and it's the moment that determines if you get the call.
       </p>
     </div>
 
-    <h2>Performance Is Part of the Design</h2>
+    <h2 class="reveal-fade">Performance Is Part of the Design</h2>
 
-    <p>
+    <p class="reveal-fade">
       Mobile-first design isn't just about layout — it's a performance discipline. Mobile devices have slower CPUs, consume more battery, and often operate on cellular connections with real latency. A site built mobile-first inherits a lean content hierarchy from the start.
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Images served at mobile sizes</strong> rather than 1920px wide versions scaled down in the browser — this alone can cut page weight by 60–80%.</li>
       <li><strong>Progressive enhancement</strong> means you're not loading desktop features and then hiding them on mobile with CSS. Unused code doesn't load.</li>
       <li><strong>Critical content renders first</strong> because mobile layouts are single-column — the most important information is at the top of the DOM, not buried in a sidebar.</li>
     </ul>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">+7%</div>
       <div class="stat-desc">Conversion rate improvement per 100ms faster mobile load time, according to research by Deloitte. Speed isn't a technical metric — it's a business metric.</div>
     </div>
 
-    <h2>What to Look For in a Mobile-First Build</h2>
+    <h2 class="reveal-fade">What to Look For in a Mobile-First Build</h2>
 
-    <p>
+    <p class="reveal-fade">
       If you're evaluating a website — whether one you currently have or one you're considering having built — here's how to assess whether it was designed with mobile in mind:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Test on an actual phone, not your browser's device emulator.</strong> Emulators miss real-world latency, real-world tap accuracy, and real-world font rendering.</li>
       <li><strong>Run a Lighthouse audit on mobile</strong> and compare it to desktop — a mobile-first site should score close to its desktop counterpart, not half of it.</li>
       <li><strong>Check the navigation on mobile.</strong> Is it intuitive, or is it an afterthought? Can you get to any page in two taps?</li>
@@ -417,24 +433,24 @@
       <li><strong>Tap the primary CTA button.</strong> Is it easy to hit? Is it above the fold? Does it do what a mobile user needs it to do?</li>
     </ul>
 
-    <div class="callout-box pink-callout">
+    <div class="callout-box pink-callout reveal-fade">
       <p>
         <strong style="color:var(--text-1);">A good question to ask any web design agency:</strong> "Can I see your mobile design mockups before the desktop version?" If they don't have them — or if they say "we do desktop first and then adapt" — that tells you everything you need to know about how much thought your mobile visitors will get.
       </p>
     </div>
 
-    <h2>The Standard Has Raised. Has Your Site?</h2>
+    <h2 class="reveal-fade">The Standard Has Raised. Has Your Site?</h2>
 
-    <p>
+    <p class="reveal-fade">
       In 2026, mobile-first isn't a competitive advantage — it's the entry requirement. Your customers have experienced genuinely great mobile interfaces every day through their banking apps, their retail apps, their social feeds. Their baseline expectation for a mobile web experience has never been higher.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       A desktop site that scales down doesn't clear that bar. A site designed mobile-first — fast, legible, touch-friendly, and tested on real hardware — earns trust before a single word is read.
     </p>
 
     <!-- CTA -->
-    <div style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(255,215,0,0.12); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
+    <div class="reveal-fade" style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(255,215,0,0.12); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(255,215,0,0.04) 0%,transparent 70%);pointer-events:none;"></div>
       <div style="position:relative;z-index:1;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;">// ready to go mobile-first</div>
@@ -449,7 +465,7 @@
     </div>
 
     <!-- Back to blog -->
-    <div style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(255,215,0,0.08);">
+    <div class="reveal-fade" style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(255,215,0,0.08);">
       <a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--gold);text-decoration:none;opacity:0.7;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         ← Back to All Posts
       </a>
@@ -479,8 +495,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -493,11 +510,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -521,5 +544,41 @@
   </div>
 </footer>
 
+<script>
+/* ── Post hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('post-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Article body: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

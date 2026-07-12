@@ -16,6 +16,11 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.7; }
     body::after {
       content: ''; position: fixed; inset: 0;
@@ -63,6 +68,14 @@
     .article-body ul li { font-size: 15.5px; line-height: 1.8; color: var(--text-2); padding: 8px 0 8px 24px; position: relative; border-bottom: 1px solid rgba(0,229,255,0.04); }
     .article-body ul li:last-child { border-bottom: none; }
     .article-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 13px; top: 10px; }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     .stat-callout { background: var(--surface); border: 1px solid rgba(0,229,255,0.12); border-left: 3px solid var(--cyan); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0; }
     .stat-callout .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 900; color: var(--cyan); line-height: 1; margin-bottom: 6px; }
@@ -215,10 +228,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -235,11 +250,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -265,8 +280,9 @@
       <a href="index.html"          class="mob-link mob-sub">Landing</a>
       <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
       <a href="index.html#services" class="mob-link mob-sub">Services</a>
-      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
       <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+      <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
       <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <a href="faq.html"      class="mob-link">FAQ</a>
@@ -291,7 +307,7 @@
     radial-gradient(ellipse 50% 50% at 20% 100%, rgba(255,45,120,0.04) 0%, transparent 65%),
     var(--base);
   position: relative; overflow: hidden;
-">
+" id="post-hero">
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.022) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;"></div>
   <div style="max-width: 720px; margin: 0 auto; position: relative; z-index: 1;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -325,113 +341,113 @@
 <article style="padding: 72px 28px 100px;">
   <div class="article-body">
 
-    <p>
+    <p class="reveal-fade">
       The pitch is seductive: launch a professional-looking website in an afternoon, no code required, for $30 a month. And for certain situations — a personal blog, an event page, an early-stage side project — that pitch is true. <strong>But for a business that's serious about growth, website builders carry hidden costs that compound quietly until they become a real liability.</strong>
     </p>
 
-    <p>
+    <p class="reveal-fade">
       This isn't a knock on the tools themselves. It's a precise breakdown of where they fall short, and why those limitations matter more than most business owners realize until it's too late to course-correct cheaply.
     </p>
 
-    <h2>The Illusion of "Good Enough"</h2>
+    <h2 class="reveal-fade">The Illusion of "Good Enough"</h2>
 
-    <p>
+    <p class="reveal-fade">
       The core problem with website builders isn't that they look bad — many modern templates look quite polished. The problem is that they look the same. Squarespace templates are used by tens of thousands of businesses simultaneously. Your competitor in your city, in your industry, might be running the exact same layout with different copy pasted in.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       When your website looks like your competition's website, price becomes the only differentiator. And competing on price is a race to the bottom that erodes your margins, your positioning, and eventually your brand. <strong>Design differentiation is a business moat — and website builders actively prevent you from building one.</strong>
     </p>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">48%</div>
       <div class="stat-desc">Of people cite a website's design as the number one factor in deciding whether a business is credible. A template that thousands of others use signals that you didn't invest in your own presence — and customers notice.</div>
     </div>
 
-    <h2>The Performance Ceiling</h2>
+    <h2 class="reveal-fade">The Performance Ceiling</h2>
 
-    <p>
+    <p class="reveal-fade">
       Website builders are built to serve millions of sites from shared infrastructure. That architecture creates a performance ceiling you cannot build your way past, regardless of how clean your content is:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Bloated JavaScript bundles</strong> load for every visitor to power the editing interface, even though they never edit anything. This adds 200–400KB of overhead that doesn't exist in a custom build.</li>
       <li><strong>Third-party font and asset loading</strong> is typically hardcoded to the platform's CDN, adding extra DNS lookups and round-trips you can't control.</li>
       <li><strong>Image optimization is partial.</strong> Builders compress images, but rarely serve next-gen formats (WebP, AVIF) or implement proper lazy loading with optimal sizing across breakpoints.</li>
       <li><strong>Core Web Vitals scores are structurally constrained.</strong> Google's Lighthouse tool consistently scores builder-based sites lower than equivalent custom builds — not because of what you put on the page, but because of the platform infrastructure underneath it.</li>
     </ul>
 
-    <p>
+    <p class="reveal-fade">
       This matters because Google uses Core Web Vitals as a ranking signal. A platform-imposed performance ceiling is a platform-imposed SEO ceiling.
     </p>
 
-    <h2>The SEO Trap</h2>
+    <h2 class="reveal-fade">The SEO Trap</h2>
 
-    <p>
+    <p class="reveal-fade">
       On the surface, most major website builders claim to be "SEO-friendly." And they are — to a point. You can set page titles, write meta descriptions, and add alt text. But SEO at a competitive level requires more than that, and builders lock you out of it:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>You can't control your URL structure</strong> beyond what the platform allows. Changing it later means broken links and lost link equity.</li>
       <li><strong>Technical SEO customization is limited.</strong> Canonical tags, hreflang, structured data schemas, robots.txt fine-tuning — these require either workarounds or premium apps that add cost and complexity.</li>
       <li><strong>Server-side rendering and caching behavior</strong> is determined by the platform, not you. You can't implement edge caching strategies that dramatically improve time-to-first-byte.</li>
       <li><strong>Your content lives in the platform's database.</strong> Migrating to a custom solution later means manually rebuilding every page and potentially losing search ranking history during the transition period.</li>
     </ul>
 
-    <div class="callout-box">
+    <div class="callout-box reveal-fade">
       <p>
         <strong style="color:var(--text-1);">The lock-in is intentional.</strong> Website builder platforms need you to stay. The longer your content lives there, the harder it is to leave — and the more you depend on their pricing, their uptime, their feature decisions, and their performance infrastructure, with no say in any of it.
       </p>
     </div>
 
-    <h2>The Real Cost Calculation</h2>
+    <h2 class="reveal-fade">The Real Cost Calculation</h2>
 
-    <p>
+    <p class="reveal-fade">
       Business owners often compare a $30/month website builder to a custom website that costs several thousand dollars upfront, and conclude the builder is cheaper. That math leaves out the most important variables:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Platform fees compound.</strong> $30/month becomes $360/year. Add premium themes, app integrations, e-commerce features, and email marketing tools, and many builder plans run $150–300/month or more.</li>
       <li><strong>Lost conversion rate has a cost.</strong> If a custom site converts at 3.5% and your builder site converts at 2%, and you have 1,000 monthly visitors with an average client value of $1,500 — that gap is worth $22,500 per year.</li>
       <li><strong>Time spent building and maintaining</strong> a DIY site is time not spent running your business. Business owners routinely spend 40–80 hours on a site they're not satisfied with.</li>
       <li><strong>Replatforming costs money twice.</strong> Eventually most growing businesses outgrow their builder. They pay to build on the builder, and then pay again to rebuild on something that works.</li>
     </ul>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">2.3×</div>
       <div class="stat-desc">Higher conversion rate achieved by sites with custom UX design vs template-based sites in the same industry, per a Forrester Research study on digital experience ROI.</div>
     </div>
 
-    <h2>When a Builder Actually Makes Sense</h2>
+    <h2 class="reveal-fade">When a Builder Actually Makes Sense</h2>
 
-    <p>
+    <p class="reveal-fade">
       To be precise: website builders aren't wrong for everyone. They make genuine sense in specific situations:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Pre-revenue validation.</strong> If you need a presence to test whether a business idea has legs before investing in it, a builder is the right tool for the job.</li>
       <li><strong>Event or campaign microsites</strong> with a fixed lifespan and no SEO requirement.</li>
       <li><strong>Very small businesses</strong> with minimal online competition, low transaction volume, and no near-term growth plans.</li>
       <li><strong>Personal portfolios or hobby projects</strong> where brand differentiation isn't a commercial priority.</li>
     </ul>
 
-    <p>
+    <p class="reveal-fade">
       If none of those descriptions fit your situation — if you're competing for clients, have a marketing budget, care about search rankings, or are planning to grow — a builder is a ceiling, not a foundation.
     </p>
 
-    <div class="callout-box pink-callout">
+    <div class="callout-box pink-callout reveal-fade">
       <p>
         <strong style="color:var(--text-1);">The question to ask isn't "can I afford a custom website?"</strong> It's "what is this builder costing me in conversions, rankings, and brand perception — and how does that stack up against an investment that would eliminate those ceilings permanently?"
       </p>
     </div>
 
-    <h2>What Custom Development Actually Buys You</h2>
+    <h2 class="reveal-fade">What Custom Development Actually Buys You</h2>
 
-    <p>
+    <p class="reveal-fade">
       A custom-built website isn't just a prettier template. It's a system built around your specific business goals, with no platform ceiling, no lock-in, and no shared infrastructure dragging your performance down:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Conversion architecture designed for your buyers.</strong> Every scroll, every CTA, every section is placed based on how your specific customers make decisions — not generic template conventions.</li>
       <li><strong>Performance that you own and control.</strong> Lighthouse scores in the 90s across all metrics, edge caching, optimized asset delivery — built in from the start, not bolted on.</li>
       <li><strong>Technical SEO with no compromises.</strong> Full control over schema markup, URL structures, canonical logic, and indexing directives — the infrastructure that serious search rankings require.</li>
@@ -439,7 +455,7 @@
     </ul>
 
     <!-- CTA -->
-    <div style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(0,229,255,0.12); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
+    <div class="reveal-fade" style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(0,229,255,0.12); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(0,229,255,0.05) 0%,transparent 70%);pointer-events:none;"></div>
       <div style="position:relative;z-index:1;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;">// ready to move past the ceiling</div>
@@ -454,7 +470,7 @@
     </div>
 
     <!-- Back to blog -->
-    <div style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
+    <div class="reveal-fade" style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
       <a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;opacity:0.7;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         ← Back to All Posts
       </a>
@@ -484,8 +500,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -498,11 +515,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -526,5 +549,41 @@
   </div>
 </footer>
 
+<script>
+/* ── Post hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('post-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Article body: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

@@ -16,6 +16,11 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.7; }
     body::after {
       content: ''; position: fixed; inset: 0;
@@ -63,6 +68,14 @@
     .article-body ul li { font-size: 15.5px; line-height: 1.8; color: var(--text-2); padding: 8px 0 8px 24px; position: relative; border-bottom: 1px solid rgba(0,229,255,0.04); }
     .article-body ul li:last-child { border-bottom: none; }
     .article-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--cyan); font-family: 'JetBrains Mono', monospace; font-size: 13px; top: 10px; }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     .stat-callout { background: var(--surface); border: 1px solid rgba(0,229,255,0.12); border-left: 3px solid var(--cyan); border-radius: 0 12px 12px 0; padding: 20px 24px; margin: 32px 0; }
     .stat-callout .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 900; color: var(--cyan); line-height: 1; margin-bottom: 6px; }
@@ -215,10 +228,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -235,11 +250,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -265,8 +280,9 @@
       <a href="index.html"          class="mob-link mob-sub">Landing</a>
       <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
       <a href="index.html#services" class="mob-link mob-sub">Services</a>
-      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
       <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+      <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
       <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <a href="faq.html"      class="mob-link">FAQ</a>
@@ -291,7 +307,7 @@
     radial-gradient(ellipse 50% 50% at 20% 100%, rgba(255,45,120,0.04) 0%, transparent 65%),
     var(--base);
   position: relative; overflow: hidden;
-">
+" id="post-hero">
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.022) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;"></div>
   <div style="max-width: 720px; margin: 0 auto; position: relative; z-index: 1;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -325,138 +341,138 @@
 <article style="padding: 72px 28px 100px;">
   <div class="article-body">
 
-    <p>
+    <p class="reveal-fade">
       Imagine two plumbers in the same city. Both are equally skilled. One has a professional website with their address clearly in the footer, a dedicated page for each neighbourhood they serve, and a Google Business Profile that matches their site exactly. The other has a generic Wix page and no Business Profile setup at all. <strong>When someone searches "plumber near me" at 8pm on a Thursday, only one of them exists.</strong>
     </p>
 
-    <p>
+    <p class="reveal-fade">
       Local SEO is the difference between being found and being invisible to the customers who are already in your city, already looking for what you offer. And unlike most marketing channels, it compounds — you invest once in the infrastructure, and it earns traffic indefinitely.
     </p>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">46%</div>
       <div class="stat-desc">Of all Google searches have local intent — the searcher is looking for something near them. That's billions of daily searches with buying intent attached. Most of those searchers act within 24 hours.</div>
     </div>
 
-    <h2>How Google Decides Who Shows Up Locally</h2>
+    <h2 class="reveal-fade">How Google Decides Who Shows Up Locally</h2>
 
-    <p>
+    <p class="reveal-fade">
       Local search ranking is determined by three primary factors: <strong>relevance</strong> (does your business match what was searched?), <strong>distance</strong> (how close are you to the searcher?), and <strong>prominence</strong> (how well-established and trustworthy does Google consider you?). Your website directly affects all three.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       The way your site is built tells Google who you are, what you do, and where you do it. Vague or inconsistent signals weaken all three factors simultaneously. Clear, consistent, well-structured signals strengthen them — and that's a function of how your site is architected, not just what words appear on it.
     </p>
 
-    <h2>NAP Consistency: The Invisible Ranking Signal</h2>
+    <h2 class="reveal-fade">NAP Consistency: The Invisible Ranking Signal</h2>
 
-    <p>
+    <p class="reveal-fade">
       NAP stands for Name, Address, Phone number — the three pieces of contact information Google uses to verify that your business is real and located where you say it is. The critical detail most business owners miss: <strong>this information must be identical everywhere it appears online.</strong>
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Your website footer.</strong> Your NAP should appear in plain HTML text — not in an image, not buried in a Contact page only. Google needs to read it on every page.</li>
       <li><strong>Your Google Business Profile.</strong> The name, address, and phone number here must exactly match your website — same abbreviations, same formatting. "St." vs "Street" is enough to create a discrepancy signal.</li>
       <li><strong>Directory listings.</strong> Yelp, Yellow Pages, Bing Places, Apple Maps — any listing with mismatched NAP data dilutes your local authority. Auditing and correcting these is a one-time investment that pays continuously.</li>
       <li><strong>Social profiles.</strong> Your LinkedIn, Instagram, and Facebook business pages should show the same NAP data you use everywhere else.</li>
     </ul>
 
-    <p>
+    <p class="reveal-fade">
       NAP inconsistency is one of the most common and most damaging local SEO mistakes — and it's invisible to a casual audit. A business might have great content and still rank poorly locally because their address is listed as "Suite 4" in one place and "#4" in another.
     </p>
 
-    <h2>Schema Markup: Speaking Google's Language</h2>
+    <h2 class="reveal-fade">Schema Markup: Speaking Google's Language</h2>
 
-    <p>
+    <p class="reveal-fade">
       Schema markup is structured data you add to your website's HTML that explicitly tells Google what your page is about — not in natural language, but in a machine-readable format Google's crawlers understand without ambiguity.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       For local businesses, the most important schema types are:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>LocalBusiness schema</strong> declares your business type, name, address, hours, phone number, geographic coordinates, and price range in a format Google can parse directly into its knowledge graph.</li>
       <li><strong>Service schema</strong> describes each service you offer, its description, and optionally its price — feeding directly into how Google displays your business in rich results.</li>
       <li><strong>Review schema</strong> surfaces your aggregate rating in search results, increasing click-through rate by 15–35% on average.</li>
       <li><strong>FAQPage schema</strong> can place your answers directly in the search result, taking up more visual space and positioning you as the authoritative answer to common local questions.</li>
     </ul>
 
-    <div class="callout-box">
+    <div class="callout-box reveal-fade">
       <p>
         <strong style="color:var(--text-1);">Schema markup is invisible to your site visitors</strong> but highly visible to Google. It's one of the highest-leverage technical SEO investments you can make — it requires no content creation, no ongoing maintenance, and delivers ranking signal immediately after implementation.
       </p>
     </div>
 
-    <h2>Local Landing Pages: Serving Neighbourhoods Specifically</h2>
+    <h2 class="reveal-fade">Local Landing Pages: Serving Neighbourhoods Specifically</h2>
 
-    <p>
+    <p class="reveal-fade">
       If you serve multiple cities or neighbourhoods, a single "Service Areas" page that lists location names isn't enough. <strong>Google rewards pages that are genuinely about a specific area</strong> — not pages that list areas as a bullet-point afterthought.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       A proper local landing page architecture includes:
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>A dedicated page per location</strong> you actively serve, with a unique URL structure: <code>/web-design-toronto/</code>, <code>/web-design-mississauga/</code>, and so on.</li>
       <li><strong>Unique content on each page</strong> that references the specific area — local landmarks, area-specific context, local case studies or testimonials if available. Duplicate content across location pages provides zero benefit.</li>
       <li><strong>LocalBusiness schema on each page</strong> with the specific area's address or service radius defined.</li>
       <li><strong>Internal linking</strong> from your main services page to each local landing page, and cross-linking between related location pages to distribute authority through the site.</li>
     </ul>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">76%</div>
       <div class="stat-desc">Of consumers who conduct a local search on their smartphone visit a business within 24 hours. And 28% of those searches result in a purchase. The intent behind local search is high — the question is whether you capture it.</div>
     </div>
 
-    <h2>Page Speed as a Local Ranking Factor</h2>
+    <h2 class="reveal-fade">Page Speed as a Local Ranking Factor</h2>
 
-    <p>
+    <p class="reveal-fade">
       Page speed affects local rankings through two mechanisms. First, it's a direct Google ranking signal — faster pages rank higher, all else equal. Second, speed affects the bounce rate data Google observes from user behavior: slow pages see more users returning immediately to the search results, which signals low relevance and drives rankings down.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       This is doubly important for local search because <strong>local searches skew heavily toward mobile</strong> — and mobile users on cellular connections are the most sensitive to load time. A site that loads in 1.2 seconds on WiFi might take 4 seconds on LTE, and at 4 seconds, more than half of mobile users have already left.
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Serve images at the correct size</strong> for each device — not 1800px-wide hero images scaled down with CSS on mobile screens.</li>
       <li><strong>Use a CDN</strong> to serve assets from servers geographically close to your visitors. For a Canadian business serving Canadian customers, North American edge nodes matter.</li>
       <li><strong>Minimize render-blocking resources.</strong> Large JavaScript bundles that execute before the page renders are a common cause of poor Core Web Vitals scores in local businesses' sites.</li>
     </ul>
 
-    <h2>Google Business Profile: Your Site's Local Co-Pilot</h2>
+    <h2 class="reveal-fade">Google Business Profile: Your Site's Local Co-Pilot</h2>
 
-    <p>
+    <p class="reveal-fade">
       Your Google Business Profile (GBP) is not a standalone marketing tool — it's an extension of your website's local authority. Google uses signals from both together when determining local rankings. The relationship is symbiotic: your site legitimizes your GBP listing, and your GBP activity feeds authority back to your site.
     </p>
 
-    <ul>
+    <ul class="reveal-fade">
       <li><strong>Keep your GBP hours accurate.</strong> Mismatched hours between your GBP and website create a trust discrepancy that suppresses ranking.</li>
       <li><strong>Post to your GBP regularly.</strong> Active profiles rank higher — even simple posts linking back to your blog or services pages signal that the business is operating and the information is current.</li>
       <li><strong>Respond to every review.</strong> Review response rate correlates with local pack ranking. Google interprets engagement as a signal of prominence.</li>
       <li><strong>Ensure your GBP links to the right page.</strong> Many businesses link their GBP to their homepage when they should be linking to a specific local landing page — the one optimized for that exact location.</li>
     </ul>
 
-    <div class="callout-box pink-callout">
+    <div class="callout-box pink-callout reveal-fade">
       <p>
         <strong style="color:var(--text-1);">Most local businesses have significant local SEO wins available within their existing content</strong> — they just need the technical infrastructure to communicate them clearly to Google. Schema, NAP consistency, and page speed are the three highest-ROI changes a local business can make, and none of them require creating new content.
       </p>
     </div>
 
-    <h2>The Compounding Return on Local SEO Infrastructure</h2>
+    <h2 class="reveal-fade">The Compounding Return on Local SEO Infrastructure</h2>
 
-    <p>
+    <p class="reveal-fade">
       Unlike paid ads that stop the moment you stop paying, local SEO infrastructure earns continuously. A site built with proper schema, consistent NAP, location-specific pages, and strong Core Web Vitals scores accumulates authority over time. <strong>The traffic it generates six months from now doesn't cost you six months of ad spend.</strong>
     </p>
 
-    <p>
+    <p class="reveal-fade">
       For a local business with a reliable service, a well-reviewed track record, and a well-built website, local search is often the highest-ROI marketing channel available — outperforming paid search, social media, and directory advertising over a 12-month horizon.
     </p>
 
     <!-- CTA -->
-    <div style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(0,229,255,0.12); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
+    <div class="reveal-fade" style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(0,229,255,0.12); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(0,229,255,0.05) 0%,transparent 70%);pointer-events:none;"></div>
       <div style="position:relative;z-index:1;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;">// ready to get found locally</div>
@@ -471,7 +487,7 @@
     </div>
 
     <!-- Back to blog -->
-    <div style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
+    <div class="reveal-fade" style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
       <a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;opacity:0.7;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         ← Back to All Posts
       </a>
@@ -501,8 +517,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -515,11 +532,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -543,5 +566,41 @@
   </div>
 </footer>
 
+<script>
+/* ── Post hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('post-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Article body: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>

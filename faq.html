@@ -24,6 +24,11 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body {
       background: var(--base);
       color: var(--text-1);
@@ -238,7 +243,7 @@
                   box-shadow 0.2s ease, color 0.2s ease,
                   transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .tag-chip:hover {
+    .tag-chip:hover, .tag-chip.is-scroll-active {
       background: rgba(0,229,255,0.13);
       border-color: rgba(0,229,255,0.38);
       box-shadow: 0 0 18px rgba(0,229,255,0.16), 0 4px 12px rgba(0,0,0,0.3);
@@ -252,7 +257,7 @@
       transition: transform 0.2s ease, opacity 0.2s ease;
       flex-shrink: 0;
     }
-    .tag-chip:hover .tag-chip-arrow { transform: translateY(2px); opacity: 1; }
+    .tag-chip:hover .tag-chip-arrow, .tag-chip.is-scroll-active .tag-chip-arrow { transform: translateY(2px); opacity: 1; }
 
     /* ── FAQ anchor offset ── */
     .faq-category { scroll-margin-top: 84px; }
@@ -272,6 +277,14 @@
       border-color: rgba(0,229,255,0.15);
       box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0,229,255,0.03);
     }
+
+    /* ── Scroll-reveal ── */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     .faq-item { border-bottom: 1px solid rgba(0,229,255,0.06); }
     .faq-item:last-child { border-bottom: none; }
@@ -564,10 +577,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -584,11 +599,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -620,8 +635,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -645,11 +661,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -866,7 +882,7 @@
     </div>
 
     <!-- RIGHT: Content -->
-    <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div id="faq-intro" style="display: flex; flex-direction: column; gap: 24px;">
       <p class="sec-tag">// what to expect</p>
       <h2 style="font-size: clamp(26px, 3.5vw, 44px); font-weight: 800; line-height: 1.12; color: var(--text-1);">
         Every question,<br><span class="grad-gold">answered up front.</span>
@@ -926,7 +942,7 @@
     <!-- ── // The Foundations ── -->
     <div class="faq-category" id="faq-foundations">
       <p class="sec-tag">// the foundations</p>
-      <div class="faq-group">
+      <div class="faq-group reveal-fade">
 
         <div class="faq-item">
           <button class="faq-trigger" aria-expanded="false">
@@ -994,7 +1010,7 @@
     <!-- ── // Straight Answers ── -->
     <div class="faq-category" id="faq-straight-answers">
       <p class="sec-tag">// straight answers</p>
-      <div class="faq-group">
+      <div class="faq-group reveal-fade">
 
         <div class="faq-item">
           <button class="faq-trigger" aria-expanded="false">
@@ -1077,7 +1093,7 @@
     <!-- ── // Process & Timeline ── -->
     <div class="faq-category" id="faq-process">
       <p class="sec-tag">// process &amp; timeline</p>
-      <div class="faq-group">
+      <div class="faq-group reveal-fade">
 
         <div class="faq-item">
           <button class="faq-trigger" aria-expanded="false">
@@ -1139,7 +1155,7 @@
     <!-- ── // Pricing & Packages ── -->
     <div class="faq-category" id="faq-pricing">
       <p class="sec-tag">// pricing &amp; packages</p>
-      <div class="faq-group">
+      <div class="faq-group reveal-fade">
 
         <div class="faq-item">
           <button class="faq-trigger" aria-expanded="false">
@@ -1206,7 +1222,7 @@
     <!-- ── // Technical ── -->
     <div class="faq-category" id="faq-technical">
       <p class="sec-tag">// technical</p>
-      <div class="faq-group">
+      <div class="faq-group reveal-fade">
 
         <div class="faq-item">
           <button class="faq-trigger" aria-expanded="false">
@@ -1268,7 +1284,7 @@
     <!-- ── // Working With Us ── -->
     <div class="faq-category" id="faq-working-with-us">
       <p class="sec-tag">// working with us</p>
-      <div class="faq-group">
+      <div class="faq-group reveal-fade">
 
         <div class="faq-item">
           <button class="faq-trigger" aria-expanded="false">
@@ -1335,7 +1351,7 @@
 <!-- ── CTA ── -->
 <section style="padding: 80px 28px 100px;">
   <div style="max-width: 820px; margin: 0 auto;">
-    <div class="cta-card">
+    <div class="cta-card" id="faq-cta">
       <div style="position: relative; z-index: 1;">
         <p class="sec-tag" style="margin-bottom: 18px;">// still have questions?</p>
         <h2 style="font-size: clamp(22px, 3vw, 36px); font-weight: 800; line-height: 1.15; color: var(--text-1); margin-bottom: 16px;">
@@ -1380,8 +1396,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -1394,11 +1411,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -1440,6 +1463,58 @@
       }
     });
   });
+</script>
+
+<script>
+/* ── Single-element reveals: intro, CTA ── */
+(function () {
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  function revealOne(el, threshold) {
+    if (!el) return;
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(32px)';
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      obs.disconnect();
+      el.addEventListener('transitionend', function cleanup(evt) {
+        if (evt.propertyName !== 'transform') return;
+        el.style.opacity = '';
+        el.style.transform = '';
+        el.style.transition = '';
+        el.removeEventListener('transitionend', cleanup);
+      });
+    }, { threshold: threshold || 0.15 });
+    obs.observe(el);
+  }
+  revealOne(document.getElementById('faq-intro') || document.getElementById('faq-hero'), 0.01);
+  revealOne(document.getElementById('faq-cta'));
+})();
+
+/* ── FAQ category groups: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.1 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
+/* ── Mobile-only touch-hover parity for tag chips ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  var targets = [].slice.call(document.querySelectorAll('.tag-chip'));
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+  targets.forEach(function (el) { obs.observe(el); });
+})();
 </script>
 
 </body>
