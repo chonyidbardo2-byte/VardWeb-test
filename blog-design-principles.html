@@ -17,6 +17,11 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(0,229,255,0.18); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,229,255,0.35); }
     body { background: var(--base); color: var(--text-1); font-family: 'Inter', sans-serif; overflow-x: hidden; line-height: 1.7; }
     body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 300px; opacity: 0.036; pointer-events: none; z-index: 9999; }
     h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
@@ -57,6 +62,14 @@
     .article-body ul li { font-size: 15.5px; line-height: 1.8; color: var(--text-2); padding: 8px 0 8px 24px; position: relative; border-bottom: 1px solid rgba(139,92,246,0.05); }
     .article-body ul li:last-child { border-bottom: none; }
     .article-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--purple); font-family: 'JetBrains Mono', monospace; font-size: 13px; top: 10px; }
+
+    /* Scroll-triggered entrance reveal */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.in { opacity: 1; transform: translateY(0); }
 
     /* Numbered principle cards */
     .principle-card {
@@ -245,10 +258,12 @@
           Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
+          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
           <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
           <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
         </div>
       </div>
@@ -265,11 +280,11 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">SEO &amp; Performance</a>
+          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Social Media</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
+          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -301,8 +316,9 @@
     <a href="index.html"          class="mob-link mob-sub">Landing</a>
     <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
     <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
     <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
@@ -326,11 +342,11 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="contact.html"  class="mob-link mob-sub">SEO &amp; Performance</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
-    <a href="contact.html"  class="mob-link mob-sub">Content Creation</a>
-    <a href="contact.html"  class="mob-link mob-sub">Social Media</a>
+    <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
+    <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -360,7 +376,7 @@
     radial-gradient(ellipse 50% 50% at 20% 100%, rgba(0,229,255,0.04) 0%, transparent 65%),
     var(--base);
   position: relative; overflow: hidden;
-">
+" id="post-hero">
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(139,92,246,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;"></div>
   <div style="max-width: 720px; margin: 0 auto; position: relative; z-index: 1;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
@@ -395,14 +411,14 @@
 <article style="padding: 72px 28px 100px;">
   <div class="article-body">
 
-    <p>
+    <p class="reveal-fade">
       You can have a gorgeous website and still lose. Design that doesn't convert is just expensive
       wallpaper. The most successful sites we've built — the ones that drive measurable revenue —
       all follow the same five foundational principles. Here's exactly what they are and why they work.
     </p>
 
     <!-- Principle 1 -->
-    <div class="principle-card">
+    <div class="principle-card reveal-fade">
       <div class="principle-num">// Principle 01</div>
       <div class="principle-title">Visual Hierarchy Is Your Invisible Salesperson</div>
       <p class="principle-body">
@@ -413,19 +429,19 @@
       </p>
     </div>
 
-    <p>
+    <p class="reveal-fade">
       In practice this means: your headline should be the biggest thing on the page. Your CTA should
       be visually distinct — not just underlined, but designed to pop. And your supporting information
       should clearly sit in a supporting role, not competing for the same visual weight as your main message.
     </p>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">55%</div>
       <div class="stat-desc">Of visitors spend fewer than 15 seconds on a webpage. Visual hierarchy ensures your most important message lands before they leave.</div>
     </div>
 
     <!-- Principle 2 -->
-    <div class="principle-card">
+    <div class="principle-card reveal-fade">
       <div class="principle-num">// Principle 02</div>
       <div class="principle-title">Speed Is a Design Decision</div>
       <p class="principle-body">
@@ -437,14 +453,14 @@
       </p>
     </div>
 
-    <p>
+    <p class="reveal-fade">
       This includes choosing the right hosting, compressing images correctly, eliminating render-blocking
       scripts, and building lean — not loading 12 JavaScript libraries when 1 would do. At VardWeb,
       performance is baked into every project from the first line of code, not bolted on at the end.
     </p>
 
     <!-- Principle 3 -->
-    <div class="principle-card">
+    <div class="principle-card reveal-fade">
       <div class="principle-num">// Principle 03</div>
       <div class="principle-title">Trust Signals Close Deals You Didn't Know Were Open</div>
       <p class="principle-body">
@@ -456,14 +472,14 @@
       </p>
     </div>
 
-    <p>
+    <p class="reveal-fade">
       Real specifics outperform vague claims by a significant margin. "We improved our client's
       conversions by 340%" is 10x more persuasive than "We deliver results." Specificity signals honesty.
       And honesty converts.
     </p>
 
     <!-- Principle 4 -->
-    <div class="principle-card">
+    <div class="principle-card reveal-fade">
       <div class="principle-num">// Principle 04</div>
       <div class="principle-title">Every Page Needs One Clear Next Step</div>
       <p class="principle-body">
@@ -474,7 +490,7 @@
       </p>
     </div>
 
-    <ul>
+    <ul class="reveal-fade">
       <li>Homepage → Book a Call / Get a Quote</li>
       <li>Services page → View Pricing / Start a Project</li>
       <li>Blog post → Get a Free Audit / Read More</li>
@@ -482,7 +498,7 @@
     </ul>
 
     <!-- Principle 5 -->
-    <div class="principle-card">
+    <div class="principle-card reveal-fade">
       <div class="principle-num">// Principle 05</div>
       <div class="principle-title">Mobile-First Is Non-Negotiable</div>
       <p class="principle-body">
@@ -494,28 +510,28 @@
       </p>
     </div>
 
-    <div class="stat-callout">
+    <div class="stat-callout reveal-fade">
       <div class="stat-num">60%</div>
       <div class="stat-desc">Of all web traffic is now on mobile. If your mobile experience is an afterthought, most of your audience is getting an inferior version of your brand.</div>
     </div>
 
-    <h2>The Common Thread</h2>
+    <h2 class="reveal-fade">The Common Thread</h2>
 
-    <p>
+    <p class="reveal-fade">
       Every one of these principles has the same underlying logic: <strong>reduce friction and increase clarity.</strong>
       Great design doesn't make visitors work harder — it makes the right action effortless. When
       hierarchy is clear, when the page loads instantly, when trust is established, when there's
       one obvious thing to do, and when the experience works flawlessly on any device — conversion follows naturally.
     </p>
 
-    <p>
+    <p class="reveal-fade">
       These aren't aesthetic preferences. They're repeatable, measurable, and they work for every
       industry we've built for — restaurants, law firms, fitness studios, SaaS companies, and more.
       The principles don't change. The application does.
     </p>
 
     <!-- CTA -->
-    <div style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(139,92,246,0.15); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
+    <div class="reveal-fade" style="margin-top: 60px; background: var(--surface); border: 1px solid rgba(139,92,246,0.15); border-radius: 20px; padding: 40px 36px; text-align: center; position: relative; overflow: hidden;">
       <div style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 100% at 50% 0%,rgba(139,92,246,0.05) 0%,transparent 70%);pointer-events:none;"></div>
       <div style="position:relative;z-index:1;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8B5CF6;margin-bottom:14px;">// put it into practice</div>
@@ -529,7 +545,7 @@
       </div>
     </div>
 
-    <div style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
+    <div class="reveal-fade" style="margin-top:48px;padding-top:32px;border-top:1px solid rgba(0,229,255,0.08);">
       <a href="blog.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--cyan);text-decoration:none;opacity:0.7;transition:opacity 0.2s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'">
         ← Back to All Posts
       </a>
@@ -559,8 +575,9 @@
         <a href="index.html#hero"     class="footer-link">Landing</a>
         <a href="index.html#why-us"   class="footer-link">Why Us?</a>
         <a href="index.html#services" class="footer-link">Services</a>
-        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#advanced" class="footer-link">Advanced</a>
+        <a href="index.html#investment" class="footer-link">Investment</a>
+        <a href="index.html#results"  class="footer-link">Results</a>
         <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
       </div>
       <div>
@@ -573,11 +590,17 @@
       </div>
       <div>
         <p class="footer-col-head">Services</p>
+        <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="contact.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
-        <a href="contact.html" class="footer-link">SEO &amp; Performance</a>
+        <a href="contact.html" class="footer-link">App Development</a>
+        <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+        <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+        <a href="contact.html" class="footer-link">Custom Request</a>
       </div>
       <div>
         <p class="footer-col-head">Legal</p>
@@ -601,5 +624,41 @@
   </div>
 </footer>
 
+<script>
+/* ── Post hero entrance reveal ── */
+(function () {
+  var el = document.getElementById('post-hero');
+  if (!el) return;
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(32px)';
+  var obs = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+    obs.disconnect();
+    el.addEventListener('transitionend', function cleanup(evt) {
+      if (evt.propertyName !== 'transform') return;
+      el.style.opacity = '';
+      el.style.transform = '';
+      el.style.transition = '';
+      el.removeEventListener('transitionend', cleanup);
+    });
+  }, { threshold: 0.01 });
+  obs.observe(el);
+})();
+
+/* ── Article body: individual scroll-reveal ── */
+(function () {
+  var els = document.querySelectorAll('.reveal-fade');
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
 </body>
 </html>
