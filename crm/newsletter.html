@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VardWeb CRM — Newsletter</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="/supabase-config.js"></script>
+  <script src="/emails/blog-newsletter-broadcast.js"></script>
+  <style>
+    :root{--cyan:#00E5FF;--pink:#FF2D78;--gold:#FFD700;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.3);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);--sidebar:220px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}html,body{height:100%;}
+    body{background:var(--base);color:var(--text-1);font-family:'Inter',sans-serif;display:flex;}
+    body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+    .sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;padding:24px 0;}
+    .sidebar-logo{padding:0 20px 28px;border-bottom:1px solid var(--border);}.sidebar-logo img{height:28px;border-radius:6px;}
+    .sidebar-label{font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);padding:20px 20px 8px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text-2);text-decoration:none;font-size:13px;font-weight:500;border-left:2px solid transparent;transition:color .15s,border-color .15s,background .15s;}
+    .nav-item:hover{color:var(--text-1);background:rgba(0,229,255,0.04);}.nav-item.active{color:var(--cyan);border-left-color:var(--cyan);background:rgba(0,229,255,0.06);}
+    .nav-item svg{width:15px;height:15px;flex-shrink:0;}
+    .sidebar-bottom{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border);}
+    .btn-logout{width:100%;padding:9px 12px;border-radius:8px;background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.2);color:#ff7eb3;font-size:12px;font-weight:600;cursor:pointer;}
+    .main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+    .top-bar{display:flex;align-items:center;gap:14px;padding:24px 36px;border-bottom:1px solid var(--border);}
+    .top-bar h1{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;letter-spacing:-0.03em;margin-right:auto;}
+    .sub-count{font-size:13px;color:var(--text-2);}
+    .sub-count strong{color:var(--cyan);font-family:'JetBrains Mono',monospace;}
+    .edit-area{flex:1;padding:28px 36px;overflow-y:auto;max-width:760px;}
+    .field-row{margin-bottom:16px;}
+    .field-row label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);display:block;margin-bottom:6px;}
+    textarea,input[type=text]{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;resize:vertical;}
+    textarea:focus,input[type=text]:focus{border-color:rgba(0,229,255,0.4);}
+    textarea{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;}
+    .note{font-size:11px;color:var(--text-2);margin-top:6px;line-height:1.5;}
+    .btn{padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s;}
+    .btn:hover{opacity:.8;}.btn-cyan{background:var(--cyan);color:#000;}.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-2);}
+    .btn-ghost:hover{color:var(--text-1);border-color:rgba(0,229,255,0.3);}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+    .action-row{display:flex;gap:10px;align-items:center;margin-top:8px;}
+    .status-msg{font-size:12.5px;margin-top:10px;color:var(--text-2);}
+    .status-msg.error{color:#ff7eb3;}
+    .status-msg.success{color:var(--cyan);}
+
+    /* ── Skip link (WCAG 2.4.1) ── */
+    .skip-link { position: absolute; top: -100px; left: 20px; z-index: 9000; padding: 10px 20px; background: #070910; color: #00E5FF; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.04em; border: 2px solid #00E5FF; border-radius: 8px; text-decoration: none; box-shadow: 0 0 20px rgba(0,229,255,0.3); transition: top 0.15s ease; }
+    .skip-link:focus { top: 20px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<aside class="sidebar">
+  <div class="sidebar-logo"><img src="/brand_assets/VardWeb.png" alt="VardWeb" /></div>
+  <div class="sidebar-label">Admin</div>
+  <a href="/crm/dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  <a href="/crm/clients.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clients</a>
+  <a href="/crm/invoices.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Invoices</a>
+  <a href="/crm/cms-editor.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>CMS Editor</a>
+  <a href="/crm/newsletter.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Newsletter</a>
+  <a href="/crm/seo-tool.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>SEO Tool</a>
+  <div class="sidebar-bottom"><button class="btn-logout" id="logoutBtn">Sign Out</button></div>
+</aside>
+
+<main class="main" id="main-content" tabindex="-1">
+  <div class="top-bar">
+    <h1>Newsletter</h1>
+    <span class="sub-count" id="subCountLabel">Loading subscribers&hellip;</span>
+  </div>
+
+  <div class="edit-area">
+    <div class="field-row">
+      <label for="subjectInput">Subject</label>
+      <input type="text" id="subjectInput" placeholder="e.g. We just shipped a big redesign" />
+    </div>
+    <div class="field-row">
+      <label for="bodyTextarea">Body (HTML)</label>
+      <textarea id="bodyTextarea" rows="16" placeholder="&lt;p&gt;Hey there,&lt;/p&gt;&#10;&lt;p&gt;Write the post update here...&lt;/p&gt;"></textarea>
+      <p class="note">Raw HTML, wrapped automatically in the VardWeb branded email shell (logo, colors, footer, unsubscribe link) when sent. No rich-text editor — write plain tags like &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;ul&gt;/&lt;li&gt;.</p>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-ghost" id="previewBtn">Preview</button>
+      <button class="btn btn-cyan" id="sendBtn">Send Broadcast</button>
+    </div>
+    <p class="status-msg" id="statusMsg" role="status" aria-live="polite"></p>
+  </div>
+</main>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+  const cfg = window.SUPABASE_CONFIG || {};
+  const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-admin-auth' } });
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/crm/login.html'; }
+  else {
+    const { data: myProfile } = await sb.from('user_profiles').select('role').eq('id', session.user.id).single();
+    if (myProfile?.role !== 'admin') window.location.href = '/crm/portal.html';
+  }
+  document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html'; });
+
+  const subjectInput  = document.getElementById('subjectInput');
+  const bodyTextarea  = document.getElementById('bodyTextarea');
+  const previewBtn    = document.getElementById('previewBtn');
+  const sendBtn        = document.getElementById('sendBtn');
+  const statusMsg      = document.getElementById('statusMsg');
+  const subCountLabel  = document.getElementById('subCountLabel');
+
+  async function activeSubscriberCount() {
+    const { count } = await sb.from('blog_subscribers').select('id', { count: 'exact', head: true }).eq('status', 'active');
+    return count ?? 0;
+  }
+
+  async function loadCount() {
+    const count = await activeSubscriberCount();
+    subCountLabel.innerHTML = `<strong>${count}</strong> active subscriber${count === 1 ? '' : 's'}`;
+  }
+  loadCount();
+
+  previewBtn.addEventListener('click', () => {
+    const html = window.buildNewsletterBroadcastHtml({ subject: subjectInput.value.trim(), bodyHtml: bodyTextarea.value });
+    const blob = new Blob([html], { type: 'text/html' });
+    window.open(URL.createObjectURL(blob), '_blank');
+  });
+
+  sendBtn.addEventListener('click', async () => {
+    const subject  = subjectInput.value.trim();
+    const bodyHtml = bodyTextarea.value;
+    statusMsg.textContent = '';
+    statusMsg.className = 'status-msg';
+
+    if (!subject || !bodyHtml) {
+      statusMsg.textContent = 'Subject and body are required.';
+      statusMsg.className = 'status-msg error';
+      return;
+    }
+
+    const count = await activeSubscriberCount();
+    if (!confirm(`Send this broadcast to ${count} subscriber(s)? This cannot be undone.`)) return;
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending…';
+
+    const html = window.buildNewsletterBroadcastHtml({ subject, bodyHtml });
+
+    try {
+      // Fetch a fresh session right before sending — the page may have been
+      // open long enough for the token captured at load time to expire.
+      const { data: { session: freshSession } } = await sb.auth.getSession();
+      if (!freshSession) {
+        statusMsg.textContent = 'Your session expired — please refresh and log in again.';
+        statusMsg.className = 'status-msg error';
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send Broadcast';
+        return;
+      }
+
+      const res = await fetch(`${cfg.url}/functions/v1/send-newsletter-broadcast`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${freshSession.access_token}` },
+        body: JSON.stringify({ subject, html }),
+      });
+      const result = await res.json();
+      if (!result.ok) throw new Error(result.error || 'Send failed');
+
+      sendBtn.textContent = 'Sent ✓';
+      statusMsg.textContent = `Broadcast sent to ${count} subscriber(s).`;
+      statusMsg.className = 'status-msg success';
+      setTimeout(() => { sendBtn.disabled = false; sendBtn.textContent = 'Send Broadcast'; }, 2500);
+    } catch (err) {
+      statusMsg.textContent = 'Error: ' + err.message;
+      statusMsg.className = 'status-msg error';
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send Broadcast';
+    }
+  });
+</script>
+</body>
+</html>
