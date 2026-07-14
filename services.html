@@ -248,11 +248,13 @@
       border: 1px solid rgba(255,255,255,0.07);
       min-height: 288px;
       cursor: default;
+      transform: translateY(var(--reveal-y, 0px)) scale(var(--active-scale, 1)) translateY(var(--active-y, 0px));
       transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
     }
     @media (hover: hover) {
       .svc-card:hover {
-        transform: scale(1.03) translateY(-4px);
+        --active-scale: 1.03;
+        --active-y: -4px;
         box-shadow:
           0 28px 60px rgba(0,0,0,0.6),
           0 0 40px color-mix(in srgb, var(--c1, #00E5FF) 28%, transparent);
@@ -329,19 +331,23 @@
         box-shadow: 0 0 30px 1px var(--c1, #00E5FF);
       }
     }
-    .svc-card.is-scroll-active .svc-badge-dot,
-    .svc-card.in-view .svc-badge-dot,
     .svc-card:hover .svc-badge-dot {
       animation: svc-dot-pulse 2.2s ease-in-out infinite;
     }
-    .svc-card.in-view {
-      transform: scale(1.03) translateY(-4px);
-      box-shadow:
-        0 28px 60px rgba(0,0,0,0.6),
-        0 0 40px color-mix(in srgb, var(--c1, #00E5FF) 28%, transparent);
-    }
-    .svc-card.in-view .svc-card-more svg {
-      transform: translateX(4px);
+    @media (hover: none) {
+      .svc-card.is-scroll-active .svc-badge-dot {
+        animation: svc-dot-pulse 2.2s ease-in-out infinite;
+      }
+      .svc-card.is-scroll-active {
+        --active-scale: 1.03;
+        --active-y: -4px;
+        box-shadow:
+          0 28px 60px rgba(0,0,0,0.6),
+          0 0 40px color-mix(in srgb, var(--c1, #00E5FF) 28%, transparent);
+      }
+      .svc-card.is-scroll-active .svc-card-more svg {
+        transform: translateX(4px);
+      }
     }
     .svc-badge-label {
       font-family: 'JetBrains Mono', monospace;
@@ -418,16 +424,15 @@
       transform-origin: center center;
       transition: transform 0.55s cubic-bezier(0.22,1,0.36,1);
     }
-    .svc-hero-flex.is-hovered .svc-hero-img img {
-      transform: rotate(8deg) scale(1.09);
-    }
-    @media (hover: none) {
-      .svc-hero-img.in-view img {
-        transform: rotate(8deg) scale(1.07);
+    @media (hover: hover) {
+      .svc-hero-flex.is-hovered .svc-hero-img img {
+        transform: rotate(8deg) scale(1.09);
       }
     }
-    .svc-hero-img.is-scroll-active img {
-      transform: rotate(8deg) scale(1.09);
+    @media (hover: none) {
+      .svc-hero-img.is-scroll-active img {
+        transform: rotate(8deg) scale(1.09);
+      }
     }
     @media (max-width: 640px) {
       .svc-hero-flex { flex-direction: column; gap: 24px; }
@@ -1137,27 +1142,6 @@
 </footer>
 
 <script>
-/* ── Services: mobile scroll-activated hover via IntersectionObserver ── */
-(function () {
-  if (!window.matchMedia('(hover: none)').matches) return;
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) return;
-      var t = entry.target;
-      io.unobserve(t);
-      requestAnimationFrame(function () {
-        requestAnimationFrame(function () {
-          t.classList.add('in-view');
-        });
-      });
-    });
-  }, { threshold: 0.30, rootMargin: '0px 0px -20px 0px' });
-  document.querySelectorAll('.svc-card').forEach(function (card) { io.observe(card); });
-  document.querySelectorAll('.svc-hero-img').forEach(function (el) { io.observe(el); });
-})();
-</script>
-
-<script>
   document.querySelectorAll('.svc-hero-flex').forEach(function(el) {
     el.addEventListener('mouseenter', function() { el.classList.add('is-hovered'); });
     el.addEventListener('mouseleave', function() { el.classList.remove('is-hovered'); });
@@ -1202,7 +1186,11 @@
       var s = getState(card);
       if (entry.isIntersecting) {
         s.scrollActive = true;
-        card.classList.add('is-scroll-active');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            card.classList.add('is-scroll-active');
+          });
+        });
         if (!s.rafId && !isHoverDevice) startFloat(img, s);
       } else {
         s.scrollActive = false;
@@ -1260,7 +1248,11 @@
     var entry = entries[0];
     if (entry.isIntersecting) {
       hs.scrollActive = true;
-      heroEl.classList.add('is-scroll-active');
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          heroEl.classList.add('is-scroll-active');
+        });
+      });
       if (!hs.rafId) startHeroFloat();
     } else {
       hs.scrollActive = false;
@@ -1301,31 +1293,27 @@
   revealOne(document.getElementById('services-hero'), 0.01);
   revealOne(document.getElementById('services-cta'));
 
-  var items = [].slice.call(document.querySelectorAll('.svc-card'));
-  var container = document.querySelector('.services-page-grid');
-  items.forEach(function (el) {
+  function revealCard(el) {
+    if (!el) return;
     el.style.opacity = '0';
-    el.style.transform = 'translateY(32px)';
+    el.style.setProperty('--reveal-y', '32px');
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+      el.style.opacity = '1';
+      el.style.setProperty('--reveal-y', '0px');
+      obs.disconnect();
+      el.addEventListener('transitionend', function cleanup(evt) {
+        if (evt.propertyName !== 'transform') return;
+        el.style.transition = '';
+        el.removeEventListener('transitionend', cleanup);
+      });
+    }, { threshold: 0.15 });
+    obs.observe(el);
+  }
+  document.querySelectorAll('.svc-card').forEach(function (el) {
+    revealCard(el);
   });
-  var gridObs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
-    items.forEach(function (el, i) {
-      setTimeout(function () {
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-        el.addEventListener('transitionend', function cleanup(evt) {
-          if (evt.propertyName !== 'transform') return;
-          el.style.opacity = '';
-          el.style.transform = '';
-          el.style.transition = '';
-          el.removeEventListener('transitionend', cleanup);
-        });
-      }, i * 120);
-    });
-    gridObs.disconnect();
-  }, { threshold: 0.1 });
-  if (container) gridObs.observe(container);
 })();
 </script>
 </body>

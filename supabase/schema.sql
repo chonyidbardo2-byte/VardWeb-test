@@ -149,6 +149,19 @@ CREATE TABLE IF NOT EXISTS site_analytics (
   UNIQUE(site_id)
 );
 
+-- blog_subscribers — VardWeb's own blog newsletter list. Global (no site_id):
+-- VardWeb is not itself a row in clients/sites, so this is intentionally
+-- outside the multi-tenant client/site scoping used everywhere else above.
+CREATE TABLE IF NOT EXISTS blog_subscribers (
+  id                 UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email              TEXT NOT NULL UNIQUE,
+  status             TEXT NOT NULL DEFAULT 'active',   -- active | unsubscribed
+  subscribed_at      TIMESTAMPTZ DEFAULT NOW(),
+  unsubscribed_at    TIMESTAMPTZ,
+  resend_contact_id  TEXT,                             -- Resend contact id; NULL = not yet synced / needs retry
+  created_at         TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Must be last — references auth.users (Supabase built-in)
 CREATE TABLE IF NOT EXISTS user_profiles (
   id        UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -195,6 +208,7 @@ ALTER TABLE site_content   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE seo_reports    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_links   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_analytics ENABLE ROW LEVEL SECURITY;
+ALTER TABLE blog_subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles  ENABLE ROW LEVEL SECURITY;
 
 
@@ -288,6 +302,17 @@ CREATE POLICY "admin_all_analytics"     ON site_analytics FOR ALL    USING (is_a
 CREATE POLICY "client_select_analytics" ON site_analytics FOR SELECT USING (
   site_id IN (SELECT id FROM sites WHERE client_id = my_client_id())
 );
+
+-- blog_subscribers — a public, unauthenticated visitor can INSERT their own
+-- signup row (the blog.html form runs with no login). SELECT/UPDATE/DELETE
+-- stay admin-only — nobody but admin can read the list or change status.
+-- (Defense-in-depth: the real write path goes through a service-role Edge
+-- Function, but this policy keeps the table usable if anything ever inserts
+-- via the anon key directly.)
+DROP POLICY IF EXISTS "admin_all_blog_subscribers"     ON blog_subscribers;
+DROP POLICY IF EXISTS "public_insert_blog_subscribers" ON blog_subscribers;
+CREATE POLICY "admin_all_blog_subscribers"     ON blog_subscribers FOR ALL    USING (is_admin());
+CREATE POLICY "public_insert_blog_subscribers" ON blog_subscribers FOR INSERT WITH CHECK (true);
 
 -- user_profiles — users read their own; admin reads all
 DROP POLICY IF EXISTS "own_profile"        ON user_profiles;
