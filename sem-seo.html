@@ -221,7 +221,6 @@
       text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.98;
       color: var(--text-1);
       margin-bottom: 22px;
-      text-shadow: 0 0 40px rgba(0,229,255,0.22);
     }
     .hero-sub {
       font-size: 17px; color: var(--text-2); line-height: 1.75;
@@ -232,20 +231,26 @@
       padding: 14px 30px; border-radius: 999px; font-size: 13px;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
     }
-    .hero-btn:hover { transform: translateY(-2px) scale(1.03); }
+    .hero-btn:hover { transform: translateY(-2px); }
     .hero-btn-white {
       background: #ffffff; border: 1px solid #ffffff; color: var(--base);
       box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
     }
     .hero-btn-white:hover { background: #f2f5fa; box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5); }
     .hero-btn-gradient {
-      background: linear-gradient(120deg, var(--cyan) 0%, var(--pink) 100%);
-      border: 1px solid transparent; color: #070910;
-      box-shadow: 0 10px 30px -8px rgba(0,229,255,0.35), 0 4px 16px -4px rgba(255,45,120,0.3);
+      border: 2px solid transparent; color: #070910;
+      background-image:
+        linear-gradient(120deg, var(--cyan) 0%, var(--pink) 100%),
+        linear-gradient(120deg, rgb(0,103,115) 0%, rgb(115,20,54) 100%);
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.45);
     }
     .hero-btn-gradient:hover {
-      background: linear-gradient(120deg, #4df0ff 0%, #ff5c95 100%);
-      box-shadow: 0 12px 34px -6px rgba(0,229,255,0.45), 0 6px 20px -4px rgba(255,45,120,0.4);
+      background-image:
+        linear-gradient(120deg, #4df0ff 0%, #ff5c95 100%),
+        linear-gradient(120deg, rgb(0,103,115) 0%, rgb(115,20,54) 100%);
+      box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5);
     }
 
     .hero-content > * {
@@ -317,6 +322,115 @@
       position: absolute; top: 0; left: 50%; transform: translateX(-50%);
       pointer-events: none; border-radius: 3px; z-index: 3;
     }
+
+    /* Trust strip — pass-through billing model, sits under the hero */
+    .trust-strip {
+      max-width: 1200px; margin: 0 auto;
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px 18px; flex-wrap: wrap; text-align: center;
+    }
+    .trust-item {
+      display: inline-flex; align-items: flex-start; gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; font-weight: 600;
+      color: var(--text-2); letter-spacing: 0.01em;
+    }
+    .trust-item b { color: var(--text-1); font-weight: 700; }
+    .trust-item svg { color: var(--cyan); flex-shrink: 0; margin-top: 2px; }
+    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(200,212,232,0.22); flex-shrink: 0; margin-top: 8px; }
+    @media (max-width: 640px) {
+      .trust-strip { flex-direction: column; align-items: flex-start; padding: 18px 24px; gap: 10px; }
+      .trust-dot { display: none; }
+    }
+
+    /* Price chips — VardWeb fee vs. client pass-through spend, per section */
+    .price-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+    .price-chip {
+      display: flex; flex-direction: column; gap: 4px;
+      padding: 10px 16px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.015);
+    }
+    .price-chip.main { border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.05); }
+    .price-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.4);
+    }
+    .price-chip.main .price-label { color: rgba(0,229,255,0.7); }
+    .price-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text-1); }
+    .price-chip.main .price-value { color: var(--cyan); }
+    .price-chip.pass .price-value { color: var(--text-2); font-weight: 600; }
+
+    /* Bespoke visual — Performance Max "channel orbit" (no screenshot exists for this product) */
+    .viz-pmax { position: relative; width: 100%; aspect-ratio: 16 / 10.5; }
+    .orbit-ring {
+      position: absolute; top: 50%; left: 50%; width: 190px; height: 190px;
+      margin: -95px 0 0 -95px; border: 1px dashed rgba(0,229,255,0.16); border-radius: 50%;
+    }
+    .orbit-center {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 84px; height: 84px; border-radius: 50%; z-index: 2;
+      background: radial-gradient(circle at 35% 30%, rgba(0,229,255,0.38), rgba(255,45,120,0.16) 60%, rgba(7,9,16,0.92) 100%);
+      border: 1px solid rgba(0,229,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #fff;
+      box-shadow: 0 0 24px rgba(0,229,255,0.3), 0 0 50px rgba(255,45,120,0.1);
+      animation: orbit-pulse 3.2s ease-in-out infinite;
+    }
+    @keyframes orbit-pulse {
+      0%, 100% { box-shadow: 0 0 24px rgba(0,229,255,0.3), 0 0 50px rgba(255,45,120,0.1); }
+      50%      { box-shadow: 0 0 38px rgba(0,229,255,0.5), 0 0 72px rgba(255,45,120,0.2); }
+    }
+    .orbit-pill {
+      position: absolute; top: 50%; left: 50%; z-index: 1;
+      transform: rotate(var(--a)) translate(var(--r, 95px)) rotate(calc(-1 * var(--a)));
+      transform-origin: 0 0;
+      margin: -13px 0 0 -38px;
+      width: 76px; padding: 6px 0; border-radius: 999px;
+      background: rgba(15,18,25,0.92); border: 1px solid rgba(255,255,255,0.12);
+      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600;
+      color: var(--text-2); text-align: center; letter-spacing: 0.02em;
+    }
+    @media (max-width: 480px) {
+      .orbit-pill { --r: 76px; width: 62px; font-size: 8.5px; margin: -11px 0 0 -31px; }
+      .orbit-center { width: 68px; height: 68px; font-size: 9.5px; }
+      .orbit-ring { width: 156px; height: 156px; margin: -78px 0 0 -78px; }
+    }
+
+    /* Bespoke visual — Video / YouTube ad player mockup (no screenshot exists for this product) */
+    .viz-video { position: relative; width: 100%; aspect-ratio: 16 / 10; background: #0b0e14; border-radius: 17px; overflow: hidden; }
+    .viz-video::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 28% 22%, rgba(0,229,255,0.1), transparent 55%),
+                  radial-gradient(ellipse at 76% 78%, rgba(255,45,120,0.1), transparent 55%);
+    }
+    .video-play-btn {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 62px; height: 62px; border-radius: 50%; background: rgba(255,255,255,0.94);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 26px rgba(0,0,0,0.45);
+    }
+    .video-play-btn::after {
+      content: ''; width: 0; height: 0; margin-left: 4px;
+      border-style: solid; border-width: 11px 0 11px 18px;
+      border-color: transparent transparent transparent #14161d;
+    }
+    .video-ad-badge {
+      position: absolute; top: 14px; left: 14px; display: flex; align-items: center; gap: 6px;
+      background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 5px; padding: 4px 9px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; color: #fff; letter-spacing: 0.03em;
+    }
+    .video-ad-badge b { color: var(--pink); }
+    .video-skip-pill {
+      position: absolute; bottom: 22px; right: 14px;
+      background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 5px; padding: 6px 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.85);
+    }
+    .video-progress-track { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,0.15); }
+    .video-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; background: var(--pink); }
 
     /* Footer */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -613,6 +727,24 @@
   </div>
 </section>
 
+<!-- ── TRUST STRIP: pass-through billing model ── -->
+<div class="trust-strip">
+  <span class="trust-item">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    <span><b>One flat monthly fee</b>&nbsp;for management</span>
+  </span>
+  <span class="trust-dot" aria-hidden="true"></span>
+  <span class="trust-item">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <span>Your ad spend goes&nbsp;<b>straight to Google or Amazon</b></span>
+  </span>
+  <span class="trust-dot" aria-hidden="true"></span>
+  <span class="trust-item">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+    <span>We never touch it,&nbsp;<b>never mark it up</b></span>
+  </span>
+</div>
+
 <div class="divider"></div>
 
 <!-- ── CONTENT: Google Search Ads (2-column, ported from the reference's Content Section) ── -->
@@ -625,8 +757,12 @@
     </div>
     <div class="wf-outer">
       <p id="wf-gsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.
+        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately. Every account also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
       </p>
+    </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$750–$900/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,000–$3,000/mo</span></div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-gsa-box">
@@ -637,22 +773,35 @@
 
 <div class="divider"></div>
 
-<!-- ── CONTENT: Google Ad Sense (2-column, flipped) ── -->
+<!-- ── CONTENT: Performance Max (2-column, flipped) — no screenshot exists; bespoke CSS orbit visual ── -->
 <section class="content-2col flip">
   <div class="content-2col-text">
     <div class="wf-outer">
-      <h2 id="wf-adsense-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
-        Google Ad Sense
+      <h2 id="wf-pmax-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Performance Max
       </h2>
     </div>
     <div class="wf-outer">
-      <p id="wf-adsense-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site. Placements are tuned to protect user experience while maximizing yield per page view.
+      <p id="wf-pmax-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Performance Max runs one AI-driven campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time — Google's own recommended default once an account has enough conversion history to fuel the automation. We configure the feed and asset groups, set the right conversion goals, and review signals monthly, including the newer Demand Gen format for visual, feed-native placements.
       </p>
     </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$800–$1,000/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,500–$4,000/mo</span></div>
+    </div>
   </div>
-  <div class="content-2col-visual" id="wf-adsense-box">
-    <img src="images/sem-seo/google-ad-sense.png" alt="Example Google Ad Sense display ad placements shown on a video page and a news article" class="visual-shot" />
+  <div class="content-2col-visual" id="wf-pmax-box">
+    <div class="viz-pmax" role="img" aria-label="Diagram of a Performance Max campaign radiating out to Search, Display, YouTube, Gmail, Maps and Discover">
+      <div class="orbit-ring" aria-hidden="true"></div>
+      <div class="orbit-center">PMax</div>
+      <div class="orbit-pill" style="--a: 0deg;">Search</div>
+      <div class="orbit-pill" style="--a: 60deg;">Display</div>
+      <div class="orbit-pill" style="--a: 120deg;">YouTube</div>
+      <div class="orbit-pill" style="--a: 180deg;">Gmail</div>
+      <div class="orbit-pill" style="--a: 240deg;">Maps</div>
+      <div class="orbit-pill" style="--a: 300deg;">Discover</div>
+    </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -669,8 +818,12 @@
     </div>
     <div class="wf-outer">
       <p id="wf-shopping-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Shopping Ads showcase your products with image, price, and reviews directly in search results, putting your catalog in front of shoppers who are already comparing and ready to buy.
+        Google Shopping Ads showcase your products with image, price, and reviews directly in search results, putting your catalog in front of shoppers who are already comparing and ready to buy. We build and maintain the Merchant Center feed and shipping/tax rules so listings stay live whether they run standalone or wrapped inside Performance Max.
       </p>
+    </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$700–$850/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,000–$3,000/mo</span></div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-shopping-box">
@@ -681,8 +834,39 @@
 
 <div class="divider"></div>
 
-<!-- ── CONTENT: Local Service Ads (2-column, flipped) ── -->
+<!-- ── CONTENT: Video / YouTube Ads (2-column, flipped) — no screenshot exists; bespoke CSS player mockup ── -->
 <section class="content-2col flip">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-video-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Video &amp; YouTube Ads
+      </h2>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-video-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Video Ads put your brand in front of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could. We handle campaign structure, audience targeting, and bid strategy; if you need the video itself, our Content Creation &amp; CM add-on covers production.
+      </p>
+    </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$900–$1,200/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,500–$4,000/mo</span></div>
+    </div>
+  </div>
+  <div class="content-2col-visual" id="wf-video-box">
+    <div class="viz-video" role="img" aria-label="Mockup of a YouTube pre-roll video ad with a skip button and progress bar">
+      <div class="video-ad-badge">Ad <b>&middot;</b> 0:05</div>
+      <div class="video-play-btn"></div>
+      <div class="video-skip-pill">Skip Ad ▸</div>
+      <div class="video-progress-track"><div class="video-progress-fill"></div></div>
+    </div>
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Local Service Ads (2-column) ── -->
+<section class="content-2col">
   <div class="content-2col-text">
     <div class="wf-outer">
       <h2 id="wf-lsa-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
@@ -694,9 +878,39 @@
         Local Service Ads put your business at the top of local search with a Google Guaranteed badge, connecting you with nearby customers who are ready to book — and you only pay for genuine leads.
       </p>
     </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$450–$600/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Lead Budget — Direct to Google</span><span class="price-value">$800–$1,500/mo</span></div>
+    </div>
   </div>
   <div class="content-2col-visual" id="wf-lsa-box">
     <img src="images/sem-seo/local-service-ads.png" alt="Example Local Service Ads listings with Google Guaranteed badges for local plumbers" class="visual-shot" />
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Google Ad Sense (2-column, flipped) ── -->
+<section class="content-2col flip">
+  <div class="content-2col-text">
+    <div class="wf-outer">
+      <h2 id="wf-adsense-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+        Google Ad Sense
+      </h2>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-adsense-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
+        Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site. Placements are tuned to protect user experience while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
+      </p>
+    </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">Setup + Monitoring</span><span class="price-value">$600–$900 + $250–$350/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Ad Spend</span><span class="price-value">None — revenue side</span></div>
+    </div>
+  </div>
+  <div class="content-2col-visual" id="wf-adsense-box">
+    <img src="images/sem-seo/google-ad-sense.png" alt="Example Google Ad Sense display ad placements shown on a video page and a news article" class="visual-shot" />
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -713,8 +927,12 @@
     </div>
     <div class="wf-outer">
       <p id="wf-asp-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace.
+        Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace — sized right for growing sellers, not just established $1M+/yr brands.
       </p>
+    </div>
+    <div class="price-row">
+      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$1,200–$1,800/mo</span></div>
+      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Amazon</span><span class="price-value">$1,500–$4,000/mo</span></div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-asp-box">
@@ -899,12 +1117,16 @@
     { el: document.getElementById('wf-sub'),               color: 'var(--pink)', delay: 0.5 },
     { el: document.getElementById('wf-gsa-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-gsa-para'),          color: '#C8D4E8', delay: 0.2 },
-    { el: document.getElementById('wf-adsense-heading'),   color: 'var(--pink)' },
-    { el: document.getElementById('wf-adsense-para'),      color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-pmax-heading'),      color: 'var(--pink)' },
+    { el: document.getElementById('wf-pmax-para'),         color: '#C8D4E8', delay: 0.2 },
     { el: document.getElementById('wf-shopping-heading'),  color: 'var(--cyan)' },
     { el: document.getElementById('wf-shopping-para'),     color: '#C8D4E8', delay: 0.2 },
-    { el: document.getElementById('wf-lsa-heading'),       color: 'var(--pink)' },
+    { el: document.getElementById('wf-video-heading'),     color: 'var(--pink)' },
+    { el: document.getElementById('wf-video-para'),        color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-lsa-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-lsa-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-adsense-heading'),   color: 'var(--pink)' },
+    { el: document.getElementById('wf-adsense-para'),      color: '#C8D4E8', delay: 0.2 },
     { el: document.getElementById('wf-asp-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-asp-para'),          color: '#C8D4E8', delay: 0.2 }
   ];
@@ -957,10 +1179,12 @@
      fall mechanic/timing as the word blocks above). ── */
   var boxTargets = [
     { id: 'wf-gsa-box',      color: 'var(--cyan)' },
-    { id: 'wf-adsense-box',  color: 'var(--pink)' },
+    { id: 'wf-pmax-box',     color: 'var(--pink)' },
     { id: 'wf-shopping-box', color: 'var(--gold)' },
-    { id: 'wf-lsa-box',      color: 'var(--cyan)' },
-    { id: 'wf-asp-box',      color: 'var(--pink)' }
+    { id: 'wf-video-box',    color: 'var(--cyan)' },
+    { id: 'wf-lsa-box',      color: 'var(--pink)' },
+    { id: 'wf-adsense-box',  color: 'var(--gold)' },
+    { id: 'wf-asp-box',      color: 'var(--cyan)' }
   ];
   boxTargets.forEach(function (t) {
     var box = document.getElementById(t.id);

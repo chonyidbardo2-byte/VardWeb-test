@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Studio — VardWeb</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--cyan:#00E5FF;--pink:#FF2D78;--base:#070910;--surface:#0f1219;--raised:#161b27;--border:rgba(0,229,255,0.3);--text-1:#eef0f8;--text-2:rgba(200,212,232,0.62);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{background:var(--base);color:var(--text-1);font-family:'Inter',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;}
+  body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px;opacity:0.036;pointer-events:none;z-index:9999;}
+
+  .top-bar{display:flex;align-items:baseline;gap:14px;padding:22px 32px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .top-bar h1{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;letter-spacing:-0.03em;}
+  .top-bar p{font-size:12.5px;color:var(--text-2);}
+
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 32px;}
+  .tab{padding:12px 16px;font-size:12.5px;font-weight:600;color:var(--text-2);cursor:pointer;border-bottom:2px solid transparent;background:none;border-left:none;border-right:none;border-top:none;font-family:'Inter',sans-serif;transition:color .15s,border-color .15s;}
+  .tab:hover{color:var(--text-1);}
+  .tab:focus-visible{outline:2px solid rgba(0,229,255,0.5);outline-offset:-2px;}
+  .tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+
+  .layout{display:flex;gap:0;align-items:flex-start;min-height:calc(100vh - 106px);}
+  .editor-col{width:400px;flex-shrink:0;padding:26px 28px;border-right:1px solid var(--border);position:sticky;top:0;}
+  .preview-col{flex:1;padding:26px 28px;display:flex;flex-direction:column;align-items:center;min-width:0;}
+
+  .field-row{margin-bottom:18px;}
+  .field-row label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);display:block;margin-bottom:6px;}
+  textarea,input[type=text]{width:100%;background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:10px 13px;color:var(--text-1);font-size:13px;outline:none;font-family:'Inter',sans-serif;resize:vertical;transition:border-color .2s;}
+  textarea:focus,input[type=text]:focus{border-color:rgba(0,229,255,0.4);}
+  textarea{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;}
+  .note{font-size:11.5px;color:var(--text-2);margin-top:6px;line-height:1.55;}
+
+  .btn{padding:9px 16px;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-2);display:inline-flex;align-items:center;gap:6px;transition:color .15s,border-color .15s,background .15s;font-family:'Inter',sans-serif;}
+  .btn:hover{color:var(--text-1);border-color:rgba(0,229,255,0.3);background:rgba(0,229,255,0.04);}
+  .btn:focus-visible{outline:2px solid rgba(0,229,255,0.5);outline-offset:2px;}
+  .btn:active{transform:translateY(1px);}
+  .copy-row{display:flex;flex-direction:column;gap:8px;margin-top:22px;}
+  .copy-feedback{font-size:11.5px;color:var(--cyan);min-height:14px;margin-top:2px;}
+
+  .example-row{display:flex;gap:8px;margin-bottom:18px;}
+  .toggle-btn{flex:1;background:rgba(255,255,255,0.03);border:1px solid rgba(0,229,255,0.3);border-radius:9px;padding:9px 12px;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;color:var(--text-2);cursor:pointer;transition:border-color .2s,background .2s,color .2s,box-shadow .2s;}
+  .toggle-btn:hover{border-color:rgba(0,229,255,0.5);color:var(--text-1);background:rgba(0,229,255,0.06);}
+  .toggle-btn.selected{border-color:rgba(0,229,255,0.6);background:rgba(0,229,255,0.1);color:var(--cyan);box-shadow:0 0 0 3px rgba(0,229,255,0.1);}
+  .toggle-btn:focus-visible{outline:2px solid rgba(0,229,255,0.5);outline-offset:2px;}
+
+  .device-toggle{display:flex;gap:8px;margin-bottom:20px;}
+  .device-toggle .toggle-btn{flex:none;min-width:110px;}
+
+  .frame-wrap{width:600px;max-width:100%;transition:width .25s cubic-bezier(.4,0,.2,1);}
+  iframe{display:block;width:100%;height:600px;border:1px solid rgba(0,229,255,0.14);border-radius:12px;background:#070910;}
+
+  .readonly-note{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:12.5px;color:var(--text-2);line-height:1.6;margin-bottom:20px;}
+
+  @media (max-width: 900px) {
+    .layout{flex-direction:column;align-items:stretch;}
+    .editor-col{width:100%;border-right:none;border-bottom:1px solid var(--border);position:static;}
+    .preview-col{width:100%;}
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>Email Studio</h1>
+  <p>Draft, edit and preview VardWeb emails locally &mdash; desktop &amp; mobile, no CRM login required.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-template="broadcast">Newsletter Broadcast</button>
+  <button class="tab" data-template="inquiry">Inquiry Notification</button>
+  <button class="tab" data-template="welcome">Welcome Email</button>
+</div>
+
+<div class="layout">
+  <div class="editor-col">
+
+    <section class="panel" data-panel="broadcast">
+      <div class="field-row">
+        <label for="subjectInput">Subject</label>
+        <input type="text" id="subjectInput" placeholder="e.g. We just shipped a big redesign" value="We just shipped a big redesign &amp; new pricing" />
+      </div>
+      <div class="field-row">
+        <label for="bodyTextarea">Body (HTML)</label>
+        <textarea id="bodyTextarea" rows="14" placeholder="&lt;p&gt;Hey there,&lt;/p&gt;">&lt;p style="margin:0 0 14px;"&gt;Hey there,&lt;/p&gt;
+&lt;p style="margin:0;"&gt;We just launched a full redesign of our web design pricing tiers &amp;mdash; clearer scope, sharper add-ons, and a Custom tier for anything in between.&lt;/p&gt;</textarea>
+        <p class="note">Raw HTML, wrapped automatically in the VardWeb branded email shell (logo, colors, footer, unsubscribe link). No rich-text editor &mdash; write plain tags like &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;ul&gt;/&lt;li&gt;. This is a draft-only tool: nothing here sends or saves &mdash; when it's ready, copy it into <code>crm/newsletter.html</code> to actually broadcast.</p>
+      </div>
+      <div class="copy-row">
+        <button class="btn" id="copySubjectBtn">Copy Subject</button>
+        <button class="btn" id="copyBodyBtn">Copy Body HTML</button>
+        <button class="btn" id="copyFullBtn">Copy Full Rendered Email HTML</button>
+        <p class="copy-feedback" id="copyFeedback" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="inquiry" hidden>
+      <p class="readonly-note">This template's content is generated automatically from real contact-form submissions &mdash; there's nothing to hand-author. Flip between two sample submissions below to review the design.</p>
+      <div class="example-row">
+        <button class="toggle-btn selected" data-example="A" id="inquiryExampleA">Example A &mdash; Gold tier</button>
+        <button class="toggle-btn" data-example="B" id="inquiryExampleB">Example B &mdash; no tier</button>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="welcome" hidden>
+      <p class="readonly-note">This is a static, already-finished template with no per-send content &mdash; it's shown here read-only for design review. The <code>%%SUBSCRIBER_EMAIL%%</code> token is filled with a placeholder address for preview purposes only.</p>
+    </section>
+
+  </div>
+
+  <div class="preview-col">
+    <div class="device-toggle" role="group" aria-label="Preview width">
+      <button class="toggle-btn selected" id="deviceDesktopBtn" data-device="desktop">Desktop</button>
+      <button class="toggle-btn" id="deviceMobileBtn" data-device="mobile">Mobile</button>
+    </div>
+    <div class="frame-wrap" id="frameWrap">
+      <iframe id="previewFrame" title="Email preview"></iframe>
+    </div>
+  </div>
+</div>
+
+<script src="contact-inquiry-notification.js"></script>
+<script src="blog-newsletter-broadcast.js"></script>
+<script>
+(function () {
+  var frame       = document.getElementById('previewFrame');
+  var frameWrap    = document.getElementById('frameWrap');
+  var subjectInput = document.getElementById('subjectInput');
+  var bodyTextarea = document.getElementById('bodyTextarea');
+  var copyFeedback = document.getElementById('copyFeedback');
+
+  var currentTemplate = 'broadcast';
+  var currentDevice   = 'desktop';
+  var currentInquiryExample = 'A';
+  var welcomeHtmlRaw  = null;
+  var lastRenderedHtml = '';
+  var debounceTimer   = null;
+
+  var inquiryExamples = {
+    A: {
+      name: 'Priya Anand',
+      email: 'priya.anand@brightleafyoga.com',
+      project: '🎨 Web Design',
+      businessType: '📈 Established — Actively looking to grow the business',
+      hasWebsite: 'Yes',
+      websiteUrl: 'https://brightleafyoga.com',
+      message: "We're relaunching our studio brand this fall & need a site that reflects the new identity.\n\nBooking integration, instructor bios, and a blog for class updates — ideally live before September 1.",
+      tier: 'Gold',
+      addons: ['SEM & SEO, SMM and CM', 'PWA (Progressive Web App)'],
+    },
+    B: {
+      name: 'Marcus Chen',
+      email: 'marcus@chenlogistics.ca',
+      project: '🔧 Website Maintenance',
+      businessType: '🔄 Established — Looking to refresh and modernize',
+      hasWebsite: 'No',
+      websiteUrl: '',
+      message: "Our current site is outdated and slow to update. Looking for a maintenance plan that keeps things running smoothly without us having to think about it.",
+      tier: null,
+      addons: [],
+    },
+  };
+
+  function syncHeight() {
+    var doc = frame.contentDocument;
+    if (doc && doc.documentElement) {
+      frame.style.height = (doc.documentElement.scrollHeight + 24) + 'px';
+    }
+  }
+
+  function setSrcdoc(html) {
+    lastRenderedHtml = html;
+    frame.onload = syncHeight;
+    frame.srcdoc = html;
+  }
+
+  function renderPreview() {
+    if (currentTemplate === 'broadcast') {
+      setSrcdoc(window.buildNewsletterBroadcastHtml({
+        subject: subjectInput.value,
+        bodyHtml: bodyTextarea.value,
+      }));
+    } else if (currentTemplate === 'inquiry') {
+      setSrcdoc(window.buildInquiryEmailHtml(inquiryExamples[currentInquiryExample]));
+    } else if (currentTemplate === 'welcome') {
+      if (welcomeHtmlRaw === null) {
+        fetch('blog-newsletter-welcome.html')
+          .then(function (res) { return res.text(); })
+          .then(function (html) {
+            welcomeHtmlRaw = html;
+            if (currentTemplate === 'welcome') renderPreview();
+          });
+        return;
+      }
+      setSrcdoc(welcomeHtmlRaw.split('%%SUBSCRIBER_EMAIL%%').join('jane@example.com'));
+    }
+  }
+
+  function debouncedRender() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(renderPreview, 200);
+  }
+
+  /* ── Tabs ── */
+  document.querySelectorAll('.tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      currentTemplate = tab.dataset.template;
+      document.querySelectorAll('.panel').forEach(function (p) {
+        p.hidden = p.dataset.panel !== currentTemplate;
+      });
+      renderPreview();
+    });
+  });
+
+  /* ── Inquiry example switch ── */
+  document.getElementById('inquiryExampleA').addEventListener('click', function () { selectInquiryExample('A'); });
+  document.getElementById('inquiryExampleB').addEventListener('click', function () { selectInquiryExample('B'); });
+  function selectInquiryExample(key) {
+    currentInquiryExample = key;
+    document.getElementById('inquiryExampleA').classList.toggle('selected', key === 'A');
+    document.getElementById('inquiryExampleB').classList.toggle('selected', key === 'B');
+    renderPreview();
+  }
+
+  /* ── Device toggle ── */
+  document.getElementById('deviceDesktopBtn').addEventListener('click', function () { selectDevice('desktop'); });
+  document.getElementById('deviceMobileBtn').addEventListener('click', function () { selectDevice('mobile'); });
+  function selectDevice(device) {
+    currentDevice = device;
+    document.getElementById('deviceDesktopBtn').classList.toggle('selected', device === 'desktop');
+    document.getElementById('deviceMobileBtn').classList.toggle('selected', device === 'mobile');
+    frameWrap.style.width = device === 'desktop' ? '600px' : '390px';
+    syncHeight();
+  }
+
+  /* ── Live edit ── */
+  subjectInput.addEventListener('input', debouncedRender);
+  bodyTextarea.addEventListener('input', debouncedRender);
+
+  /* ── Copy actions ── */
+  function flashCopyFeedback(msg) {
+    copyFeedback.textContent = msg;
+    clearTimeout(flashCopyFeedback._t);
+    flashCopyFeedback._t = setTimeout(function () { copyFeedback.textContent = ''; }, 2200);
+  }
+  document.getElementById('copySubjectBtn').addEventListener('click', function () {
+    navigator.clipboard.writeText(subjectInput.value).then(function () { flashCopyFeedback('Subject copied.'); });
+  });
+  document.getElementById('copyBodyBtn').addEventListener('click', function () {
+    navigator.clipboard.writeText(bodyTextarea.value).then(function () { flashCopyFeedback('Body HTML copied.'); });
+  });
+  document.getElementById('copyFullBtn').addEventListener('click', function () {
+    navigator.clipboard.writeText(lastRenderedHtml).then(function () { flashCopyFeedback('Full email HTML copied.'); });
+  });
+
+  renderPreview();
+})();
+</script>
+
+</body>
+</html>

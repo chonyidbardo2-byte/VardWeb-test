@@ -9,8 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script src="/emailjs-config.js"></script>
+  <script src="/supabase-config.js"></script>
+  <script src="/emails/contact-inquiry-notification.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -209,6 +209,22 @@
 
     /* ── Contact Form ── */
     .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; align-items: stretch; }
+    #contact-form-box { background: var(--surface); border: 1px solid rgba(0,229,255,0.1); border-radius: 20px; padding: 20px; overflow: hidden; width: 100%; box-sizing: border-box; }
+    #contact-form-box .calendly-inline-widget { overflow: auto !important; border-radius: 12px; }
+    #contact-form-box .calendly-inline-widget iframe { border-radius: 12px; display: block; }
+    #social-box { background: var(--surface); border: 1px solid rgba(0,229,255,0.1); border-radius: 20px; padding: 28px; width: 100%; box-sizing: border-box; flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; }
+    .social-row-lg { display: flex; justify-content: center; gap: 16px; margin-top: 14px; }
+    .social-btn-lg {
+      width: 60px; height: 60px; border-radius: 14px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(200,212,232,0.55); text-decoration: none;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.28);
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .social-btn-lg:hover { border-color: rgba(0,229,255,0.45); color: var(--cyan); background: rgba(0,229,255,0.08); transform: translateY(-3px); }
+    .social-btn-lg:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .social-btn-lg:active { transform: translateY(-1px); }
     .contact-input, .contact-textarea, .contact-select {
       width: 100%;
       background: rgba(255,255,255,0.03);
@@ -314,9 +330,8 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      .contact-grid { grid-template-columns: 1fr; gap: 52px; }
+      .contact-grid { grid-template-columns: 1fr; gap: 16px; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
-      #contact-form-box { min-height: 600px; }
     }
     @media (max-width: 560px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px 16px; } .footer-grid > div:first-child { grid-column: 1 / -1; } .footer-brand-tagline { max-width: 100%; } }
 
@@ -617,7 +632,7 @@
 
 
 <!-- ── Contact section ── -->
-<section style="padding:60px 28px 120px;">
+<section style="padding:60px 28px 60px;">
   <div style="max-width:1200px;margin:0 auto;">
 
     <div class="contact-grid">
@@ -642,7 +657,7 @@
           <div class="contact-info-icon icon-pink">🚀</div>
           <div>
             <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);margin-bottom:4px;">Typical Timeline</div>
-            <div style="font-size:14.5px;color:var(--text-1);">1–2 weeks from kickoff to launch</div>
+            <div style="font-size:14.5px;color:var(--text-1);">1–4 weeks from kickoff to launch</div>
           </div>
         </div>
 
@@ -738,11 +753,20 @@
         </div>
       </div>
 
-      <!-- Calendly -->
-      <div id="contact-form-box" style="background:var(--surface);border:1px solid rgba(0,229,255,0.1);border-radius:20px;padding:0;overflow:hidden;display:flex;flex-direction:column;">
-        <div style="flex:1;min-height:660px;border-radius:20px;overflow:hidden;">
-          <div class="calendly-inline-widget" data-url="https://calendly.com/vardweb/1-hour-meeting?hide_landing_page_details=1&hide_gdpr_banner=1" style="height:100%;width:100%;min-height:660px;"></div>
+      <!-- Calendly + Social -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div id="contact-form-box">
+          <div class="calendly-inline-widget" data-url="https://calendly.com/vardweb/1-hour-meeting?hide_landing_page_details=1&hide_gdpr_banner=1&hide_event_type_details=1" style="height:560px;width:100%;"></div>
           <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+        </div>
+
+        <div id="social-box">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(200,212,232,0.4);text-align:center;">Connect With Us</div>
+          <div class="social-row-lg">
+            <a href="#" class="social-btn-lg" aria-label="Twitter / X"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="#" class="social-btn-lg" aria-label="GitHub"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+            <a href="#" class="social-btn-lg" aria-label="Discord"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+          </div>
         </div>
       </div>
 
@@ -823,21 +847,7 @@
 </footer>
 
 <script>
-/* ─────────────────────────────────────────────────────────────────────────
-   EmailJS config  ←  fill in your three credentials from emailjs.com
-   1. Sign up at https://www.emailjs.com/
-   2. Add an Email Service (Gmail / Outlook / etc.)  → copy the Service ID
-   3. Create an Email Template with these variables:
-        {{subject}}  {{from_name}}  {{from_email}}  {{body}}
-      Set "To Email" to support@vardweb.com in the template settings
-   4. Copy your Public Key from Account → API Keys
-───────────────────────────────────────────────────────────────────────── */
-var _cfg = window.EMAILJS_CONFIG || {};
-var EJS_PUBLIC_KEY  = _cfg.publicKey  || '';
-var EJS_SERVICE_ID  = _cfg.serviceId  || '';
-var EJS_TEMPLATE_ID = _cfg.templateId || '';
-
-emailjs.init(EJS_PUBLIC_KEY);
+var _sbCfg = window.SUPABASE_CONFIG || {};
 
 /* ── Prefill from web-design.html "Let's Talk" links ── */
 var urlParams    = new URLSearchParams(location.search);
@@ -955,42 +965,44 @@ var addonsParam  = urlParams.get('addons');
 
     /* ── Send ── */
     var originalBtnCSS = btn.style.cssText;
+
+    if (!_sbCfg.url) {
+      document.getElementById('mini-form-status').textContent = 'Inquiry notifications are not configured yet.';
+      console.error('SUPABASE_CONFIG missing');
+      return;
+    }
+
     btn.disabled = true;
     btn.innerHTML = 'Sending&hellip;';
 
-    var body = [
-      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-      '  CLIENT INFORMATION',
-      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-      '',
-      'Name:     ' + name,
-      'Email:    ' + email,
-      '',
-      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-      '  PROJECT DETAILS',
-      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-      '',
-      'Type:          ' + project,
-      'Business Type: ' + businessType,
-      'Has Website:   ' + hasWebsite + (websiteUrl ? '\nWebsite URL:   ' + websiteUrl : ''),
-    ].concat(tierParam ? ['Investment Tier: ' + tierParam] : [])
-     .concat(addonsParam ? ['Selected Add-ons: ' + addonsParam.split('|').join(', ')] : [])
-     .concat([
-      '',
-      'Message:',
-      message,
-      '',
-      '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-      'Reply-to: ' + email,
-    ]).join('\n');
+    var emailHtml = window.buildInquiryEmailHtml({
+      name:         name,
+      email:        email,
+      project:      project,
+      businessType: businessType,
+      hasWebsite:   hasWebsite,
+      websiteUrl:   websiteUrl,
+      message:      message,
+      tier:         tierParam || null,
+      addons:       addonsParam ? addonsParam.split('|') : [],
+    });
 
-    emailjs.send(EJS_SERVICE_ID, EJS_TEMPLATE_ID, {
-      to_email:   'support@vardweb.com',
-      subject:    '🛎️ New Project Request from ' + name + ' ⬅️',
-      from_name:  name,
-      from_email: email,
-      body:       body,
-    }).then(function () {
+    fetch(_sbCfg.url + '/functions/v1/send-transactional-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (_sbCfg.anonKey || '') },
+      body: JSON.stringify({
+        to:       'support@vardweb.com',
+        from:     'VardWeb <notifications@vardweb.com>',
+        replyTo:  email,
+        subject:  '🛎️ New Project Request from ' + name + ' ⬅️',
+        html:     emailHtml,
+      }),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (result) {
+        if (result.error) throw new Error(result.error);
+      })
+      .then(function () {
       btn.innerHTML = '&#10003; Message Sent!';
       btn.style.cssText += ';background:linear-gradient(135deg,rgba(0,229,255,0.14),rgba(0,229,255,0.07));border-color:rgba(0,229,255,0.38);color:#00E5FF;';
 
@@ -1064,30 +1076,17 @@ var addonsParam  = urlParams.get('addons');
         }, 200);
       }, 3000);
     }, function (err) {
-      console.error('EmailJS error:', JSON.stringify(err));
+      console.error('Inquiry send error:', err);
       btn.disabled = false;
       btn.innerHTML = 'Send Message <span aria-hidden="true">→</span>';
       document.getElementById('mini-form-status').textContent = 'Send failed. Please try again or contact us directly.';
       var errEl = document.createElement('p');
       errEl.style.cssText = 'font-size:11px;color:#f87171;text-align:center;margin-top:6px;font-family:JetBrains Mono,monospace;';
-      errEl.textContent = 'Send failed (' + (err.text || err.status || 'unknown') + ') — check console';
+      errEl.textContent = 'Send failed (' + (err.message || 'unknown') + ') — check console';
       btn.parentNode.insertBefore(errEl, btn.nextSibling);
       setTimeout(function () { errEl.remove(); document.getElementById('mini-form-status').textContent = ''; }, 8000);
     });
   });
-})();
-
-/* Size Calendly iframe to fill the form box (padding only, no name row) */
-(function () {
-  function sizeCalendly() {
-    var box = document.getElementById('contact-form-box');
-    var widget = document.querySelector('.calendly-inline-widget');
-    if (!box || !widget) return;
-    var available = box.clientHeight;
-    if (available > 400) widget.style.height = available + 'px';
-  }
-  window.addEventListener('load', sizeCalendly);
-  window.addEventListener('resize', sizeCalendly);
 })();
 
 (function () {
