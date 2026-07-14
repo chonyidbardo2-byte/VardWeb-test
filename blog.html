@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/supabase-config.js"></script>
 
   <style>
     :root {
@@ -152,9 +153,12 @@
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1),
                   box-shadow 0.25s ease, border-color 0.25s ease;
     }
-    .post-card:hover,
-    .post-card.is-scroll-active {
+    .post-card:hover {
       transform: translateY(-6px);
+      border-color: rgba(0,229,255,0.18);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 24px rgba(0,229,255,0.04);
+    }
+    .post-card.is-scroll-active {
       border-color: rgba(0,229,255,0.18);
       box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 24px rgba(0,229,255,0.04);
     }
@@ -586,7 +590,7 @@
           Here's what the data actually says.
         </p>
         <div class="post-meta">
-          <span>Apr 15, 2026</span>
+          <span>Feb 15, 2026</span>
           <span class="post-meta-dot"></span>
           <span>8 min read</span>
           <span class="post-meta-dot"></span>
@@ -598,7 +602,7 @@
     <!-- ── POST GRID ── -->
     <div id="blog-post-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
 
-      <!-- Post 2 -->
+      <!-- Post 2 — March -->
       <a href="blog-design-principles.html" class="post-card" data-category="design">
         <div class="post-thumb">
           <div class="post-thumb-inner" style="
@@ -624,7 +628,7 @@
           <h3 class="post-title">5 Design Principles That Turn Visitors Into Paying Customers</h3>
           <p class="post-excerpt">Visual hierarchy, intentional CTAs, trust signals — the principles that separate a beautiful website from a profitable one.</p>
           <div class="post-meta">
-            <span>Mar 28, 2026</span>
+            <span>Mar 6, 2026</span>
             <span class="post-meta-dot"></span>
             <span>6 min read</span>
             <span class="post-meta-dot"></span>
@@ -633,7 +637,7 @@
         </div>
       </a>
 
-      <!-- Post 3 -->
+      <!-- Post 3 — April -->
       <a href="blog-website-speed.html" class="post-card" data-category="performance">
         <div class="post-thumb">
           <div class="post-thumb-inner" style="
@@ -654,7 +658,7 @@
           <h3 class="post-title">The Real Cost of a Slow Website (And How to Fix It)</h3>
           <p class="post-excerpt">Every extra second your site takes to load costs you conversions, SEO rankings, and real revenue. Here are the numbers — and what to do about them.</p>
           <div class="post-meta">
-            <span>Mar 12, 2026</span>
+            <span>Apr 18, 2026</span>
             <span class="post-meta-dot"></span>
             <span>5 min read</span>
             <span class="post-meta-dot"></span>
@@ -690,7 +694,7 @@
           <h3 class="post-title">Mobile-First Design: Why It Matters More Than Ever in 2026</h3>
           <p class="post-excerpt">Over 60% of web traffic is mobile — yet most sites are still built for desktop and adapted down. Here's why that approach is costing you.</p>
           <div class="post-meta">
-            <span>May 12, 2026</span>
+            <span>May 2, 2026</span>
             <span class="post-meta-dot"></span>
             <span>7 min read</span>
             <span class="post-meta-dot"></span>
@@ -736,7 +740,7 @@
           <h3 class="post-title">Website Builders Are Costing You Clients</h3>
           <p class="post-excerpt">Wix and Squarespace look good in demos. But there's a performance ceiling, an SEO trap, and a brand problem they can't solve. Here's what custom development actually buys you.</p>
           <div class="post-meta">
-            <span>Jun 9, 2026</span>
+            <span>Jun 21, 2026</span>
             <span class="post-meta-dot"></span>
             <span>6 min read</span>
             <span class="post-meta-dot"></span>
@@ -781,7 +785,7 @@
           <h3 class="post-title">Local SEO: How Your Website's Structure Brings In Nearby Customers</h3>
           <p class="post-excerpt">Ranking in local search isn't about keyword stuffing — it's about how your site is built. Here's the architecture and signals that put you on the map.</p>
           <div class="post-meta">
-            <span>Jul 14, 2026</span>
+            <span>Jul 9, 2026</span>
             <span class="post-meta-dot"></span>
             <span>7 min read</span>
             <span class="post-meta-dot"></span>
@@ -836,16 +840,22 @@
           No spam. Just practical web design and business insights when we publish — usually every couple of weeks.
         </p>
       </div>
-      <div style="position:relative;z-index:1;display:flex;gap:10px;flex-wrap:wrap;">
-        <input type="email" placeholder="your@email.com" style="
-          background: rgba(255,255,255,0.04); border: 1px solid rgba(0,229,255,0.18);
-          border-radius: 8px; padding: 11px 18px; font-size: 13.5px;
-          color: var(--text-1); font-family: 'Inter',sans-serif; outline: none;
-          min-width: 220px;
-        " />
-        <a href="contact.html" class="btn btn-primary" style="white-space:nowrap;">
-          Subscribe →
-        </a>
+      <div style="position:relative;z-index:1;">
+        <form id="newsletter-form" style="display:flex;gap:10px;flex-wrap:wrap;">
+          <label for="newsletter-email" class="sr-only">Email address</label>
+          <input type="email" id="newsletter-email" name="email" required placeholder="your@email.com" style="
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(0,229,255,0.18);
+            border-radius: 8px; padding: 11px 18px; font-size: 13.5px;
+            color: var(--text-1); font-family: 'Inter',sans-serif; outline: none;
+            min-width: 220px;
+          " />
+          <button type="submit" id="newsletter-submit" class="btn btn-primary" style="white-space:nowrap;min-width:152px;justify-content:center;">
+            Subscribe <span aria-hidden="true">→</span>
+          </button>
+        </form>
+        <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" style="
+          margin-top:8px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-2);min-height:16px;
+        "></p>
       </div>
     </div>
 
@@ -969,19 +979,17 @@
 /* ── Post grid: stagger reveal ── */
 (function () {
   var ease = 'cubic-bezier(0.22,1,0.36,1)';
-  var items = [].slice.call(document.querySelectorAll('.post-card'));
-  var container = document.getElementById('blog-post-grid');
-  items.forEach(function (el) {
+  var items = [].slice.call(document.querySelectorAll('#blog-post-grid .post-card'));
+  items.forEach(function (el, i) {
     el.style.opacity = '0';
     el.style.transform = 'translateY(32px)';
-  });
-  var obs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
-    items.forEach(function (el, i) {
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
       el.style.transitionDelay = (i * 120) + 'ms';
       el.style.opacity = '1';
       el.style.transform = 'translateY(0)';
+      obs.disconnect();
       el.addEventListener('transitionend', function cleanup(evt) {
         if (evt.propertyName !== 'transform') return;
         el.style.opacity = '';
@@ -990,10 +998,9 @@
         el.style.transitionDelay = '';
         el.removeEventListener('transitionend', cleanup);
       });
-    });
-    obs.disconnect();
-  }, { threshold: 0.1 });
-  if (container) obs.observe(container);
+    }, { threshold: 0.1 });
+    obs.observe(el);
+  });
 })();
 
 /* ── Mobile-only touch-hover parity for post cards (excludes disabled "coming soon" card) ── */
@@ -1006,6 +1013,101 @@
     });
   }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
   targets.forEach(function (el) { obs.observe(el); });
+})();
+</script>
+
+<script>
+/* ── Blog newsletter — Resend welcome-email send ── */
+(function () {
+  var form   = document.getElementById('newsletter-form');
+  var input  = document.getElementById('newsletter-email');
+  var btn    = document.getElementById('newsletter-submit');
+  var status = document.getElementById('newsletter-status');
+  if (!form) return;
+
+  var _sbCfg = window.SUPABASE_CONFIG || {};
+
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = input.value.trim();
+
+    if (!EMAIL_RE.test(email)) {
+      status.style.color = '#f87171';
+      status.textContent = 'Please enter a valid email address.';
+      input.focus();
+      return;
+    }
+    if (!_sbCfg.url) {
+      status.style.color = '#f87171';
+      status.textContent = 'Newsletter signup is not configured yet.';
+      console.error('SUPABASE_CONFIG missing');
+      return;
+    }
+
+    var originalLabel = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = 'Sending&hellip;';
+    status.textContent = '';
+
+    // Persist the real subscriber first — source of truth for the list —
+    // then send the welcome confirmation only once that succeeds.
+    fetch(_sbCfg.url + '/functions/v1/subscribe-newsletter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (_sbCfg.anonKey || '') },
+      body: JSON.stringify({ email: email }),
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (result) {
+        if (result.error) throw new Error(result.error);
+        if (result.already_subscribed) {
+          status.style.color = 'var(--text-2)';
+          status.textContent = "You're already subscribed — no need to sign up again.";
+          input.value = '';
+          btn.disabled = false;
+          btn.innerHTML = originalLabel;
+          return null;
+        }
+        return fetch('/emails/blog-newsletter-welcome.html');
+      })
+      .then(function (res) {
+        if (res === null) return null;
+        if (!res.ok) throw new Error('Template fetch failed: ' + res.status);
+        return res.text();
+      })
+      .then(function (html) {
+        if (html === null) return null;
+        var personalized = html.split('%%SUBSCRIBER_EMAIL%%').join(email);
+        return fetch(_sbCfg.url + '/functions/v1/send-transactional-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (_sbCfg.anonKey || '') },
+          body: JSON.stringify({
+            to:      email,
+            from:    'VardWeb Blog <newsletter@vardweb.com>',
+            replyTo: 'newsletter@vardweb.com',
+            subject: 'Welcome to the VardWeb Blog 👋',
+            html:    personalized,
+          }),
+        }).then(function (res) { return res.json(); });
+      })
+      .then(function (result) {
+        if (result === null) return;
+        if (result.error) throw new Error(result.error);
+        btn.innerHTML = '&#10003; Subscribed';
+        status.style.color = 'var(--text-2)';
+        status.textContent = 'You\'re on the list — check your inbox.';
+        input.value = '';
+        setTimeout(function () { btn.disabled = false; btn.innerHTML = originalLabel; }, 4000);
+      })
+      .catch(function (err) {
+        console.error('Newsletter signup error:', err);
+        btn.disabled = false;
+        btn.innerHTML = originalLabel;
+        status.style.color = '#f87171';
+        status.textContent = 'Something went wrong. Please try again later.';
+      });
+  });
 })();
 </script>
 

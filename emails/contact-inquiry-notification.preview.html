@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Inquiry Email — Design Preview</title>
+<style>
+  body {
+    margin: 0; padding: 40px 24px 80px; background: #05060a;
+    font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #eef0f8;
+  }
+  h2 {
+    max-width: 640px; margin: 0 auto 12px; font-size: 15px; font-weight: 700;
+    letter-spacing: 0.02em; color: #9AA3B8;
+  }
+  .frame-wrap { max-width: 640px; margin: 0 auto 56px; }
+  iframe {
+    display: block; width: 100%; height: 600px; border: 1px solid rgba(0,229,255,0.14);
+    border-radius: 12px; background: #070910;
+  }
+</style>
+</head>
+<body>
+
+  <h2>Example A &mdash; Gold tier, 2 add-ons, existing website</h2>
+  <div class="frame-wrap"><iframe id="frame-a" title="Example A preview"></iframe></div>
+
+  <h2>Example B &mdash; no tier, no add-ons, no existing website</h2>
+  <div class="frame-wrap"><iframe id="frame-b" title="Example B preview"></iframe></div>
+
+  <script src="contact-inquiry-notification.js"></script>
+  <script>
+    var exampleA = {
+      name: 'Priya Anand',
+      email: 'priya.anand@brightleafyoga.com',
+      project: '🎨 Web Design',
+      businessType: '📈 Established — Actively looking to grow the business',
+      hasWebsite: 'Yes',
+      websiteUrl: 'https://brightleafyoga.com',
+      message: "We're relaunching our studio brand this fall & need a site that reflects the new identity.\n\nBooking integration, instructor bios, and a blog for class updates — ideally live before September 1.",
+      tier: 'Gold',
+      addons: ['SEM & SEO, SMM and CM', 'PWA (Progressive Web App)'],
+    };
+
+    var exampleB = {
+      name: 'Marcus Chen',
+      email: 'marcus@chenlogistics.ca',
+      project: '🔧 Website Maintenance',
+      businessType: '🔄 Established — Looking to refresh and modernize',
+      hasWebsite: 'No',
+      websiteUrl: '',
+      message: "Our current site is outdated and slow to update. Looking for a maintenance plan that keeps things running smoothly without us having to think about it.",
+      tier: null,
+      addons: [],
+    };
+
+    function renderInto(id, data) {
+      var frame = document.getElementById(id);
+      frame.addEventListener('load', function () {
+        var doc = frame.contentDocument;
+        frame.style.height = (doc.documentElement.scrollHeight + 24) + 'px';
+      });
+      frame.srcdoc = window.buildInquiryEmailHtml(data);
+    }
+
+    renderInto('frame-a', exampleA);
+    renderInto('frame-b', exampleB);
+  </script>
+
+</body>
+</html>
