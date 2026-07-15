@@ -243,7 +243,7 @@
                   box-shadow 0.2s ease, color 0.2s ease,
                   transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .tag-chip:hover, .tag-chip.is-scroll-active {
+    .tag-chip:hover, .tag-chip.is-tap-active {
       background: rgba(0,229,255,0.13);
       border-color: rgba(0,229,255,0.38);
       box-shadow: 0 0 18px rgba(0,229,255,0.16), 0 4px 12px rgba(0,0,0,0.3);
@@ -257,7 +257,7 @@
       transition: transform 0.2s ease, opacity 0.2s ease;
       flex-shrink: 0;
     }
-    .tag-chip:hover .tag-chip-arrow, .tag-chip.is-scroll-active .tag-chip-arrow { transform: translateY(2px); opacity: 1; }
+    .tag-chip:hover .tag-chip-arrow, .tag-chip.is-tap-active .tag-chip-arrow { transform: translateY(2px); opacity: 1; }
 
     /* ── FAQ anchor offset ── */
     .faq-category { scroll-margin-top: 84px; }
@@ -1504,16 +1504,17 @@
   els.forEach(function (el) { io.observe(el); });
 })();
 
-/* ── Mobile-only touch-hover parity for tag chips ── */
+/* ── Mobile-only tap-press parity for tag chips ── */
 (function () {
   if (!window.matchMedia('(hover: none)').matches) return;
   var targets = [].slice.call(document.querySelectorAll('.tag-chip'));
-  var obs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
-    });
-  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
-  targets.forEach(function (el) { obs.observe(el); });
+  targets.forEach(function (el) {
+    var press = function () { el.classList.add('is-tap-active'); };
+    var release = function () { el.classList.remove('is-tap-active'); };
+    el.addEventListener('touchstart', press, { passive: true });
+    el.addEventListener('touchend', release);
+    el.addEventListener('touchcancel', release);
+  });
 })();
 </script>
 
