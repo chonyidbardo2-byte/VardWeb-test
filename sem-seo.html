@@ -7,7 +7,7 @@
   <meta name="description" content="SEM (Search Engine Marketing) and SEO (Search Engine Optimization) — VardWeb's intent-targeted paid search and organic growth services that put your business in front of buyers ready to convert." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
@@ -18,6 +18,7 @@
       --cyan:    #00E5FF;
       --pink:    #FF2D78;
       --gold:    #FFD700;
+      --hero-orange: #f97316;
       --base:    #070910;
       --surface: #0f1219;
       --raised:  #161b27;
@@ -186,12 +187,13 @@
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 18px; border-radius: 999px;
       background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
       filter: url(#hero-glass-effect);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px; font-weight: 600;
-      color: rgba(238,240,248,0.9); letter-spacing: 0.06em;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: rgba(238,240,248,0.9); letter-spacing: 0.02em;
+      margin-bottom: 10px;
     }
     .hero-pill::before {
       content: ''; position: absolute; top: 0; left: 6px; right: 6px; height: 1px;
@@ -204,23 +206,54 @@
       font-size: 13px; font-weight: 600;
       letter-spacing: 0.1em; text-transform: uppercase;
       margin-bottom: 10px;
-      background: linear-gradient(135deg, var(--cyan) 0%, #ffffff 30%, var(--pink) 70%, var(--cyan) 100%);
-      background-size: 200% 200%;
+    }
+    .kicker-slash { color: var(--text-2); margin-right: 2px; }
+    .kw {
+      display: inline-block;
+      animation: kicker-wave 2.2s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--cyan) 0%, #ffffff 50%, var(--hero-orange) 100%);
+      background-size: 700% 100%;
+      background-position: calc(var(--i) / 6 * 100%) 0;
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       filter: url(#hero-text-glow);
-      animation: hero-gradient-shift 8s linear infinite;
+    }
+    @keyframes kicker-wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .kw { animation: none; }
     }
     @keyframes hero-gradient-shift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
-    .hero-heading {
+    .hero-heading { margin-bottom: 22px; }
+    .hero-heading-line1 {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(29px, 5vw, 63px); font-weight: 300;
+      letter-spacing: 0.01em; margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--cyan) 0%, #ffffff 30%, var(--hero-orange) 70%, var(--cyan) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: url(#hero-text-glow);
+      animation: hero-gradient-shift 8s linear infinite;
+    }
+    .hero-heading-line2 {
+      display: block;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: clamp(40px, 7vw, 88px); font-weight: 900;
       text-transform: uppercase; letter-spacing: -0.03em; line-height: 0.98;
       color: var(--text-1);
-      margin-bottom: 22px;
+    }
+    .hero-heading-line3 {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(29px, 5vw, 63px); font-weight: 300; font-style: italic;
+      letter-spacing: -0.01em; margin-top: 6px;
+      color: rgba(238,240,248,0.82);
     }
     .hero-sub {
       font-size: 17px; color: var(--text-2); line-height: 1.75;
@@ -230,27 +263,32 @@
     .hero-btn {
       padding: 14px 30px; border-radius: 999px; font-size: 13px;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .hero-btn:hover { transform: translateY(-2px); }
-    .hero-btn-white {
-      background: #ffffff; border: 1px solid #ffffff; color: var(--base);
-      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.4);
+    .hero-btn:hover { transform: translateY(-1px) scale(1.035) translateZ(0); }
+    .hero-btn-outline {
+      background: transparent; border: 2px solid rgba(255,255,255,0.3); color: #ffffff;
     }
-    .hero-btn-white:hover { background: #f2f5fa; box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5); }
+    .hero-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,229,255,0.5); }
     .hero-btn-gradient {
-      border: 2px solid transparent; color: #070910;
-      background-image:
-        linear-gradient(120deg, var(--cyan) 0%, var(--pink) 100%),
-        linear-gradient(120deg, rgb(0,103,115) 0%, rgb(115,20,54) 100%);
-      background-origin: border-box;
-      background-clip: padding-box, border-box;
-      box-shadow: 0 8px 24px -8px rgba(0,0,0,0.45);
+      border: none; color: #070910;
+      background: linear-gradient(120deg, var(--cyan) 0%, var(--hero-orange) 100%);
+      animation: btn-glow-breathe 6s ease-in-out infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
     .hero-btn-gradient:hover {
-      background-image:
-        linear-gradient(120deg, #4df0ff 0%, #ff5c95 100%),
-        linear-gradient(120deg, rgb(0,103,115) 0%, rgb(115,20,54) 100%);
-      box-shadow: 0 10px 30px -8px rgba(0,0,0,0.5);
+      background: linear-gradient(120deg, #4df0ff 0%, #ff9d4d 100%);
+      animation-play-state: paused;
+      box-shadow: 0 10px 28px -6px rgba(0,229,255,0.4), 0 12px 34px -8px rgba(249,115,22,0.4);
+    }
+    @keyframes btn-glow-breathe {
+      0%, 100% { box-shadow: 0 8px 20px -6px rgba(0,229,255,0.5), 0 10px 28px -8px rgba(249,115,22,0.16); }
+      50% { box-shadow: 0 8px 20px -6px rgba(0,229,255,0.16), 0 10px 28px -8px rgba(249,115,22,0.5); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-btn-gradient { animation: none; box-shadow: 0 8px 20px -6px rgba(0,229,255,0.35), 0 10px 28px -8px rgba(249,115,22,0.3); }
     }
 
     .hero-content > * {
@@ -262,9 +300,11 @@
     .hero-content.hero-in > *:nth-child(3) { transition-delay: 0.35s; }
     .hero-content.hero-in > *:nth-child(4) { transition-delay: 0.5s; }
     .hero-content.hero-in > *:nth-child(5) { transition-delay: 0.65s; }
+    .hero-content.hero-in > *:nth-child(6) { transition-delay: 0.8s; }
     .hero-content.hero-in > * { opacity: 1; transform: translateY(0); }
     @media (max-width: 640px) {
-      .hero-heading { font-size: clamp(34px, 11vw, 56px); }
+      .hero-heading-line2 { font-size: clamp(34px, 11vw, 56px); }
+      .hero-heading-line1, .hero-heading-line3 { font-size: clamp(24px, 7.9vw, 40px); }
     }
 
     /* Divider */
@@ -289,6 +329,8 @@
     .content-2col-text { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
     .content-2col-visual {
       position: relative;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
       border-radius: 18px;
       background: var(--raised);
       border: 1px solid var(--border);
@@ -296,12 +338,9 @@
       padding: 0;
       text-align: center;
     }
-    .visual-shot {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 17px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
+    @media (max-width: 767px) {
+      /* Detail-heavy mockups (chrome + tabs + grid) need more vertical room than 16/10 gives at narrow widths */
+      .content-2col-visual { aspect-ratio: 1 / 1; }
     }
     .wf-box-clip {
       position: absolute; inset: 0;
@@ -338,32 +377,61 @@
     }
     .trust-item b { color: var(--text-1); font-weight: 700; }
     .trust-item svg { color: var(--cyan); flex-shrink: 0; margin-top: 2px; }
-    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(200,212,232,0.22); flex-shrink: 0; margin-top: 8px; }
+    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(200,212,232,0.22); flex-shrink: 0; }
     @media (max-width: 640px) {
       .trust-strip { flex-direction: column; align-items: flex-start; padding: 18px 24px; gap: 10px; }
       .trust-dot { display: none; }
     }
 
-    /* Price chips — VardWeb fee vs. client pass-through spend, per section */
-    .price-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
-    .price-chip {
-      display: flex; flex-direction: column; gap: 4px;
-      padding: 10px 16px; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.015);
+    /* Tier chips — Jack/Queen/King/Ace pricing tiers, per section */
+    .tier-kicker {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase; color: rgba(200,212,232,0.4);
+      margin: 2px 0 2px;
     }
-    .price-chip.main { border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.05); }
-    .price-label {
-      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.4);
+    .tier-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; max-width: 400px; margin-top: 2px;
     }
-    .price-chip.main .price-label { color: rgba(0,229,255,0.7); }
-    .price-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text-1); }
-    .price-chip.main .price-value { color: var(--cyan); }
-    .price-chip.pass .price-value { color: var(--text-2); font-weight: 600; }
+    .tier-chip {
+      position: relative;
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 12px 14px; border-radius: 12px;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.1));
+      background: var(--tier-bg, rgba(255,255,255,0.02));
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .tier-chip:hover {
+      transform: translateY(-2px);
+      border-color: var(--tier-color, rgba(0,229,255,0.4));
+      box-shadow: 0 10px 22px -8px rgba(0,0,0,0.45), 0 0 16px var(--tier-glow, rgba(0,229,255,0.14));
+    }
+    .tier-chip-head { display: flex; align-items: center; gap: 6px; }
+    .tier-chip-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+      background: var(--tier-color, var(--cyan));
+      box-shadow: 0 0 6px var(--tier-color, var(--cyan));
+    }
+    .tier-chip-name {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase; color: var(--tier-color, var(--cyan));
+    }
+    .tier-chip-fee { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text-1); }
+    .tier-chip-band { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600; color: var(--text-2); line-height: 1.45; }
+    /* Ace — holo/foil treatment: dual-tone gradient dot + layered cyan/pink glow */
+    .tier-chip[data-tier="ace"] { background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(255,45,120,0.05)); }
+    .tier-chip[data-tier="ace"] .tier-chip-dot {
+      background: linear-gradient(135deg, var(--cyan), #ffffff 50%, var(--pink));
+      box-shadow: 0 0 8px rgba(242,245,255,0.55);
+    }
+    .tier-chip[data-tier="ace"]:hover {
+      border-color: rgba(242,245,255,0.55);
+      box-shadow: 0 10px 22px -8px rgba(0,0,0,0.45), 0 0 10px rgba(0,229,255,0.22), 0 0 18px rgba(255,45,120,0.18);
+    }
+    @media (max-width: 400px) { .tier-row { grid-template-columns: 1fr; max-width: 100%; } }
 
     /* Bespoke visual — Performance Max "channel orbit" (no screenshot exists for this product) */
-    .viz-pmax { position: relative; width: 100%; aspect-ratio: 16 / 10.5; }
+    .viz-pmax { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; }
     .orbit-ring {
       position: absolute; top: 50%; left: 50%; width: 190px; height: 190px;
       margin: -95px 0 0 -95px; border: 1px dashed rgba(0,229,255,0.16); border-radius: 50%;
@@ -399,7 +467,7 @@
     }
 
     /* Bespoke visual — Video / YouTube ad player mockup (no screenshot exists for this product) */
-    .viz-video { position: relative; width: 100%; aspect-ratio: 16 / 10; background: #0b0e14; border-radius: 17px; overflow: hidden; }
+    .viz-video { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; }
     .viz-video::before {
       content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse at 28% 22%, rgba(0,229,255,0.1), transparent 55%),
@@ -431,6 +499,128 @@
     }
     .video-progress-track { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,0.15); }
     .video-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; background: var(--pink); }
+
+    /* Shared bespoke-mockup chrome — search bar + tab row, used by Search/Shopping/LSA mockups */
+    .mock-chrome { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; }
+    .mock-searchpill { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 5px 12px; width: fit-content; }
+    .mock-logo { display: flex; align-items: center; gap: 2px; }
+    .mock-logo span { width: 5px; height: 5px; border-radius: 50%; }
+    .mock-logo span:nth-child(1) { background: var(--cyan); }
+    .mock-logo span:nth-child(2) { background: var(--gold); }
+    .mock-logo span:nth-child(3) { background: var(--pink); }
+    .mock-searchpill-text { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: rgba(200,212,232,0.55); }
+    .mock-tabs { display: flex; gap: 12px; padding-left: 2px; }
+    .mock-tab { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; color: rgba(200,212,232,0.32); letter-spacing: 0.02em; padding-bottom: 3px; border-bottom: 1.5px solid transparent; }
+    .mock-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+    /* Shared subtle pulse for the single "this is an ad" marker per mockup — opacity only, respects reduced motion */
+    @keyframes badge-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .badge-pulse { animation: badge-pulse 2.4s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { .badge-pulse { animation: none; } }
+
+    /* Bespoke visual — Google Search Ads dark SERP mockup (no clean brand-safe screenshot exists) */
+    .viz-serp { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 12px; }
+    .viz-serp::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 85% 0%, rgba(0,229,255,0.08), transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 10% 100%, rgba(255,45,120,0.07), transparent 60%);
+    }
+    .serp-card { position: relative; z-index: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; flex-shrink: 0; }
+    .serp-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .serp-ad-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); border-radius: 4px; padding: 1px 6px; letter-spacing: 0.04em; }
+    .serp-url { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: rgba(200,212,232,0.5); }
+    .serp-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 5px; letter-spacing: -0.01em; }
+    .serp-desc { font-size: 12px; line-height: 1.55; color: rgba(200,212,232,0.55); margin-bottom: 10px; }
+    .serp-sitelinks { display: flex; flex-wrap: wrap; gap: 7px; }
+    .serp-sitelink { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--pink); border: 1px solid rgba(255,45,120,0.25); border-radius: 999px; padding: 3px 9px; }
+    .serp-organic-ghost { position: relative; z-index: 1; opacity: 0.32; padding: 2px 16px 0; flex: 1; overflow: hidden; }
+    .serp-organic-url { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(200,212,232,0.5); margin-bottom: 3px; }
+    .serp-organic-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: rgba(200,212,232,0.6); margin-bottom: 5px; }
+    .serp-organic-line { height: 6px; border-radius: 3px; background: rgba(200,212,232,0.2); margin-bottom: 4px; }
+    .serp-organic-line.short { width: 55%; }
+
+    /* Bespoke visual — Google Shopping Ads product carousel mockup */
+    .viz-shopping { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .viz-shopping::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 55% 45% at 15% 10%, rgba(255,215,0,0.08), transparent 60%),
+                  radial-gradient(ellipse 55% 45% at 90% 90%, rgba(0,229,255,0.07), transparent 60%);
+    }
+    .shop-heading-row { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
+    .shop-heading { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: rgba(200,212,232,0.6); }
+    .shop-heading b { color: var(--cyan); font-weight: 700; }
+    .shop-badge { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); border-radius: 4px; padding: 2px 7px; letter-spacing: 0.04em; flex-shrink: 0; }
+    .shop-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; }
+    .shop-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 9px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .shop-img { width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; }
+    .shop-title { font-size: 9.5px; font-weight: 600; color: var(--text-1); line-height: 1.25; }
+    .shop-price { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--text-1); }
+    .shop-rating { font-size: 9px; color: var(--gold); }
+    .shop-rating span { color: rgba(200,212,232,0.4); }
+    .shop-seller { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(200,212,232,0.4); }
+
+    /* Bespoke visual — Local Service Ads listing mockup */
+    .viz-lsa { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; }
+    .viz-lsa::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 20% 20%, rgba(0,229,255,0.08), transparent 60%),
+                  radial-gradient(ellipse 55% 45% at 85% 85%, rgba(255,45,120,0.07), transparent 60%);
+    }
+    .lsa-header { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+    .lsa-header-count { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: rgba(200,212,232,0.5); }
+    .lsa-header-sponsored { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); border-radius: 4px; padding: 1px 6px; letter-spacing: 0.04em; }
+    .lsa-row { position: relative; z-index: 1; display: flex; gap: 8px; flex: 1; }
+    .lsa-card { flex: 1; min-width: 0; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 11px 9px; display: flex; flex-direction: column; gap: 5px; }
+    .lsa-badge { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 700; color: var(--cyan); border: 1px solid rgba(0,229,255,0.35); border-radius: 999px; padding: 3px 7px 3px 6px; letter-spacing: 0.02em; width: fit-content; }
+    .lsa-badge svg { width: 7px; height: 7px; flex-shrink: 0; }
+    .lsa-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--text-1); line-height: 1.25; }
+    .lsa-rating { font-size: 9px; color: var(--gold); }
+    .lsa-rating span { color: rgba(200,212,232,0.5); margin-left: 3px; }
+    .lsa-phone { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: rgba(200,212,232,0.45); }
+    .lsa-actions { display: flex; gap: 6px; margin-top: 1px; }
+    .lsa-btn { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; color: #070910; background: var(--cyan); border-radius: 999px; padding: 4px 9px; }
+
+    /* Bespoke visual — Google AdSense page-wireframe + earnings readout mockup */
+    .viz-adsense { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; }
+    .viz-adsense::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 55% 45% at 90% 10%, rgba(255,215,0,0.07), transparent 60%),
+                  radial-gradient(ellipse 55% 45% at 10% 90%, rgba(0,229,255,0.06), transparent 60%);
+    }
+    .ads-chrome { position: relative; z-index: 1; display: flex; align-items: center; gap: 4px; margin-bottom: 12px; }
+    .ads-chrome-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.14); }
+    .ads-chrome-url { margin-left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(200,212,232,0.4); background: rgba(255,255,255,0.04); border-radius: 4px; padding: 2px 8px; }
+    .ads-page { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 9px; }
+    .ads-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: rgba(200,212,232,0.8); letter-spacing: -0.01em; }
+    .ads-page-row { display: flex; gap: 10px; }
+    .ads-content-block { height: 46px; border-radius: 6px; background: rgba(255,255,255,0.05); flex-shrink: 0; }
+    .ads-page-row .ads-content-block { flex: 1; }
+    .ads-content-block.wide { height: 32px; width: 70%; }
+    .ads-unit { width: 78px; height: 46px; border-radius: 6px; border: 1.5px dashed rgba(255,215,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; flex-shrink: 0; }
+    .ads-unit span { font-size: 6.5px; font-weight: 600; color: rgba(255,215,0,0.55); }
+    .ads-unit.wide { width: 100%; height: 28px; margin-top: 2px; flex-direction: row; gap: 6px; }
+    .ads-earnings { position: absolute; right: 16px; bottom: 16px; z-index: 2; background: rgba(7,9,16,0.85); border: 1px solid rgba(0,229,255,0.3); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .ads-earnings-label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(200,212,232,0.45); }
+    .ads-earnings-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--cyan); display: flex; align-items: center; gap: 4px; }
+
+    /* Bespoke visual — Amazon Sponsored Products listing mockup */
+    .viz-asp { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .viz-asp::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 55% 45% at 85% 15%, rgba(0,229,255,0.07), transparent 60%),
+                  radial-gradient(ellipse 55% 45% at 15% 90%, rgba(255,45,120,0.06), transparent 60%);
+    }
+    .asp-results-header { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: rgba(200,212,232,0.55); letter-spacing: 0.02em; margin-top: 2px; }
+    .asp-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; }
+    .asp-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 9px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .asp-img { width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; }
+    .asp-sponsored { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 700; color: rgba(200,212,232,0.45); letter-spacing: 0.03em; }
+    .asp-title { font-size: 9.5px; font-weight: 600; color: var(--text-1); line-height: 1.25; }
+    .asp-rating { font-size: 8.5px; color: var(--gold); }
+    .asp-rating span { color: rgba(200,212,232,0.4); }
+    .asp-price { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--cyan); }
+    .asp-delivery { font-size: 7.5px; color: rgba(0,229,255,0.6); font-weight: 600; }
+    .asp-cta { align-self: flex-start; margin-top: 1px; font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 700; color: #070910; background: var(--gold); border-radius: 999px; padding: 3px 8px; }
 
     /* Footer */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -695,7 +885,7 @@
   <!-- static fallback (visible immediately + if the shader module can't load) -->
   <div style="position: absolute; inset: 0; z-index: 0; background:
     radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,229,255,0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(255,45,120,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(249,115,22,0.07) 0%, transparent 65%),
     var(--base);"></div>
 
   <!-- animated mesh-gradient shader mount points -->
@@ -706,14 +896,25 @@
 
   <div id="sem-seo-hero" class="hero-content" style="position: relative; z-index: 4; max-width: 640px;">
     <div class="hero-pill">
-      <span class="hero-pill-dot"></span>
-      Advertising Add-On — SEM + SEO
+      <span>✨</span>
+      Amazon Ads Now Available
     </div>
     <div class="wf-outer">
-      <p class="hero-kicker">// SEM &amp; SEO</p>
+      <p class="hero-kicker">
+        <span class="kicker-slash">//</span>
+        <span class="kw" style="--i:0; animation-delay:0s">S</span><span class="kw" style="--i:1; animation-delay:0.07s">E</span><span class="kw" style="--i:2; animation-delay:0.14s">M</span>
+        <span class="kw" style="--i:3; animation-delay:0.21s">&amp;</span>
+        <span class="kw" style="--i:4; animation-delay:0.28s">S</span><span class="kw" style="--i:5; animation-delay:0.35s">E</span><span class="kw" style="--i:6; animation-delay:0.42s">O</span>
+      </p>
     </div>
     <div class="wf-outer">
-      <h1 id="wf-heading" class="hero-heading">SEM &amp; SEO</h1>
+      <p class="hero-heading-line1">Search Engine</p>
+    </div>
+    <div class="wf-outer">
+      <h1 id="wf-heading" class="hero-heading">
+        <span class="hero-heading-line2">Marke<span style="margin-left: 0.035em; display: inline-block;">t</span>ing</span>
+        <span class="hero-heading-line3">&amp; Optimization</span>
+      </h1>
     </div>
     <div class="wf-outer">
       <p id="wf-sub" class="hero-sub">
@@ -721,7 +922,7 @@
       </p>
     </div>
     <div class="hero-cta-row">
-      <a href="services.html" class="btn hero-btn hero-btn-white">View Services</a>
+      <a href="services.html" class="btn hero-btn hero-btn-outline">View Services</a>
       <a href="contact.html" class="btn hero-btn hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
     </div>
   </div>
@@ -736,7 +937,7 @@
   <span class="trust-dot" aria-hidden="true"></span>
   <span class="trust-item">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    <span>Your ad spend goes&nbsp;<b>straight to Google or Amazon</b></span>
+    <span>Ad spend&nbsp;<b>straight to Google or Amazon</b></span>
   </span>
   <span class="trust-dot" aria-hidden="true"></span>
   <span class="trust-item">
@@ -760,13 +961,58 @@
         Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately. Every account also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$750–$900/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,000–$3,000/mo</span></div>
+    <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$750/mo</span>
+        <span class="tier-chip-band">Spend $1,000–$1,500</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$800/mo</span>
+        <span class="tier-chip-band">Spend $1,500–$2,000</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$850/mo</span>
+        <span class="tier-chip-band">Spend $2,000–$2,500</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$900/mo</span>
+        <span class="tier-chip-band">Spend $2,500–$3,000</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-gsa-box">
-    <img src="images/sem-seo/google-search-ads.png" alt="Example sponsored Google Search Ads result highlighted at the top of a search results page" class="visual-shot" />
+    <div class="viz-serp" role="img" aria-label="Mockup of a Google-style search results page showing a Sponsored ad card above a faded organic result, illustrating how a paid search ad appears to a searcher">
+      <div class="mock-tabs">
+        <span class="mock-tab active">All</span>
+        <span class="mock-tab">Images</span>
+        <span class="mock-tab">Videos</span>
+        <span class="mock-tab">News</span>
+        <span class="mock-tab">Maps</span>
+        <span class="mock-tab">⋮ More</span>
+      </div>
+      <div class="serp-card">
+        <div class="serp-meta"><span class="serp-ad-badge badge-pulse">Ad</span><span class="serp-url">yourbusiness.com</span></div>
+        <p class="serp-headline">Your Business — Book Online Today</p>
+        <p class="serp-desc">Trusted by 500+ local customers. Same-day quotes, transparent pricing, no obligation. See why we're rated 4.9★.</p>
+        <div class="serp-sitelinks">
+          <span class="serp-sitelink">Pricing</span>
+          <span class="serp-sitelink">Services</span>
+          <span class="serp-sitelink">Reviews</span>
+          <span class="serp-sitelink">Contact</span>
+        </div>
+      </div>
+      <div class="serp-organic-ghost">
+        <p class="serp-organic-url">competitor-site.com</p>
+        <p class="serp-organic-headline">Similar Business Name — Home</p>
+        <div class="serp-organic-line"></div>
+        <div class="serp-organic-line short"></div>
+      </div>
+    </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -786,9 +1032,28 @@
         Performance Max runs one AI-driven campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time — Google's own recommended default once an account has enough conversion history to fuel the automation. We configure the feed and asset groups, set the right conversion goals, and review signals monthly, including the newer Demand Gen format for visual, feed-native placements.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$800–$1,000/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,500–$4,000/mo</span></div>
+    <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$800/mo</span>
+        <span class="tier-chip-band">Spend $1,500–$2,125</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$875/mo</span>
+        <span class="tier-chip-band">Spend $2,125–$2,750</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$925/mo</span>
+        <span class="tier-chip-band">Spend $2,750–$3,375</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$1,000/mo</span>
+        <span class="tier-chip-band">Spend $3,375–$4,000</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-pmax-box">
@@ -821,13 +1086,73 @@
         Google Shopping Ads showcase your products with image, price, and reviews directly in search results, putting your catalog in front of shoppers who are already comparing and ready to buy. We build and maintain the Merchant Center feed and shipping/tax rules so listings stay live whether they run standalone or wrapped inside Performance Max.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$700–$850/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,000–$3,000/mo</span></div>
+    <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$700/mo</span>
+        <span class="tier-chip-band">Spend $1,000–$1,500</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$750/mo</span>
+        <span class="tier-chip-band">Spend $1,500–$2,000</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$800/mo</span>
+        <span class="tier-chip-band">Spend $2,000–$2,500</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$850/mo</span>
+        <span class="tier-chip-band">Spend $2,500–$3,000</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-shopping-box">
-    <img src="images/sem-seo/google-shopping-ads.png" alt="Example Google Shopping Ads product listings shown at the top of a Google search" class="visual-shot" />
+    <div class="viz-shopping" role="img" aria-label="Mockup of Google Shopping Ads showing a search bar, category tabs, and a 3-up sponsored product grid for fictional VardWeb merch">
+      <div class="mock-chrome">
+        <div class="mock-searchpill">
+          <span class="mock-logo"><span></span><span></span><span></span></span>
+          <span class="mock-searchpill-text">get varded shirt</span>
+        </div>
+        <div class="mock-tabs">
+          <span class="mock-tab">All</span>
+          <span class="mock-tab active">Shopping</span>
+          <span class="mock-tab">Images</span>
+          <span class="mock-tab">News</span>
+          <span class="mock-tab">More</span>
+        </div>
+      </div>
+      <div class="shop-heading-row">
+        <p class="shop-heading">Shop for <b>get varded shirt</b> on Google</p>
+        <span class="shop-badge badge-pulse">Sponsored</span>
+      </div>
+      <div class="shop-grid">
+        <div class="shop-card">
+          <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
+          <p class="shop-title">Get Varded Shirt</p>
+          <p class="shop-price">$28.00</p>
+          <p class="shop-rating">★★★★☆ <span>(212)</span></p>
+          <p class="shop-seller">vardweb.shop</p>
+        </div>
+        <div class="shop-card">
+          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
+          <p class="shop-title">VardWeb Hoodie</p>
+          <p class="shop-price">$52.00</p>
+          <p class="shop-rating">★★★★★ <span>(89)</span></p>
+          <p class="shop-seller">vardweb.shop</p>
+        </div>
+        <div class="shop-card">
+          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
+          <p class="shop-title">404 Not Found Tee</p>
+          <p class="shop-price">$24.00</p>
+          <p class="shop-rating">★★★★☆ <span>(147)</span></p>
+          <p class="shop-seller">vardweb.shop</p>
+        </div>
+      </div>
+    </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -847,9 +1172,28 @@
         Video Ads put your brand in front of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could. We handle campaign structure, audience targeting, and bid strategy; if you need the video itself, our Content Creation &amp; CM add-on covers production.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$900–$1,200/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Google</span><span class="price-value">$1,500–$4,000/mo</span></div>
+    <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$900/mo</span>
+        <span class="tier-chip-band">Spend $1,500–$2,125</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$1,000/mo</span>
+        <span class="tier-chip-band">Spend $2,125–$2,750</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$1,100/mo</span>
+        <span class="tier-chip-band">Spend $2,750–$3,375</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$1,200/mo</span>
+        <span class="tier-chip-band">Spend $3,375–$4,000</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-video-box">
@@ -878,13 +1222,79 @@
         Local Service Ads put your business at the top of local search with a Google Guaranteed badge, connecting you with nearby customers who are ready to book — and you only pay for genuine leads.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$450–$600/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Lead Budget — Direct to Google</span><span class="price-value">$800–$1,500/mo</span></div>
+    <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$450/mo</span>
+        <span class="tier-chip-band">Lead Budget $800–$975</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$500/mo</span>
+        <span class="tier-chip-band">Lead Budget $975–$1,150</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$550/mo</span>
+        <span class="tier-chip-band">Lead Budget $1,150–$1,325</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$600/mo</span>
+        <span class="tier-chip-band">Lead Budget $1,325–$1,500</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-lsa-box">
-    <img src="images/sem-seo/local-service-ads.png" alt="Example Local Service Ads listings with Google Guaranteed badges for local plumbers" class="visual-shot" />
+    <div class="viz-lsa" role="img" aria-label="Mockup of Google Local Service Ads showing a search bar, tab row, and three Google Guaranteed business listings with ratings and phone numbers">
+      <div class="mock-chrome">
+        <div class="mock-searchpill">
+          <span class="mock-logo"><span></span><span></span><span></span></span>
+          <span class="mock-searchpill-text">plumber near me</span>
+        </div>
+        <div class="mock-tabs">
+          <span class="mock-tab active">All</span>
+          <span class="mock-tab">Maps</span>
+          <span class="mock-tab">Images</span>
+          <span class="mock-tab">More</span>
+        </div>
+      </div>
+      <div class="lsa-header">
+        <span class="lsa-header-count">23 plumbers nearby</span>
+        <span class="lsa-header-sponsored badge-pulse">Sponsored</span>
+      </div>
+      <div class="lsa-row">
+        <div class="lsa-card">
+          <div class="lsa-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5.25 3.4 10.16 8 11.5 4.6-1.34 8-6.25 8-11.5V5l-8-3z"/></svg>
+            Google Guaranteed
+          </div>
+          <p class="lsa-name">Apex Plumbing &amp; Rooter</p>
+          <p class="lsa-rating">★★★★★ <span>4.9 (166)</span></p>
+          <p class="lsa-phone">(206) 555-0142</p>
+        </div>
+        <div class="lsa-card">
+          <div class="lsa-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5.25 3.4 10.16 8 11.5 4.6-1.34 8-6.25 8-11.5V5l-8-3z"/></svg>
+            Google Guaranteed
+          </div>
+          <p class="lsa-name">Pipe Dream Plumbing Co.</p>
+          <p class="lsa-rating">★★★★☆ <span>4.8 (98)</span></p>
+          <p class="lsa-phone">(206) 555-0187</p>
+          <div class="lsa-actions"><span class="lsa-btn">Call Now</span></div>
+        </div>
+        <div class="lsa-card">
+          <div class="lsa-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5.25 3.4 10.16 8 11.5 4.6-1.34 8-6.25 8-11.5V5l-8-3z"/></svg>
+            Google Guaranteed
+          </div>
+          <p class="lsa-name">ElbowGrease Plumbers</p>
+          <p class="lsa-rating">★★★★☆ <span>4.7 (211)</span></p>
+          <p class="lsa-phone">(206) 555-0119</p>
+        </div>
+      </div>
+    </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -904,13 +1314,55 @@
         Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site. Placements are tuned to protect user experience while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">Setup + Monitoring</span><span class="price-value">$600–$900 + $250–$350/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Ad Spend</span><span class="price-value">None — revenue side</span></div>
+    <p class="tier-kicker">Choose your tier — by site traffic, not ad spend (none to pass through)</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$600 setup</span>
+        <span class="tier-chip-band">$250/mo monitoring · &lt;50k pageviews</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$700 setup</span>
+        <span class="tier-chip-band">$283/mo monitoring · 50k–125k pageviews</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$800 setup</span>
+        <span class="tier-chip-band">$317/mo monitoring · 125k–250k pageviews</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$900 setup</span>
+        <span class="tier-chip-band">$350/mo monitoring · 250k+ pageviews</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-adsense-box">
-    <img src="images/sem-seo/google-ad-sense.png" alt="Example Google Ad Sense display ad placements shown on a video page and a news article" class="visual-shot" />
+    <div class="viz-adsense" role="img" aria-label="Mockup of a blog webpage with a browser address bar, article headline, and two highlighted AdSense ad placements alongside a daily earnings readout">
+      <div class="ads-chrome">
+        <span class="ads-chrome-dot"></span><span class="ads-chrome-dot"></span><span class="ads-chrome-dot"></span>
+        <span class="ads-chrome-url">yourblog.com/article</span>
+      </div>
+      <div class="ads-page">
+        <p class="ads-headline">Why Faster Websites Win More Customers</p>
+        <div class="ads-page-row">
+          <div class="ads-content-block"></div>
+          <div class="ads-unit">Ad<span>VardWeb Optimized</span></div>
+        </div>
+        <div class="ads-content-block wide"></div>
+        <div class="ads-unit wide">Ad<span>VardWeb Optimized</span></div>
+        <div class="ads-content-block wide" style="width: 92%; height: 12px;"></div>
+        <div class="ads-content-block wide" style="width: 78%; height: 12px;"></div>
+        <div class="ads-content-block wide" style="width: 85%; height: 12px;"></div>
+      </div>
+      <div class="ads-earnings">
+        <span class="ads-earnings-label">Est. Revenue Today</span>
+        <span class="ads-earnings-val badge-pulse">+$18.42
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+      </div>
+    </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -930,13 +1382,61 @@
         Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace — sized right for growing sellers, not just established $1M+/yr brands.
       </p>
     </div>
-    <div class="price-row">
-      <div class="price-chip main"><span class="price-label">VardWeb Fee</span><span class="price-value">$1,200–$1,800/mo</span></div>
-      <div class="price-chip pass"><span class="price-label">Ad Spend — Direct to Amazon</span><span class="price-value">$1,500–$4,000/mo</span></div>
+    <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-row">
+      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
+        <span class="tier-chip-fee">$1,200/mo</span>
+        <span class="tier-chip-band">Spend $1,500–$2,125</span>
+      </div>
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
+        <span class="tier-chip-fee">$1,400/mo</span>
+        <span class="tier-chip-band">Spend $2,125–$2,750</span>
+      </div>
+      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
+        <span class="tier-chip-fee">$1,600/mo</span>
+        <span class="tier-chip-band">Spend $2,750–$3,375</span>
+      </div>
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
+        <span class="tier-chip-fee">$1,800/mo</span>
+        <span class="tier-chip-band">Spend $3,375–$4,000</span>
+      </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-asp-box">
-    <img src="images/sem-seo/amazon-sponsored-products.png" alt="Example Amazon Sponsored Products listings highlighted among search results" class="visual-shot" />
+    <div class="viz-asp" role="img" aria-label="Mockup of Amazon search results showing a Results header and a grid of Sponsored VardWeb merch product cards with ratings, prices, and an Add to Cart button">
+      <p class="asp-results-header">Results</p>
+      <div class="asp-grid">
+        <div class="asp-card">
+          <div class="asp-img" style="background: linear-gradient(135deg, rgba(255,153,0,0.22), rgba(0,229,255,0.12));"></div>
+          <span class="asp-sponsored badge-pulse">Sponsored</span>
+          <p class="asp-title">Get Varded Shirt — Unisex Tee</p>
+          <p class="asp-rating">★★★★☆ <span>4.4 (1,204)</span></p>
+          <p class="asp-price">$19.99</p>
+          <p class="asp-delivery">FREE delivery</p>
+        </div>
+        <div class="asp-card">
+          <div class="asp-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,45,120,0.14));"></div>
+          <span class="asp-sponsored">Sponsored</span>
+          <p class="asp-title">VardWeb Hoodie — Premium Fleece</p>
+          <p class="asp-rating">★★★★★ <span>4.8 (542)</span></p>
+          <p class="asp-price">$34.99</p>
+          <p class="asp-delivery">FREE delivery</p>
+          <span class="asp-cta">Add to Cart</span>
+        </div>
+        <div class="asp-card">
+          <div class="asp-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,45,120,0.12));"></div>
+          <span class="asp-sponsored">Sponsored</span>
+          <p class="asp-title">404 Error Mug</p>
+          <p class="asp-rating">★★★★☆ <span>4.3 (879)</span></p>
+          <p class="asp-price">$14.99</p>
+          <p class="asp-delivery">FREE delivery</p>
+        </div>
+      </div>
+    </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
@@ -1084,12 +1584,12 @@
     };
 
     new ShaderMount(layer1, meshGradientFragmentShader, Object.assign({}, baseUniforms, {
-      u_colors: buildColors(['#070910', '#00E5FF', darken('#00E5FF', 0.45), '#161b27', '#FF2D78']),
+      u_colors: buildColors(['#070910', '#00E5FF', darken('#00E5FF', 0.45), '#161b27', '#f97316']),
       u_colorsCount: 5
     }), undefined, reduceMotion ? 0 : 0.3);
 
     new ShaderMount(layer2, meshGradientFragmentShader, Object.assign({}, baseUniforms, {
-      u_colors: buildColors(['#070910', '#ffffff', '#00E5FF', '#FF2D78']),
+      u_colors: buildColors(['#070910', '#ffffff', '#00E5FF', '#f97316']),
       u_colorsCount: 4
     }), undefined, reduceMotion ? 0 : 0.2);
   }).catch(function (err) {
@@ -1114,7 +1614,7 @@
 
   var targets = [
     { el: document.getElementById('wf-heading'),          color: 'var(--cyan)' },
-    { el: document.getElementById('wf-sub'),               color: 'var(--pink)', delay: 0.5 },
+    { el: document.getElementById('wf-sub'),               color: 'var(--hero-orange)', delay: 0.5 },
     { el: document.getElementById('wf-gsa-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-gsa-para'),          color: '#C8D4E8', delay: 0.2 },
     { el: document.getElementById('wf-pmax-heading'),      color: 'var(--pink)' },
