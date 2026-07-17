@@ -318,8 +318,10 @@
 
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/crm/login.html'; }
-  const { data: myProfile } = await sb.from('user_profiles').select('role').eq('id', session.user.id).single();
-  if (myProfile?.role !== 'admin') window.location.href = '/crm/portal.html';
+  else {
+    const { data: myProfile } = await sb.from('user_profiles').select('role').eq('id', session.user.id).single();
+    if (myProfile?.role !== 'admin') window.location.href = '/crm/portal.html';
+  }
   document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html'; });
 
   document.addEventListener('click', e => {
