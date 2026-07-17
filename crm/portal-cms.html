@@ -130,17 +130,21 @@
   const sb  = createClient(cfg.url, cfg.anonKey, { auth: { storageKey: 'vw-client-auth' } });
 
   const { data: { session } } = await sb.auth.getSession();
+  let clientId = null, site = null;
   if (!session) { window.location.href = '/crm/login.html'; }
-  const { data: profile } = await sb.from('user_profiles').select('*, clients(id)').eq('id', session.user.id).single();
-  if (!profile || profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
-
-  const clientId  = profile.client_id;
-  const params    = new URLSearchParams(location.search);
-  const siteParam = params.get('site');
-  const { data: siteRows } = siteParam
-    ? await sb.from('sites').select('id, domain_name').eq('id', siteParam).eq('client_id', clientId).limit(1)
-    : await sb.from('sites').select('id, domain_name').eq('client_id', clientId).order('created_at', { ascending: false }).limit(1);
-  const site = siteRows?.[0] ?? null;
+  else {
+    const { data: profile } = await sb.from('user_profiles').select('*, clients(id)').eq('id', session.user.id).single();
+    if (!profile || profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
+    else {
+      clientId  = profile.client_id;
+      const params    = new URLSearchParams(location.search);
+      const siteParam = params.get('site');
+      const { data: siteRows } = siteParam
+        ? await sb.from('sites').select('id, domain_name').eq('id', siteParam).eq('client_id', clientId).limit(1)
+        : await sb.from('sites').select('id, domain_name').eq('client_id', clientId).order('created_at', { ascending: false }).limit(1);
+      site = siteRows?.[0] ?? null;
+    }
+  }
 
   if (site?.domain_name) {
     document.title = `Edit — ${site.domain_name}`;

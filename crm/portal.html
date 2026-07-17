@@ -203,14 +203,18 @@
 
   /* Auth */
   const { data: { session } } = await sb.auth.getSession();
+  let clientId = null;
   if (!session) { window.location.href = '/crm/login.html'; }
-  const { data: profile } = await sb.from('user_profiles').select('*, clients(*)').eq('id', session.user.id).single();
-  if (!profile) { window.location.href = '/crm/login.html'; }
-  if (profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
-
-  const clientId = profile.client_id;
-  const clientName = profile.clients?.business_name || 'My Account';
-  document.getElementById('portalUser').textContent = profile.full_name || clientName;
+  else {
+    const { data: profile } = await sb.from('user_profiles').select('*, clients(*)').eq('id', session.user.id).single();
+    if (!profile) { window.location.href = '/crm/login.html'; }
+    else if (profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
+    else {
+      clientId = profile.client_id;
+      const clientName = profile.clients?.business_name || 'My Account';
+      document.getElementById('portalUser').textContent = profile.full_name || clientName;
+    }
+  }
 
   document.getElementById('logoutBtn').addEventListener('click', async () => { await sb.auth.signOut(); window.location.href = '/crm/login.html?signedout=1'; });
 
