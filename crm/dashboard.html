@@ -294,11 +294,13 @@
   /* Auth guard */
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/crm/login.html'; }
-  const { data: profile } = await sb.from('user_profiles').select('*').eq('id', session.user.id).single();
-  if (profile?.role !== 'admin') { window.location.href = '/crm/portal.html'; }
+  else {
+    const { data: profile } = await sb.from('user_profiles').select('*').eq('id', session.user.id).single();
+    if (profile?.role !== 'admin') { window.location.href = '/crm/portal.html'; }
 
-  document.getElementById('greetingLine').textContent =
-    `Welcome back${profile?.full_name ? ', ' + profile.full_name : ''}. Here's your overview.`;
+    document.getElementById('greetingLine').textContent =
+      `Welcome back${profile?.full_name ? ', ' + profile.full_name : ''}. Here's your overview.`;
+  }
 
   /* Logout */
   document.getElementById('logoutBtn').addEventListener('click', async () => {
@@ -307,7 +309,7 @@
   });
 
   /* ── Auto-flip past-due invoices to overdue ── */
-  await sb.rpc('mark_overdue_invoices').catch(() => {});
+  try { await sb.rpc('mark_overdue_invoices'); } catch {}
 
   /* ── Load KPIs ── */
   const [
