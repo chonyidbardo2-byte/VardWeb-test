@@ -321,7 +321,7 @@
       display: grid; grid-template-columns: 1fr; gap: 40px;
       padding: 70px 28px;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 1024px) {
       .content-2col { grid-template-columns: 1fr 1fr; padding: 100px 28px; align-items: center; }
       .content-2col.flip .content-2col-text   { order: 2; }
       .content-2col.flip .content-2col-visual { order: 1; }
@@ -329,7 +329,10 @@
     .content-2col-text { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
     .content-2col-visual {
       position: relative;
-      aspect-ratio: 16 / 10;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 550px;
+      justify-self: center;
       overflow: hidden;
       border-radius: 18px;
       background: var(--raised);
@@ -338,9 +341,31 @@
       padding: 0;
       text-align: center;
     }
-    @media (max-width: 767px) {
-      /* Detail-heavy mockups (chrome + tabs + grid) need more vertical room than 16/10 gives at narrow widths */
-      .content-2col-visual { aspect-ratio: 1 / 1; }
+    /* Amazon Sponsored Products opts out of the shared square-box chrome above —
+       no dark square container, just label/card/dots stacked directly. Scoped to
+       this one id so the other 6 .content-2col-visual boxes are unaffected. */
+    #wf-asp-box {
+      aspect-ratio: auto;
+      max-width: 640px;
+      background: none;
+      border: none;
+      display: block;
+      padding: 0;
+    }
+    /* Below the 2-column breakpoint, un-box .content-2col-text so its children
+       (heading, paragraph, tier-kicker, tier-row) become direct grid items
+       alongside .content-2col-visual — lets us interleave the box between the
+       paragraph and the tier chips via `order` instead of it trailing the
+       whole text block. Must come after the base .content-2col-text/.content-2col-visual
+       rules above so the cascade actually overrides them at these widths. */
+    @media (max-width: 1023px) {
+      .content-2col { gap: 24px; }
+      .content-2col-text { display: contents; }
+      .content-2col-text > *:nth-child(1) { order: 1; }
+      .content-2col-text > *:nth-child(2) { order: 2; }
+      .content-2col-visual { order: 3; }
+      .content-2col-text > *:nth-child(3) { order: 4; }
+      .content-2col-text > *:nth-child(4) { order: 5; }
     }
     .wf-box-clip {
       position: absolute; inset: 0;
@@ -430,19 +455,272 @@
     }
     @media (max-width: 400px) { .tier-row { grid-template-columns: 1fr; max-width: 100%; } }
 
-    /* Bespoke visual — Performance Max "channel orbit" (no screenshot exists for this product) */
-    .viz-pmax { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; }
-    .orbit-ring {
-      position: absolute; top: 50%; left: 50%; width: 190px; height: 190px;
-      margin: -95px 0 0 -95px; border: 1px dashed rgba(0,229,255,0.16); border-radius: 50%;
+    /* Email pricing — toggle + slider + 4-card grid, mirrors a Resend-style
+       pricing page but rendered entirely in VardWeb's own dark/cyan/pink/gold
+       system (colors, fonts, card treatment) rather than copying the
+       reference's black-and-white look. */
+    .email-pricing { padding: 90px 28px 70px; }
+    .email-pricing-inner { max-width: 1200px; margin: 0 auto; }
+    .email-pricing-head { max-width: 640px; margin: 0 auto; text-align: center; }
+    .email-pricing-head .sec-tag { display: flex; justify-content: center; }
+    .email-pricing-sub {
+      font-size: 15.5px; line-height: 1.8; color: var(--text-2);
+      margin: 18px auto 0; max-width: 560px;
     }
-    .orbit-center {
+
+    .email-toggle {
+      display: flex; justify-content: center; gap: 4px; width: fit-content;
+      margin: 34px auto 0;
+    }
+    .email-toggle-btn {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
+      letter-spacing: 0.02em; padding: 9px 20px; border-radius: 999px;
+      border: 1px solid transparent; background: transparent; color: rgba(200,212,232,0.5);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease,
+                  color 0.2s ease, border-color 0.2s ease;
+    }
+    .email-toggle-btn:hover { color: rgba(255,255,255,0.88); }
+    .email-toggle-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
+    .email-toggle-btn:active { transform: scale(0.96); }
+    .email-toggle-btn.is-active {
+      background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #fff;
+    }
+    .email-toggle-btn.is-active:hover { color: #fff; }
+
+    .email-slider-wrap { max-width: 900px; margin: 40px auto 0; padding: 0 8px; }
+    .email-range {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 6px; border-radius: 999px;
+      background: linear-gradient(to right,
+        rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.85) var(--fill, 0%),
+        rgba(255,255,255,0.1) var(--fill, 0%), rgba(255,255,255,0.1) 100%);
+      outline: none; cursor: pointer; margin: 0;
+    }
+    .email-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 2px solid #070910;
+      box-shadow: 0 0 10px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .email-range::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .email-range:active::-webkit-slider-thumb {
+      box-shadow: 0 0 16px rgba(255,255,255,0.65), 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .email-range::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); }
+    .email-range::-moz-range-progress { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.85); }
+    .email-range::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 2px solid #070910;
+      box-shadow: 0 0 10px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .email-range::-moz-range-thumb:hover { transform: scale(1.15); }
+    .email-range:focus-visible::-webkit-slider-thumb { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 3px; }
+    .email-range:focus-visible::-moz-range-thumb { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 3px; }
+    .email-slider-ticks {
+      position: relative; height: 13px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+      color: rgba(255,255,255,0.65); letter-spacing: 0.01em; margin-top: 12px;
+    }
+    .email-slider-ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+    .email-slider-ticks .tick-short { display: none; }
+    @media (max-width: 640px) {
+      .email-slider-ticks { font-size: 8.5px; }
+      .email-slider-ticks .tick-full { display: none; }
+      .email-slider-ticks .tick-short { display: inline; }
+    }
+
+    .email-tab-panel.is-hidden { display: none; }
+
+    .pricing-card-grid {
+      display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 20px; max-width: 1200px; margin: 46px auto 0;
+    }
+    @media (max-width: 900px) { .pricing-card-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) {
+      .pricing-card-grid { grid-template-columns: 1fr; }
+      /* Compact mode: once the slider moves off its starting point, only
+         the matched tier's card stays in the stack — the others are
+         removed from layout (not just dimmed) so there's nothing left to
+         scroll past to find the focused card. */
+      .pricing-card-grid.is-compact .pricing-card:not(.is-active) { display: none; }
+    }
+
+    /* Cards: grayscale chrome + green checkmarks only, per-tier color reserved
+       for the plan name (values pulled from web-design.html's own tier system).
+       Two independent effects, per the reference: (1) focus vs. unfocused is
+       communicated purely by opacity on the real content (below) plus the
+       border/glow on the ::before shell — never by hiding/dimming content
+       itself; (2) the shell's bottom edge permanently dissolves into the page
+       background via a masked ::before, regardless of focus state — a fixed
+       card-shape trait, not a focus effect. Direct children get z-index:1 so
+       they always paint above the masked ::before shell (position:absolute
+       descendants stack above static in-flow ones by default, so without
+       this the shell would cover the content instead of sitting behind it). */
+    .pricing-card {
+      position: relative; display: flex; flex-direction: column;
+      padding: 28px 24px; text-align: center;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .pricing-card > * { position: relative; z-index: 1; }
+    .pricing-card::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; border-radius: 18px;
+      background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.07);
+      /* Fully transparent by 20px from the bottom — comfortably clears the
+         18px corner radius, so the rounded corner itself never becomes
+         partially visible mid-fade (which read as a stray "bend"). The
+         visible dissolve happens entirely above that, on the flat wall. */
+      -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 100px), transparent calc(100% - 20px));
+              mask-image: linear-gradient(to bottom, #000 calc(100% - 100px), transparent calc(100% - 20px));
+      transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.35s ease;
+    }
+    .pricing-card.is-active,
+    .pricing-card.is-peek { transform: translateY(-4px); }
+    .pricing-card.is-active::before,
+    .pricing-card.is-peek::before {
+      border-color: var(--tier-color, rgba(255,255,255,0.4));
+      box-shadow: 0 16px 34px -12px rgba(0,0,0,0.55), 0 0 22px var(--tier-glow, rgba(255,255,255,0.12));
+      background: linear-gradient(180deg, var(--tier-bg, rgba(255,255,255,0.05)), rgba(255,255,255,0.02) 65%);
+    }
+    @media (hover: hover) {
+      .pricing-card:not(.is-active):hover { transform: translateY(-4px); }
+      .pricing-card:not(.is-active):hover::before {
+        border-color: var(--tier-color, rgba(255,255,255,0.4));
+        box-shadow: 0 16px 34px -12px rgba(0,0,0,0.55), 0 0 22px var(--tier-glow, rgba(255,255,255,0.12));
+        background: linear-gradient(180deg, var(--tier-bg, rgba(255,255,255,0.05)), rgba(255,255,255,0.02) 65%);
+      }
+    }
+    .pricing-card-name {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.04em; color: var(--tier-color, var(--text-1));
+      margin: 0 0 10px; opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card-badge {
+      display: inline-block; align-self: center; box-sizing: border-box; text-align: center; width: 110px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.03em; text-transform: uppercase; color: #33D17A;
+      background: rgba(51,209,122,0.12); border: 1px solid rgba(51,209,122,0.35);
+      border-radius: 999px; padding: 4px 12px; margin: 0 0 17px;
+      visibility: hidden; opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card.is-recommended-active .pricing-card-badge { visibility: visible; }
+    .pricing-card-price {
+      font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 800;
+      letter-spacing: -0.02em; color: var(--text-1); line-height: 1; margin: 0;
+      opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card-vol {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
+      color: var(--text-1); margin: 0; opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card-extra {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
+      color: var(--text-2); margin: 6px 0 0; opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card-divider {
+      height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0;
+      opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card-features {
+      display: flex; flex-direction: column; gap: 12px; list-style: none;
+      padding: 0; margin: 0 0 24px; text-align: left;
+      opacity: 0.45; transition: opacity 0.3s ease;
+    }
+    .pricing-card-features li { display: flex; align-items: center; gap: 9px; font-size: 12.5px; line-height: 1.5; color: rgba(200,212,232,0.72); }
+    .pricing-card-features li svg { flex-shrink: 0; }
+    .pricing-card-features li.is-off { color: rgba(200,212,232,0.32); }
+    .pricing-card .btn {
+      width: 100%; justify-content: center; margin-top: auto;
+      opacity: 0.45; transition: opacity 0.3s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .pricing-card.is-active .pricing-card-name, .pricing-card.is-peek .pricing-card-name,
+    .pricing-card.is-active .pricing-card-badge, .pricing-card.is-peek .pricing-card-badge,
+    .pricing-card.is-active .pricing-card-price, .pricing-card.is-peek .pricing-card-price,
+    .pricing-card.is-active .pricing-card-vol, .pricing-card.is-peek .pricing-card-vol,
+    .pricing-card.is-active .pricing-card-extra, .pricing-card.is-peek .pricing-card-extra,
+    .pricing-card.is-active .pricing-card-divider, .pricing-card.is-peek .pricing-card-divider,
+    .pricing-card.is-active .pricing-card-features, .pricing-card.is-peek .pricing-card-features,
+    .pricing-card.is-active .btn, .pricing-card.is-peek .btn {
+      opacity: 1;
+    }
+
+    /* Comparison table — static feature grid, values are placeholders */
+    .email-compare { padding: 90px 28px 90px; }
+    .email-compare-inner { max-width: 1000px; margin: 0 auto; }
+    .compare-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
+    .compare-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+    .compare-table th, .compare-table td { padding: 14px 18px; text-align: left; }
+    .compare-table thead th {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.5);
+      background: rgba(255,255,255,0.03);
+    }
+    .compare-table thead th:first-child { color: transparent; }
+    .compare-table tbody th {
+      font-size: 13px; font-weight: 600; color: var(--text-1);
+    }
+    .compare-table tbody td { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-1); }
+    .compare-table tbody tr { border-top: 1px solid rgba(255,255,255,0.06); }
+    .compare-table .ck { color: #33D17A; }
+    .compare-table .xk { color: rgba(200,212,232,0.28); }
+
+    /* Row-label tooltip triggers — scoped to the label text itself, not the whole cell */
+    .compare-table tbody .tt-label.tt-trigger {
+      cursor: help;
+      border-bottom: 1px dashed rgba(255,255,255,0.3);
+      padding-bottom: 1px;
+    }
+    .compare-table tbody .tt-label.tt-trigger:focus-visible {
+      outline: 2px solid #00E5FF; outline-offset: 2px; border-radius: 3px;
+    }
+    @media (hover: hover) {
+      .compare-table tbody .tt-label.tt-trigger:hover { border-bottom-color: rgba(0,229,255,0.55); }
+    }
+
+    /* Shared floating tooltip (position: fixed, escapes .compare-table-wrap's overflow-x:auto clip) */
+    .tt-box {
+      position: fixed; z-index: 500; max-width: 220px;
+      background: #0a0a0a;
+      border: 1px solid #3a3a3a; border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
+      color: #fff;
+      box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
+      opacity: 0; transform: translateY(4px) scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* Bespoke visual — Performance Max channel-hub diagram, recreating the reference's
+       hex/flower layout: center two-tone mark, blob-backed channel icons, soft color-wash background */
+    .viz-pmax {
+      position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden;
+      background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 22px 22px;
+    }
+    .viz-pmax::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 60% 50% at 12% 8%, rgba(0,229,255,0.09), transparent 60%),
+                  radial-gradient(ellipse 55% 45% at 88% 92%, rgba(255,45,120,0.08), transparent 60%);
+    }
+
+    /* Square sub-container so the 6 clock positions below form a true, unstretched
+       hexagon regardless of the outer box's aspect ratio (16/10 desktop, 1/1 mobile) */
+    .pmax-diagram { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 100%; max-width: 100%; aspect-ratio: 1 / 1; }
+
+    .pmax-hub {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 84px; height: 84px; border-radius: 50%; z-index: 2;
-      background: radial-gradient(circle at 35% 30%, rgba(0,229,255,0.38), rgba(255,45,120,0.16) 60%, rgba(7,9,16,0.92) 100%);
+      z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 9px;
+    }
+    .pmax-hub-icon {
+      position: relative; width: 62px; height: 62px; border-radius: 17px; overflow: hidden;
+      background: radial-gradient(circle at 35% 30%, rgba(0,229,255,0.28), rgba(255,215,0,0.12) 60%, rgba(7,9,16,0.94) 100%);
       border: 1px solid rgba(0,229,255,0.5);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #fff;
       box-shadow: 0 0 24px rgba(0,229,255,0.3), 0 0 50px rgba(255,45,120,0.1);
       animation: orbit-pulse 3.2s ease-in-out infinite;
     }
@@ -450,20 +728,85 @@
       0%, 100% { box-shadow: 0 0 24px rgba(0,229,255,0.3), 0 0 50px rgba(255,45,120,0.1); }
       50%      { box-shadow: 0 0 38px rgba(0,229,255,0.5), 0 0 72px rgba(255,45,120,0.2); }
     }
-    .orbit-pill {
-      position: absolute; top: 50%; left: 50%; z-index: 1;
-      transform: rotate(var(--a)) translate(var(--r, 95px)) rotate(calc(-1 * var(--a)));
-      transform-origin: 0 0;
-      margin: -13px 0 0 -38px;
-      width: 76px; padding: 6px 0; border-radius: 999px;
-      background: rgba(15,18,25,0.92); border: 1px solid rgba(255,255,255,0.12);
-      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600;
-      color: var(--text-2); text-align: center; letter-spacing: 0.02em;
+    /* Two-tone diagonal mark echoing the real Google Ads logo shape */
+    .pmax-mark-bar { position: absolute; width: 12px; border-radius: 999px; transform: rotate(45deg); }
+    .pmax-mark-bar.gold { height: 22px; left: 17px; top: 29px; background: #FBBC05; }
+    .pmax-mark-bar.blue { height: 27px; left: 30px; top: 12px; background: #4285F4; }
+    .pmax-mark-dot { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #34A853; left: 15px; top: 41px; }
+    .pmax-hub-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-1); text-align: center; line-height: 1.25; letter-spacing: -0.01em; }
+
+    /* Channel nodes — each is sized to its own icon and centered exactly on the computed
+       hex point (angle = hour*30deg, left = 50%+R*sin, top = 50%-R*cos, set inline per-node).
+       The label is an absolutely-positioned child so it can never shift the icon off that point. */
+    .pmax-node {
+      position: absolute; z-index: 2; transform: translate(-50%, -50%);
+      display: flex; align-items: center; justify-content: center;
     }
+    .pmax-node-blob {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 100px; height: 100px; z-index: 0; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--blob-tint, rgba(255,255,255,0.06)), rgba(255,255,255,0.02) 68%, transparent 100%);
+    }
+    .pmax-node-label {
+      position: absolute; z-index: 1; white-space: nowrap;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-2);
+    }
+    .pmax-node-label.pos-top    { bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; }
+    .pmax-node-label.pos-bottom { top: 100%; left: 50%; transform: translateX(-50%); margin-top: 8px; }
+    .pmax-node-label.pos-left   { right: 100%; top: 50%; transform: translateY(-50%); margin-right: 10px; text-align: right; }
+    .pmax-node-label.pos-right  { left: 100%; top: 50%; transform: translateY(-50%); margin-left: 10px; text-align: left; }
+
+    /* YouTube/Display positions are in their own class (not inline) so the mobile media
+       query below can pull them inward, giving their outward label room before the box edge */
+    .pmax-node-youtube { top: 50%; left: 14%; }
+    .pmax-node-display { top: 50%; left: 86%; }
+
+    /* Tiled icons (Gmail-was-removed / YouTube / Display) — tile kept only for the 2 channels
+       the reference actually shows on a background tile */
+    .pmax-tile { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pmax-tile.display { width: 46px; height: 46px; border-radius: 13px; background: #34A853; }
+    .pmax-tile.youtube { width: 54px; height: 38px; border-radius: 12px; background: #FF0000; }
+    .pmax-tile svg { display: block; }
+
+    /* Standalone logomarks (Google / Gmail / Authenticator / Maps) — no tile, float directly on the blob */
+    .pmax-standalone { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .pmax-standalone svg { display: block; }
+    .pmax-standalone.google { width: 44px; height: 44px; }
+    .pmax-standalone.gmail { width: 48px; height: 36px; }
+
+    /* Authenticator — 3 full-length bars crossing the center, each half colored independently,
+       built as 6 petals: -30/30/90/150/210/270deg = 11/1/3/5/7/9 o'clock, yellow/blue/blue/red/red/green */
+    .pmax-auth { position: relative; width: 40px; height: 40px; }
+    .pmax-auth-petal { position: absolute; left: 50%; top: 50%; width: 7px; height: 16px; margin-left: -3.5px; border-radius: 999px; transform-origin: 50% 0%; }
+
+    /* Google Maps pin — silhouette clipped into 4 color quadrants (blue/red/yellow/green), white hole on top */
+    .pmax-maps { position: relative; width: 38px; height: 44px; }
+
     @media (max-width: 480px) {
-      .orbit-pill { --r: 76px; width: 62px; font-size: 8.5px; margin: -11px 0 0 -31px; }
-      .orbit-center { width: 68px; height: 68px; font-size: 9.5px; }
-      .orbit-ring { width: 156px; height: 156px; margin: -78px 0 0 -78px; }
+      .pmax-hub-icon { width: 46px; height: 46px; border-radius: 13px; }
+      .pmax-mark-bar { width: 9px; }
+      .pmax-mark-bar.gold { height: 18px; left: 11px; top: 20px; }
+      .pmax-mark-bar.blue { height: 23px; left: 22px; top: 6px; }
+      .pmax-mark-dot { width: 8px; height: 8px; left: 9px; top: 30px; }
+      .pmax-hub-label { font-size: 10.5px; }
+      .pmax-node-blob { width: 70px; height: 70px; }
+      .pmax-node-label { font-size: 10px; }
+      .pmax-node-label.pos-top, .pmax-node-label.pos-bottom { margin-top: 5px; margin-bottom: 5px; }
+      .pmax-node-label.pos-left, .pmax-node-label.pos-right {
+        margin-left: 5px; margin-right: 5px;
+        white-space: normal; width: 38px; line-height: 1.2; word-break: break-word;
+      }
+      .pmax-node-youtube { left: 20%; }
+      .pmax-node-display { left: 80%; }
+      .pmax-tile.display { width: 32px; height: 32px; border-radius: 9px; }
+      .pmax-tile.youtube { width: 38px; height: 27px; border-radius: 8px; }
+      .pmax-tile svg { width: 18px; height: 15px; }
+      .pmax-tile.youtube svg { width: 20px; height: 20px; }
+      .pmax-standalone.google { width: 32px; height: 32px; }
+      .pmax-standalone.gmail { width: 34px; height: 26px; }
+      .pmax-auth { width: 28px; height: 28px; }
+      .pmax-auth-petal { width: 5px; height: 11px; margin-left: -2.5px; }
+      .pmax-maps { width: 27px; height: 31px; }
     }
 
     /* Bespoke visual — Video / YouTube ad player mockup (no screenshot exists for this product) */
@@ -498,7 +841,9 @@
       font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.85);
     }
     .video-progress-track { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,0.15); }
-    .video-progress-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; background: var(--pink); }
+    .video-progress-fill {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: var(--pink);
+    }
 
     /* Shared bespoke-mockup chrome — search bar + tab row, used by Search/Shopping/LSA mockups */
     .mock-chrome { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; }
@@ -513,114 +858,248 @@
     .mock-tab { font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 600; color: rgba(200,212,232,0.32); letter-spacing: 0.02em; padding-bottom: 3px; border-bottom: 1.5px solid transparent; }
     .mock-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
 
+    /* Google multicolor wordmark, recreated in text for logo recognizability (Round 3) */
+    .mock-google-logo { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: -0.01em; flex-shrink: 0; }
+    .mock-google-logo b:nth-child(1) { color: #4285F4; font-weight: 800; }
+    .mock-google-logo b:nth-child(2) { color: #EA4335; font-weight: 800; }
+    .mock-google-logo b:nth-child(3) { color: #FBBC05; font-weight: 800; }
+    .mock-google-logo b:nth-child(4) { color: #4285F4; font-weight: 800; }
+    .mock-google-logo b:nth-child(5) { color: #34A853; font-weight: 800; }
+    .mock-google-logo b:nth-child(6) { color: #EA4335; font-weight: 800; }
+
+    /* Larger real-looking search bar (logo + query + icon cluster), used by Search/Shopping/LSA */
+    .mock-searchbar { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 7px 8px 7px 14px; width: 100%; box-sizing: border-box; }
+    .mock-searchbar-text { flex: 1; min-width: 0; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: rgba(200,212,232,0.7); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mock-searchbar-icons { display: flex; align-items: center; gap: 8px; flex-shrink: 0; color: rgba(200,212,232,0.4); }
+    .mock-searchbar-icons svg { width: 13px; height: 13px; display: block; }
+    .mock-searchbar-icons svg:last-child { color: var(--cyan); }
+
+    /* Filter-pill strip (Shopping Ads) */
+    .mock-filterpills { display: flex; gap: 6px; overflow: hidden; }
+    .mock-filterpill { flex-shrink: 0; display: flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 600; color: rgba(200,212,232,0.55); border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; padding: 4px 9px; white-space: nowrap; }
+    .mock-filterpill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Bottom "More…" arrow pill (Local Service Ads) */
+    .mock-more-pill { align-self: center; display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--text-1); border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; padding: 5px 14px; }
+    .mock-more-pill svg { width: 10px; height: 10px; }
+
+    /* Kebab (⋮) menu dot used next to URLs / sponsored labels — Search & Shopping Ads */
+    .mock-kebab { color: rgba(200,212,232,0.35); font-size: 13px; line-height: 1; }
+
     /* Shared subtle pulse for the single "this is an ad" marker per mockup — opacity only, respects reduced motion */
     @keyframes badge-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     .badge-pulse { animation: badge-pulse 2.4s ease-in-out infinite; }
     @media (prefers-reduced-motion: reduce) { .badge-pulse { animation: none; } }
 
     /* Bespoke visual — Google Search Ads dark SERP mockup (no clean brand-safe screenshot exists) */
-    .viz-serp { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 20px 20px 0; display: flex; flex-direction: column; gap: 12px; }
+    .viz-serp { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 22px 26px 0; display: flex; flex-direction: column; gap: 10px; text-align: left; }
     .viz-serp::before {
       content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse 60% 50% at 85% 0%, rgba(0,229,255,0.08), transparent 60%),
                   radial-gradient(ellipse 50% 40% at 10% 100%, rgba(255,45,120,0.07), transparent 60%);
     }
-    .serp-card { position: relative; z-index: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 16px; flex-shrink: 0; }
-    .serp-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .serp-results-count { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: rgba(200,212,232,0.32); }
+    .serp-card { position: relative; z-index: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px 18px; flex-shrink: 0; overflow: hidden; }
+    .serp-card.compact { padding: 12px 18px; }
+    .serp-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .serp-ad-badge { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); border-radius: 4px; padding: 1px 6px; letter-spacing: 0.04em; }
-    .serp-url { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: rgba(200,212,232,0.5); }
-    .serp-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; color: var(--cyan); margin-bottom: 5px; letter-spacing: -0.01em; }
-    .serp-desc { font-size: 12px; line-height: 1.55; color: rgba(200,212,232,0.55); margin-bottom: 10px; }
-    .serp-sitelinks { display: flex; flex-wrap: wrap; gap: 7px; }
-    .serp-sitelink { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--pink); border: 1px solid rgba(255,45,120,0.25); border-radius: 999px; padding: 3px 9px; }
-    .serp-organic-ghost { position: relative; z-index: 1; opacity: 0.32; padding: 2px 16px 0; flex: 1; overflow: hidden; }
-    .serp-organic-url { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(200,212,232,0.5); margin-bottom: 3px; }
-    .serp-organic-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: rgba(200,212,232,0.6); margin-bottom: 5px; }
-    .serp-organic-line { height: 6px; border-radius: 3px; background: rgba(200,212,232,0.2); margin-bottom: 4px; }
+    .serp-url { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(200,212,232,0.5); }
+    .serp-body-row { display: flex; gap: 14px; align-items: flex-start; }
+    .serp-body-text { flex: 1; min-width: 0; }
+    .serp-thumb { width: 64px; height: 50px; border-radius: 6px; flex-shrink: 0; background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15)); }
+    .serp-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--cyan); margin-bottom: 5px; letter-spacing: -0.01em; }
+    .serp-desc { font-size: 12.5px; line-height: 1.45; color: rgba(200,212,232,0.55); margin-bottom: 8px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+    .serp-sitelinks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; }
+    .serp-sitelink-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 700; color: var(--cyan); margin-bottom: 1px; }
+    .serp-sitelink-desc { font-size: 9.5px; line-height: 1.3; color: rgba(200,212,232,0.38); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .serp-inline-links { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--cyan); line-height: 1.4; }
+    .serp-organic-ghost { position: relative; z-index: 1; opacity: 0.32; padding: 4px 18px 0; flex: 1; overflow: hidden; }
+    @media (max-width: 480px) {
+      .serp-results-count { display: none; }
+      .serp-card { padding: 10px 12px; }
+      .serp-card.compact.serp-card-2 { display: none; }
+      .serp-thumb { display: none; }
+      .serp-headline { font-size: 13px; margin-bottom: 4px; }
+      .serp-desc { font-size: 10.5px; margin-bottom: 7px; -webkit-line-clamp: 2; }
+    }
+    .serp-organic-url { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: rgba(200,212,232,0.5); margin-bottom: 3px; }
+    .serp-organic-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: rgba(200,212,232,0.6); margin-bottom: 6px; }
+    .serp-organic-line { height: 6px; border-radius: 3px; background: rgba(200,212,232,0.2); margin-bottom: 5px; }
     .serp-organic-line.short { width: 55%; }
+    .serp-organic-links { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 600; color: rgba(200,212,232,0.5); margin-top: 4px; }
 
     /* Bespoke visual — Google Shopping Ads product carousel mockup */
-    .viz-shopping { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .viz-shopping { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 12px 26px; display: flex; flex-direction: column; gap: 9px; text-align: left; }
     .viz-shopping::before {
       content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse 55% 45% at 15% 10%, rgba(255,215,0,0.08), transparent 60%),
                   radial-gradient(ellipse 55% 45% at 90% 90%, rgba(0,229,255,0.07), transparent 60%);
     }
-    .shop-heading-row { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 2px; }
-    .shop-heading { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: rgba(200,212,232,0.6); }
-    .shop-heading b { color: var(--cyan); font-weight: 700; }
-    .shop-badge { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); border-radius: 4px; padding: 2px 7px; letter-spacing: 0.04em; flex-shrink: 0; }
-    .shop-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; }
-    .shop-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 9px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    .shop-img { width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; }
-    .shop-title { font-size: 9.5px; font-weight: 600; color: var(--text-1); line-height: 1.25; }
-    .shop-price { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--text-1); }
-    .shop-rating { font-size: 9px; color: var(--gold); }
+    .shop-heading-row { position: relative; z-index: 1; display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+    .shop-sponsored { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; }
+    .shop-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .shop-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .shop-img { width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; }
+    .shop-title { font-size: 11px; font-weight: 600; color: var(--text-1); line-height: 1.25; }
+    .shop-price { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700; color: var(--text-1); }
+    .shop-rating { font-size: 10px; color: var(--gold); }
     .shop-rating span { color: rgba(200,212,232,0.4); }
-    .shop-seller { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: rgba(200,212,232,0.4); }
+    .shop-seller { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(200,212,232,0.4); }
+    .shop-attr { font-size: 8.5px; color: rgba(200,212,232,0.32); }
+    .shop-popular-row { position: relative; z-index: 1; display: flex; align-items: center; gap: 6px; }
+    .shop-popular-label { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: rgba(200,212,232,0.45); letter-spacing: 0.02em; }
+    .shop-grid.organic { opacity: 0.42; }
+    @media (max-width: 480px) {
+      .viz-shopping { padding: 10px 14px; gap: 6px; }
+      .shop-popular-row, .shop-grid.organic { display: none; }
+    }
 
     /* Bespoke visual — Local Service Ads listing mockup */
-    .viz-lsa { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; }
+    .viz-lsa { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: 26px 28px; text-align: left; }
     .viz-lsa::before {
       content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse 60% 50% at 20% 20%, rgba(0,229,255,0.08), transparent 60%),
                   radial-gradient(ellipse 55% 45% at 85% 85%, rgba(255,45,120,0.07), transparent 60%);
     }
     .lsa-header { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
-    .lsa-header-count { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: rgba(200,212,232,0.5); }
-    .lsa-header-sponsored { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); border: 1px solid rgba(255,215,0,0.4); border-radius: 4px; padding: 1px 6px; letter-spacing: 0.04em; }
-    .lsa-row { position: relative; z-index: 1; display: flex; gap: 8px; flex: 1; }
-    .lsa-card { flex: 1; min-width: 0; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 11px 9px; display: flex; flex-direction: column; gap: 5px; }
-    .lsa-badge { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 700; color: var(--cyan); border: 1px solid rgba(0,229,255,0.35); border-radius: 999px; padding: 3px 7px 3px 6px; letter-spacing: 0.02em; width: fit-content; }
-    .lsa-badge svg { width: 7px; height: 7px; flex-shrink: 0; }
-    .lsa-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 800; color: var(--text-1); line-height: 1.25; }
-    .lsa-rating { font-size: 9px; color: var(--gold); }
+    .lsa-header-count { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; color: var(--text-1); }
+    .lsa-header-sponsored { display: inline-flex; align-items: center; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: rgba(200,212,232,0.5); letter-spacing: 0.03em; }
+    .lsa-header-sponsored svg { width: 10px; height: 10px; }
+    .lsa-row { position: relative; z-index: 1; display: flex; gap: 12px; }
+    .lsa-card { flex: 1; min-width: 0; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px 14px; display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; }
+    .lsa-badge { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; color: #33D17A; letter-spacing: 0.03em; width: fit-content; }
+    .lsa-badge svg { width: 9px; height: 9px; flex-shrink: 0; }
+    .lsa-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--cyan); line-height: 1.3; }
+    .lsa-rating { font-size: 10.5px; color: var(--gold); }
     .lsa-rating span { color: rgba(200,212,232,0.5); margin-left: 3px; }
-    .lsa-phone { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: rgba(200,212,232,0.45); }
-    .lsa-actions { display: flex; gap: 6px; margin-top: 1px; }
-    .lsa-btn { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; color: #070910; background: var(--cyan); border-radius: 999px; padding: 4px 9px; }
+    .lsa-years { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: rgba(200,212,232,0.4); }
+    .lsa-phone { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(200,212,232,0.45); }
+    .lsa-phone .lsa-status { color: var(--pink); font-weight: 600; }
+    @media (max-width: 480px) {
+      .viz-lsa { padding: 14px 16px; gap: 8px; }
+      .lsa-header-count { font-size: 11px; }
+      .lsa-row { gap: 6px; }
+      .lsa-card { padding: 8px 7px; gap: 3px; justify-content: flex-start; }
+      .lsa-name { font-size: 10px; }
+      .lsa-rating { font-size: 8px; }
+      .lsa-years { font-size: 7px; }
+      .lsa-phone { font-size: 7.5px; }
+      .lsa-badge { font-size: 6.5px; }
+    }
+    /* Non-mobile spacing squeeze (box, not text) so a second serp-organic-ghost fits below the first — mirrors the ≤480px mobile cutoff above */
+    @media (min-width: 481px) {
+      #wf-lsa-box .viz-lsa { gap: 10px; }
+      #wf-lsa-box .serp-organic-ghost { padding-top: 0; flex: initial; }
+      #wf-lsa-box .serp-organic-headline { margin-bottom: 3px; }
+      #wf-lsa-box .serp-organic-line { margin-bottom: 3px; }
+    }
+    .mock-more-pill svg { flex-shrink: 0; }
 
     /* Bespoke visual — Google AdSense page-wireframe + earnings readout mockup */
-    .viz-adsense { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; }
+    .viz-adsense { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; display: flex; flex-direction: column; }
     .viz-adsense::before {
       content: ''; position: absolute; inset: 0;
       background: radial-gradient(ellipse 55% 45% at 90% 10%, rgba(255,215,0,0.07), transparent 60%),
                   radial-gradient(ellipse 55% 45% at 10% 90%, rgba(0,229,255,0.06), transparent 60%);
     }
-    .ads-chrome { position: relative; z-index: 1; display: flex; align-items: center; gap: 4px; margin-bottom: 12px; }
+    .ads-chrome { position: relative; z-index: 1; display: flex; align-items: center; gap: 4px; margin-bottom: 12px; flex-shrink: 0; }
     .ads-chrome-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.14); }
     .ads-chrome-url { margin-left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: rgba(200,212,232,0.4); background: rgba(255,255,255,0.04); border-radius: 4px; padding: 2px 8px; }
-    .ads-page { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 9px; }
-    .ads-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: rgba(200,212,232,0.8); letter-spacing: -0.01em; }
-    .ads-page-row { display: flex; gap: 10px; }
+    /* .ads-page fills the remaining height below the chrome bar; the row/hero
+       blocks below flex-grow to absorb whatever space that leaves, so the
+       mockup fills the box at any size instead of top-aligning with a void
+       underneath (the box itself stretches to fill its grid column — see
+       .content-2col-visual — so this content must scale to match). */
+    .ads-page { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; padding-bottom: 56px; }
+    .ads-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: rgba(200,212,232,0.8); letter-spacing: -0.01em; flex-shrink: 0; }
+    .ads-byline { display: flex; align-items: center; gap: 6px; margin-top: -3px; flex-shrink: 0; }
+    .ads-byline-avatar { width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--pink)); flex-shrink: 0; }
+    .ads-byline-text { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: rgba(200,212,232,0.4); }
+    .ads-page-row { display: flex; gap: 10px; flex: 1.2 1 46px; min-height: 46px; }
     .ads-content-block { height: 46px; border-radius: 6px; background: rgba(255,255,255,0.05); flex-shrink: 0; }
-    .ads-page-row .ads-content-block { flex: 1; }
-    .ads-content-block.wide { height: 32px; width: 70%; }
+    .ads-page-row .ads-content-block { flex: 1; height: auto; }
+    .ads-page-row .ads-unit { align-self: center; }
+    .ads-hero-block { flex: 1 1 32px; width: 70%; height: auto; min-height: 32px; }
+    .ads-line { height: 12px; flex-shrink: 0; }
     .ads-unit { width: 78px; height: 46px; border-radius: 6px; border: 1.5px dashed rgba(255,215,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; flex-shrink: 0; }
     .ads-unit span { font-size: 6.5px; font-weight: 600; color: rgba(255,215,0,0.55); }
-    .ads-unit.wide { width: 100%; height: 28px; margin-top: 2px; flex-direction: row; gap: 6px; }
+    .ads-unit.wide { width: 100%; height: 30px; margin-top: 2px; flex-direction: row; gap: 6px; flex-shrink: 0; }
     .ads-earnings { position: absolute; right: 16px; bottom: 16px; z-index: 2; background: rgba(7,9,16,0.85); border: 1px solid rgba(0,229,255,0.3); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
     .ads-earnings-label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(200,212,232,0.45); }
     .ads-earnings-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--cyan); display: flex; align-items: center; gap: 4px; }
-
-    /* Bespoke visual — Amazon Sponsored Products listing mockup */
-    .viz-asp { position: relative; width: 100%; height: 100%; background: #0b0e14; border-radius: 17px; overflow: hidden; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
-    .viz-asp::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 55% 45% at 85% 15%, rgba(0,229,255,0.07), transparent 60%),
-                  radial-gradient(ellipse 55% 45% at 15% 90%, rgba(255,45,120,0.06), transparent 60%);
+    @media (max-width: 480px) {
+      .viz-adsense { padding: 14px 16px; }
+      .ads-chrome { margin-bottom: 8px; }
+      .ads-chrome-url { font-size: 8px; padding: 2px 6px; }
+      .ads-page { gap: 6px; padding-bottom: 40px; }
+      .ads-headline { font-size: 11px; }
+      .ads-byline-text { font-size: 7px; }
+      .ads-page-row { flex-basis: 34px; min-height: 34px; }
+      .ads-hero-block { flex-basis: 24px; min-height: 24px; }
+      .ads-line { height: 8px; }
+      .ads-unit { width: 56px; height: 34px; font-size: 7.5px; }
+      .ads-unit span { font-size: 5px; }
+      .ads-unit.wide { height: 22px; }
+      .ads-earnings { right: 10px; bottom: 10px; padding: 6px 9px; }
+      .ads-earnings-label { font-size: 6.5px; }
+      .ads-earnings-val { font-size: 11px; }
     }
-    .asp-results-header { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: rgba(200,212,232,0.55); letter-spacing: 0.02em; margin-top: 2px; }
-    .asp-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; }
-    .asp-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 9px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    .asp-img { width: 100%; aspect-ratio: 1 / 1; border-radius: 6px; }
-    .asp-sponsored { font-family: 'JetBrains Mono', monospace; font-size: 7.5px; font-weight: 700; color: rgba(200,212,232,0.45); letter-spacing: 0.03em; }
-    .asp-title { font-size: 9.5px; font-weight: 600; color: var(--text-1); line-height: 1.25; }
-    .asp-rating { font-size: 8.5px; color: var(--gold); }
-    .asp-rating span { color: rgba(200,212,232,0.4); }
-    .asp-price { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--cyan); }
-    .asp-delivery { font-size: 7.5px; color: rgba(0,229,255,0.6); font-weight: 600; }
-    .asp-cta { align-self: flex-start; margin-top: 1px; font-family: 'JetBrains Mono', monospace; font-size: 8px; font-weight: 700; color: #070910; background: var(--gold); border-radius: 999px; padding: 3px 8px; }
+
+    /* Bespoke visual — Amazon Sponsored Brands ad-format carousel: 3 slides
+       (Product collection / Store spotlight / Video) auto-rotating in place,
+       recreating the reference's 3 side-by-side format cards as slides */
+    .viz-asp { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .asp-top-label { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 15.5px; font-weight: 700; color: rgba(200,212,232,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
+    .asp-slides { position: relative; z-index: 1; width: 100%; display: grid; }
+    .asp-slide { grid-area: 1 / 1; zoom: var(--asp-scale, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; opacity: 0; animation: asp-cycle 9s ease-in-out infinite; }
+    .asp-slide:nth-child(2) { animation-delay: 3s; }
+    .asp-slide:nth-child(3) { animation-delay: 6s; }
+    @keyframes asp-cycle {
+      0% { opacity: 0; } 4% { opacity: 1; } 28% { opacity: 1; } 33% { opacity: 0; } 100% { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .asp-slide { animation: none; opacity: 0; }
+      .asp-slide:first-child { opacity: 1; }
+      .asp-dot { animation: none !important; background: rgba(255,255,255,0.2) !important; }
+      .asp-dot:first-child { background: var(--cyan) !important; }
+    }
+    /* Amazon-accurate card chrome — recreates the reference screenshot's real
+       light-mode UI (white cards, Amazon orange/blue) inset in the dark frame */
+    .asp-card { width: 430px; display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid #d5dbdb; border-radius: 8px; padding: 14px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    .asp-card--selected { border-color: #0972d3; background: #fff; }
+    .asp-card-title-row { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .asp-card-title { font-size: 17px; font-weight: 700; color: #0f1111; letter-spacing: 0; }
+    .asp-new-tag { font-size: 12px; font-weight: 700; color: #fff; background: #0972d3; border-radius: 4px; padding: 2px 8px; letter-spacing: 0.01em; }
+    .asp-mock-frame { height: 204px; margin: 0 10px; flex-shrink: 0; background: #fff; border: 1px solid #e3e6e6; border-radius: 6px; padding: 9px; display: flex; flex-direction: column; gap: 7px; }
+    .asp-mock-head { display: flex; gap: 6px; align-items: flex-start; flex-shrink: 0; }
+    .asp-mock-swatch { width: 22px; height: 10px; border-radius: 2px; background: #FF9900; flex-shrink: 0; }
+    .asp-mock-lines { flex: 1; display: flex; flex-direction: column; gap: 4px; padding-top: 2px; }
+    .asp-mock-line { height: 4px; flex-shrink: 0; border-radius: 2px; background: rgba(255,153,0,0.55); }
+    .asp-mock-line.short { width: 60%; }
+    .asp-mock-line.long { width: 88%; }
+    .asp-mock-tiles, .asp-mock-images { display: flex; gap: 6px; flex: 1; min-height: 0; }
+    .asp-mock-tile-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .asp-mock-tile { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #FF9900; border: none; border-radius: 4px; }
+    .asp-mock-tile-icon { width: 80%; height: 80%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .asp-mock-tile-icon svg { width: 100%; height: 100%; }
+    .asp-mock-tile-stars { font-size: 16px; color: #FF9900; letter-spacing: -0.3px; text-align: center; flex-shrink: 0; }
+    .asp-mock-image-tile { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #FF9900; border: none; border-radius: 4px; }
+    .asp-mock-image-tile svg { width: 65%; height: 65%; }
+    .asp-mock-video { position: relative; flex: 1; min-height: 0; border-radius: 4px; background: #FF9900; display: flex; align-items: center; justify-content: center; }
+    .asp-mock-video-play { width: 0; height: 0; border-style: solid; border-width: 12px 0 12px 20px; border-color: transparent transparent transparent #fff; }
+    .asp-mock-video-row { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .asp-mock-video-icon { width: 24px; height: 24px; border-radius: 4px; background: #FF9900; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .asp-mock-video-icon svg { width: 13px; height: 13px; }
+    .asp-mock-video-lines { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+    .asp-mock-video-stars { font-size: 13px; color: #FF9900; letter-spacing: -0.3px; }
+    .asp-card-caption { font-size: 13px; line-height: 1.4; color: #fff; text-align: center; white-space: nowrap; flex-shrink: 0; }
+    .asp-dots { position: relative; z-index: 1; display: flex; gap: 6px; justify-content: center; flex-shrink: 0; }
+    .asp-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); animation: asp-dot-cycle 9s ease-in-out infinite; }
+    .asp-dot:nth-child(2) { animation-delay: 3s; }
+    .asp-dot:nth-child(3) { animation-delay: 6s; }
+    @keyframes asp-dot-cycle {
+      0%, 100% { background: rgba(255,255,255,0.2); } 4%, 28% { background: var(--cyan); } 33% { background: rgba(255,255,255,0.2); }
+    }
 
     /* Footer */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -958,7 +1437,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-gsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately. Every account also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
+        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.<br><br>Every account also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
       </p>
     </div>
     <p class="tier-kicker">Choose your tier</p>
@@ -986,7 +1465,15 @@
     </div>
   </div>
   <div class="content-2col-visual" id="wf-gsa-box">
-    <div class="viz-serp" role="img" aria-label="Mockup of a Google-style search results page showing a Sponsored ad card above a faded organic result, illustrating how a paid search ad appears to a searcher">
+    <div class="viz-serp" role="img" aria-label="Mockup of a Google search results page with a search bar, tab row, two stacked Sponsored ad results (the first with a thumbnail image and sitelinks), and a faded organic result, illustrating how paid search ads appear to a searcher">
+      <div class="mock-searchbar">
+        <span class="mock-google-logo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
+        <span class="mock-searchbar-text">social media marketing</span>
+        <span class="mock-searchbar-icons">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+      </div>
       <div class="mock-tabs">
         <span class="mock-tab active">All</span>
         <span class="mock-tab">Images</span>
@@ -995,22 +1482,38 @@
         <span class="mock-tab">Maps</span>
         <span class="mock-tab">⋮ More</span>
       </div>
+      <p class="serp-results-count">About 2,430,000 results (0.61 seconds)</p>
       <div class="serp-card">
-        <div class="serp-meta"><span class="serp-ad-badge badge-pulse">Ad</span><span class="serp-url">yourbusiness.com</span></div>
-        <p class="serp-headline">Your Business — Book Online Today</p>
-        <p class="serp-desc">Trusted by 500+ local customers. Same-day quotes, transparent pricing, no obligation. See why we're rated 4.9★.</p>
+        <div class="serp-meta"><span class="serp-ad-badge badge-pulse">Ad</span><span class="serp-url">mailchimp.com</span><span class="mock-kebab">⋮</span></div>
+        <div class="serp-body-row">
+          <div class="serp-body-text">
+            <p class="serp-headline">Social Media Marketing - Organic Social Posting</p>
+            <p class="serp-desc">Easily Create and Manage Professional Social Media Campaigns With Our Intuitive Interface. Build Your Following On Social Media And Reach The Right People.</p>
+          </div>
+          <div class="serp-thumb"></div>
+        </div>
         <div class="serp-sitelinks">
-          <span class="serp-sitelink">Pricing</span>
-          <span class="serp-sitelink">Services</span>
-          <span class="serp-sitelink">Reviews</span>
-          <span class="serp-sitelink">Contact</span>
+          <div class="serp-sitelink">
+            <p class="serp-sitelink-title">View Our Pricing Plans</p>
+            <p class="serp-sitelink-desc">Find a Plan That's Right for You</p>
+          </div>
+          <div class="serp-sitelink">
+            <p class="serp-sitelink-title">Free Email Templates</p>
+            <p class="serp-sitelink-desc">Send Better Emails Instantly</p>
+          </div>
         </div>
       </div>
+      <div class="serp-card compact serp-card-2">
+        <div class="serp-meta"><span class="serp-ad-badge">Ad</span><span class="serp-url">zozimus.com</span><span class="serp-url">(617) 259-1605</span></div>
+        <p class="serp-headline">Dream Big. We'll Do the Rest. - Award Winning Social Media</p>
+        <p class="serp-desc">Our Bespoke Social Media Strategies Are Tailored to Suit Your Needs. It's Just How We Are. One Size Doesn't Fit All. It's Why We Customize Your Strategy with You, for You.</p>
+        <p class="serp-inline-links">Paid Search · Best Ad Agency in Boston · Social Media · Brand Strategy</p>
+      </div>
       <div class="serp-organic-ghost">
-        <p class="serp-organic-url">competitor-site.com</p>
-        <p class="serp-organic-headline">Similar Business Name — Home</p>
+        <p class="serp-organic-url">wordstream.com</p>
+        <p class="serp-organic-headline">Social Media Marketing for Businesses - WordStream</p>
         <div class="serp-organic-line"></div>
-        <div class="serp-organic-line short"></div>
+        <p class="serp-organic-links">Social Media Optimization · Popular Social Media Platforms</p>
       </div>
     </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
@@ -1029,7 +1532,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-pmax-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Performance Max runs one AI-driven campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time — Google's own recommended default once an account has enough conversion history to fuel the automation. We configure the feed and asset groups, set the right conversion goals, and review signals monthly, including the newer Demand Gen format for visual, feed-native placements.
+        Performance Max runs one AI-driven campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time. Google's own recommended default once an account has enough conversion history to fuel the automation.<br><br>We configure the feed and asset groups, set the right conversion goals, and review signals monthly, including the newer Demand Gen format for visual, feed-native placements.
       </p>
     </div>
     <p class="tier-kicker">Choose your tier</p>
@@ -1057,15 +1560,100 @@
     </div>
   </div>
   <div class="content-2col-visual" id="wf-pmax-box">
-    <div class="viz-pmax" role="img" aria-label="Diagram of a Performance Max campaign radiating out to Search, Display, YouTube, Gmail, Maps and Discover">
-      <div class="orbit-ring" aria-hidden="true"></div>
-      <div class="orbit-center">PMax</div>
-      <div class="orbit-pill" style="--a: 0deg;">Search</div>
-      <div class="orbit-pill" style="--a: 60deg;">Display</div>
-      <div class="orbit-pill" style="--a: 120deg;">YouTube</div>
-      <div class="orbit-pill" style="--a: 180deg;">Gmail</div>
-      <div class="orbit-pill" style="--a: 240deg;">Maps</div>
-      <div class="orbit-pill" style="--a: 300deg;">Discover</div>
+    <div class="viz-pmax" role="img" aria-label="Diagram of a Performance Max campaign radiating from a central hub icon out to Google at 11 o'clock, Gmail at 1 o'clock, Display at 3 o'clock, Google Maps at 5 o'clock, Authenticator at 7 o'clock, and YouTube at 9 o'clock">
+      <div class="pmax-diagram">
+        <!-- Google — 11 o'clock, no tile, standalone multicolor "G" logomark, label above -->
+        <div class="pmax-node" style="top: 18.8%; left: 32%;">
+          <span class="pmax-node-blob" style="--blob-tint: rgba(66,133,244,0.16);"></span>
+          <span class="pmax-node-label pos-top">Google</span>
+          <span class="pmax-standalone google">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91H2.18v6.24C6.51 42.62 14.62 48 24 48z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59v-6.24H2.18C.79 16.46 0 20.12 0 24c0 3.88.79 7.54 2.18 10.83l8.35-6.24z"/>
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.18 13.17l8.35 6.24C12.43 13.72 17.74 9.5 24 9.5z"/>
+            </svg>
+          </span>
+        </div>
+        <!-- Gmail — 1 o'clock, no tile, standalone 5-region "M" logomark, label above -->
+        <div class="pmax-node" style="top: 18.8%; left: 68%;">
+          <span class="pmax-node-blob" style="--blob-tint: rgba(234,67,53,0.14);"></span>
+          <span class="pmax-node-label pos-top">Gmail</span>
+          <span class="pmax-standalone gmail">
+            <svg viewBox="0 0 48 36" aria-hidden="true">
+              <rect x="4" y="9" width="8" height="23" rx="3" fill="#4285F4"/>
+              <rect x="36" y="9" width="8" height="23" rx="3" fill="#34A853"/>
+              <polygon points="4,9 12,3 12,11" fill="#C5221F"/>
+              <polygon points="44,9 36,3 36,11" fill="#FBBC04"/>
+              <path d="M12,3 L24,19 L36,3 L36,11 L24,27 L12,11 Z" fill="#EA4335"/>
+            </svg>
+          </span>
+        </div>
+        <!-- Display — 3 o'clock, green tile, label to the right -->
+        <div class="pmax-node pmax-node-display">
+          <span class="pmax-node-blob" style="--blob-tint: rgba(52,168,83,0.16);"></span>
+          <span class="pmax-tile display">
+            <svg viewBox="0 0 24 20" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="4" rx="1" fill="#fff"/>
+              <rect x="2" y="8" width="12" height="10" rx="1" fill="#fff"/>
+              <rect x="16" y="8" width="6" height="10" rx="1" fill="#fff"/>
+            </svg>
+          </span>
+          <span class="pmax-node-label pos-right">Display</span>
+        </div>
+        <!-- Google Maps — 5 o'clock, no tile, color-blocked pin silhouette, label below -->
+        <div class="pmax-node" style="top: 81.2%; left: 68%;">
+          <span class="pmax-node-blob" style="--blob-tint: rgba(66,133,244,0.16);"></span>
+          <span class="pmax-maps">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <defs>
+                <clipPath id="pmaxMapsPinClip">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                </clipPath>
+              </defs>
+              <g clip-path="url(#pmaxMapsPinClip)">
+                <rect x="0" y="0" width="10" height="9" fill="#EA4335"/>
+                <rect x="10" y="0" width="14" height="9" fill="#4285F4"/>
+                <rect x="0" y="9" width="8" height="15" fill="#FBBC05"/>
+                <rect x="8" y="9" width="16" height="15" fill="#34A853"/>
+              </g>
+              <circle cx="12" cy="9" r="3.4" fill="#fff"/>
+            </svg>
+          </span>
+          <span class="pmax-node-label pos-bottom">Maps</span>
+        </div>
+        <!-- Authenticator — 7 o'clock, no tile, 6-petal pinwheel, label below -->
+        <div class="pmax-node" style="top: 81.2%; left: 32%;">
+          <span class="pmax-node-blob" style="--blob-tint: rgba(66,133,244,0.14);"></span>
+          <span class="pmax-standalone">
+            <span class="pmax-auth">
+              <span class="pmax-auth-petal" style="transform: rotate(150deg); background:#FBBC05;"></span>
+              <span class="pmax-auth-petal" style="transform: rotate(210deg); background:#4285F4;"></span>
+              <span class="pmax-auth-petal" style="transform: rotate(270deg); background:#4285F4;"></span>
+              <span class="pmax-auth-petal" style="transform: rotate(330deg); background:#EA4335;"></span>
+              <span class="pmax-auth-petal" style="transform: rotate(30deg);  background:#EA4335;"></span>
+              <span class="pmax-auth-petal" style="transform: rotate(90deg);  background:#34A853;"></span>
+            </span>
+          </span>
+          <span class="pmax-node-label pos-bottom">Authenticator</span>
+        </div>
+        <!-- YouTube — 9 o'clock, red pill tile, label to the left -->
+        <div class="pmax-node pmax-node-youtube">
+          <span class="pmax-node-blob" style="--blob-tint: rgba(255,0,0,0.16);"></span>
+          <span class="pmax-node-label pos-left">YouTube</span>
+          <span class="pmax-tile youtube">
+            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M5 4l15 8-15 8z" fill="#fff"/></svg>
+          </span>
+        </div>
+        <div class="pmax-hub">
+          <span class="pmax-hub-icon">
+            <span class="pmax-mark-bar gold"></span>
+            <span class="pmax-mark-bar blue"></span>
+            <span class="pmax-mark-dot"></span>
+          </span>
+          <span class="pmax-hub-label">Performance<br>Max</span>
+        </div>
+      </div>
     </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
@@ -1083,7 +1671,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-shopping-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Shopping Ads showcase your products with image, price, and reviews directly in search results, putting your catalog in front of shoppers who are already comparing and ready to buy. We build and maintain the Merchant Center feed and shipping/tax rules so listings stay live whether they run standalone or wrapped inside Performance Max.
+        Google Shopping Ads showcase your products with image, price, and reviews directly in search results. Putting your catalog in front of shoppers who are already comparing and ready to buy.<br><br>We build and maintain the Merchant Center feed and shipping/tax rules so listings stay live whether they run standalone or wrapped inside Performance Max.
       </p>
     </div>
     <p class="tier-kicker">Choose your tier</p>
@@ -1111,11 +1699,15 @@
     </div>
   </div>
   <div class="content-2col-visual" id="wf-shopping-box">
-    <div class="viz-shopping" role="img" aria-label="Mockup of Google Shopping Ads showing a search bar, category tabs, and a 3-up sponsored product grid for fictional VardWeb merch">
+    <div class="viz-shopping" role="img" aria-label="Mockup of Google Shopping Ads showing a search bar, category tabs, filter pills, a 3-up sponsored product grid, and a faded Popular Products row below, for fictional VardWeb merch">
       <div class="mock-chrome">
-        <div class="mock-searchpill">
-          <span class="mock-logo"><span></span><span></span><span></span></span>
-          <span class="mock-searchpill-text">get varded shirt</span>
+        <div class="mock-searchbar">
+          <span class="mock-google-logo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
+          <span class="mock-searchbar-text">get varded shirt</span>
+          <span class="mock-searchbar-icons">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
         </div>
         <div class="mock-tabs">
           <span class="mock-tab">All</span>
@@ -1124,32 +1716,71 @@
           <span class="mock-tab">News</span>
           <span class="mock-tab">More</span>
         </div>
+        <div class="mock-filterpills">
+          <span class="mock-filterpill">On sale</span>
+          <span class="mock-filterpill"><span class="mock-filterpill-dot" style="background:#14161d;border:1px solid rgba(255,255,255,0.3);"></span>Black</span>
+          <span class="mock-filterpill">Under $50</span>
+          <span class="mock-filterpill"><span class="mock-filterpill-dot" style="background:var(--cyan);"></span>Blue</span>
+        </div>
       </div>
       <div class="shop-heading-row">
-        <p class="shop-heading">Shop for <b>get varded shirt</b> on Google</p>
-        <span class="shop-badge badge-pulse">Sponsored</span>
+        <span class="shop-sponsored badge-pulse">Sponsored</span>
+        <span class="mock-kebab">⋮</span>
       </div>
       <div class="shop-grid">
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
           <p class="shop-title">Get Varded Shirt</p>
           <p class="shop-price">$28.00</p>
-          <p class="shop-rating">★★★★☆ <span>(212)</span></p>
           <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-rating">★★★★☆ <span>(212)</span></p>
+          <p class="shop-attr">Apparel · Unisex</p>
         </div>
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
           <p class="shop-title">VardWeb Hoodie</p>
           <p class="shop-price">$52.00</p>
-          <p class="shop-rating">★★★★★ <span>(89)</span></p>
           <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-rating">★★★★★ <span>(89)</span></p>
+          <p class="shop-attr">Fleece · Unisex</p>
         </div>
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
           <p class="shop-title">404 Not Found Tee</p>
           <p class="shop-price">$24.00</p>
-          <p class="shop-rating">★★★★☆ <span>(147)</span></p>
           <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-rating">★★★★☆ <span>(147)</span></p>
+          <p class="shop-attr">Apparel · Unisex</p>
+        </div>
+      </div>
+      <div class="shop-popular-row">
+        <span class="shop-popular-label">Popular products</span>
+        <span class="mock-kebab">⋮</span>
+      </div>
+      <div class="shop-grid organic">
+        <div class="shop-card">
+          <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,215,0,0.12));"></div>
+          <p class="shop-title">500 Server Error Cap</p>
+          <p class="shop-price">$22.00</p>
+          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-rating">★★★★☆ <span>(76)</span></p>
+          <p class="shop-attr">Apparel · Unisex</p>
+        </div>
+        <div class="shop-card">
+          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.18), rgba(0,229,255,0.12));"></div>
+          <p class="shop-title">NullPointer Beanie</p>
+          <p class="shop-price">$26.00</p>
+          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-rating">★★★★★ <span>(54)</span></p>
+          <p class="shop-attr">Apparel · Unisex</p>
+        </div>
+        <div class="shop-card">
+          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,45,120,0.12));"></div>
+          <p class="shop-title">Segfault Socks (3-Pack)</p>
+          <p class="shop-price">$18.00</p>
+          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-rating">★★★★☆ <span>(133)</span></p>
+          <p class="shop-attr">Apparel · Unisex</p>
         </div>
       </div>
     </div>
@@ -1169,7 +1800,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-video-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Video Ads put your brand in front of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could. We handle campaign structure, audience targeting, and bid strategy; if you need the video itself, our Content Creation &amp; CM add-on covers production.
+        Video Ads put your brand in front of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could.<br><br>We handle campaign structure, audience targeting, and bid strategy; if you need the video itself, our Content Creation &amp; CM add-on covers production.
       </p>
     </div>
     <p class="tier-kicker">Choose your tier</p>
@@ -1198,7 +1829,7 @@
   </div>
   <div class="content-2col-visual" id="wf-video-box">
     <div class="viz-video" role="img" aria-label="Mockup of a YouTube pre-roll video ad with a skip button and progress bar">
-      <div class="video-ad-badge">Ad <b>&middot;</b> 0:05</div>
+      <div class="video-ad-badge">Ad <b>&middot;</b> <span id="video-ad-timer">0:15</span></div>
       <div class="video-play-btn"></div>
       <div class="video-skip-pill">Skip Ad ▸</div>
       <div class="video-progress-track"><div class="video-progress-fill"></div></div>
@@ -1247,52 +1878,70 @@
     </div>
   </div>
   <div class="content-2col-visual" id="wf-lsa-box">
-    <div class="viz-lsa" role="img" aria-label="Mockup of Google Local Service Ads showing a search bar, tab row, and three Google Guaranteed business listings with ratings and phone numbers">
+    <div class="viz-lsa" role="img" aria-label="Mockup of Google Local Service Ads showing a search bar, three Google Screened immigration attorney listings with ratings, years in business, and phone numbers, and a faded organic result below, illustrating how a Local Service Ad appears above regular search results">
       <div class="mock-chrome">
-        <div class="mock-searchpill">
-          <span class="mock-logo"><span></span><span></span><span></span></span>
-          <span class="mock-searchpill-text">plumber near me</span>
-        </div>
-        <div class="mock-tabs">
-          <span class="mock-tab active">All</span>
-          <span class="mock-tab">Maps</span>
-          <span class="mock-tab">Images</span>
-          <span class="mock-tab">More</span>
+        <div class="mock-searchbar">
+          <span class="mock-google-logo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
+          <span class="mock-searchbar-text">immigration attorney atlanta</span>
+          <span class="mock-searchbar-icons">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
         </div>
       </div>
       <div class="lsa-header">
-        <span class="lsa-header-count">23 plumbers nearby</span>
-        <span class="lsa-header-sponsored badge-pulse">Sponsored</span>
+        <span class="lsa-header-count">10+ immigration lawyers serving Atlanta</span>
+        <span class="lsa-header-sponsored badge-pulse">Sponsored
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+        </span>
       </div>
       <div class="lsa-row">
         <div class="lsa-card">
+          <p class="lsa-name">Elliott Immigration Law</p>
+          <p class="lsa-rating">★★★★★ <span>4.9 (35)</span></p>
           <div class="lsa-badge">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5.25 3.4 10.16 8 11.5 4.6-1.34 8-6.25 8-11.5V5l-8-3z"/></svg>
-            Google Guaranteed
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
+            GOOGLE SCREENED
           </div>
-          <p class="lsa-name">Apex Plumbing &amp; Rooter</p>
-          <p class="lsa-rating">★★★★★ <span>4.9 (166)</span></p>
-          <p class="lsa-phone">(206) 555-0142</p>
+          <p class="lsa-years">8 years in business</p>
+          <p class="lsa-phone">(404) 364-1425 <span class="lsa-status">· Closed now</span></p>
         </div>
         <div class="lsa-card">
+          <p class="lsa-name">Schwartz Posel Immigration</p>
+          <p class="lsa-rating">★★★★★ <span>4.8 (35)</span></p>
           <div class="lsa-badge">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5.25 3.4 10.16 8 11.5 4.6-1.34 8-6.25 8-11.5V5l-8-3z"/></svg>
-            Google Guaranteed
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
+            GOOGLE SCREENED
           </div>
-          <p class="lsa-name">Pipe Dream Plumbing Co.</p>
-          <p class="lsa-rating">★★★★☆ <span>4.8 (98)</span></p>
-          <p class="lsa-phone">(206) 555-0187</p>
-          <div class="lsa-actions"><span class="lsa-btn">Call Now</span></div>
+          <p class="lsa-years">24 years in business</p>
+          <p class="lsa-phone">(770) 824-1988 <span class="lsa-status">· Closed now</span></p>
         </div>
         <div class="lsa-card">
+          <p class="lsa-name">Ross &amp; Pines LLC</p>
+          <p class="lsa-rating">★★★★★ <span>4.9 (55)</span></p>
           <div class="lsa-badge">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4 5v6c0 5.25 3.4 10.16 8 11.5 4.6-1.34 8-6.25 8-11.5V5l-8-3z"/></svg>
-            Google Guaranteed
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
+            GOOGLE SCREENED
           </div>
-          <p class="lsa-name">ElbowGrease Plumbers</p>
-          <p class="lsa-rating">★★★★☆ <span>4.7 (211)</span></p>
-          <p class="lsa-phone">(206) 555-0119</p>
+          <p class="lsa-years">12 years in business</p>
+          <p class="lsa-phone">(404) 812-4300 <span class="lsa-status">· Closed now</span></p>
         </div>
+      </div>
+      <span class="mock-more-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        More immigration lawyers
+      </span>
+      <div class="serp-organic-ghost">
+        <p class="serp-organic-url">avvo.com › georgia › atlanta</p>
+        <p class="serp-organic-headline">Best Immigration Lawyers in Atlanta, GA - Avvo</p>
+        <div class="serp-organic-line"></div>
+        <div class="serp-organic-line short"></div>
+      </div>
+      <div class="serp-organic-ghost">
+        <p class="serp-organic-url">yelp.com › atlanta › immigration-lawyers</p>
+        <p class="serp-organic-headline">Best Immigration Lawyers Near Me in Atlanta, GA | Yelp</p>
+        <div class="serp-organic-line"></div>
+        <div class="serp-organic-line short"></div>
       </div>
     </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
@@ -1311,10 +1960,10 @@
     </div>
     <div class="wf-outer">
       <p id="wf-adsense-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site. Placements are tuned to protect user experience while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
+        Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site.<br><br>Placements are tuned to protect user experience while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
       </p>
     </div>
-    <p class="tier-kicker">Choose your tier — by site traffic, not ad spend (none to pass through)</p>
+    <p class="tier-kicker">Choose your tier — by site traffic, not ad spend.</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
@@ -1346,15 +1995,21 @@
       </div>
       <div class="ads-page">
         <p class="ads-headline">Why Faster Websites Win More Customers</p>
+        <div class="ads-byline">
+          <span class="ads-byline-avatar"></span>
+          <span class="ads-byline-text">VardWeb Blog · 6 min read</span>
+        </div>
         <div class="ads-page-row">
           <div class="ads-content-block"></div>
           <div class="ads-unit">Ad<span>VardWeb Optimized</span></div>
         </div>
-        <div class="ads-content-block wide"></div>
+        <div class="ads-content-block ads-hero-block"></div>
         <div class="ads-unit wide">Ad<span>VardWeb Optimized</span></div>
-        <div class="ads-content-block wide" style="width: 92%; height: 12px;"></div>
-        <div class="ads-content-block wide" style="width: 78%; height: 12px;"></div>
-        <div class="ads-content-block wide" style="width: 85%; height: 12px;"></div>
+        <div class="ads-content-block ads-line" style="width: 92%;"></div>
+        <div class="ads-content-block ads-line" style="width: 78%;"></div>
+        <div class="ads-content-block ads-line" style="width: 85%;"></div>
+        <div class="ads-content-block ads-line" style="width: 60%;"></div>
+        <div class="ads-content-block ads-line" style="width: 72%;"></div>
       </div>
       <div class="ads-earnings">
         <span class="ads-earnings-label">Est. Revenue Today</span>
@@ -1407,37 +2062,333 @@
     </div>
   </div>
   <div class="content-2col-visual" id="wf-asp-box">
-    <div class="viz-asp" role="img" aria-label="Mockup of Amazon search results showing a Results header and a grid of Sponsored VardWeb merch product cards with ratings, prices, and an Add to Cart button">
-      <p class="asp-results-header">Results</p>
-      <div class="asp-grid">
-        <div class="asp-card">
-          <div class="asp-img" style="background: linear-gradient(135deg, rgba(255,153,0,0.22), rgba(0,229,255,0.12));"></div>
-          <span class="asp-sponsored badge-pulse">Sponsored</span>
-          <p class="asp-title">Get Varded Shirt — Unisex Tee</p>
-          <p class="asp-rating">★★★★☆ <span>4.4 (1,204)</span></p>
-          <p class="asp-price">$19.99</p>
-          <p class="asp-delivery">FREE delivery</p>
+    <div class="viz-asp" role="img" aria-label="Mockup of Amazon's Sponsored Brands ad-format picker, auto-rotating through Product collection, Store spotlight, and Video format previews built from fictional VardWeb merch">
+      <p class="asp-top-label">Choose an ad format</p>
+      <div class="asp-slides">
+        <div class="asp-slide">
+          <div class="asp-card asp-card--selected">
+            <div class="asp-card-title-row">
+              <p class="asp-card-title">Product collection</p>
+            </div>
+            <div class="asp-mock-frame">
+              <div class="asp-mock-head">
+                <div class="asp-mock-swatch"></div>
+                <div class="asp-mock-lines"><div class="asp-mock-line short"></div><div class="asp-mock-line long"></div></div>
+              </div>
+              <div class="asp-mock-tiles">
+                <div class="asp-mock-tile-col">
+                  <div class="asp-mock-tile">
+                    <span class="asp-mock-tile-icon">
+                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><rect x="2" y="16.3" width="20" height="2.4" rx="1.2"/><path d="M2 16.3C2 13.8 3.7 11.7 6.1 11.2L15.8 9.5C18.6 9 21.2 10.9 21.6 13.6L22 16.3H2z"/></svg>
+                    </span>
+                  </div>
+                  <span class="asp-mock-tile-stars">★★★★★</span>
+                </div>
+                <div class="asp-mock-tile-col">
+                  <div class="asp-mock-tile">
+                    <span class="asp-mock-tile-icon">
+                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 2 4 6l3 3v11h10V9l3-3-4-4-2 2H8z"/></svg>
+                    </span>
+                  </div>
+                  <span class="asp-mock-tile-stars">★★★★★</span>
+                </div>
+                <div class="asp-mock-tile-col">
+                  <div class="asp-mock-tile">
+                    <span class="asp-mock-tile-icon">
+                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M2 16A10 9 0 0 1 22 16Z"/><path d="M17 15.6h5.8c.8 0 1.3.8 1 1.5-.7 1.8-2.4 3-4.4 3H17v-4.5z"/></svg>
+                    </span>
+                  </div>
+                  <span class="asp-mock-tile-stars">★★★★★</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="asp-card-caption">Promote multiple products from a landing page of your choice.</p>
         </div>
-        <div class="asp-card">
-          <div class="asp-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,45,120,0.14));"></div>
-          <span class="asp-sponsored">Sponsored</span>
-          <p class="asp-title">VardWeb Hoodie — Premium Fleece</p>
-          <p class="asp-rating">★★★★★ <span>4.8 (542)</span></p>
-          <p class="asp-price">$34.99</p>
-          <p class="asp-delivery">FREE delivery</p>
-          <span class="asp-cta">Add to Cart</span>
+        <div class="asp-slide">
+          <div class="asp-card">
+            <div class="asp-card-title-row">
+              <p class="asp-card-title">Store spotlight</p>
+              <span class="asp-new-tag">New</span>
+            </div>
+            <div class="asp-mock-frame">
+              <div class="asp-mock-head">
+                <div class="asp-mock-swatch"></div>
+                <div class="asp-mock-lines"><div class="asp-mock-line short"></div><div class="asp-mock-line long"></div></div>
+              </div>
+              <div class="asp-mock-images">
+                <div class="asp-mock-image-tile">
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2.3"/><path d="M3 18l5.5-6.5L12.5 16l3-3.5L21 18H3z"/></svg>
+                </div>
+                <div class="asp-mock-image-tile">
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2.3"/><path d="M3 18l5.5-6.5L12.5 16l3-3.5L21 18H3z"/></svg>
+                </div>
+                <div class="asp-mock-image-tile">
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2.3"/><path d="M3 18l5.5-6.5L12.5 16l3-3.5L21 18H3z"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="asp-card-caption">Drive traffic to a Store, including subpages.</p>
         </div>
-        <div class="asp-card">
-          <div class="asp-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,45,120,0.12));"></div>
-          <span class="asp-sponsored">Sponsored</span>
-          <p class="asp-title">404 Error Mug</p>
-          <p class="asp-rating">★★★★☆ <span>4.3 (879)</span></p>
-          <p class="asp-price">$14.99</p>
-          <p class="asp-delivery">FREE delivery</p>
+        <div class="asp-slide">
+          <div class="asp-card">
+            <div class="asp-card-title-row">
+              <p class="asp-card-title">Video</p>
+            </div>
+            <div class="asp-mock-frame">
+              <div class="asp-mock-video"><span class="asp-mock-video-play"></span></div>
+              <div class="asp-mock-video-row">
+                <span class="asp-mock-video-icon">
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><rect x="2" y="16.3" width="20" height="2.4" rx="1.2"/><path d="M2 16.3C2 13.8 3.7 11.7 6.1 11.2L15.8 9.5C18.6 9 21.2 10.9 21.6 13.6L22 16.3H2z"/></svg>
+                </span>
+                <div class="asp-mock-video-lines">
+                  <div class="asp-mock-line long"></div>
+                  <div class="asp-mock-line short"></div>
+                  <span class="asp-mock-video-stars">★★★★★</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="asp-card-caption">Feature a single product with an autoplaying video.</p>
+        </div>
+      </div>
+      <div class="asp-dots"><span class="asp-dot"></span><span class="asp-dot"></span><span class="asp-dot"></span></div>
+    </div>
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Email Sending Volume (pricing cards) ── -->
+<section class="email-pricing">
+  <div class="email-pricing-inner">
+    <div class="wf-outer">
+      <div class="email-pricing-head">
+        <p class="sec-tag" id="wf-email-tag">// scale your sending</p>
+        <h2 id="wf-email-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
+          Inbox Ready, Scale Set
+        </h2>
+      </div>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-email-para" class="email-pricing-sub">
+        Every order confirmation, password reset, and promo blast needs somewhere to land — preferably the inbox, not the spam folder. Our tiers scale right alongside you, with a full suite of deliverability tools and analytics to keep your sending healthy and your reputation intact.
+      </p>
+    </div>
+
+    <div class="email-toggle" role="tablist" aria-label="Email pricing type">
+      <button type="button" class="email-toggle-btn is-active" data-tab="transactional" role="tab" aria-selected="true">Transactional emails</button>
+      <button type="button" class="email-toggle-btn" data-tab="marketing" role="tab" aria-selected="false">Marketing emails</button>
+    </div>
+
+    <!-- Transactional panel -->
+    <div class="email-tab-panel" data-panel="transactional">
+      <div class="email-slider-wrap">
+        <input type="range" class="email-range" min="0" max="8" step="1" value="0" aria-label="Estimated monthly transactional email volume" />
+        <div class="email-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0)"><span class="tick-full">3,000</span><span class="tick-short">3K</span></span><span style="left:calc(9px + (100% - 18px) * 0.125)"><span class="tick-full">25,000</span><span class="tick-short">25K</span></span><span style="left:calc(9px + (100% - 18px) * 0.25)"><span class="tick-full">50,000</span><span class="tick-short">50K</span></span><span style="left:calc(9px + (100% - 18px) * 0.375)"><span class="tick-full">100,000</span><span class="tick-short">100K</span></span><span style="left:calc(9px + (100% - 18px) * 0.5)"><span class="tick-full">200,000</span><span class="tick-short">200K</span></span><span style="left:calc(9px + (100% - 18px) * 0.625)"><span class="tick-full">500,000</span><span class="tick-short">500K</span></span><span style="left:calc(9px + (100% - 18px) * 0.75)"><span class="tick-full">1,000,000</span><span class="tick-short">1M</span></span><span style="left:calc(9px + (100% - 18px) * 0.875)"><span class="tick-full">1,500,000</span><span class="tick-short">1.5M</span></span><span style="left:calc(9px + (100% - 18px) * 1)"><span class="tick-full">2,500,000</span><span class="tick-short">2.5M</span></span>
+        </div>
+      </div>
+
+      <div class="pricing-card-grid">
+        <div class="pricing-card is-active" data-card="free" style="--tier-color:#CD7F32; --tier-glow:rgba(205,127,50,0.16); --tier-bg:rgba(205,127,50,0.08);">
+          <p class="pricing-card-name">Bronze</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">Included</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">3,000 emails / mo</p>
+          <p class="pricing-card-extra">No extra emails</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>12-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 sending domain</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>100 emails a day</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Get Started</a>
+        </div>
+
+        <div class="pricing-card" data-card="pro" style="--tier-color:#C2D0E8; --tier-glow:rgba(194,208,232,0.2); --tier-bg:rgba(194,208,232,0.08);">
+          <p class="pricing-card-name">Silver</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">Included</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">25,000 emails / mo</p>
+          <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>8-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No Daily Cap</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Get Started</a>
+        </div>
+
+        <div class="pricing-card" data-card="scale" style="--tier-color:#FFD700; --tier-glow:rgba(255,215,0,0.14); --tier-bg:rgba(255,215,0,0.06);">
+          <p class="pricing-card-name">Gold</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">Included</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">50,000 emails / mo</p>
+          <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>4-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1,000 sending domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No Daily Cap</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Get Started</a>
+        </div>
+
+        <div class="pricing-card" data-card="enterprise" style="--tier-color:#A855F7; --tier-glow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.06);">
+          <p class="pricing-card-name">Custom</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">C$90 / mo</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">100,000 emails / mo</p>
+          <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Priority support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Flexible automation runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Flexible data retention</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Flexible domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No Daily Cap</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Contact us</a>
         </div>
       </div>
     </div>
-    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
+
+    <!-- Marketing panel -->
+    <div class="email-tab-panel is-hidden" data-panel="marketing">
+      <div class="email-slider-wrap">
+        <input type="range" class="email-range" min="0" max="7" step="1" value="0" aria-label="Estimated monthly marketing contact volume" />
+        <div class="email-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0)">1K</span><span style="left:calc(9px + (100% - 18px) * 0.142857)">3K</span><span style="left:calc(9px + (100% - 18px) * 0.285714)">5K</span><span style="left:calc(9px + (100% - 18px) * 0.428571)">10K</span><span style="left:calc(9px + (100% - 18px) * 0.571429)">25K</span><span style="left:calc(9px + (100% - 18px) * 0.714286)">50K</span><span style="left:calc(9px + (100% - 18px) * 0.857143)">100K</span><span style="left:calc(9px + (100% - 18px) * 1)">150K</span>
+        </div>
+      </div>
+
+      <div class="pricing-card-grid">
+        <div class="pricing-card is-active" data-card="free" style="--tier-color:#CD7F32; --tier-glow:rgba(205,127,50,0.16); --tier-bg:rgba(205,127,50,0.08);">
+          <p class="pricing-card-name">Bronze</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">Included</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">1,000 contacts</p>
+          <p class="pricing-card-extra">Unlimited broadcast sending</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>12-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>3 segments</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 domain</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Marketing analytics</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Get Started</a>
+        </div>
+
+        <div class="pricing-card" data-card="pro" style="--tier-color:#C2D0E8; --tier-glow:rgba(194,208,232,0.2); --tier-bg:rgba(194,208,232,0.08);">
+          <p class="pricing-card-name">Silver</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">Included</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">3,000 contacts</p>
+          <p class="pricing-card-extra">Unlimited broadcast sending</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>8-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Get Started</a>
+        </div>
+
+        <div class="pricing-card" data-card="scale" style="--tier-color:#FFD700; --tier-glow:rgba(255,215,0,0.14); --tier-bg:rgba(255,215,0,0.06);">
+          <p class="pricing-card-name">Gold</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">Included</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">5,000 contacts</p>
+          <p class="pricing-card-extra">Unlimited broadcast sending</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>4-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Get Started</a>
+        </div>
+
+        <div class="pricing-card" data-card="enterprise" style="--tier-color:#A855F7; --tier-glow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.06);">
+          <p class="pricing-card-name">Custom</p>
+          <span class="pricing-card-badge">Recommended</span>
+          <p class="pricing-card-price">C$205 / mo</p>
+          <div class="pricing-card-divider"></div>
+          <p class="pricing-card-vol">10,000 contacts</p>
+          <p class="pricing-card-extra">Unlimited broadcast sending</p>
+          <div class="pricing-card-divider"></div>
+          <ul class="pricing-card-features">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Priority support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
+          </ul>
+          <a href="contact.html" class="btn btn-ghost">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── CONTENT: Email feature comparison (static) ── -->
+<section class="email-compare">
+  <div class="email-compare-inner">
+    <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;">
+      Sending &amp; receiving
+    </h3>
+    <div class="compare-table-wrap wf-outer">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th style="--tier-color:#CD7F32; color:var(--tier-color);">Bronze</th>
+            <th style="--tier-color:#C2D0E8; color:var(--tier-color);">Silver</th>
+            <th style="--tier-color:#FFD700; color:var(--tier-color);">Gold</th>
+            <th style="--tier-color:#A855F7; color:var(--tier-color);">Custom</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 1.">Daily limit</span></th><td>100</td><td>No limit</td><td>No limit</td><td>No limit</td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 2.">Inbound emails</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 3.">RESTful API</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 4.">SMTP relay</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 5.">Official SDKs</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 6.">Schedule emails</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 7.">Batch sending</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 8.">Open tracking</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 9.">Link tracking</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
 
@@ -1524,6 +2475,90 @@
 </footer>
 
 <script>
+/* ── Amazon Sponsored Products card: fluidly scale the fixed-430px-wide
+   mockup to fit whatever width .asp-slides actually has, so the card's
+   internal (fixed-px) proportions stay identical to desktop at any size
+   instead of the mock-frame's aspect ratio collapsing at other widths.
+   Uncapped both ways — the card now also expands past its 430px design
+   size to fill wider available space, not just shrinks on mobile. ── */
+(function () {
+  var slidesEl = document.querySelector('.viz-asp .asp-slides');
+  var vizEl = document.querySelector('.viz-asp');
+  if (!slidesEl || !vizEl || typeof ResizeObserver === 'undefined') return;
+  var DESIGN_WIDTH = 430;
+  var ro = new ResizeObserver(function (entries) {
+    var w = entries[0].contentRect.width;
+    vizEl.style.setProperty('--asp-scale', w / DESIGN_WIDTH);
+  });
+  ro.observe(slidesEl);
+})();
+
+/* ── Email-compare row-label tooltips: hover on desktop, tap on mobile, tap
+   elsewhere closes it (mirrors mouseleave). Single shared tt-box positioned
+   with position:fixed + JS-measured coordinates so it escapes the
+   .compare-table-wrap overflow-x:auto clip instead of being cut off. ── */
+(function () {
+  var triggers = document.querySelectorAll('.tt-trigger');
+  if (!triggers.length) return;
+
+  var box = document.createElement('div');
+  box.className = 'tt-box';
+  box.id = 'tt-box-shared';
+  box.setAttribute('role', 'tooltip');
+  document.body.appendChild(box);
+
+  var openTrigger = null;
+  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  function position(trigger) {
+    var r = trigger.getBoundingClientRect();
+    var bw = box.offsetWidth, bh = box.offsetHeight;
+    var left = r.left + r.width / 2 - bw / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
+    var top = r.top - bh - 6;
+    var below = top < 8;
+    if (below) top = r.bottom + 6;
+    box.style.left = left + 'px';
+    box.style.top = top + 'px';
+    box.classList.toggle('tt-below', below);
+  }
+
+  function show(trigger) {
+    openTrigger = trigger;
+    box.textContent = trigger.getAttribute('data-tooltip') || '';
+    box.classList.add('is-open');
+    position(trigger);
+    trigger.setAttribute('aria-expanded', 'true');
+    trigger.setAttribute('aria-describedby', 'tt-box-shared');
+  }
+
+  function hide() {
+    if (!openTrigger) return;
+    openTrigger.setAttribute('aria-expanded', 'false');
+    openTrigger.removeAttribute('aria-describedby');
+    openTrigger = null;
+    box.classList.remove('is-open');
+  }
+
+  triggers.forEach(function (t) {
+    if (canHover) {
+      t.addEventListener('mouseenter', function () { show(t); });
+      t.addEventListener('mouseleave', function () { if (openTrigger === t) hide(); });
+      t.addEventListener('focus', function () { show(t); });
+      t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
+    } else {
+      t.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (openTrigger === t) { hide(); } else { show(t); }
+      });
+    }
+  });
+
+  document.addEventListener('click', function () { hide(); });
+  window.addEventListener('scroll', function () { if (openTrigger) position(openTrigger); }, true);
+  window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
+})();
+
 /* ── Hero entrance reveal (staggers each direct child via .hero-in, see CSS) ── */
 (function () {
   var el = document.getElementById('sem-seo-hero');
@@ -1538,6 +2573,28 @@
     obs.disconnect();
   }, { threshold: 0.01 });
   obs.observe(el);
+})();
+
+/* ── Video/YouTube ad mockup: countdown timer and progress-bar fill driven from
+   a single rAF loop off one elapsed-time calculation, so they can never drift
+   apart the way two independent setInterval/CSS-animation clocks would.
+   Skipped under reduced motion, leaving the static "0:15" / 0% markup in place. ── */
+(function () {
+  var timerEl = document.getElementById('video-ad-timer');
+  var fillEl = document.querySelector('#wf-video-box .video-progress-fill');
+  if (!timerEl || !fillEl) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var DURATION = 15000;
+  var start = performance.now();
+  function tick(now) {
+    var elapsed = (now - start) % DURATION;
+    var secondsLeft = Math.ceil((DURATION - elapsed) / 1000);
+    if (secondsLeft <= 0) secondsLeft = DURATION / 1000;
+    timerEl.textContent = '0:' + String(secondsLeft).padStart(2, '0');
+    fillEl.style.width = (elapsed / DURATION * 100) + '%';
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 })();
 
 /* ── Hero animated mesh-gradient background (vanilla port of @paper-design/shaders,
@@ -1628,7 +2685,9 @@
     { el: document.getElementById('wf-adsense-heading'),   color: 'var(--pink)' },
     { el: document.getElementById('wf-adsense-para'),      color: '#C8D4E8', delay: 0.2 },
     { el: document.getElementById('wf-asp-heading'),       color: 'var(--cyan)' },
-    { el: document.getElementById('wf-asp-para'),          color: '#C8D4E8', delay: 0.2 }
+    { el: document.getElementById('wf-asp-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-email-heading'),     color: 'var(--pink)' },
+    { el: document.getElementById('wf-email-para'),        color: '#C8D4E8', delay: 0.2 }
   ];
 
   function run() {
@@ -1638,11 +2697,37 @@
       if (!outer) return;
 
       var split = new SplitText(t.el, { type: 'words', wordsClass: 'wf-word' });
-      var colorBoxes = split.words.map(function (word) {
-        var rect = word.getBoundingClientRect();
+      var words = split.words;
+      /* Snapshot every word's rect before any block is appended, so a word's
+         own (position:absolute) block never skews a still-unmeasured
+         neighbor's rect. */
+      var rects = words.map(function (word) { return word.getBoundingClientRect(); });
+      var GAP_BUFFER = 2; // px of breathing room between two adjacent blocks
+
+      var colorBoxes = words.map(function (word, i) {
+        var rect = rects[i];
+        var prev = rects[i - 1];
+        var next = rects[i + 1];
+
+        function onSameLine(other) {
+          return !!other && Math.abs(other.top - rect.top) < rect.height * 0.5;
+        }
+
+        /* Default 5%/side pad (10% total) matches the original flat 1.1x
+           oversize; clamp it against same-line neighbors so adjacent blocks
+           never bridge the gap between words and fuse into one bar. */
+        var pad = rect.width * 0.05;
+        if (onSameLine(prev)) {
+          pad = Math.min(pad, (rect.left - prev.right) / 2 - GAP_BUFFER / 2);
+        }
+        if (onSameLine(next)) {
+          pad = Math.min(pad, (next.left - rect.right) / 2 - GAP_BUFFER / 2);
+        }
+        pad = Math.max(pad, 0);
+
         var block = document.createElement('div');
         block.className = 'wf-block';
-        block.style.width = (rect.width * 1.1) + 'px';
+        block.style.width = (rect.width + 2 * pad) + 'px';
         block.style.height = (rect.height * 0.9) + 'px';
         block.style.background = t.color;
         word.appendChild(block);
@@ -1704,6 +2789,165 @@
       rotation: function () { return gsap.utils.random(-360, 360); },
       duration: 1,
       ease: 'power2.in'
+    });
+  });
+})();
+
+/* ── Email pricing — toggle between transactional/marketing panels, each
+   with its own discrete-stop slider (snapped to Resend's real plan
+   breakpoints, not continuous) driving a live readout and which of the
+   4 cards (Free/Pro/Scale/Enterprise) is focused. Hovering (desktop) or
+   pressing (touch) an unfocused card previews the same focused look. ── */
+(function () {
+  var section = document.querySelector('.email-pricing');
+  if (!section) return;
+
+  /* "Mobile" for the scroll-focus/compact-card behaviors below is the same
+     560px breakpoint that already collapses the grid to 1 column — a
+     width check, not a touch/hover capability check, so it stays correct
+     if the viewport is resized or rotated. */
+  var mobileQuery = window.matchMedia('(max-width: 560px)');
+
+  var DATA = {
+    transactional: [
+      { card: 'free',       vol: '3,000 emails / mo',     price: 'Included' },
+      { card: 'pro',        vol: '25,000 emails / mo',    price: 'Included' },
+      { card: 'scale',      vol: '50,000 emails / mo',    price: 'Included' },
+      { card: 'enterprise', vol: '100,000 emails / mo',   price: 'C$90 / mo',     extra: 'C$2.30 / 1000' },
+      { card: 'enterprise', vol: '200,000 emails / mo',   price: 'C$410 / mo',    extra: 'C$2.00 / 1000' },
+      { card: 'enterprise', vol: '500,000 emails / mo',   price: 'C$895 / mo',    extra: 'C$1.80 / 1000' },
+      { card: 'enterprise', vol: '1,000,000 emails / mo', price: 'C$1,650 / mo',  extra: 'C$1.70 / 1000' },
+      { card: 'enterprise', vol: '1,500,000 emails / mo', price: 'C$2,100 / mo',  extra: 'C$1.30 / 1000' },
+      { card: 'enterprise', vol: '2,500,000 emails / mo', price: 'C$2,925 / mo',  extra: 'C$1.20 / 1000' }
+    ],
+    marketing: [
+      { card: 'free',       vol: '1,000 contacts',   price: 'Included' },
+      { card: 'pro',        vol: '3,000 contacts',   price: 'Included' },
+      { card: 'scale',      vol: '5,000 contacts',   price: 'Included' },
+      { card: 'enterprise', vol: '10,000 contacts',  price: 'C$205 / mo' },
+      { card: 'enterprise', vol: '25,000 contacts',  price: 'C$460 / mo' },
+      { card: 'enterprise', vol: '50,000 contacts',  price: 'C$635 / mo' },
+      { card: 'enterprise', vol: '100,000 contacts', price: 'C$1,145 / mo' },
+      { card: 'enterprise', vol: '150,000 contacts', price: 'C$1,655 / mo' }
+    ]
+  };
+
+  var panelRenders = [];
+
+  function setupPanel(tab) {
+    var panel = section.querySelector('.email-tab-panel[data-panel="' + tab + '"]');
+    if (!panel) return;
+    var range = panel.querySelector('.email-range');
+    var grid  = panel.querySelector('.pricing-card-grid');
+    var cards = panel.querySelectorAll('.pricing-card');
+    var rows  = DATA[tab];
+
+    function render() {
+      var i   = +range.value;
+      var row = rows[i];
+      var f   = i / (rows.length - 1);
+
+      range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + f + ')');
+      range.setAttribute('aria-valuetext', row.vol + ', ' + row.price);
+
+      cards.forEach(function (card) {
+        var isActive = card.getAttribute('data-card') === row.card;
+        /* At step 0 on mobile, don't pin the matched card (Bronze)
+           visually focused — let the scroll observer's .is-peek drive
+           its focus state exactly like the other 3 cards, instead of
+           it staying lit regardless of scroll position. */
+        var suppressForScroll = mobileQuery.matches && i === 0;
+        card.classList.toggle('is-active', isActive && !suppressForScroll);
+        /* "Recommended" pill always tracks the true slider match (never
+           Bronze/Free, since that's always step 0) — independent of the
+           mobile scroll suppression above and of hover/peek previews on
+           other cards, which must not steal the badge. */
+        card.classList.toggle('is-recommended-active', isActive && i > 0);
+        if (isActive && row.card === 'enterprise') {
+          var priceEl = card.querySelector('.pricing-card-price');
+          var volEl   = card.querySelector('.pricing-card-vol');
+          var extraEl = card.querySelector('.pricing-card-extra');
+          if (priceEl) priceEl.textContent = row.price;
+          if (volEl) volEl.textContent = row.vol;
+          if (extraEl && row.extra) extraEl.textContent = 'Extra emails: ' + row.extra;
+        }
+      });
+
+      /* Mobile compact mode: once the slider leaves its starting point,
+         collapse the stack down to just the matched card so there's
+         nothing left to scroll past (see CSS's .is-compact rule, scoped
+         to the same 560px breakpoint). */
+      if (grid) grid.classList.toggle('is-compact', mobileQuery.matches && i > 0);
+    }
+
+    range.addEventListener('input', render);
+    render();
+    panelRenders.push(render);
+
+    /* Mobile scroll-focus: while the slider is still at its starting
+       point, scrolling a card near the center of the viewport previews
+       the same focused look hover/press already give it, so a mobile
+       user browsing by scroll (not touching the slider) can still see
+       each tier's focused state. Reuses the existing .is-peek class —
+       identical visual treatment to .is-active, no new CSS needed.
+       Gated on mobileQuery so this never fires on desktop, where
+       scrolling shouldn't drive focus at all. Cards hidden by compact
+       mode (display:none) never intersect, so no extra gating is needed
+       once the slider moves past 0. */
+    var scrollFocusObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('is-peek', mobileQuery.matches && entry.isIntersecting);
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    cards.forEach(function (card) { scrollFocusObserver.observe(card); });
+  }
+
+  setupPanel('transactional');
+  setupPanel('marketing');
+
+  /* Re-evaluate the compact-mode breakpoint if the viewport is resized or
+     rotated while the slider sits at a non-zero value. */
+  window.addEventListener('resize', function () {
+    panelRenders.forEach(function (render) { render(); });
+  });
+
+  /* Peek focus: desktop hover is handled entirely in CSS
+     (`.pricing-card:not(.is-active):hover`). Touch has no hover, so a
+     press adds `.is-peek` (same visual treatment as `.is-active`), and
+     releasing anywhere — including outside the card — clears it.
+     Desktop-only: on mobile, the round-6 scroll-focus IntersectionObserver
+     is the sole owner of `.is-peek` — without this guard, lifting a
+     finger after any scroll gesture fires the global pointerup below and
+     wipes out whatever card the scroll observer had legitimately
+     focused, forcing another scroll/tap to re-trigger it. */
+  section.querySelectorAll('.pricing-card').forEach(function (card) {
+    card.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'touch' && !mobileQuery.matches) card.classList.add('is-peek');
+    });
+  });
+  function clearPeek() {
+    if (mobileQuery.matches) return;
+    section.querySelectorAll('.pricing-card.is-peek').forEach(function (card) {
+      card.classList.remove('is-peek');
+    });
+  }
+  document.addEventListener('pointerup', clearPeek);
+  document.addEventListener('pointercancel', clearPeek);
+
+  /* Toggle pills */
+  var toggleBtns = section.querySelectorAll('.email-toggle-btn');
+  var panels     = section.querySelectorAll('.email-tab-panel');
+  toggleBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var tab = btn.getAttribute('data-tab');
+      toggleBtns.forEach(function (b) {
+        var active = b === btn;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panels.forEach(function (p) {
+        p.classList.toggle('is-hidden', p.getAttribute('data-panel') !== tab);
+      });
     });
   });
 })();
