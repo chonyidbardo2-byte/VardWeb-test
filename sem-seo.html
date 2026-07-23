@@ -16,6 +16,7 @@
   <style>
     :root {
       --cyan:    #00E5FF;
+      --google-blue: #4285F4;
       --pink:    #FF2D78;
       --gold:    #FFD700;
       --hero-orange: #f97316;
@@ -352,6 +353,21 @@
       display: block;
       padding: 0;
     }
+    /* Video/YouTube ad mockup opts into a 16:9 widescreen box instead of the
+       shared square chrome — its player content reads as an actual video format.
+       Scoped to this one id so the other .content-2col-visual boxes are unaffected. */
+    #wf-video-box {
+      aspect-ratio: 16 / 9;
+      max-width: 640px;
+    }
+    /* Performance Max opts into the same 640px width cap as ASP/YouTube, and
+       matches the ASP box's height (rather than staying a 1:1 square) so all
+       three boxes render at matching size. Scoped to this one id so the other
+       .content-2col-visual boxes are unaffected. */
+    #wf-pmax-box {
+      max-width: 640px;
+      aspect-ratio: 552 / 451.8125;
+    }
     /* Below the 2-column breakpoint, un-box .content-2col-text so its children
        (heading, paragraph, tier-kicker, tier-row) become direct grid items
        alongside .content-2col-visual — lets us interleave the box between the
@@ -366,6 +382,15 @@
       .content-2col-visual { order: 3; }
       .content-2col-text > *:nth-child(3) { order: 4; }
       .content-2col-text > *:nth-child(4) { order: 5; }
+      /* LSA section only: has an extra .tip-banner wrapper as its 3rd child (before
+         tier-kicker), pushing tier-row to a real 5th child that the generic rules
+         above don't cover, so it fell back to order:0 and rendered first. */
+      #wf-lsa-text > *:nth-child(5) { order: 6; }
+      #wf-pmax-text > *:nth-child(5) { order: 6; }
+      #wf-shopping-text > *:nth-child(5) { order: 6; }
+      #wf-video-text > *:nth-child(5) { order: 6; }
+      #wf-adsense-text > *:nth-child(5) { order: 6; }
+      #wf-asp-text > *:nth-child(5) { order: 6; }
     }
     .wf-box-clip {
       position: absolute; inset: 0;
@@ -408,6 +433,25 @@
       .trust-dot { display: none; }
     }
 
+    /* Tip admonition banner */
+    .tip-banner {
+      display: flex; flex-direction: column; gap: 6px;
+      max-width: 480px; margin: 4px 0 2px;
+      padding: 16px 18px; border-radius: 10px;
+      background: #08150D; border: 1px solid #016630;
+    }
+    .tip-banner-head { display: flex; align-items: center; gap: 8px; }
+    .tip-banner-icon { color: #05DF72; flex-shrink: 0; }
+    .tip-banner-title {
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+      color: #05DF72;
+    }
+    .tip-banner-body {
+      font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7;
+      color: rgba(123,241,168,0.65);
+    }
+    .tip-banner-body b { color: #05DF72; font-weight: 700; }
+
     /* Tier chips — Jack/Queen/King/Ace pricing tiers, per section */
     .tier-kicker {
       font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
@@ -443,17 +487,68 @@
     }
     .tier-chip-fee { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text-1); }
     .tier-chip-band { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 600; color: var(--text-2); line-height: 1.45; }
-    /* Ace — holo/foil treatment: dual-tone gradient dot + layered cyan/pink glow */
-    .tier-chip[data-tier="ace"] { background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(255,45,120,0.05)); }
+    /* Ace — holo/foil treatment: dual-tone gradient dot + layered red glow */
+    .tier-chip[data-tier="ace"] { background: linear-gradient(135deg, rgba(255,59,59,0.05), rgba(185,28,28,0.05)); }
     .tier-chip[data-tier="ace"] .tier-chip-dot {
-      background: linear-gradient(135deg, var(--cyan), #ffffff 50%, var(--pink));
+      background: linear-gradient(135deg, #FF3B3B, #ffffff 50%, #B91C1C);
       box-shadow: 0 0 8px rgba(242,245,255,0.55);
     }
     .tier-chip[data-tier="ace"]:hover {
       border-color: rgba(242,245,255,0.55);
-      box-shadow: 0 10px 22px -8px rgba(0,0,0,0.45), 0 0 10px rgba(0,229,255,0.22), 0 0 18px rgba(255,45,120,0.18);
+      box-shadow: 0 10px 22px -8px rgba(0,0,0,0.45), 0 0 10px rgba(255,59,59,0.22), 0 0 18px rgba(185,28,28,0.18);
+    }
+    .tier-focus-panel[data-tier="ace"] .tier-chip-dot {
+      background: linear-gradient(135deg, #FF3B3B, #ffffff 50%, #B91C1C);
+      box-shadow: 0 0 8px rgba(242,245,255,0.55);
     }
     @media (max-width: 400px) { .tier-row { grid-template-columns: 1fr; max-width: 100%; } }
+
+    /* Tier glider — single-card slider variant of the tier chips above.
+       Same Jack/Queen/King/Ace data and color coding, but only one tier is
+       shown at a time (dragging the slider swaps it) inside a bigger card
+       with a dedicated icon panel. Built generically (classes only, no
+       per-section IDs) so it can be copied into other sections unchanged. */
+    .tier-glider { display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin-top: 2px; }
+    .tier-slider-wrap { max-width: 480px; margin: 0; padding: 0 9px; }
+    .tier-slider-ticks span { color: var(--tier-color, rgba(255,255,255,0.65)); }
+    .tier-focus-box {
+      display: flex; align-items: stretch;
+      min-height: 132px; border-radius: 14px; overflow: hidden;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.12));
+      background: var(--tier-bg, rgba(255,255,255,0.02));
+      box-shadow: 0 10px 24px -10px rgba(0,0,0,0.5), 0 0 18px var(--tier-glow, transparent);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .tier-focus-info { flex: 1; position: relative; padding: 20px 22px; }
+    .tier-focus-panel {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center; gap: 8px;
+      padding: 20px 22px;
+      opacity: 0; pointer-events: none; transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .tier-focus-panel.is-active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .tier-focus-fee { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text-1); }
+    .tier-focus-band { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-2); }
+    .tier-focus-icon {
+      flex: 0 0 128px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 14px;
+    }
+    .tier-icon-ring {
+      width: 92px; height: 92px; border-radius: 50%;
+      background: #fff;
+      border: 4px solid var(--tier-color, rgba(255,255,255,0.4));
+      box-shadow: 0 0 16px var(--tier-glow, transparent);
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .tier-icon-ring img { width: 64px; height: 64px; object-fit: contain; display: block; }
+    @media (max-width: 480px) {
+      .tier-focus-icon { flex-basis: 96px; padding: 10px; }
+      .tier-icon-ring { width: 72px; height: 72px; border-width: 3px; }
+      .tier-icon-ring img { width: 50px; height: 50px; }
+    }
 
     /* Email pricing — toggle + slider + 4-card grid, mirrors a Resend-style
        pricing page but rendered entirely in VardWeb's own dark/cyan/pink/gold
@@ -723,16 +818,14 @@
       border: 1px solid rgba(0,229,255,0.5);
       box-shadow: 0 0 24px rgba(0,229,255,0.3), 0 0 50px rgba(255,45,120,0.1);
       animation: orbit-pulse 3.2s ease-in-out infinite;
+      display: flex; align-items: center; justify-content: center;
     }
     @keyframes orbit-pulse {
       0%, 100% { box-shadow: 0 0 24px rgba(0,229,255,0.3), 0 0 50px rgba(255,45,120,0.1); }
       50%      { box-shadow: 0 0 38px rgba(0,229,255,0.5), 0 0 72px rgba(255,45,120,0.2); }
     }
-    /* Two-tone diagonal mark echoing the real Google Ads logo shape */
-    .pmax-mark-bar { position: absolute; width: 12px; border-radius: 999px; transform: rotate(45deg); }
-    .pmax-mark-bar.gold { height: 22px; left: 17px; top: 29px; background: #FBBC05; }
-    .pmax-mark-bar.blue { height: 27px; left: 30px; top: 12px; background: #4285F4; }
-    .pmax-mark-dot { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #34A853; left: 15px; top: 41px; }
+    /* Real Google Ads logomark (blue/gold bars + green dot) rather than CSS-rotated bars */
+    .pmax-hub-icon svg { display: block; width: 38px; height: 38px; }
     .pmax-hub-label { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-1); text-align: center; line-height: 1.25; letter-spacing: -0.01em; }
 
     /* Channel nodes — each is sized to its own icon and centered exactly on the computed
@@ -764,7 +857,7 @@
     /* Tiled icons (Gmail-was-removed / YouTube / Display) — tile kept only for the 2 channels
        the reference actually shows on a background tile */
     .pmax-tile { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .pmax-tile.display { width: 46px; height: 46px; border-radius: 13px; background: #34A853; }
+    .pmax-tile.display { width: 54px; height: 37px; border-radius: 7px; background: #34A853; }
     .pmax-tile.youtube { width: 54px; height: 38px; border-radius: 12px; background: #FF0000; }
     .pmax-tile svg { display: block; }
 
@@ -777,17 +870,21 @@
     /* Authenticator — 3 full-length bars crossing the center, each half colored independently,
        built as 6 petals: -30/30/90/150/210/270deg = 11/1/3/5/7/9 o'clock, yellow/blue/blue/red/red/green */
     .pmax-auth { position: relative; width: 40px; height: 40px; }
-    .pmax-auth-petal { position: absolute; left: 50%; top: 50%; width: 7px; height: 16px; margin-left: -3.5px; border-radius: 999px; transform-origin: 50% 0%; }
+    .pmax-auth-petal { position: absolute; left: 50%; top: calc(50% - 2px); width: 7px; height: 22px; margin-left: -3.5px; border-radius: 0 0 999px 999px; transform-origin: 50% 2px; }
+    /* Dark-navy hub accent: apex pinned at absolute x=20 (the yellow/blue bisector), base wide
+       enough on the right to fully cover red's peak (not just brush its edge). */
+    .pmax-auth-connector-accent {
+      position: absolute; left: 11px; top: 11px; width: 17px; height: 13px;
+      clip-path: polygon(53% 0%, 0% 100%, 100% 100%);
+      background: #1c5faa; opacity: 0.8; z-index: 3;
+    }
 
-    /* Google Maps pin — silhouette clipped into 4 color quadrants (blue/red/yellow/green), white hole on top */
-    .pmax-maps { position: relative; width: 38px; height: 44px; }
+    /* Google Maps pin — official 2020 mark (5 curved color regions), white hole on top */
+    .pmax-maps { position: relative; width: 31px; height: 44px; }
 
     @media (max-width: 480px) {
       .pmax-hub-icon { width: 46px; height: 46px; border-radius: 13px; }
-      .pmax-mark-bar { width: 9px; }
-      .pmax-mark-bar.gold { height: 18px; left: 11px; top: 20px; }
-      .pmax-mark-bar.blue { height: 23px; left: 22px; top: 6px; }
-      .pmax-mark-dot { width: 8px; height: 8px; left: 9px; top: 30px; }
+      .pmax-hub-icon svg { width: 28px; height: 28px; }
       .pmax-hub-label { font-size: 10.5px; }
       .pmax-node-blob { width: 70px; height: 70px; }
       .pmax-node-label { font-size: 10px; }
@@ -798,15 +895,17 @@
       }
       .pmax-node-youtube { left: 20%; }
       .pmax-node-display { left: 80%; }
-      .pmax-tile.display { width: 32px; height: 32px; border-radius: 9px; }
+      .pmax-tile.display { width: 38px; height: 26px; border-radius: 5px; }
       .pmax-tile.youtube { width: 38px; height: 27px; border-radius: 8px; }
       .pmax-tile svg { width: 18px; height: 15px; }
+      .pmax-tile.display svg { width: 38px; height: 26px; }
       .pmax-tile.youtube svg { width: 20px; height: 20px; }
       .pmax-standalone.google { width: 32px; height: 32px; }
       .pmax-standalone.gmail { width: 34px; height: 26px; }
       .pmax-auth { width: 28px; height: 28px; }
-      .pmax-auth-petal { width: 5px; height: 11px; margin-left: -2.5px; }
-      .pmax-maps { width: 27px; height: 31px; }
+      .pmax-auth-petal { top: calc(50% - 1px); width: 5px; height: 15px; margin-left: -2.5px; transform-origin: 50% 1px; }
+      .pmax-auth-connector-accent { left: 8px; top: 8px; width: 12px; height: 9px; }
+      .pmax-maps { width: 22px; height: 31px; }
     }
 
     /* Bespoke visual — Video / YouTube ad player mockup (no screenshot exists for this product) */
@@ -880,8 +979,8 @@
     .mock-filterpill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
     /* Bottom "More…" arrow pill (Local Service Ads) */
-    .mock-more-pill { align-self: center; display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--text-1); border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; padding: 5px 14px; }
-    .mock-more-pill svg { width: 10px; height: 10px; }
+    .mock-more-pill { align-self: center; display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: var(--google-blue); border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; padding: 5px 14px; }
+    .mock-more-pill svg { width: 13px; height: 13px; }
 
     /* Kebab (⋮) menu dot used next to URLs / sponsored labels — Search & Shopping Ads */
     .mock-kebab { color: rgba(200,212,232,0.35); font-size: 13px; line-height: 1; }
@@ -907,12 +1006,12 @@
     .serp-body-row { display: flex; gap: 14px; align-items: flex-start; }
     .serp-body-text { flex: 1; min-width: 0; }
     .serp-thumb { width: 64px; height: 50px; border-radius: 6px; flex-shrink: 0; background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15)); }
-    .serp-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--cyan); margin-bottom: 5px; letter-spacing: -0.01em; }
+    .serp-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; color: var(--google-blue); margin-bottom: 5px; letter-spacing: -0.01em; }
     .serp-desc { font-size: 12.5px; line-height: 1.45; color: rgba(200,212,232,0.55); margin-bottom: 8px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
     .serp-sitelinks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 18px; }
-    .serp-sitelink-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 700; color: var(--cyan); margin-bottom: 1px; }
+    .serp-sitelink-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 700; color: var(--google-blue); margin-bottom: 1px; }
     .serp-sitelink-desc { font-size: 9.5px; line-height: 1.3; color: rgba(200,212,232,0.38); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .serp-inline-links { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--cyan); line-height: 1.4; }
+    .serp-inline-links { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10.5px; font-weight: 600; color: var(--google-blue); line-height: 1.4; }
     .serp-organic-ghost { position: relative; z-index: 1; opacity: 0.32; padding: 4px 18px 0; flex: 1; overflow: hidden; }
     @media (max-width: 480px) {
       .serp-results-count { display: none; }
@@ -923,7 +1022,7 @@
       .serp-desc { font-size: 10.5px; margin-bottom: 7px; -webkit-line-clamp: 2; }
     }
     .serp-organic-url { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: rgba(200,212,232,0.5); margin-bottom: 3px; }
-    .serp-organic-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: rgba(200,212,232,0.6); margin-bottom: 6px; }
+    .serp-organic-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; color: rgba(200,212,232,0.6); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .serp-organic-line { height: 6px; border-radius: 3px; background: rgba(200,212,232,0.2); margin-bottom: 5px; }
     .serp-organic-line.short { width: 55%; }
     .serp-organic-links { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 600; color: rgba(200,212,232,0.5); margin-top: 4px; }
@@ -966,15 +1065,16 @@
     .lsa-header-sponsored { display: inline-flex; align-items: center; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: rgba(200,212,232,0.5); letter-spacing: 0.03em; }
     .lsa-header-sponsored svg { width: 10px; height: 10px; }
     .lsa-row { position: relative; z-index: 1; display: flex; gap: 12px; }
-    .lsa-card { flex: 1; min-width: 0; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px 14px; display: flex; flex-direction: column; gap: 10px; justify-content: flex-start; }
-    .lsa-badge { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; color: #33D17A; letter-spacing: 0.03em; width: fit-content; }
-    .lsa-badge svg { width: 9px; height: 9px; flex-shrink: 0; }
-    .lsa-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--cyan); line-height: 1.3; }
-    .lsa-rating { font-size: 10.5px; color: var(--gold); }
+    .lsa-card { flex: 1; min-width: 0; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 18px 14px; display: flex; flex-direction: column; gap: 5px; justify-content: flex-start; }
+    .lsa-badge { display: inline-flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; color: rgba(200,212,232,0.4); letter-spacing: 0.08em; width: fit-content; max-width: 100%; }
+    .lsa-badge svg { width: 10px; height: 10px; flex-shrink: 0; color: #33D17A; }
+    .lsa-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; font-weight: 800; color: var(--google-blue); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lsa-rating { font-size: 10.5px; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .lsa-rating span { color: rgba(200,212,232,0.5); margin-left: 3px; }
-    .lsa-years { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: rgba(200,212,232,0.4); }
-    .lsa-phone { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(200,212,232,0.45); }
-    .lsa-phone .lsa-status { color: var(--pink); font-weight: 600; }
+    .lsa-years { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: rgba(200,212,232,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lsa-phone { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: rgba(200,212,232,0.45); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lsa-phone .lsa-status { color: #33D17A; font-weight: 600; }
+    .lsa-phone .lsa-status-closed { color: var(--pink); }
     @media (max-width: 480px) {
       .viz-lsa { padding: 14px 16px; gap: 8px; }
       .lsa-header-count { font-size: 11px; }
@@ -985,10 +1085,15 @@
       .lsa-years { font-size: 7px; }
       .lsa-phone { font-size: 7.5px; }
       .lsa-badge { font-size: 6.5px; }
+      #wf-lsa-box .serp-organic-ghost:nth-last-child(-n+2) { display: none; }
+      #wf-lsa-box .lsa-card:last-child { display: none; }
     }
     /* Non-mobile spacing squeeze (box, not text) so a second serp-organic-ghost fits below the first — mirrors the ≤480px mobile cutoff above */
     @media (min-width: 481px) {
-      #wf-lsa-box .viz-lsa { gap: 10px; }
+      #wf-lsa-box .viz-lsa { gap: 7px; padding: 22px 12px; }
+      #wf-lsa-box .lsa-row { gap: 6px; }
+      #wf-lsa-box .lsa-card { padding: 18px 6px; }
+      #wf-lsa-box .lsa-phone { font-size: 9px; }
       #wf-lsa-box .serp-organic-ghost { padding-top: 0; flex: initial; }
       #wf-lsa-box .serp-organic-headline { margin-bottom: 3px; }
       #wf-lsa-box .serp-organic-line { margin-bottom: 3px; }
@@ -1015,15 +1120,19 @@
     .ads-byline { display: flex; align-items: center; gap: 6px; margin-top: -3px; flex-shrink: 0; }
     .ads-byline-avatar { width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--pink)); flex-shrink: 0; }
     .ads-byline-text { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: rgba(200,212,232,0.4); }
-    .ads-page-row { display: flex; gap: 10px; flex: 1.2 1 46px; min-height: 46px; }
+    .ads-page-row-combined { display: flex; gap: 10px; flex: 2.9 1 138px; min-height: 138px; }
+    .ads-page-left-col { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+    .ads-page-right-col { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
     .ads-content-block { height: 46px; border-radius: 6px; background: rgba(255,255,255,0.05); flex-shrink: 0; }
-    .ads-page-row .ads-content-block { flex: 1; height: auto; }
-    .ads-page-row .ads-unit { align-self: center; }
-    .ads-hero-block { flex: 1 1 32px; width: 70%; height: auto; min-height: 32px; }
+    .ads-top-block { height: 46px; }
+    .ads-hero-block { flex: 1 1 32px; width: 100%; height: auto; min-height: 32px; }
     .ads-line { height: 12px; flex-shrink: 0; }
-    .ads-unit { width: 78px; height: 46px; border-radius: 6px; border: 1.5px dashed rgba(255,215,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; flex-shrink: 0; }
+    .ads-unit { width: 66px; height: 46px; border-radius: 6px; border: 1.5px dashed rgba(255,215,0,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 2px; font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; flex-shrink: 0; }
     .ads-unit span { font-size: 6.5px; font-weight: 600; color: rgba(255,215,0,0.55); }
     .ads-unit.wide { width: 100%; height: 30px; margin-top: 2px; flex-direction: row; gap: 6px; flex-shrink: 0; }
+    .ads-line-group { display: flex; flex-direction: column; justify-content: flex-start; gap: 6px; flex-shrink: 0; }
+    .ads-unit.tall { width: 46px; flex: 1; }
+    .ads-mini-block { height: 20px; width: 55%; flex-shrink: 0; }
     .ads-earnings { position: absolute; right: 16px; bottom: 16px; z-index: 2; background: rgba(7,9,16,0.85); border: 1px solid rgba(0,229,255,0.3); border-radius: 10px; padding: 10px 14px; display: flex; flex-direction: column; gap: 3px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
     .ads-earnings-label { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(200,212,232,0.45); }
     .ads-earnings-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--cyan); display: flex; align-items: center; gap: 4px; }
@@ -1034,12 +1143,15 @@
       .ads-page { gap: 6px; padding-bottom: 40px; }
       .ads-headline { font-size: 11px; }
       .ads-byline-text { font-size: 7px; }
-      .ads-page-row { flex-basis: 34px; min-height: 34px; }
+      .ads-page-row-combined { flex-basis: 102px; min-height: 102px; }
+      .ads-top-block { height: 34px; }
       .ads-hero-block { flex-basis: 24px; min-height: 24px; }
       .ads-line { height: 8px; }
-      .ads-unit { width: 56px; height: 34px; font-size: 7.5px; }
+      .ads-unit { width: 48px; height: 34px; font-size: 7.5px; }
       .ads-unit span { font-size: 5px; }
       .ads-unit.wide { height: 22px; }
+      .ads-unit.tall { width: 34px; flex: 1; }
+      .ads-mini-block { height: 14px; }
       .ads-earnings { right: 10px; bottom: 10px; padding: 6px 9px; }
       .ads-earnings-label { font-size: 6.5px; }
       .ads-earnings-val { font-size: 11px; }
@@ -1051,22 +1163,15 @@
     .viz-asp { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .asp-top-label { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 15.5px; font-weight: 700; color: rgba(200,212,232,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
     .asp-slides { position: relative; z-index: 1; width: 100%; display: grid; }
-    .asp-slide { grid-area: 1 / 1; zoom: var(--asp-scale, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; opacity: 0; animation: asp-cycle 9s ease-in-out infinite; }
-    .asp-slide:nth-child(2) { animation-delay: 3s; }
-    .asp-slide:nth-child(3) { animation-delay: 6s; }
-    @keyframes asp-cycle {
-      0% { opacity: 0; } 4% { opacity: 1; } 28% { opacity: 1; } 33% { opacity: 0; } 100% { opacity: 0; }
-    }
+    .asp-slide { grid-area: 1 / 1; zoom: var(--asp-scale, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
+    .asp-slide.is-active { opacity: 1; pointer-events: auto; }
     @media (prefers-reduced-motion: reduce) {
-      .asp-slide { animation: none; opacity: 0; }
-      .asp-slide:first-child { opacity: 1; }
-      .asp-dot { animation: none !important; background: rgba(255,255,255,0.2) !important; }
-      .asp-dot:first-child { background: var(--cyan) !important; }
+      .asp-slide { transition: none; }
     }
     /* Amazon-accurate card chrome — recreates the reference screenshot's real
        light-mode UI (white cards, Amazon orange/blue) inset in the dark frame */
-    .asp-card { width: 430px; display: flex; flex-direction: column; gap: 10px; background: #fff; border: 1px solid #d5dbdb; border-radius: 8px; padding: 14px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
-    .asp-card--selected { border-color: #0972d3; background: #fff; }
+    .asp-card { width: 430px; display: flex; flex-direction: column; gap: 10px; background: #fff; border: 2px solid rgba(255,153,0,0.7); border-radius: 8px; padding: 14px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    .asp-card--selected { border-color: rgba(255,153,0,0.7); background: #fff; }
     .asp-card-title-row { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .asp-card-title { font-size: 17px; font-weight: 700; color: #0f1111; letter-spacing: 0; }
     .asp-new-tag { font-size: 12px; font-weight: 700; color: #fff; background: #0972d3; border-radius: 4px; padding: 2px 8px; letter-spacing: 0.01em; }
@@ -1092,14 +1197,13 @@
     .asp-mock-video-icon svg { width: 13px; height: 13px; }
     .asp-mock-video-lines { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
     .asp-mock-video-stars { font-size: 13px; color: #FF9900; letter-spacing: -0.3px; }
-    .asp-card-caption { font-size: 13px; line-height: 1.4; color: #fff; text-align: center; white-space: nowrap; flex-shrink: 0; }
+    .asp-card-caption { font-family: 'Inter', -apple-system, "Helvetica Neue", Arial, sans-serif; font-size: 13px; line-height: 1.4; color: #0f1111; text-align: center; white-space: nowrap; flex-shrink: 0; }
     .asp-dots { position: relative; z-index: 1; display: flex; gap: 6px; justify-content: center; flex-shrink: 0; }
-    .asp-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); animation: asp-dot-cycle 9s ease-in-out infinite; }
-    .asp-dot:nth-child(2) { animation-delay: 3s; }
-    .asp-dot:nth-child(3) { animation-delay: 6s; }
-    @keyframes asp-dot-cycle {
-      0%, 100% { background: rgba(255,255,255,0.2); } 4%, 28% { background: var(--cyan); } 33% { background: rgba(255,255,255,0.2); }
-    }
+    .asp-dot { width: 5px; height: 5px; padding: 6px; box-sizing: content-box; border: none; border-radius: 50%; background-color: rgba(255,255,255,0.2); background-clip: content-box; cursor: pointer; transition: background-color 0.3s ease, transform 0.15s ease; }
+    .asp-dot:hover { background-color: rgba(255,255,255,0.4); }
+    .asp-dot:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+    .asp-dot:active { transform: scale(0.85); }
+    .asp-dot.is-active { background-color: var(--cyan); }
 
     /* Footer */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -1429,7 +1533,7 @@
 
 <!-- ── CONTENT: Google Search Ads (2-column, ported from the reference's Content Section) ── -->
 <section class="content-2col">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-gsa-text">
     <div class="wf-outer">
       <h2 id="wf-gsa-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Google Search Ads
@@ -1440,27 +1544,53 @@
         Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.<br><br>Every account also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
       </p>
     </div>
-    <p class="tier-kicker">Choose your tier</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$750/mo</span>
-        <span class="tier-chip-band">Spend $1,000–$1,500</span>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-gsa-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$800/mo</span>
-        <span class="tier-chip-band">Spend $1,500–$2,000</span>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-gsa-tip-body"><b>Best For:</b> Capturing high-intent users actively searching for your specific product or service.</p>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$850/mo</span>
-        <span class="tier-chip-band">Spend $2,000–$2,500</span>
+    </div>
+    <div class="tier-glider">
+      <p class="tier-kicker">Choose your tier</p>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Search Ads tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$900/mo</span>
-        <span class="tier-chip-band">Spend $2,500–$3,000</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$750/mo</span>
+            <span class="tier-focus-band">Spend C$1,000–C$1,500</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$800/mo</span>
+            <span class="tier-focus-band">Spend C$1,500–C$2,000</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$850/mo</span>
+            <span class="tier-focus-band">Spend C$2,000–C$2,500</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$900/mo</span>
+            <span class="tier-focus-band">Spend C$2,500–C$3,000</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon">
+          <div class="tier-icon-ring">
+            <img src="brand_assets/icons/google-search-ads.png" alt="" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1484,11 +1614,11 @@
       </div>
       <p class="serp-results-count">About 2,430,000 results (0.61 seconds)</p>
       <div class="serp-card">
-        <div class="serp-meta"><span class="serp-ad-badge badge-pulse">Ad</span><span class="serp-url">mailchimp.com</span><span class="mock-kebab">⋮</span></div>
+        <div class="serp-meta"><span class="serp-ad-badge badge-pulse">Ad</span><span class="serp-url">vardweb.com</span><span class="mock-kebab">⋮</span></div>
         <div class="serp-body-row">
           <div class="serp-body-text">
             <p class="serp-headline">Social Media Marketing - Organic Social Posting</p>
-            <p class="serp-desc">Easily Create and Manage Professional Social Media Campaigns With Our Intuitive Interface. Build Your Following On Social Media And Reach The Right People.</p>
+            <p class="serp-desc">Easily Create and Manage Professional Social Media Campaigns. Build Your Following and Reach the Right People.</p>
           </div>
           <div class="serp-thumb"></div>
         </div>
@@ -1504,14 +1634,14 @@
         </div>
       </div>
       <div class="serp-card compact serp-card-2">
-        <div class="serp-meta"><span class="serp-ad-badge">Ad</span><span class="serp-url">zozimus.com</span><span class="serp-url">(617) 259-1605</span></div>
+        <div class="serp-meta"><span class="serp-ad-badge badge-pulse">Ad</span><span class="serp-url">vardweb.ca</span><span class="mock-kebab">⋮</span><span class="serp-url">(613) 279-1635</span></div>
         <p class="serp-headline">Dream Big. We'll Do the Rest. - Award Winning Social Media</p>
-        <p class="serp-desc">Our Bespoke Social Media Strategies Are Tailored to Suit Your Needs. It's Just How We Are. One Size Doesn't Fit All. It's Why We Customize Your Strategy with You, for You.</p>
+        <p class="serp-desc">Our Bespoke Social Media Strategies Are Tailored to Suit Your Needs. It's Just How We Are. One Size Doesn't Fit All.</p>
         <p class="serp-inline-links">Paid Search · Best Ad Agency in Boston · Social Media · Brand Strategy</p>
       </div>
       <div class="serp-organic-ghost">
-        <p class="serp-organic-url">wordstream.com</p>
-        <p class="serp-organic-headline">Social Media Marketing for Businesses - WordStream</p>
+        <p class="serp-organic-url">vardweb.net</p>
+        <p class="serp-organic-headline">Social Media Marketing for Businesses - VardWeb</p>
         <div class="serp-organic-line"></div>
         <p class="serp-organic-links">Social Media Optimization · Popular Social Media Platforms</p>
       </div>
@@ -1524,7 +1654,7 @@
 
 <!-- ── CONTENT: Performance Max (2-column, flipped) — no screenshot exists; bespoke CSS orbit visual ── -->
 <section class="content-2col flip">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-pmax-text">
     <div class="wf-outer">
       <h2 id="wf-pmax-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Performance Max
@@ -1535,27 +1665,38 @@
         Performance Max runs one AI-driven campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time. Google's own recommended default once an account has enough conversion history to fuel the automation.<br><br>We configure the feed and asset groups, set the right conversion goals, and review signals monthly, including the newer Demand Gen format for visual, feed-native placements.
       </p>
     </div>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-pmax-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+      </div>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-pmax-tip-body"><b>Best For:</b> Maximizing conversions using Google's AI without managing multiple individual campaigns.</p>
+      </div>
+    </div>
     <p class="tier-kicker">Choose your tier</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$800/mo</span>
-        <span class="tier-chip-band">Spend $1,500–$2,125</span>
+        <span class="tier-chip-fee">C$800/mo</span>
+        <span class="tier-chip-band">Spend C$1,500–C$2,125</span>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$875/mo</span>
-        <span class="tier-chip-band">Spend $2,125–$2,750</span>
+        <span class="tier-chip-fee">C$875/mo</span>
+        <span class="tier-chip-band">Spend C$2,125–C$2,750</span>
       </div>
       <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$925/mo</span>
-        <span class="tier-chip-band">Spend $2,750–$3,375</span>
+        <span class="tier-chip-fee">C$925/mo</span>
+        <span class="tier-chip-band">Spend C$2,750–C$3,375</span>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$1,000/mo</span>
-        <span class="tier-chip-band">Spend $3,375–$4,000</span>
+        <span class="tier-chip-fee">C$1,000/mo</span>
+        <span class="tier-chip-band">Spend C$3,375–C$4,000</span>
       </div>
     </div>
   </div>
@@ -1565,7 +1706,7 @@
         <!-- Google — 11 o'clock, no tile, standalone multicolor "G" logomark, label above -->
         <div class="pmax-node" style="top: 18.8%; left: 32%;">
           <span class="pmax-node-blob" style="--blob-tint: rgba(66,133,244,0.16);"></span>
-          <span class="pmax-node-label pos-top">Google</span>
+          <span class="pmax-node-label pos-bottom">Google</span>
           <span class="pmax-standalone google">
             <svg viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
@@ -1578,14 +1719,14 @@
         <!-- Gmail — 1 o'clock, no tile, standalone 5-region "M" logomark, label above -->
         <div class="pmax-node" style="top: 18.8%; left: 68%;">
           <span class="pmax-node-blob" style="--blob-tint: rgba(234,67,53,0.14);"></span>
-          <span class="pmax-node-label pos-top">Gmail</span>
+          <span class="pmax-node-label pos-bottom">Gmail</span>
           <span class="pmax-standalone gmail">
-            <svg viewBox="0 0 48 36" aria-hidden="true">
-              <rect x="4" y="9" width="8" height="23" rx="3" fill="#4285F4"/>
-              <rect x="36" y="9" width="8" height="23" rx="3" fill="#34A853"/>
-              <polygon points="4,9 12,3 12,11" fill="#C5221F"/>
-              <polygon points="44,9 36,3 36,11" fill="#FBBC04"/>
-              <path d="M12,3 L24,19 L36,3 L36,11 L24,27 L12,11 Z" fill="#EA4335"/>
+            <svg viewBox="52 42 88 66" aria-hidden="true">
+              <path d="M58 108h14V74L52 59v43c0 3.32 2.69 6 6 6" fill="#4285f4"/>
+              <path d="M120 108h14c3.32 0 6-2.69 6-6V59l-20 15" fill="#34a853"/>
+              <path d="M120 48v26l20-15v-8c0-7.42-8.47-11.65-14.4-7.2" fill="#fbbc04"/>
+              <path d="M72 74V48l24 18 24-18v26L96 92" fill="#ea4335"/>
+              <path d="M52 51v8l20 15V48l-5.6-4.2c-5.94-4.45-14.4-.22-14.4 7.2" fill="#c5221f"/>
             </svg>
           </span>
         </div>
@@ -1593,31 +1734,25 @@
         <div class="pmax-node pmax-node-display">
           <span class="pmax-node-blob" style="--blob-tint: rgba(52,168,83,0.16);"></span>
           <span class="pmax-tile display">
-            <svg viewBox="0 0 24 20" aria-hidden="true">
-              <rect x="2" y="2" width="20" height="4" rx="1" fill="#fff"/>
-              <rect x="2" y="8" width="12" height="10" rx="1" fill="#fff"/>
-              <rect x="16" y="8" width="6" height="10" rx="1" fill="#fff"/>
+            <svg viewBox="0 0 29 20" aria-hidden="true">
+              <rect x="2.7" y="6" width="14" height="2.2" fill="#fff"/>
+              <rect x="2.7" y="9.5" width="14" height="6.6" fill="#fff"/>
+              <rect x="18" y="6" width="7" height="10.1" fill="#fff"/>
             </svg>
           </span>
-          <span class="pmax-node-label pos-right">Display</span>
+          <span class="pmax-node-label pos-bottom">Display</span>
         </div>
         <!-- Google Maps — 5 o'clock, no tile, color-blocked pin silhouette, label below -->
         <div class="pmax-node" style="top: 81.2%; left: 68%;">
           <span class="pmax-node-blob" style="--blob-tint: rgba(66,133,244,0.16);"></span>
           <span class="pmax-maps">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <defs>
-                <clipPath id="pmaxMapsPinClip">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                </clipPath>
-              </defs>
-              <g clip-path="url(#pmaxMapsPinClip)">
-                <rect x="0" y="0" width="10" height="9" fill="#EA4335"/>
-                <rect x="10" y="0" width="14" height="9" fill="#4285F4"/>
-                <rect x="0" y="9" width="8" height="15" fill="#FBBC05"/>
-                <rect x="8" y="9" width="16" height="15" fill="#34A853"/>
-              </g>
-              <circle cx="12" cy="9" r="3.4" fill="#fff"/>
+            <svg viewBox="0 0 92.3 132.3" aria-hidden="true">
+              <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z"/>
+              <path fill="#ea4335" d="M10.8 16.5C4.1 24.5 0 34.9 0 46.1c0 8.7 1.7 15.7 4.6 22l28-33.3-21.8-18.3z"/>
+              <path fill="#4285f4" d="M46.2 28.5c9.8 0 17.7 7.9 17.7 17.7 0 4.3-1.6 8.3-4.2 11.4 0 0 13.9-16.6 27.5-32.7-5.6-10.8-15.3-19-27-22.7L32.6 34.8c3.3-3.8 8.1-6.3 13.6-6.3"/>
+              <path fill="#fbbc04" d="M46.2 63.8c-9.8 0-17.7-7.9-17.7-17.7 0-4.3 1.5-8.3 4.1-11.3l-28 33.3c4.8 10.6 12.8 19.2 21 29.9l34.1-40.5c-3.3 3.9-8.1 6.3-13.5 6.3"/>
+              <path fill="#34a853" d="M59.1 109.2c15.4-24.1 33.3-35 33.3-63 0-7.7-1.9-14.9-5.2-21.3L25.6 98c2.6 3.4 5.3 7.3 7.9 11.3 9.4 14.5 6.8 23.1 12.8 23.1s3.4-8.7 12.8-23.2"/>
+              <circle cx="46.2" cy="46.1" r="17.7" fill="#fff"/>
             </svg>
           </span>
           <span class="pmax-node-label pos-bottom">Maps</span>
@@ -1633,6 +1768,7 @@
               <span class="pmax-auth-petal" style="transform: rotate(330deg); background:#EA4335;"></span>
               <span class="pmax-auth-petal" style="transform: rotate(30deg);  background:#EA4335;"></span>
               <span class="pmax-auth-petal" style="transform: rotate(90deg);  background:#34A853;"></span>
+              <span class="pmax-auth-connector-accent"></span>
             </span>
           </span>
           <span class="pmax-node-label pos-bottom">Authenticator</span>
@@ -1640,16 +1776,18 @@
         <!-- YouTube — 9 o'clock, red pill tile, label to the left -->
         <div class="pmax-node pmax-node-youtube">
           <span class="pmax-node-blob" style="--blob-tint: rgba(255,0,0,0.16);"></span>
-          <span class="pmax-node-label pos-left">YouTube</span>
+          <span class="pmax-node-label pos-bottom">YouTube</span>
           <span class="pmax-tile youtube">
             <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M5 4l15 8-15 8z" fill="#fff"/></svg>
           </span>
         </div>
         <div class="pmax-hub">
           <span class="pmax-hub-icon">
-            <span class="pmax-mark-bar gold"></span>
-            <span class="pmax-mark-bar blue"></span>
-            <span class="pmax-mark-dot"></span>
+            <svg viewBox="0 -13 256 256" aria-hidden="true">
+              <path fill="#FBBC04" d="M5.888,166.405103 L90.88,20.9 C101.676138,27.2558621 156.115862,57.3844138 164.908138,63.1135172 L79.9161379,208.627448 C70.6206897,220.906621 -5.888,185.040138 5.888,166.396276 L5.888,166.405103 Z"/>
+              <path fill="#4285F4" d="M250.084224,166.401789 L165.092224,20.9055131 C153.210293,1.13172 127.619121,-6.05393517 106.600638,5.62496138 C85.582155,17.3038579 79.182155,42.4624786 91.0640861,63.1190303 L176.056086,208.632961 C187.938017,228.397927 213.52919,235.583582 234.547672,223.904686 C254.648086,212.225789 261.966155,186.175582 250.084224,166.419444 L250.084224,166.401789 Z"/>
+              <ellipse fill="#34A853" cx="42.6637241" cy="187.924414" rx="42.6637241" ry="41.6044138"/>
+            </svg>
           </span>
           <span class="pmax-hub-label">Performance<br>Max</span>
         </div>
@@ -1663,7 +1801,7 @@
 
 <!-- ── CONTENT: Google Shopping Ads (2-column) ── -->
 <section class="content-2col">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-shopping-text">
     <div class="wf-outer">
       <h2 id="wf-shopping-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Google Shopping Ads
@@ -1674,27 +1812,38 @@
         Google Shopping Ads showcase your products with image, price, and reviews directly in search results. Putting your catalog in front of shoppers who are already comparing and ready to buy.<br><br>We build and maintain the Merchant Center feed and shipping/tax rules so listings stay live whether they run standalone or wrapped inside Performance Max.
       </p>
     </div>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-shopping-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+      </div>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-shopping-tip-body"><b>Best For:</b> E-commerce retailers looking to drive direct product sales.</p>
+      </div>
+    </div>
     <p class="tier-kicker">Choose your tier</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$700/mo</span>
-        <span class="tier-chip-band">Spend $1,000–$1,500</span>
+        <span class="tier-chip-fee">C$700/mo</span>
+        <span class="tier-chip-band">Spend C$1,000–C$1,500</span>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$750/mo</span>
-        <span class="tier-chip-band">Spend $1,500–$2,000</span>
+        <span class="tier-chip-fee">C$750/mo</span>
+        <span class="tier-chip-band">Spend C$1,500–C$2,000</span>
       </div>
       <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$800/mo</span>
-        <span class="tier-chip-band">Spend $2,000–$2,500</span>
+        <span class="tier-chip-fee">C$800/mo</span>
+        <span class="tier-chip-band">Spend C$2,000–C$2,500</span>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$850/mo</span>
-        <span class="tier-chip-band">Spend $2,500–$3,000</span>
+        <span class="tier-chip-fee">C$850/mo</span>
+        <span class="tier-chip-band">Spend C$2,500–C$3,000</span>
       </div>
     </div>
   </div>
@@ -1703,7 +1852,7 @@
       <div class="mock-chrome">
         <div class="mock-searchbar">
           <span class="mock-google-logo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
-          <span class="mock-searchbar-text">get varded shirt</span>
+          <span class="mock-searchbar-text">best selling products</span>
           <span class="mock-searchbar-icons">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1718,9 +1867,9 @@
         </div>
         <div class="mock-filterpills">
           <span class="mock-filterpill">On sale</span>
-          <span class="mock-filterpill"><span class="mock-filterpill-dot" style="background:#14161d;border:1px solid rgba(255,255,255,0.3);"></span>Black</span>
-          <span class="mock-filterpill">Under $50</span>
-          <span class="mock-filterpill"><span class="mock-filterpill-dot" style="background:var(--cyan);"></span>Blue</span>
+          <span class="mock-filterpill"><span class="mock-filterpill-dot" style="background:#32353d;border:1px solid rgba(255,255,255,0.3);"></span>Grey</span>
+          <span class="mock-filterpill">Under $150</span>
+          <span class="mock-filterpill">Popular</span>
         </div>
       </div>
       <div class="shop-heading-row">
@@ -1730,27 +1879,27 @@
       <div class="shop-grid">
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
-          <p class="shop-title">Get Varded Shirt</p>
-          <p class="shop-price">$28.00</p>
-          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-title">VardWeb Hoodie</p>
+          <p class="shop-price">$65.00</p>
+          <p class="shop-seller">vardweb.com</p>
           <p class="shop-rating">★★★★☆ <span>(212)</span></p>
           <p class="shop-attr">Apparel · Unisex</p>
         </div>
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
-          <p class="shop-title">VardWeb Hoodie</p>
-          <p class="shop-price">$52.00</p>
-          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-title">VardWeb Skincare Set</p>
+          <p class="shop-price">$84.00</p>
+          <p class="shop-seller">vardweb.ca</p>
           <p class="shop-rating">★★★★★ <span>(89)</span></p>
-          <p class="shop-attr">Fleece · Unisex</p>
+          <p class="shop-attr">Beauty · Skincare</p>
         </div>
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
-          <p class="shop-title">404 Not Found Tee</p>
-          <p class="shop-price">$24.00</p>
-          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-title">VardWeb Whey Protein</p>
+          <p class="shop-price">$72.00</p>
+          <p class="shop-seller">vardweb.io</p>
           <p class="shop-rating">★★★★☆ <span>(147)</span></p>
-          <p class="shop-attr">Apparel · Unisex</p>
+          <p class="shop-attr">Nutrition · Supplements</p>
         </div>
       </div>
       <div class="shop-popular-row">
@@ -1760,27 +1909,27 @@
       <div class="shop-grid organic">
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,215,0,0.12));"></div>
-          <p class="shop-title">500 Server Error Cap</p>
-          <p class="shop-price">$22.00</p>
-          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-title">VardWeb Coffee Beans</p>
+          <p class="shop-price">$15.00</p>
+          <p class="shop-seller">vardweb.net</p>
           <p class="shop-rating">★★★★☆ <span>(76)</span></p>
-          <p class="shop-attr">Apparel · Unisex</p>
+          <p class="shop-attr">Grocery · Beverage</p>
         </div>
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.18), rgba(0,229,255,0.12));"></div>
-          <p class="shop-title">NullPointer Beanie</p>
-          <p class="shop-price">$26.00</p>
+          <p class="shop-title">VardWeb Console</p>
+          <p class="shop-price">$150.00</p>
           <p class="shop-seller">vardweb.shop</p>
           <p class="shop-rating">★★★★★ <span>(54)</span></p>
-          <p class="shop-attr">Apparel · Unisex</p>
+          <p class="shop-attr">Electronics · Gaming</p>
         </div>
         <div class="shop-card">
           <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,45,120,0.12));"></div>
-          <p class="shop-title">Segfault Socks (3-Pack)</p>
-          <p class="shop-price">$18.00</p>
-          <p class="shop-seller">vardweb.shop</p>
+          <p class="shop-title">VardWeb Exercise Kit</p>
+          <p class="shop-price">$40.00</p>
+          <p class="shop-seller">vardweb.ai</p>
           <p class="shop-rating">★★★★☆ <span>(133)</span></p>
-          <p class="shop-attr">Apparel · Unisex</p>
+          <p class="shop-attr">Fitness · Equipment</p>
         </div>
       </div>
     </div>
@@ -1792,7 +1941,7 @@
 
 <!-- ── CONTENT: Video / YouTube Ads (2-column, flipped) — no screenshot exists; bespoke CSS player mockup ── -->
 <section class="content-2col flip">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-video-text">
     <div class="wf-outer">
       <h2 id="wf-video-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Video &amp; YouTube Ads
@@ -1803,27 +1952,38 @@
         Video Ads put your brand in front of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could.<br><br>We handle campaign structure, audience targeting, and bid strategy; if you need the video itself, our Content Creation &amp; CM add-on covers production.
       </p>
     </div>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-video-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+      </div>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-video-tip-body"><b>Best For:</b> Driving deep customer engagement and visual storytelling.</p>
+      </div>
+    </div>
     <p class="tier-kicker">Choose your tier</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$900/mo</span>
-        <span class="tier-chip-band">Spend $1,500–$2,125</span>
+        <span class="tier-chip-fee">C$900/mo</span>
+        <span class="tier-chip-band">Spend C$1,500–C$2,125</span>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$1,000/mo</span>
-        <span class="tier-chip-band">Spend $2,125–$2,750</span>
+        <span class="tier-chip-fee">C$1,000/mo</span>
+        <span class="tier-chip-band">Spend C$2,125–C$2,750</span>
       </div>
       <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$1,100/mo</span>
-        <span class="tier-chip-band">Spend $2,750–$3,375</span>
+        <span class="tier-chip-fee">C$1,100/mo</span>
+        <span class="tier-chip-band">Spend C$2,750–C$3,375</span>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$1,200/mo</span>
-        <span class="tier-chip-band">Spend $3,375–$4,000</span>
+        <span class="tier-chip-fee">C$1,200/mo</span>
+        <span class="tier-chip-band">Spend C$3,375–C$4,000</span>
       </div>
     </div>
   </div>
@@ -1842,7 +2002,7 @@
 
 <!-- ── CONTENT: Local Service Ads (2-column) ── -->
 <section class="content-2col">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-lsa-text">
     <div class="wf-outer">
       <h2 id="wf-lsa-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Local Service Ads
@@ -1850,30 +2010,41 @@
     </div>
     <div class="wf-outer">
       <p id="wf-lsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Local Service Ads put your business at the top of local search with a Google Guaranteed badge, connecting you with nearby customers who are ready to book — and you only pay for genuine leads.
+        Featured prominently at the very top of Google local search results. Simple business cards showing reviews, ratings, phone numbers, and a "Google Screened" or "Google Guaranteed" badge.<br><br>Connect your business with nearby customers who are ready to book — and you only pay for genuine leads.
       </p>
+    </div>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-lsa-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+      </div>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-lsa-tip-body"><b>Best For:</b> Local service providers (like plumbers, electricians, or lawyers) looking for phone calls or direct bookings.</p>
+      </div>
     </div>
     <p class="tier-kicker">Choose your tier</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$450/mo</span>
-        <span class="tier-chip-band">Lead Budget $800–$975</span>
+        <span class="tier-chip-fee">C$450/mo</span>
+        <span class="tier-chip-band">Lead Budget C$800–C$975</span>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$500/mo</span>
-        <span class="tier-chip-band">Lead Budget $975–$1,150</span>
+        <span class="tier-chip-fee">C$500/mo</span>
+        <span class="tier-chip-band">Lead Budget C$975–C$1,150</span>
       </div>
       <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$550/mo</span>
-        <span class="tier-chip-band">Lead Budget $1,150–$1,325</span>
+        <span class="tier-chip-fee">C$550/mo</span>
+        <span class="tier-chip-band">Lead Budget C$1,150–C$1,325</span>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$600/mo</span>
-        <span class="tier-chip-band">Lead Budget $1,325–$1,500</span>
+        <span class="tier-chip-fee">C$600/mo</span>
+        <span class="tier-chip-band">Lead Budget C$1,325–C$1,500</span>
       </div>
     </div>
   </div>
@@ -1882,7 +2053,7 @@
       <div class="mock-chrome">
         <div class="mock-searchbar">
           <span class="mock-google-logo"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
-          <span class="mock-searchbar-text">immigration attorney atlanta</span>
+          <span class="mock-searchbar-text">lawyer in toronto</span>
           <span class="mock-searchbar-icons">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1890,56 +2061,68 @@
         </div>
       </div>
       <div class="lsa-header">
-        <span class="lsa-header-count">10+ immigration lawyers serving Atlanta</span>
+        <span class="lsa-header-count">10+ lawyers serving Toronto</span>
         <span class="lsa-header-sponsored badge-pulse">Sponsored
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
         </span>
       </div>
       <div class="lsa-row">
         <div class="lsa-card">
-          <p class="lsa-name">Elliott Immigration Law</p>
-          <p class="lsa-rating">★★★★★ <span>4.9 (35)</span></p>
+          <p class="lsa-name">Saul Goodman Law</p>
+          <p class="lsa-rating">★★★★★ <span>4.9 (69)</span></p>
           <div class="lsa-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
+            <svg class="badge-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
             GOOGLE SCREENED
           </div>
           <p class="lsa-years">8 years in business</p>
-          <p class="lsa-phone">(404) 364-1425 <span class="lsa-status">· Closed now</span></p>
+          <p class="lsa-phone">(433) 364-1425 <span class="lsa-status lsa-status-closed">· Closed now</span></p>
         </div>
         <div class="lsa-card">
-          <p class="lsa-name">Schwartz Posel Immigration</p>
-          <p class="lsa-rating">★★★★★ <span>4.8 (35)</span></p>
+          <p class="lsa-name">Pearson Specter Litt...</p>
+          <p class="lsa-rating">★★★★★ <span>4.8 (132)</span></p>
           <div class="lsa-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
+            <svg class="badge-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
             GOOGLE SCREENED
           </div>
           <p class="lsa-years">24 years in business</p>
-          <p class="lsa-phone">(770) 824-1988 <span class="lsa-status">· Closed now</span></p>
+          <p class="lsa-phone">(770) 834-1969 <span class="lsa-status">· Open now</span></p>
         </div>
         <div class="lsa-card">
-          <p class="lsa-name">Ross &amp; Pines LLC</p>
-          <p class="lsa-rating">★★★★★ <span>4.9 (55)</span></p>
+          <p class="lsa-name">Annalise &amp; Keating LLC</p>
+          <p class="lsa-rating">★★★★★ <span>4.9 (34)</span></p>
           <div class="lsa-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
+            <svg class="badge-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
             GOOGLE SCREENED
           </div>
           <p class="lsa-years">12 years in business</p>
-          <p class="lsa-phone">(404) 812-4300 <span class="lsa-status">· Closed now</span></p>
+          <p class="lsa-phone">(484) 852-4700 <span class="lsa-status">· Open now</span></p>
         </div>
       </div>
       <span class="mock-more-pill">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        More immigration lawyers
+        More lawyers
       </span>
       <div class="serp-organic-ghost">
-        <p class="serp-organic-url">avvo.com › georgia › atlanta</p>
-        <p class="serp-organic-headline">Best Immigration Lawyers in Atlanta, GA - Avvo</p>
+        <p class="serp-organic-url">avvo.com › ontario › toronto</p>
+        <p class="serp-organic-headline">Best Lawyers in Toronto, ON - Avvo</p>
         <div class="serp-organic-line"></div>
         <div class="serp-organic-line short"></div>
       </div>
       <div class="serp-organic-ghost">
-        <p class="serp-organic-url">yelp.com › atlanta › immigration-lawyers</p>
-        <p class="serp-organic-headline">Best Immigration Lawyers Near Me in Atlanta, GA | Yelp</p>
+        <p class="serp-organic-url">yelp.com › toronto › lawyers</p>
+        <p class="serp-organic-headline">Best Lawyers Near Me in Toronto, ON | Yelp</p>
+        <div class="serp-organic-line"></div>
+        <div class="serp-organic-line short"></div>
+      </div>
+      <div class="serp-organic-ghost">
+        <p class="serp-organic-url">lawyers.com › ontario › toronto</p>
+        <p class="serp-organic-headline">Top Rated Lawyers in Toronto, ON</p>
+        <div class="serp-organic-line"></div>
+        <div class="serp-organic-line short"></div>
+      </div>
+      <div class="serp-organic-ghost">
+        <p class="serp-organic-url">findlaw.com › toronto › Lawyers</p>
+        <p class="serp-organic-headline">Toronto Lawyers - FindLaw</p>
         <div class="serp-organic-line"></div>
         <div class="serp-organic-line short"></div>
       </div>
@@ -1952,7 +2135,7 @@
 
 <!-- ── CONTENT: Google Ad Sense (2-column, flipped) ── -->
 <section class="content-2col flip">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-adsense-text">
     <div class="wf-outer">
       <h2 id="wf-adsense-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Google Ad Sense
@@ -1963,32 +2146,43 @@
         Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site.<br><br>Placements are tuned to protect user experience while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
       </p>
     </div>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-adsense-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+      </div>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-adsense-tip-body"><b>Best For:</b> Website owners, bloggers, and content creators who want to monetize their web traffic by selling ad space without having to manually find and manage advertisers.</p>
+      </div>
+    </div>
     <p class="tier-kicker">Choose your tier — by site traffic, not ad spend.</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$600 setup</span>
-        <span class="tier-chip-band">$250/mo monitoring · &lt;50k pageviews</span>
+        <span class="tier-chip-fee">C$600 setup</span>
+        <span class="tier-chip-band">C$250/mo monitoring · &lt;50k pageviews</span>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$700 setup</span>
-        <span class="tier-chip-band">$283/mo monitoring · 50k–125k pageviews</span>
+        <span class="tier-chip-fee">C$700 setup</span>
+        <span class="tier-chip-band">C$283/mo monitoring · 50k–125k pageviews</span>
       </div>
       <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$800 setup</span>
-        <span class="tier-chip-band">$317/mo monitoring · 125k–250k pageviews</span>
+        <span class="tier-chip-fee">C$800 setup</span>
+        <span class="tier-chip-band">C$317/mo monitoring · 125k–250k pageviews</span>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$900 setup</span>
-        <span class="tier-chip-band">$350/mo monitoring · 250k+ pageviews</span>
+        <span class="tier-chip-fee">C$900 setup</span>
+        <span class="tier-chip-band">C$350/mo monitoring · 250k+ pageviews</span>
       </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-adsense-box">
-    <div class="viz-adsense" role="img" aria-label="Mockup of a blog webpage with a browser address bar, article headline, and two highlighted AdSense ad placements alongside a daily earnings readout">
+    <div class="viz-adsense" role="img" aria-label="Mockup of a blog webpage with a browser address bar, article headline, and three highlighted AdSense ad placements of different sizes alongside a daily earnings readout">
       <div class="ads-chrome">
         <span class="ads-chrome-dot"></span><span class="ads-chrome-dot"></span><span class="ads-chrome-dot"></span>
         <span class="ads-chrome-url">yourblog.com/article</span>
@@ -1999,21 +2193,30 @@
           <span class="ads-byline-avatar"></span>
           <span class="ads-byline-text">VardWeb Blog · 6 min read</span>
         </div>
-        <div class="ads-page-row">
-          <div class="ads-content-block"></div>
-          <div class="ads-unit">Ad<span>VardWeb Optimized</span></div>
+        <div class="ads-page-row-combined">
+          <div class="ads-page-left-col">
+            <div class="ads-content-block ads-top-block"></div>
+            <div class="ads-content-block ads-hero-block"></div>
+            <div class="ads-line-group">
+              <div class="ads-content-block ads-line" style="width: 92%;"></div>
+              <div class="ads-content-block ads-line" style="width: 78%;"></div>
+              <div class="ads-content-block ads-line" style="width: 85%;"></div>
+              <div class="ads-content-block ads-mini-block"></div>
+            </div>
+          </div>
+          <div class="ads-page-right-col">
+            <div class="ads-unit badge-pulse">Ad<span>VardWeb Optimized</span></div>
+            <div class="ads-unit tall badge-pulse" style="animation-delay: -0.8s;">Ad<span>VardWeb Optimized</span></div>
+          </div>
         </div>
-        <div class="ads-content-block ads-hero-block"></div>
-        <div class="ads-unit wide">Ad<span>VardWeb Optimized</span></div>
-        <div class="ads-content-block ads-line" style="width: 92%;"></div>
-        <div class="ads-content-block ads-line" style="width: 78%;"></div>
+        <div class="ads-unit wide badge-pulse" style="animation-delay: -1.6s;">Ad<span>VardWeb Optimized</span></div>
         <div class="ads-content-block ads-line" style="width: 85%;"></div>
         <div class="ads-content-block ads-line" style="width: 60%;"></div>
         <div class="ads-content-block ads-line" style="width: 72%;"></div>
       </div>
       <div class="ads-earnings">
         <span class="ads-earnings-label">Est. Revenue Today</span>
-        <span class="ads-earnings-val badge-pulse">+$18.42
+        <span class="ads-earnings-val badge-pulse">+$43.69
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </span>
       </div>
@@ -2026,7 +2229,7 @@
 
 <!-- ── CONTENT: Amazon Sponsored Products (2-column) ── -->
 <section class="content-2col">
-  <div class="content-2col-text">
+  <div class="content-2col-text" id="wf-asp-text">
     <div class="wf-outer">
       <h2 id="wf-asp-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Amazon Sponsored Products
@@ -2034,38 +2237,49 @@
     </div>
     <div class="wf-outer">
       <p id="wf-asp-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace — sized right for growing sellers, not just established $1M+/yr brands.
+        Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace.<br><br>We handle campaign structure, keyword targeting, and bid strategy; if you need product photography or copywriting, our Content Creation &amp; CM add-on covers production.
       </p>
+    </div>
+    <div class="tip-banner">
+      <div class="wf-outer">
+        <div class="tip-banner-head" id="wf-asp-tip-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+      </div>
+      <div class="wf-outer">
+        <p class="tip-banner-body" id="wf-asp-tip-body"><b>Best For:</b> E-commerce brands, manufacturers, and third-party sellers who sell products directly on Amazon and want to drive immediate sales at the exact moment a customer is ready to buy.</p>
+      </div>
     </div>
     <p class="tier-kicker">Choose your tier</p>
     <div class="tier-row">
       <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">$1,200/mo</span>
-        <span class="tier-chip-band">Spend $1,500–$2,125</span>
+        <span class="tier-chip-fee">C$1,200/mo</span>
+        <span class="tier-chip-band">Spend C$1,500–C$2,125</span>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#FF2D78;--tier-border:rgba(255,45,120,0.35);--tier-glow:rgba(255,45,120,0.18);--tier-bg:rgba(255,45,120,0.04);">
+      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">$1,400/mo</span>
-        <span class="tier-chip-band">Spend $2,125–$2,750</span>
+        <span class="tier-chip-fee">C$1,400/mo</span>
+        <span class="tier-chip-band">Spend C$2,125–C$2,750</span>
       </div>
       <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">$1,600/mo</span>
-        <span class="tier-chip-band">Spend $2,750–$3,375</span>
+        <span class="tier-chip-fee">C$1,600/mo</span>
+        <span class="tier-chip-band">Spend C$2,750–C$3,375</span>
       </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#F2F5FF;--tier-border:rgba(242,245,255,0.4);--tier-glow:rgba(242,245,255,0.25);--tier-bg:rgba(242,245,255,0.03);">
+      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
         <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">$1,800/mo</span>
-        <span class="tier-chip-band">Spend $3,375–$4,000</span>
+        <span class="tier-chip-fee">C$1,800/mo</span>
+        <span class="tier-chip-band">Spend C$3,375–C$4,000</span>
       </div>
     </div>
   </div>
   <div class="content-2col-visual" id="wf-asp-box">
-    <div class="viz-asp" role="img" aria-label="Mockup of Amazon's Sponsored Brands ad-format picker, auto-rotating through Product collection, Store spotlight, and Video format previews built from fictional VardWeb merch">
+    <div class="viz-asp" role="group" aria-label="Mockup of Amazon's Sponsored Brands ad-format picker, showing Product collection, Store spotlight, and Video format previews built from fictional VardWeb merch">
       <p class="asp-top-label">Choose an ad format</p>
       <div class="asp-slides">
-        <div class="asp-slide">
+        <div class="asp-slide is-active">
           <div class="asp-card asp-card--selected">
             <div class="asp-card-title-row">
               <p class="asp-card-title">Product collection</p>
@@ -2079,7 +2293,7 @@
                 <div class="asp-mock-tile-col">
                   <div class="asp-mock-tile">
                     <span class="asp-mock-tile-icon">
-                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><rect x="2" y="16.3" width="20" height="2.4" rx="1.2"/><path d="M2 16.3C2 13.8 3.7 11.7 6.1 11.2L15.8 9.5C18.6 9 21.2 10.9 21.6 13.6L22 16.3H2z"/></svg>
+                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path fill-rule="evenodd" d="M4.09 6.47L3.85 6.82L3.66 7.16L3.53 7.49L3.45 7.82L3.42 8.14L3.45 8.45L3.53 8.76L3.66 9.06L3.85 9.35L4.09 9.63L4.39 9.89L4.75 10.13L5.16 10.36L5.63 10.57L6.16 10.76L6.74 10.94L7.38 11.1L8.04 11.32L8.74 11.6L9.46 11.94L10.2 12.34L10.98 12.8L11.78 13.32L12.6 13.9L13.46 14.54L14.3 15.12L15.14 15.64L15.98 16.1L16.8 16.5L17.62 16.84L18.43 17.12L19.24 17.34L20.04 17.5L20.74 17.61L21.35 17.68L21.86 17.71L22.27 17.7L22.59 17.64L22.81 17.54L22.93 17.4L22.96 17.22L22.98 17.04L22.99 16.86L23 16.7L23 16.54L22.99 16.38L22.98 16.24L22.96 16.1L22.93 15.96L22.86 15.83L22.73 15.71L22.55 15.58L22.33 15.46L22.05 15.35L21.72 15.23L21.35 15.12L20.92 15.02L20.51 14.89L20.13 14.74L19.76 14.58L19.41 14.39L19.09 14.18L18.78 13.96L18.49 13.71L18.23 13.44L17.95 13.21L17.66 13.02L17.37 12.86L17.06 12.74L16.75 12.66L16.42 12.61L16.08 12.6L15.74 12.63L15.42 12.63L15.13 12.59L14.88 12.53L14.65 12.44L14.45 12.31L14.29 12.16L14.15 11.98L14.04 11.76L13.96 11.56L13.91 11.36L13.88 11.16L13.88 10.98L13.91 10.8L13.96 10.62L14.04 10.46L14.15 10.3L14.23 10.15L14.28 10.02L14.31 9.9L14.31 9.79L14.28 9.7L14.23 9.62L14.15 9.55L14.04 9.5L13.96 9.42L13.91 9.33L13.88 9.22L13.88 9.08L13.91 8.93L13.96 8.76L14.04 8.56L14.15 8.35L14.23 8.13L14.29 7.91L14.33 7.69L14.34 7.46L14.33 7.23L14.3 7L14.24 6.76L14.16 6.52L14.07 6.32L13.97 6.14L13.86 5.99L13.74 5.87L13.61 5.78L13.47 5.72L13.32 5.69L13.16 5.69L13 5.71L12.84 5.75L12.68 5.81L12.52 5.89L12.36 5.99L12.2 6.11L12.04 6.25L11.88 6.41L11.68 6.54L11.44 6.66L11.16 6.76L10.84 6.84L10.48 6.9L10.08 6.94L9.64 6.96L9.16 6.96L8.7 6.94L8.26 6.88L7.84 6.8L7.44 6.7L7.06 6.56L6.7 6.41L6.37 6.22L6.05 6.01L5.74 5.86L5.44 5.79L5.15 5.79L4.87 5.85L4.6 5.99L4.34 6.2Z M1.23 10.66L1.15 10.74L1.09 10.83L1.04 10.93L1.01 11.04L1 11.16L1 11.29L1.02 11.43L1.06 11.58L1.11 11.74L1.18 11.89L1.27 12.05L1.37 12.2L1.49 12.34L1.63 12.49L1.78 12.63L1.95 12.76L2.14 12.9L2.42 13.04L2.78 13.19L3.24 13.36L3.79 13.53L4.42 13.71L5.15 13.91L5.97 14.11L6.87 14.32L7.69 14.54L8.42 14.75L9.07 14.96L9.63 15.18L10.1 15.39L10.49 15.6L10.79 15.82L11 16.03L11.27 16.24L11.59 16.46L11.96 16.67L12.39 16.88L12.87 17.1L13.4 17.31L13.99 17.52L14.63 17.73L15.2 17.91L15.69 18.06L16.11 18.17L16.46 18.25L16.73 18.3L16.93 18.31L17.06 18.29L17.11 18.24L17.08 18.17L16.98 18.07L16.79 17.96L16.52 17.83L16.18 17.67L15.75 17.5L15.24 17.31L14.66 17.1L14.1 16.87L13.58 16.63L13.1 16.38L12.64 16.11L12.22 15.83L11.84 15.54L11.48 15.23L11.16 14.91L10.75 14.58L10.24 14.23L9.64 13.87L8.95 13.5L8.16 13.11L7.28 12.71L6.31 12.3L5.25 11.87L4.3 11.51L3.48 11.21L2.79 10.97L2.21 10.8L1.76 10.69L1.44 10.64Z"/></svg>
                     </span>
                   </div>
                   <span class="asp-mock-tile-stars">★★★★★</span>
@@ -2087,7 +2301,7 @@
                 <div class="asp-mock-tile-col">
                   <div class="asp-mock-tile">
                     <span class="asp-mock-tile-icon">
-                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8 2 4 6l3 3v11h10V9l3-3-4-4-2 2H8z"/></svg>
+                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8.5 2h-3L2 5.5l2.5 2.5L6 6.8V21h12V6.8l1.5 1.2L22 5.5 18.5 2h-3c0 1.7-1.6 3-3.5 3s-3.5-1.3-3.5-3z"/></svg>
                     </span>
                   </div>
                   <span class="asp-mock-tile-stars">★★★★★</span>
@@ -2095,15 +2309,15 @@
                 <div class="asp-mock-tile-col">
                   <div class="asp-mock-tile">
                     <span class="asp-mock-tile-icon">
-                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M2 16A10 9 0 0 1 22 16Z"/><path d="M17 15.6h5.8c.8 0 1.3.8 1 1.5-.7 1.8-2.4 3-4.4 3H17v-4.5z"/></svg>
+                      <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M6.71 3.32L6.8 3.54L6.84 3.77L6.83 3.99L6.76 4.21L6.63 4.44L6.44 4.66L6.2 4.89L5.91 5.11L5.56 5.33L5.21 5.58L4.88 5.85L4.55 6.15L4.23 6.47L3.92 6.81L3.61 7.18L3.32 7.57L3.03 7.99L2.76 8.47L2.51 9.02L2.29 9.64L2.08 10.33L1.89 11.08L1.72 11.91L1.58 12.8L1.45 13.76L1.37 14.6L1.35 15.33L1.38 15.94L1.46 16.44L1.59 16.82L1.77 17.08L2.01 17.23L2.3 17.26L2.66 17.26L3.1 17.22L3.61 17.14L4.21 17.03L4.87 16.88L5.62 16.7L6.44 16.48L7.33 16.22L8.19 15.97L9 15.73L9.78 15.5L10.51 15.28L11.21 15.06L11.86 14.85L12.48 14.65L13.06 14.46L13.57 14.28L14.01 14.1L14.4 13.93L14.72 13.77L14.97 13.62L15.17 13.48L15.29 13.34L15.36 13.22L15.47 13.1L15.62 13L15.81 12.9L16.05 12.82L16.34 12.76L16.66 12.7L17.04 12.66L17.45 12.62L17.79 12.52L18.06 12.36L18.24 12.12L18.36 11.82L18.39 11.44L18.35 11L18.24 10.5L18.04 9.92L17.84 9.37L17.62 8.85L17.4 8.36L17.16 7.9L16.9 7.46L16.64 7.06L16.36 6.68L16.08 6.32L15.69 5.98L15.2 5.63L14.61 5.29L13.93 4.96L13.14 4.63L12.25 4.3L11.26 3.97L10.18 3.65L9.24 3.4L8.45 3.22L7.8 3.1L7.31 3.05L6.96 3.07L6.76 3.16Z"/><path d="M13.95 15.49L13.63 15.68L13.26 15.86L12.85 16.04L12.38 16.2L11.87 16.36L11.31 16.52L10.7 16.66L10.05 16.8L9.35 16.92L8.72 17.06L8.17 17.19L7.69 17.33L7.29 17.48L6.97 17.62L6.72 17.78L6.55 17.93L6.45 18.09L6.43 18.27L6.48 18.46L6.6 18.67L6.79 18.89L7.05 19.13L7.39 19.39L7.8 19.66L8.27 19.95L8.76 20.21L9.25 20.44L9.74 20.64L10.23 20.82L10.73 20.97L11.24 21.09L11.74 21.18L12.26 21.24L12.84 21.23L13.51 21.14L14.25 20.98L15.06 20.74L15.95 20.42L16.92 20.03L17.96 19.56L19.08 19.02L20 18.51L20.72 18.03L21.24 17.58L21.56 17.16L21.68 16.78L21.6 16.43L21.32 16.11L20.84 15.82L20.36 15.57L19.87 15.35L19.38 15.17L18.88 15.03L18.38 14.92L17.88 14.85L17.37 14.81L16.86 14.81L16.37 14.84L15.91 14.89L15.47 14.96L15.05 15.05L14.66 15.17L14.29 15.32Z"/></svg>
                     </span>
                   </div>
                   <span class="asp-mock-tile-stars">★★★★★</span>
                 </div>
               </div>
             </div>
+            <p class="asp-card-caption">Promote multiple products from a landing page of your choice.</p>
           </div>
-          <p class="asp-card-caption">Promote multiple products from a landing page of your choice.</p>
         </div>
         <div class="asp-slide">
           <div class="asp-card">
@@ -2118,18 +2332,18 @@
               </div>
               <div class="asp-mock-images">
                 <div class="asp-mock-image-tile">
-                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2.3"/><path d="M3 18l5.5-6.5L12.5 16l3-3.5L21 18H3z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="15.5" cy="4" r="1.6"/><path d="M2 19L7 6L10 13L13 10L15.5 14L18 13.5L22 19Z"/></svg>
                 </div>
                 <div class="asp-mock-image-tile">
-                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2.3"/><path d="M3 18l5.5-6.5L12.5 16l3-3.5L21 18H3z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="15.5" cy="4" r="1.6"/><path d="M2 19L7 6L10 13L13 10L15.5 14L18 13.5L22 19Z"/></svg>
                 </div>
                 <div class="asp-mock-image-tile">
-                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="7.5" cy="7.5" r="2.3"/><path d="M3 18l5.5-6.5L12.5 16l3-3.5L21 18H3z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><circle cx="15.5" cy="4" r="1.6"/><path d="M2 19L7 6L10 13L13 10L15.5 14L18 13.5L22 19Z"/></svg>
                 </div>
               </div>
             </div>
+            <p class="asp-card-caption">Drive traffic to a Store, including subpages.</p>
           </div>
-          <p class="asp-card-caption">Drive traffic to a Store, including subpages.</p>
         </div>
         <div class="asp-slide">
           <div class="asp-card">
@@ -2140,7 +2354,7 @@
               <div class="asp-mock-video"><span class="asp-mock-video-play"></span></div>
               <div class="asp-mock-video-row">
                 <span class="asp-mock-video-icon">
-                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><rect x="2" y="16.3" width="20" height="2.4" rx="1.2"/><path d="M2 16.3C2 13.8 3.7 11.7 6.1 11.2L15.8 9.5C18.6 9 21.2 10.9 21.6 13.6L22 16.3H2z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path fill-rule="evenodd" d="M4.09 6.47L3.85 6.82L3.66 7.16L3.53 7.49L3.45 7.82L3.42 8.14L3.45 8.45L3.53 8.76L3.66 9.06L3.85 9.35L4.09 9.63L4.39 9.89L4.75 10.13L5.16 10.36L5.63 10.57L6.16 10.76L6.74 10.94L7.38 11.1L8.04 11.32L8.74 11.6L9.46 11.94L10.2 12.34L10.98 12.8L11.78 13.32L12.6 13.9L13.46 14.54L14.3 15.12L15.14 15.64L15.98 16.1L16.8 16.5L17.62 16.84L18.43 17.12L19.24 17.34L20.04 17.5L20.74 17.61L21.35 17.68L21.86 17.71L22.27 17.7L22.59 17.64L22.81 17.54L22.93 17.4L22.96 17.22L22.98 17.04L22.99 16.86L23 16.7L23 16.54L22.99 16.38L22.98 16.24L22.96 16.1L22.93 15.96L22.86 15.83L22.73 15.71L22.55 15.58L22.33 15.46L22.05 15.35L21.72 15.23L21.35 15.12L20.92 15.02L20.51 14.89L20.13 14.74L19.76 14.58L19.41 14.39L19.09 14.18L18.78 13.96L18.49 13.71L18.23 13.44L17.95 13.21L17.66 13.02L17.37 12.86L17.06 12.74L16.75 12.66L16.42 12.61L16.08 12.6L15.74 12.63L15.42 12.63L15.13 12.59L14.88 12.53L14.65 12.44L14.45 12.31L14.29 12.16L14.15 11.98L14.04 11.76L13.96 11.56L13.91 11.36L13.88 11.16L13.88 10.98L13.91 10.8L13.96 10.62L14.04 10.46L14.15 10.3L14.23 10.15L14.28 10.02L14.31 9.9L14.31 9.79L14.28 9.7L14.23 9.62L14.15 9.55L14.04 9.5L13.96 9.42L13.91 9.33L13.88 9.22L13.88 9.08L13.91 8.93L13.96 8.76L14.04 8.56L14.15 8.35L14.23 8.13L14.29 7.91L14.33 7.69L14.34 7.46L14.33 7.23L14.3 7L14.24 6.76L14.16 6.52L14.07 6.32L13.97 6.14L13.86 5.99L13.74 5.87L13.61 5.78L13.47 5.72L13.32 5.69L13.16 5.69L13 5.71L12.84 5.75L12.68 5.81L12.52 5.89L12.36 5.99L12.2 6.11L12.04 6.25L11.88 6.41L11.68 6.54L11.44 6.66L11.16 6.76L10.84 6.84L10.48 6.9L10.08 6.94L9.64 6.96L9.16 6.96L8.7 6.94L8.26 6.88L7.84 6.8L7.44 6.7L7.06 6.56L6.7 6.41L6.37 6.22L6.05 6.01L5.74 5.86L5.44 5.79L5.15 5.79L4.87 5.85L4.6 5.99L4.34 6.2Z M1.23 10.66L1.15 10.74L1.09 10.83L1.04 10.93L1.01 11.04L1 11.16L1 11.29L1.02 11.43L1.06 11.58L1.11 11.74L1.18 11.89L1.27 12.05L1.37 12.2L1.49 12.34L1.63 12.49L1.78 12.63L1.95 12.76L2.14 12.9L2.42 13.04L2.78 13.19L3.24 13.36L3.79 13.53L4.42 13.71L5.15 13.91L5.97 14.11L6.87 14.32L7.69 14.54L8.42 14.75L9.07 14.96L9.63 15.18L10.1 15.39L10.49 15.6L10.79 15.82L11 16.03L11.27 16.24L11.59 16.46L11.96 16.67L12.39 16.88L12.87 17.1L13.4 17.31L13.99 17.52L14.63 17.73L15.2 17.91L15.69 18.06L16.11 18.17L16.46 18.25L16.73 18.3L16.93 18.31L17.06 18.29L17.11 18.24L17.08 18.17L16.98 18.07L16.79 17.96L16.52 17.83L16.18 17.67L15.75 17.5L15.24 17.31L14.66 17.1L14.1 16.87L13.58 16.63L13.1 16.38L12.64 16.11L12.22 15.83L11.84 15.54L11.48 15.23L11.16 14.91L10.75 14.58L10.24 14.23L9.64 13.87L8.95 13.5L8.16 13.11L7.28 12.71L6.31 12.3L5.25 11.87L4.3 11.51L3.48 11.21L2.79 10.97L2.21 10.8L1.76 10.69L1.44 10.64Z"/></svg>
                 </span>
                 <div class="asp-mock-video-lines">
                   <div class="asp-mock-line long"></div>
@@ -2149,11 +2363,15 @@
                 </div>
               </div>
             </div>
+            <p class="asp-card-caption">Feature a single product with an autoplaying video.</p>
           </div>
-          <p class="asp-card-caption">Feature a single product with an autoplaying video.</p>
         </div>
       </div>
-      <div class="asp-dots"><span class="asp-dot"></span><span class="asp-dot"></span><span class="asp-dot"></span></div>
+      <div class="asp-dots" role="group" aria-label="Choose ad format slide">
+        <button type="button" class="asp-dot is-active" aria-current="true" aria-label="Show Product collection format"></button>
+        <button type="button" class="asp-dot" aria-current="false" aria-label="Show Store spotlight format"></button>
+        <button type="button" class="asp-dot" aria-current="false" aria-label="Show Video format"></button>
+      </div>
     </div>
     <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
@@ -2203,7 +2421,7 @@
           <div class="pricing-card-divider"></div>
           <ul class="pricing-card-features">
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>12-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>12-Hour ticket support</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 sending domain</li>
@@ -2222,11 +2440,11 @@
           <div class="pricing-card-divider"></div>
           <ul class="pricing-card-features">
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>8-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>8-Hour ticket support</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No Daily Cap</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -2241,11 +2459,11 @@
           <div class="pricing-card-divider"></div>
           <ul class="pricing-card-features">
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>4-Hour Ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>4-Hour ticket support</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1,000 sending domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No Daily Cap</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -2260,11 +2478,11 @@
           <div class="pricing-card-divider"></div>
           <ul class="pricing-card-features">
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Priority support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Flexible automation runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Flexible data retention</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Flexible domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No Daily Cap</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Priority ticket support</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1,000 sending domains</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Contact us</a>
         </div>
@@ -2493,6 +2711,38 @@
   ro.observe(slidesEl);
 })();
 
+/* ── Amazon Sponsored Products carousel: JS-driven slide cycling so the dots
+   can jump to a specific slide (impossible with pure CSS-animation-delay
+   cycling) and each manual change gets a full fresh 5s hold before the
+   next auto-advance, instead of continuing the old timer. ── */
+(function () {
+  var slides = document.querySelectorAll('.viz-asp .asp-slide');
+  var dots = document.querySelectorAll('.viz-asp .asp-dot');
+  if (!slides.length || !dots.length) return;
+  var INTERVAL = 5000;
+  var current = 0;
+  var timer = null;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function show(index) {
+    current = index;
+    slides.forEach(function (s, i) { s.classList.toggle('is-active', i === index); });
+    dots.forEach(function (d, i) {
+      d.classList.toggle('is-active', i === index);
+      d.setAttribute('aria-current', i === index ? 'true' : 'false');
+    });
+  }
+  function restart() {
+    if (timer) clearInterval(timer);
+    if (reduceMotion) return;
+    timer = setInterval(function () { show((current + 1) % slides.length); }, INTERVAL);
+  }
+  dots.forEach(function (dot, i) {
+    dot.addEventListener('click', function () { show(i); restart(); });
+  });
+  restart();
+})();
+
 /* ── Email-compare row-label tooltips: hover on desktop, tap on mobile, tap
    elsewhere closes it (mirrors mouseleave). Single shared tt-box positioned
    with position:fixed + JS-measured coordinates so it escapes the
@@ -2674,18 +2924,32 @@
     { el: document.getElementById('wf-sub'),               color: 'var(--hero-orange)', delay: 0.5 },
     { el: document.getElementById('wf-gsa-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-gsa-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-gsa-tip-head'),      color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-gsa-tip-body'),      color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-pmax-heading'),      color: 'var(--pink)' },
     { el: document.getElementById('wf-pmax-para'),         color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-pmax-tip-head'),     color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-pmax-tip-body'),     color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-shopping-heading'),  color: 'var(--cyan)' },
     { el: document.getElementById('wf-shopping-para'),     color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-shopping-tip-head'), color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-shopping-tip-body'), color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-video-heading'),     color: 'var(--pink)' },
     { el: document.getElementById('wf-video-para'),        color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-video-tip-head'),    color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-video-tip-body'),    color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-lsa-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-lsa-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-lsa-tip-head'),      color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-lsa-tip-body'),      color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-adsense-heading'),   color: 'var(--pink)' },
     { el: document.getElementById('wf-adsense-para'),      color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-adsense-tip-head'),  color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-adsense-tip-body'),  color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-asp-heading'),       color: 'var(--cyan)' },
     { el: document.getElementById('wf-asp-para'),          color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-asp-tip-head'),      color: '#05DF72', delay: 0.3 },
+    { el: document.getElementById('wf-asp-tip-body'),      color: '#7BF1A8', delay: 0.4 },
     { el: document.getElementById('wf-email-heading'),     color: 'var(--pink)' },
     { el: document.getElementById('wf-email-para'),        color: '#C8D4E8', delay: 0.2 }
   ];
@@ -2949,6 +3213,46 @@
         p.classList.toggle('is-hidden', p.getAttribute('data-panel') !== tab);
       });
     });
+  });
+})();
+
+/* ── Tier glider — single-card slider variant of the Jack/Queen/King/Ace
+   tier chips. Generic over any .tier-glider on the page (keyed by class,
+   not per-section IDs) so future sections work by just copying the markup
+   pattern in — no JS changes needed. ── */
+(function () {
+  var TIER_COLORS = {
+    jack:  { color: '#00E5FF', border: 'rgba(0,229,255,0.35)',  glow: 'rgba(0,229,255,0.18)',  bg: 'rgba(0,229,255,0.04)' },
+    queen: { color: '#A855F7', border: 'rgba(168,85,247,0.35)', glow: 'rgba(168,85,247,0.18)', bg: 'rgba(168,85,247,0.04)' },
+    king:  { color: '#FFD700', border: 'rgba(255,215,0,0.35)',  glow: 'rgba(255,215,0,0.18)',  bg: 'rgba(255,215,0,0.04)' },
+    ace:   { color: '#FF3B3B', border: 'rgba(255,59,59,0.4)',   glow: 'rgba(255,59,59,0.25)',  bg: 'rgba(255,59,59,0.03)',
+             foilBg: 'linear-gradient(135deg, rgba(255,59,59,0.05), rgba(185,28,28,0.05))' }
+  };
+  var TIERS = ['jack', 'queen', 'king', 'ace'];
+
+  document.querySelectorAll('.tier-glider').forEach(function (glider) {
+    var range  = glider.querySelector('.email-range');
+    var box    = glider.querySelector('.tier-focus-box');
+    var panels = glider.querySelectorAll('.tier-focus-panel');
+    if (!range || !box) return;
+
+    function render() {
+      var tier = TIERS[+range.value];
+      var c = TIER_COLORS[tier];
+      range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + (+range.value / 3) + ')');
+      box.style.setProperty('--tier-color', c.color);
+      box.style.setProperty('--tier-border', c.border);
+      box.style.setProperty('--tier-glow', c.glow);
+      box.style.setProperty('--tier-bg', c.bg);
+      box.style.background = c.foilBg || '';
+      panels.forEach(function (p) {
+        p.classList.toggle('is-active', p.getAttribute('data-tier') === tier);
+      });
+      range.setAttribute('aria-valuetext', tier.charAt(0).toUpperCase() + tier.slice(1));
+    }
+
+    range.addEventListener('input', render);
+    render();
   });
 })();
 </script>
