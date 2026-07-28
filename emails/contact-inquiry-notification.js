@@ -4,8 +4,10 @@
    Exposes window.buildInquiryEmailHtml(data), where:
      data = {
        name, email, project, businessType, hasWebsite, websiteUrl, message,
-       tier,    // one of 'Bronze' | 'Silver' | 'Gold' | 'Custom' | null
-       addons,  // array of readable add-on labels, [] if none
+       tier,     // one of 'Bronze' | 'Silver' | 'Gold' | 'Custom' |
+                 // 'Jack' | 'Queen' | 'King' | 'Ace' | null
+       addons,   // array of readable add-on labels, [] if none
+       service,  // readable SEM service name (e.g. "Google Search Ads"), null if none
      }
 
    Used both by contact.html (production send) and
@@ -16,7 +18,10 @@
 
   // Duplicated from contact.html's own TIER_COLORS (drives the on-page
   // #mini-tier-box preview) — keep both in sync if a tier is ever renamed/added.
-  var TIER_COLORS = { Bronze: '#CD7F32', Silver: '#C2D0E8', Gold: '#FFD700', Custom: '#A855F7' };
+  var TIER_COLORS = {
+    Bronze: '#CD7F32', Silver: '#C2D0E8', Gold: '#FFD700', Custom: '#A855F7',
+    Jack: '#00E5FF', Queen: '#A855F7', King: '#FFD700', Ace: '#FF3B3B',
+  };
 
   function escapeHtml(str) {
     return String(str == null ? '' : str)
@@ -90,6 +95,15 @@
     return sectionCard({
       accent: 'rgba(255,255,255,0.22)', bg: '#161b27',
       eyebrow: '// project details', body: body, bottomPad: 14,
+    });
+  }
+
+  function renderServiceSection(data) {
+    if (!data.service) return '';
+    var body = '<p style="margin:0;font-family:\'Inter\',-apple-system,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;font-size:16px;font-weight:700;color:#EEF0F8;">' + escapeHtml(data.service) + '</p>';
+    return sectionCard({
+      accent: '#00E5FF', bg: 'rgba(0,229,255,0.1)',
+      eyebrow: '// selected service', body: body, bottomPad: 14,
     });
   }
 
@@ -196,6 +210,7 @@
 +     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">'
 +       renderClientInfoSection(data)
 +       renderProjectDetailsSection(data)
++       renderServiceSection(data)
 +       renderTierSection(data)
 +       renderAddonsSection(data)
 +       renderMessageSection(data)
