@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1093,7 +1093,7 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
           <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
@@ -1156,7 +1156,7 @@
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
+    <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
     <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
@@ -3623,7 +3623,7 @@
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Landing Pages</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">App Development</a>
               <a href="sem-seo.html"    class="footer-pill-home-sub" role="menuitem">SEM &amp; SEO</a>
-              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Maintenance</a>
+              <a href="email-marketing.html" class="footer-pill-home-sub" role="menuitem">Email Marketing</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Hosting Services</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Content Creation &amp; CM</a>
               <a href="smm.html"    class="footer-pill-home-sub" role="menuitem">Social Media &amp; SMM</a>
@@ -3747,22 +3747,30 @@
     mouse.y = e.clientY - rect.top;
   }
 
-  function handleTouchStart(e) {
-    var rect = canvas.getBoundingClientRect();
-    var now = performance.now();
-    for (var k = 0; k < e.changedTouches.length; k++) {
-      var touch = e.changedTouches[k];
-      ripples.push({
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top,
-        start: now,
-        duration: RIPPLE_DURATION,
-        maxRadius: Math.sqrt(size.width * size.width + size.height * size.height) * 0.5
-      });
-    }
+  function spawnRipple(x, y) {
+    ripples.push({
+      x: x,
+      y: y,
+      start: performance.now(),
+      duration: RIPPLE_DURATION,
+      maxRadius: Math.sqrt(size.width * size.width + size.height * size.height) * 0.5
+    });
     if (ripples.length > RIPPLE_MAX_COUNT) {
       ripples.splice(0, ripples.length - RIPPLE_MAX_COUNT);
     }
+  }
+
+  function handleTouchStart(e) {
+    var rect = canvas.getBoundingClientRect();
+    for (var k = 0; k < e.changedTouches.length; k++) {
+      var touch = e.changedTouches[k];
+      spawnRipple(touch.clientX - rect.left, touch.clientY - rect.top);
+    }
+  }
+
+  function handleClick(e) {
+    var rect = canvas.getBoundingClientRect();
+    spawnRipple(e.clientX - rect.left, e.clientY - rect.top);
   }
 
   function drawStatic() {
@@ -3864,6 +3872,7 @@
     document.documentElement.addEventListener('mouseleave', function () {
       mouse.x = null; mouse.y = null;
     });
+    hero.addEventListener('click', handleClick, { passive: true });
   }
   rafId = requestAnimationFrame(animate);
 })();

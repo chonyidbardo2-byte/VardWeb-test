@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -71,6 +71,12 @@
 
     .grad-cyan-pink {
       background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .grad-cyan-purple {
+      background: linear-gradient(135deg, var(--cyan) 0%, #A855F7 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
@@ -605,6 +611,56 @@
     .addon-toggle.selected .addon-icon-check { display: block; }
     @media (max-width: 860px) { .pricing-addons { margin-bottom: 16px; } }
 
+    /* ── SEM add-on accordion (service + tier picker) ── */
+    .addon-sem-summary {
+      display: block; font-size: 11.5px; font-weight: 600;
+      color: var(--tier-color, #00E5FF); margin-top: 2px;
+    }
+    .pricing-addons-list li.addon-sem-panel-row {
+      padding: 0; border-top: none;
+    }
+    .addon-sem-panel {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s cubic-bezier(0.22,1,0.36,1);
+      width: 100%;
+    }
+    .addon-sem-panel > div { overflow: hidden; }
+    .addon-sem-panel.open { grid-template-rows: 1fr; }
+    .sem-panel-inner { padding: 4px 0 10px 32px; }
+    .sem-panel-heading {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--tier-color, #00E5FF);
+      margin: 10px 0 6px;
+    }
+    .sem-panel-heading:first-child { margin-top: 0; }
+    .sem-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sem-chip {
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px; font-weight: 600;
+      color: rgba(200,212,232,0.68);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    }
+    .sem-chip:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.28); }
+    .sem-chip:focus-visible { outline: 2px solid var(--tier-color, #00E5FF); outline-offset: 2px; }
+    .sem-chip[data-tier].active {
+      color: var(--tier-color, #00E5FF);
+      border-color: var(--tier-color, #00E5FF);
+      background: color-mix(in srgb, var(--tier-color, #00E5FF) 14%, transparent);
+      box-shadow: 0 0 10px color-mix(in srgb, var(--tier-color, #00E5FF) 35%, transparent);
+    }
+    .sem-chip[data-service].active {
+      color: #4ade80;
+      border-color: #4ade80;
+      background: rgba(22,163,74,0.16);
+    }
+
     .pricing-cta {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       width: 100%; padding: 13px 24px;
@@ -1075,7 +1131,7 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
           <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
@@ -1139,7 +1195,7 @@
     <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="contact.html"    class="mob-link mob-sub">Maintenance</a>
+    <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
     <a href="contact.html"    class="mob-link mob-sub">Hosting Services</a>
     <a href="contact.html"    class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"    class="mob-link mob-sub">Social Media &amp; SMM</a>
@@ -1180,7 +1236,7 @@
     <p class="sec-tag" style="margin-bottom:14px;">// Web Design</p>
     <h1 class="hero-h1" style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:800;line-height:1.05;margin-bottom:20px;color:var(--text-1);">
       Your digital home,<br>
-      <span class="grad-cyan-pink">Just a click away</span>
+      <span class="grad-cyan-purple">Just a click away</span>
     </h1>
     <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 40px;">
       We engineer every website from scratch — no templates, no page builders, no compromises. Built to load fast, rank on Google, and convert the visitors that matter most to your business.
@@ -1307,7 +1363,7 @@
     <div style="text-align:center;margin:0 auto 56px;">
       <p class="sec-tag">// apps</p>
       <h2 class="apps-heading" style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Your Site.<span class="apps-br"></span>&nbsp;Every Platform.
+        Your Site.<span class="apps-br"></span>&nbsp;<span class="grad-cyan-purple">Every Platform.</span>
       </h2>
       <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:500px;margin:0 auto;">
         Extend your reach beyond the browser. These add-ons wrap your existing web experience into a native-feeling app.
@@ -1400,7 +1456,7 @@
     <div style="text-align:center;max-width:640px;margin:0 auto 60px;">
       <p class="sec-tag" style="margin-bottom:14px;">// Merging Complete</p>
       <h2 style="font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;line-height:1.1;letter-spacing:-0.03em;margin-bottom:20px;color:var(--text-1);">
-        One website.<br><span class="grad-cyan-pink">Everything included.</span>
+        One website.<br><span class="grad-cyan-purple">Everything included.</span>
       </h2>
       <p style="font-size:16px;line-height:1.78;color:var(--text-2);">
         Instead of paying four different software bills and worrying about data leaks between disjointed systems, you get a single, secure, high-performance digital asset that owns its data, protects its brand, and automates its revenue generation from day one.
@@ -1639,7 +1695,7 @@
           </span>
         </h2>
         <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:480px;">
-          Empower with Google’s entire growth ecosystem.<br><br>We handle the complex setup of your tracking, SEO monitoring, product feeds, and revenue streams before launch.<br><br>You get an asset that is fully tracked, visible to search engines, and ready to generate revenue from day one.
+          Empower with Google’s entire growth ecosystem.<br><br>We handle the complex setup of your tracking, SEO monitoring, product feeds, and revenue streams before launch.<br><br>You get an asset that is fully tracked, visible to search engines, and ready to generate revenue from day one.<br><br>Any paid advertising or features available are offered and billed separately.
         </p>
       </div>
       <div class="cap-hero-img" style="flex-shrink:0;">
@@ -1804,7 +1860,7 @@
     <div style="text-align:center;max-width:600px;margin:0 auto 60px;">
       <p class="sec-tag">// AI</p>
       <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        AI Search &amp;<br>Conversion Optimization
+        AI Search &amp;<br><span class="grad-cyan-purple">Conversion Optimization</span>
       </h2>
       <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
         Position your store to be discovered inside AI tools, where more buyers now start their shopping journey before ever reaching a traditional search engine.
@@ -2016,7 +2072,7 @@
     <div style="text-align:center;max-width:520px;margin:0 auto 60px;">
       <p class="sec-tag">// Advertising</p>
       <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);">
-        Paid Search, Social &<br>Content That Delivers
+        Paid Search, Social &<br><span class="grad-cyan-purple">Content That Delivers</span>
       </h2>
     </div>
 
@@ -2178,11 +2234,50 @@
           <p class="pricing-addons-label">Available Add-ons</p>
           <ul class="pricing-addons-list">
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-bronze" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SEM &amp; SEO, SMM and CM
+              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="sem-panel-bronze">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                      <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                      <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                      <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                      <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                      <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                      <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                    </div>
+                    <p class="sem-panel-heading">Choose a tier</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                      <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                      <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                      <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SMM (Social Media Marketing)
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              CM (Content Marketing)
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
@@ -2192,11 +2287,18 @@
               <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+              <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+              Google Play Application
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              App Store Application
             </li>
           </ul>
         </div>
@@ -2289,11 +2391,50 @@
           <p class="pricing-addons-label">Available Add-ons</p>
           <ul class="pricing-addons-list">
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-silver" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SEM &amp; SEO, SMM and CM
+              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="sem-panel-silver">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                      <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                      <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                      <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                      <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                      <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                      <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                    </div>
+                    <p class="sem-panel-heading">Choose a tier</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                      <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                      <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                      <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SMM (Social Media Marketing)
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              CM (Content Marketing)
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
@@ -2303,11 +2444,18 @@
               <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+              <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+              Google Play Application
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              App Store Application
             </li>
           </ul>
         </div>
@@ -2400,11 +2548,50 @@
           <p class="pricing-addons-label">Available Add-ons</p>
           <ul class="pricing-addons-list">
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-gold" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SEM &amp; SEO, SMM and CM
+              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="sem-panel-gold">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                      <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                      <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                      <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                      <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                      <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                      <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                    </div>
+                    <p class="sem-panel-heading">Choose a tier</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                      <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                      <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                      <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SMM (Social Media Marketing)
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              CM (Content Marketing)
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
@@ -2414,11 +2601,18 @@
               <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+              <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+              Google Play Application
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              App Store Application
             </li>
           </ul>
         </div>
@@ -2510,11 +2704,50 @@
           <p class="pricing-addons-label">Available Add-ons</p>
           <ul class="pricing-addons-list">
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SEM &amp; SEO, SMM and CM" aria-pressed="false" aria-label="Toggle SEM &amp; SEO, SMM and CM add-on">
+              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-custom" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SEM &amp; SEO, SMM and CM
+              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="sem-panel-custom">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                      <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                      <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                      <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                      <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                      <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                      <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                    </div>
+                    <p class="sem-panel-heading">Choose a tier</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                      <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                      <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                      <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              SMM (Social Media Marketing)
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              CM (Content Marketing)
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
@@ -2524,11 +2757,18 @@
               <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="Google Play/App Store Application" aria-pressed="false" aria-label="Toggle Google Play/App Store Application add-on">
+              <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">Google Play/App</span> <span class="block md:inline"> Store Application</span></span>
+              Google Play Application
+            </li>
+            <li>
+              <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              App Store Application
             </li>
           </ul>
         </div>
@@ -2558,7 +2798,7 @@
       <div style="position:relative;z-index:1;max-width:580px;margin:0 auto;">
         <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:14px;color:var(--text-1);">
           Let's build something<br>
-          <span class="grad-cyan-pink">worth visiting</span>
+          <span class="grad-cyan-purple">worth visiting</span>
         </h2>
         <p style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;">Not sure which tier is right for you?</p>
         <p style="font-size:16px;line-height:1.78;color:var(--text-2);margin-bottom:36px;">
@@ -2619,7 +2859,7 @@
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
-        <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="email-marketing.html" class="footer-link">Email Marketing</a>
         <a href="contact.html" class="footer-link">Hosting Services</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
@@ -3125,6 +3365,7 @@
     }
 
     buttons.forEach(function (b) {
+      if (b.classList.contains('addon-sem-trigger')) return;
       b.addEventListener('click', function () {
         b.classList.toggle('selected');
         b.setAttribute('aria-pressed', b.classList.contains('selected') ? 'true' : 'false');
@@ -3132,7 +3373,72 @@
       });
     });
 
+    card._updateAddonsHref = updateHref;
     updateHref();
+  });
+})();
+</script>
+
+<script>
+/* ── SEM add-on accordion: pick 1 of 7 services + 1 of 4 tiers before the
+   add-on counts as selected. Generic over any .addon-sem-trigger, keyed by
+   aria-controls, so a future card's panel works by copying the markup. ── */
+(function () {
+  var TIER_LABELS = { jack: 'Jack', queen: 'Queen', king: 'King', ace: 'Ace' };
+
+  document.querySelectorAll('.addon-sem-trigger').forEach(function (trigger) {
+    var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+    if (!panel) return;
+    var card = trigger.closest('.pricing-card');
+    var summary = trigger.parentElement.querySelector('.addon-sem-summary');
+    var serviceChips = panel.querySelectorAll('.sem-chip[data-service]');
+    var tierChips = panel.querySelectorAll('.sem-chip[data-tier]');
+    var baseLabel = 'SEM (Search Engine Marketing)';
+
+    trigger.addEventListener('click', function () {
+      var open = !panel.classList.contains('open');
+      panel.classList.toggle('open', open);
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    function selectChip(chips, chip) {
+      var wasActive = chip.classList.contains('active');
+      chips.forEach(function (c) { c.classList.remove('active'); });
+      if (!wasActive) chip.classList.add('active');
+    }
+
+    function refresh() {
+      var activeService = panel.querySelector('.sem-chip[data-service].active');
+      var activeTier = panel.querySelector('.sem-chip[data-tier].active');
+
+      if (activeService && activeTier) {
+        var tierName = TIER_LABELS[activeTier.getAttribute('data-tier')];
+        trigger.classList.add('selected');
+        trigger.setAttribute('aria-pressed', 'true');
+        trigger.setAttribute('data-addon-label', baseLabel + ' — ' + activeService.getAttribute('data-service') + ' — ' + tierName + ' Tier');
+        if (summary) {
+          summary.hidden = false;
+          summary.textContent = activeService.getAttribute('data-service') + ' · ' + tierName;
+        }
+      } else {
+        trigger.classList.remove('selected');
+        trigger.setAttribute('aria-pressed', 'false');
+        trigger.removeAttribute('data-addon-label');
+        if (summary) {
+          summary.hidden = true;
+          summary.textContent = '';
+        }
+      }
+
+      if (card && card._updateAddonsHref) card._updateAddonsHref();
+    }
+
+    serviceChips.forEach(function (chip) {
+      chip.addEventListener('click', function () { selectChip(serviceChips, chip); refresh(); });
+    });
+    tierChips.forEach(function (chip) {
+      chip.addEventListener('click', function () { selectChip(tierChips, chip); refresh(); });
+    });
   });
 })();
 </script>
