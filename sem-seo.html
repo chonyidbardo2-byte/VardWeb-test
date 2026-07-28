@@ -14,6 +14,11 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
 
   <style>
+    @property --ridge-reveal {
+      syntax: '<percentage>';
+      inherits: false;
+      initial-value: 30%;
+    }
     :root {
       --cyan:    #00E5FF;
       --google-blue: #4285F4;
@@ -29,7 +34,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; overflow-x: hidden; }
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--base); }
@@ -58,6 +63,21 @@
 
     .grad-cyan-pink {
       background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .grad-cyan-orange {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--hero-orange) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    /* SplitText moves each word into its own .wf-word div, leaving
+       .grad-cyan-orange with no direct glyphs to clip its gradient against
+       (the transparent text-fill-color still inherits down, so without this
+       the split words render invisible). Re-declare the clip on each word. */
+    .grad-cyan-orange .wf-word {
+      background: inherit;
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
@@ -195,7 +215,12 @@
       font-size: 14px; font-weight: 500;
       color: rgba(238,240,248,0.9); letter-spacing: 0.02em;
       margin-bottom: 10px;
+      text-decoration: none; cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
+    .hero-pill:hover { transform: translateY(-5px) !important; }
+    .hero-pill:active { transform: translateY(0) !important; }
+    .hero-pill:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; }
     .hero-pill::before {
       content: ''; position: absolute; top: 0; left: 6px; right: 6px; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(0,229,255,0.3), transparent);
@@ -261,6 +286,7 @@
       max-width: 480px; margin: 0 0 32px;
     }
     .hero-cta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    #seo-pillars, #wf-gsa-text, #wf-asp-text { scroll-margin-top: 84px; }
     .hero-btn {
       padding: 14px 30px; border-radius: 999px; font-size: 13px;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
@@ -331,6 +357,7 @@
     .content-2col-visual {
       position: relative;
       width: 100%;
+      min-width: 0;
       aspect-ratio: 1 / 1;
       max-width: 550px;
       justify-self: center;
@@ -368,6 +395,21 @@
       max-width: 640px;
       aspect-ratio: 552 / 451.8125;
     }
+    /* Mini animated card opts out of the shared box's cyan-tinted background/
+       border — the reference component it's ported from is near-black with a
+       neutral border, and the site's default --raised/--border (navy-grey bg,
+       cyan-tinted border) don't match that palette. Scoped to this one id. */
+    #seo-report-box {
+      background: rgba(0,0,0,0.75);
+      border-color: rgba(255,255,255,0.1);
+      aspect-ratio: 4 / 3;
+      max-width: 520px;
+    }
+    /* .mini-card-tags/.mini-card-caption float above the chart at z-index 6/7
+       (no other wf-box mockup has children that high) — the shared
+       .wf-box-clip cover sits at z-index 3, so it needs a scoped bump here
+       to actually hide them. */
+    #seo-report-box .wf-box-clip { z-index: 8; }
     /* Below the 2-column breakpoint, un-box .content-2col-text so its children
        (heading, paragraph, tier-kicker, tier-row) become direct grid items
        alongside .content-2col-visual — lets us interleave the box between the
@@ -391,6 +433,21 @@
       #wf-video-text > *:nth-child(5) { order: 6; }
       #wf-adsense-text > *:nth-child(5) { order: 6; }
       #wf-asp-text > *:nth-child(5) { order: 6; }
+    }
+    /* Free-check row: interleave the chart card between the two paragraphs
+       on mobile only (desktop keeps its normal 2-column layout untouched).
+       Same display:contents + order technique as .content-2col-text above,
+       scoped to this row's own .check-report-text class so it can't affect
+       any other .content-2col section on the page. */
+    @media (max-width: 1023px) {
+      #free-check-row .check-report-text { display: contents; }
+      #free-check-row .check-report-text > *:nth-child(1) { order: 1; }
+      #free-check-row .check-report-text > *:nth-child(2) { order: 2; }
+      #free-check-row .check-report-text > *:nth-child(3) { order: 3; }
+      #free-check-row #seo-report-box { order: 4; }
+      #free-check-row .check-report-text > *:nth-child(4) { order: 5; }
+      #free-check-row .check-report-text > *:nth-child(5) { order: 6; }
+      #free-check-row .check-report-text > *:nth-child(6) { order: 7; }
     }
     .wf-box-clip {
       position: absolute; inset: 0;
@@ -458,6 +515,28 @@
       letter-spacing: 0.09em; text-transform: uppercase; color: rgba(200,212,232,0.4);
       margin: 2px 0 2px;
     }
+    .tier-kicker-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .tier-kicker-row .tier-kicker { margin: 0; }
+    .tier-contact-btn {
+      --tier-color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      white-space: nowrap; text-decoration: none;
+      padding: 5px 13px; border-radius: 9999px;
+      color: var(--tier-color);
+      background: var(--tier-btn-bg, rgba(0,229,255,0.08));
+      border: 1px solid var(--tier-btn-border, rgba(0,229,255,0.4));
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .tier-contact-btn:hover {
+      background: var(--tier-btn-bg-hover, rgba(0,229,255,0.16));
+      box-shadow: 0 0 14px var(--tier-btn-glow, rgba(0,229,255,0.28));
+      transform: translateY(-1px);
+    }
+    .tier-contact-btn:active { transform: translateY(0); }
+    .tier-contact-btn:focus-visible { outline: 2px solid var(--tier-color); outline-offset: 2px; }
     .tier-row {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 10px; max-width: 400px; margin-top: 2px;
@@ -503,6 +582,236 @@
     }
     @media (max-width: 400px) { .tier-row { grid-template-columns: 1fr; max-width: 100%; } }
 
+    /* SEO pillars — 3-card grid (On-Page / Off-Page / Technical). Each card is
+       a vanilla-HTML/CSS/SVG port of the reference "score card" component:
+       title + strength badge, an animated semicircle gauge with a
+       score-tier-colored gradient, a centered digit-counter score, and a
+       glossy liquid-glass pill button (reusing the #hero-glass-effect
+       distortion filter already defined in the hero section). */
+    .seo-pillars { max-width: 1200px; margin: 0 auto; padding: 80px 28px; }
+    .seo-pillars-head { max-width: 640px; margin: 0 auto 48px; text-align: center; }
+    .seo-pillars-head h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05;
+      color: var(--text-1); margin-bottom: 16px;
+    }
+    .seo-pillars-head p { font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
+    .seo-pillar-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 1024px) { .seo-pillar-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; } }
+
+    .seo-score-card {
+      position: relative;
+      display: flex; flex-direction: column;
+      padding: 30px 28px 28px; border-radius: 16px;
+      background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%);
+      border: 1px solid rgba(var(--pillar-rgb), 0.18);
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+    .seo-score-card::before {
+      content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--pillar-rgb), 0.5), transparent);
+    }
+    .seo-score-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(var(--pillar-rgb), 0.4);
+      box-shadow: 0 16px 40px -12px rgba(0,0,0,0.55), 0 0 24px rgba(var(--pillar-rgb), 0.16), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8);
+    }
+    @media (hover: none) {
+      .seo-score-card.is-scroll-active {
+        transform: translateY(-6px);
+        border-color: rgba(var(--pillar-rgb), 0.4);
+        box-shadow: 0 16px 40px -12px rgba(0,0,0,0.55), 0 0 24px rgba(var(--pillar-rgb), 0.16), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8);
+      }
+    }
+    .seo-score-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .seo-score-head h3 {
+      font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700;
+      letter-spacing: -0.01em; color: var(--text-1);
+    }
+    .seo-score-badge {
+      flex-shrink: 0; padding: 4px 12px; border-radius: 9999px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: rgb(var(--pillar-rgb));
+      background: rgba(var(--pillar-rgb), 0.12);
+      border: 1px solid rgba(var(--pillar-rgb), 0.35);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 0 6px rgba(255,255,255,0.18);
+    }
+    .seo-score-gauge { position: relative; margin: 6px 0 4px; }
+    .seo-score-arc { display: block; width: 100%; height: auto; }
+    .seo-score-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 9; }
+    .seo-score-fill {
+      fill: none; stroke-width: 9; stroke-linecap: butt;
+      stroke-dasharray: 100; stroke-dashoffset: 100;
+      transition: stroke-dashoffset 1.4s cubic-bezier(0.65,0,0.35,1);
+    }
+    .seo-score-value {
+      position: absolute; left: 0; right: 0; bottom: 2px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .seo-score-number {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(30px, 4vw, 38px);
+      font-weight: 700; color: var(--text-1); line-height: 1;
+    }
+    .seo-score-outof {
+      margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2);
+    }
+    .seo-score-card > p { font-size: 14px; line-height: 1.7; color: var(--text-2); margin: 8px 0 16px; }
+    .seo-pillar-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+    .seo-pillar-list li {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-family: 'Inter', sans-serif; font-size: 13.5px; line-height: 1.5; color: var(--text-2);
+    }
+    .seo-pillar-list li::before {
+      content: ''; flex-shrink: 0; margin-top: 6px;
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgb(var(--pillar-rgb));
+      box-shadow: 0 0 6px rgb(var(--pillar-rgb));
+    }
+
+    /* Glossy liquid-glass pill button — reuses the #hero-glass-effect
+       distortion filter already defined in the hero section's <svg> defs. */
+    .btn-glass {
+      margin-top: auto;
+      display: block; text-align: center;
+      padding: 14px 24px; border-radius: 9999px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+      color: var(--text-1); text-decoration: none;
+      background: linear-gradient(145deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 8px 20px -8px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 0 8px rgba(255,255,255,0.16);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      filter: url(#hero-glass-effect);
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-glass:hover {
+      transform: scale(1.03);
+      border-color: rgba(var(--pillar-rgb), 0.5);
+      box-shadow: 0 10px 26px -8px rgba(0,0,0,0.6), 0 0 18px rgba(var(--pillar-rgb), 0.18), inset 0 0 0 1px rgba(255,255,255,0.28), inset 0 0 8px rgba(255,255,255,0.2);
+    }
+    .btn-glass:focus-visible { outline: 2px solid rgb(var(--pillar-rgb)); outline-offset: 3px; }
+
+    .seo-score-toggle {
+      cursor: pointer;
+      appearance: none; -webkit-appearance: none;
+      width: 100%;
+    }
+
+    /* Orange liquid-glass variant of .btn-glass, for the "Request a Free Check"
+       CTA — same glossy pill treatment, tinted orange instead of pillar-scoped,
+       since this button sits outside any --pillar-rgb card context. */
+    .btn-primary-green {
+      border-radius: 9999px;
+      color: var(--text-1);
+      background: rgba(7,9,16,0.82);
+      border: 1.5px solid rgba(249,115,22,0.6);
+      box-shadow: 0 8px 20px -8px rgba(0,0,0,0.55), 0 0 14px rgba(249,115,22,0.18), inset 0 0 0 1px rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      filter: url(#hero-glass-effect);
+    }
+    .btn-primary-green:hover {
+      background: rgba(7,9,16,0.9);
+      border-color: rgba(249,115,22,0.85);
+      box-shadow: 0 10px 26px -8px rgba(0,0,0,0.6), 0 0 22px rgba(249,115,22,0.32), inset 0 0 0 1px rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+    .btn-primary-green:focus-visible { outline: 2px solid var(--hero-orange); outline-offset: 2px; }
+
+    /* Free-check / monthly-reporting section — text column skips the
+       .content-2col-text class on purpose (that class's mobile
+       display:contents + nth-child(order) rules are tuned for the SEM
+       sections' exact 3-4 child shape; this section has a different child
+       count, so a plain flex column avoids re-triggering that fragility). */
+    .check-report-text { display: flex; flex-direction: column; gap: 22px; }
+    .seo-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .seo-stat-item { display: flex; flex-direction: column; gap: 8px; }
+    .seo-stat-item svg { color: var(--hero-orange); }
+    .seo-stat-item h4 { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: var(--text-1); }
+    .seo-stat-item p { font-size: 12.5px; line-height: 1.5; color: var(--text-2); }
+
+    /* Mini animated card — hover-triggered stat card ported from the
+       reference "AnimatedCard" component (grid bg + glow + bar chart +
+       tags in the visual half, static title/description in the body
+       half). All motion is transform/opacity only, driven by a single
+       hover/focus-within on .mini-card — no JS needed. */
+    .mini-card { width: 100%; height: 100%; display: flex; flex-direction: column; text-align: left; }
+    .mini-card-visual { position: relative; flex: 1; overflow: hidden; }
+    .mini-card-grid {
+      position: absolute; inset: 0; z-index: 1; opacity: 0.6;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.08) 1px, transparent 1px);
+      background-size: 20px 20px; background-position: center;
+      -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 55%, transparent 100%);
+      mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 55%, transparent 100%);
+    }
+    .mini-card-glow {
+      position: absolute; inset: 0; z-index: 2;
+      background: radial-gradient(ellipse 65% 65% at 50% 60%, rgba(249,115,22,0.32) 0%, rgba(249,115,22,0.14) 45%, transparent 78%);
+    }
+    .mini-card-ridge {
+      position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%;
+      transform: translateZ(0);
+      --ridge-reveal: 30%;
+      mask-image: linear-gradient(90deg, #000 0%, #000 calc(var(--ridge-reveal) - 12%), transparent var(--ridge-reveal));
+      -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 calc(var(--ridge-reveal) - 12%), transparent var(--ridge-reveal));
+      transition: --ridge-reveal 0.6s cubic-bezier(0.6,0.6,0,1);
+    }
+    .mini-card:hover .mini-card-ridge,
+    .mini-card:focus-within .mini-card-ridge { --ridge-reveal: 112%; }
+    .mini-card-bars {
+      position: absolute; left: 0; bottom: 0; z-index: 4;
+      display: flex; align-items: flex-end; width: 100%; height: 62%;
+      padding: 0 0 0 4%;
+    }
+    .mini-card-bars span {
+      flex: 0 0 5.1%; margin-right: 1.9%; border-radius: 3px 3px 0 0; background: var(--hero-orange);
+      transform: scaleY(0.32); transform-origin: 50% 100%;
+      transition: transform 0.9s cubic-bezier(0.34,1.56,0.64,1);
+      will-change: transform;
+    }
+    .mini-card-bars span:nth-child(odd) { background: #f54900; }
+    .mini-card-bars span:nth-child(2n) { margin-right: 4.6%; }
+    .mini-card-bars span:last-child { margin-right: 0; }
+    .mini-card:hover .mini-card-bars span:nth-child(odd),
+    .mini-card:focus-within .mini-card-bars span:nth-child(odd) { transform: scaleY(1); }
+    .mini-card-tags {
+      position: absolute; top: 16px; right: 16px; z-index: 6;
+      display: flex; align-items: center; gap: 6px;
+      transition: opacity 0.3s ease;
+      will-change: opacity;
+      transform: translateZ(0);
+    }
+    .mini-card:hover .mini-card-tags,
+    .mini-card:focus-within .mini-card-tags { opacity: 0; }
+    .mini-card-tag {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 600; color: var(--text-1);
+      background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      padding: 4px 9px; border-radius: 9999px;
+    }
+    .mini-card-tag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .mini-card-caption {
+      position: absolute; top: 14px; left: 14px; right: 14px; z-index: 7;
+      max-width: 260px;
+      background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border-radius: 10px; padding: 10px 14px;
+      transform: translateY(-130%); opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.6,0.6,0,1), opacity 0.4s ease;
+    }
+    .mini-card:hover .mini-card-caption,
+    .mini-card:focus-within .mini-card-caption { transform: translateY(0); opacity: 1; }
+    .mini-card-caption-title { font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--text-1); margin-bottom: 2px; }
+    .mini-card-caption-desc { font-size: 11.5px; line-height: 1.4; color: var(--text-2); }
+    .mini-card-body { flex-shrink: 0; padding: 20px 22px; border-top: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.75); }
+    .mini-card-title { font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-1); margin-bottom: 4px; }
+    .mini-card-desc { font-size: 13px; line-height: 1.5; color: var(--text-2); }
+
     /* Tier glider — single-card slider variant of the tier chips above.
        Same Jack/Queen/King/Ace data and color coding, but only one tier is
        shown at a time (dragging the slider swaps it) inside a bigger card
@@ -512,8 +821,8 @@
     .tier-slider-wrap { max-width: 480px; margin: 0; padding: 0 9px; }
     .tier-slider-ticks span { color: var(--tier-color, rgba(255,255,255,0.65)); }
     .tier-focus-box {
-      display: flex; align-items: stretch;
-      min-height: 132px; border-radius: 14px; overflow: hidden;
+      display: flex; align-items: stretch; position: relative;
+      min-height: 132px; border-radius: 14px; margin-top: 2cqmax;
       border: 1px solid var(--tier-border, rgba(255,255,255,0.12));
       background: var(--tier-bg, rgba(255,255,255,0.02));
       box-shadow: 0 10px 24px -10px rgba(0,0,0,0.5), 0 0 18px var(--tier-glow, transparent);
@@ -531,57 +840,22 @@
     .tier-focus-fee { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text-1); }
     .tier-focus-band { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-2); }
     .tier-focus-icon {
-      flex: 0 0 128px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 14px;
+      position: absolute;
+      right: var(--icon-right, -50px); top: var(--icon-top, 0%); transform: var(--icon-transform, translateY(-30%));
+      pointer-events: none;
     }
-    .tier-icon-ring {
-      width: 92px; height: 92px; border-radius: 50%;
-      background: #fff;
-      border: 4px solid var(--tier-color, rgba(255,255,255,0.4));
-      box-shadow: 0 0 16px var(--tier-glow, transparent);
-      display: flex; align-items: center; justify-content: center;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease;
-    }
-    .tier-icon-ring img { width: 64px; height: 64px; object-fit: contain; display: block; }
+    .tier-focus-icon img { width: var(--icon-w, 330px); height: var(--icon-h, 330px); object-fit: contain; display: block; }
     @media (max-width: 480px) {
-      .tier-focus-icon { flex-basis: 96px; padding: 10px; }
-      .tier-icon-ring { width: 72px; height: 72px; border-width: 3px; }
-      .tier-icon-ring img { width: 50px; height: 50px; }
+      .tier-focus-icon {
+        right: var(--icon-right-mobile, var(--icon-right, 6px));
+        top: var(--icon-top-mobile, var(--icon-top, 0%));
+        transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-30%)));
+      }
+      .tier-focus-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 200px));
+        height: var(--icon-h-mobile, var(--icon-h, 200px));
+      }
     }
-
-    /* Email pricing — toggle + slider + 4-card grid, mirrors a Resend-style
-       pricing page but rendered entirely in VardWeb's own dark/cyan/pink/gold
-       system (colors, fonts, card treatment) rather than copying the
-       reference's black-and-white look. */
-    .email-pricing { padding: 90px 28px 70px; }
-    .email-pricing-inner { max-width: 1200px; margin: 0 auto; }
-    .email-pricing-head { max-width: 640px; margin: 0 auto; text-align: center; }
-    .email-pricing-head .sec-tag { display: flex; justify-content: center; }
-    .email-pricing-sub {
-      font-size: 15.5px; line-height: 1.8; color: var(--text-2);
-      margin: 18px auto 0; max-width: 560px;
-    }
-
-    .email-toggle {
-      display: flex; justify-content: center; gap: 4px; width: fit-content;
-      margin: 34px auto 0;
-    }
-    .email-toggle-btn {
-      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
-      letter-spacing: 0.02em; padding: 9px 20px; border-radius: 999px;
-      border: 1px solid transparent; background: transparent; color: rgba(200,212,232,0.5);
-      cursor: pointer;
-      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease,
-                  color 0.2s ease, border-color 0.2s ease;
-    }
-    .email-toggle-btn:hover { color: rgba(255,255,255,0.88); }
-    .email-toggle-btn:focus-visible { outline: 2px solid rgba(255,255,255,0.55); outline-offset: 2px; }
-    .email-toggle-btn:active { transform: scale(0.96); }
-    .email-toggle-btn.is-active {
-      background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #fff;
-    }
-    .email-toggle-btn.is-active:hover { color: #fff; }
 
     .email-slider-wrap { max-width: 900px; margin: 40px auto 0; padding: 0 8px; }
     .email-range {
@@ -628,168 +902,6 @@
       .email-slider-ticks .tick-full { display: none; }
       .email-slider-ticks .tick-short { display: inline; }
     }
-
-    .email-tab-panel.is-hidden { display: none; }
-
-    .pricing-card-grid {
-      display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
-      gap: 20px; max-width: 1200px; margin: 46px auto 0;
-    }
-    @media (max-width: 900px) { .pricing-card-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 560px) {
-      .pricing-card-grid { grid-template-columns: 1fr; }
-      /* Compact mode: once the slider moves off its starting point, only
-         the matched tier's card stays in the stack — the others are
-         removed from layout (not just dimmed) so there's nothing left to
-         scroll past to find the focused card. */
-      .pricing-card-grid.is-compact .pricing-card:not(.is-active) { display: none; }
-    }
-
-    /* Cards: grayscale chrome + green checkmarks only, per-tier color reserved
-       for the plan name (values pulled from web-design.html's own tier system).
-       Two independent effects, per the reference: (1) focus vs. unfocused is
-       communicated purely by opacity on the real content (below) plus the
-       border/glow on the ::before shell — never by hiding/dimming content
-       itself; (2) the shell's bottom edge permanently dissolves into the page
-       background via a masked ::before, regardless of focus state — a fixed
-       card-shape trait, not a focus effect. Direct children get z-index:1 so
-       they always paint above the masked ::before shell (position:absolute
-       descendants stack above static in-flow ones by default, so without
-       this the shell would cover the content instead of sitting behind it). */
-    .pricing-card {
-      position: relative; display: flex; flex-direction: column;
-      padding: 28px 24px; text-align: center;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .pricing-card > * { position: relative; z-index: 1; }
-    .pricing-card::before {
-      content: ''; position: absolute; inset: 0; z-index: 0; border-radius: 18px;
-      background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.07);
-      /* Fully transparent by 20px from the bottom — comfortably clears the
-         18px corner radius, so the rounded corner itself never becomes
-         partially visible mid-fade (which read as a stray "bend"). The
-         visible dissolve happens entirely above that, on the flat wall. */
-      -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 100px), transparent calc(100% - 20px));
-              mask-image: linear-gradient(to bottom, #000 calc(100% - 100px), transparent calc(100% - 20px));
-      transition: box-shadow 0.3s ease, border-color 0.3s ease, background 0.35s ease;
-    }
-    .pricing-card.is-active,
-    .pricing-card.is-peek { transform: translateY(-4px); }
-    .pricing-card.is-active::before,
-    .pricing-card.is-peek::before {
-      border-color: var(--tier-color, rgba(255,255,255,0.4));
-      box-shadow: 0 16px 34px -12px rgba(0,0,0,0.55), 0 0 22px var(--tier-glow, rgba(255,255,255,0.12));
-      background: linear-gradient(180deg, var(--tier-bg, rgba(255,255,255,0.05)), rgba(255,255,255,0.02) 65%);
-    }
-    @media (hover: hover) {
-      .pricing-card:not(.is-active):hover { transform: translateY(-4px); }
-      .pricing-card:not(.is-active):hover::before {
-        border-color: var(--tier-color, rgba(255,255,255,0.4));
-        box-shadow: 0 16px 34px -12px rgba(0,0,0,0.55), 0 0 22px var(--tier-glow, rgba(255,255,255,0.12));
-        background: linear-gradient(180deg, var(--tier-bg, rgba(255,255,255,0.05)), rgba(255,255,255,0.02) 65%);
-      }
-    }
-    .pricing-card-name {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.04em; color: var(--tier-color, var(--text-1));
-      margin: 0 0 10px; opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card-badge {
-      display: inline-block; align-self: center; box-sizing: border-box; text-align: center; width: 110px;
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
-      letter-spacing: 0.03em; text-transform: uppercase; color: #33D17A;
-      background: rgba(51,209,122,0.12); border: 1px solid rgba(51,209,122,0.35);
-      border-radius: 999px; padding: 4px 12px; margin: 0 0 17px;
-      visibility: hidden; opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card.is-recommended-active .pricing-card-badge { visibility: visible; }
-    .pricing-card-price {
-      font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 800;
-      letter-spacing: -0.02em; color: var(--text-1); line-height: 1; margin: 0;
-      opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card-vol {
-      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
-      color: var(--text-1); margin: 0; opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card-extra {
-      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
-      color: var(--text-2); margin: 6px 0 0; opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card-divider {
-      height: 1px; background: rgba(255,255,255,0.08); margin: 20px 0;
-      opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card-features {
-      display: flex; flex-direction: column; gap: 12px; list-style: none;
-      padding: 0; margin: 0 0 24px; text-align: left;
-      opacity: 0.45; transition: opacity 0.3s ease;
-    }
-    .pricing-card-features li { display: flex; align-items: center; gap: 9px; font-size: 12.5px; line-height: 1.5; color: rgba(200,212,232,0.72); }
-    .pricing-card-features li svg { flex-shrink: 0; }
-    .pricing-card-features li.is-off { color: rgba(200,212,232,0.32); }
-    .pricing-card .btn {
-      width: 100%; justify-content: center; margin-top: auto;
-      opacity: 0.45; transition: opacity 0.3s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-    }
-    .pricing-card.is-active .pricing-card-name, .pricing-card.is-peek .pricing-card-name,
-    .pricing-card.is-active .pricing-card-badge, .pricing-card.is-peek .pricing-card-badge,
-    .pricing-card.is-active .pricing-card-price, .pricing-card.is-peek .pricing-card-price,
-    .pricing-card.is-active .pricing-card-vol, .pricing-card.is-peek .pricing-card-vol,
-    .pricing-card.is-active .pricing-card-extra, .pricing-card.is-peek .pricing-card-extra,
-    .pricing-card.is-active .pricing-card-divider, .pricing-card.is-peek .pricing-card-divider,
-    .pricing-card.is-active .pricing-card-features, .pricing-card.is-peek .pricing-card-features,
-    .pricing-card.is-active .btn, .pricing-card.is-peek .btn {
-      opacity: 1;
-    }
-
-    /* Comparison table — static feature grid, values are placeholders */
-    .email-compare { padding: 90px 28px 90px; }
-    .email-compare-inner { max-width: 1000px; margin: 0 auto; }
-    .compare-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
-    .compare-table { width: 100%; border-collapse: collapse; min-width: 560px; }
-    .compare-table th, .compare-table td { padding: 14px 18px; text-align: left; }
-    .compare-table thead th {
-      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.5);
-      background: rgba(255,255,255,0.03);
-    }
-    .compare-table thead th:first-child { color: transparent; }
-    .compare-table tbody th {
-      font-size: 13px; font-weight: 600; color: var(--text-1);
-    }
-    .compare-table tbody td { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-1); }
-    .compare-table tbody tr { border-top: 1px solid rgba(255,255,255,0.06); }
-    .compare-table .ck { color: #33D17A; }
-    .compare-table .xk { color: rgba(200,212,232,0.28); }
-
-    /* Row-label tooltip triggers — scoped to the label text itself, not the whole cell */
-    .compare-table tbody .tt-label.tt-trigger {
-      cursor: help;
-      border-bottom: 1px dashed rgba(255,255,255,0.3);
-      padding-bottom: 1px;
-    }
-    .compare-table tbody .tt-label.tt-trigger:focus-visible {
-      outline: 2px solid #00E5FF; outline-offset: 2px; border-radius: 3px;
-    }
-    @media (hover: hover) {
-      .compare-table tbody .tt-label.tt-trigger:hover { border-bottom-color: rgba(0,229,255,0.55); }
-    }
-
-    /* Shared floating tooltip (position: fixed, escapes .compare-table-wrap's overflow-x:auto clip) */
-    .tt-box {
-      position: fixed; z-index: 500; max-width: 220px;
-      background: #0a0a0a;
-      border: 1px solid #3a3a3a; border-radius: 10px;
-      padding: 10px 13px;
-      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
-      color: #fff;
-      box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
-      opacity: 0; transform: translateY(4px) scale(0.97);
-      pointer-events: none;
-      transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
 
     /* Bespoke visual — Performance Max channel-hub diagram, recreating the reference's
        hex/flower layout: center two-tone mark, blob-backed channel icons, soft color-wash background */
@@ -1038,7 +1150,7 @@
     .shop-sponsored { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; }
     .shop-grid { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
     .shop-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .shop-img { width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; }
+    .shop-img { width: 100%; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background-repeat: no-repeat; background-position: center; background-size: contain; }
     .shop-title { font-size: 11px; font-weight: 600; color: var(--text-1); line-height: 1.25; }
     .shop-price { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700; color: var(--text-1); }
     .shop-rating { font-size: 10px; color: var(--gold); }
@@ -1162,7 +1274,7 @@
        recreating the reference's 3 side-by-side format cards as slides */
     .viz-asp { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; }
     .asp-top-label { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 15.5px; font-weight: 700; color: rgba(200,212,232,0.55); letter-spacing: 0.04em; text-transform: uppercase; }
-    .asp-slides { position: relative; z-index: 1; width: 100%; display: grid; }
+    .asp-slides { position: relative; z-index: 1; width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); }
     .asp-slide { grid-area: 1 / 1; zoom: var(--asp-scale, 1); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease; }
     .asp-slide.is-active { opacity: 1; pointer-events: auto; }
     @media (prefers-reduced-motion: reduce) {
@@ -1361,7 +1473,7 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Maintenance</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
           <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
@@ -1418,7 +1530,7 @@
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="contact.html"  class="mob-link mob-sub">Maintenance</a>
+    <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
     <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
     <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
@@ -1451,7 +1563,7 @@
 ">
   <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
     <defs>
-      <filter id="hero-glass-effect" x="-50%" y="-50%" width="200%" height="200%">
+      <filter id="hero-glass-effect" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
         <feTurbulence baseFrequency="0.005" numOctaves="1" result="noise" />
         <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.3" />
       </filter>
@@ -1478,10 +1590,10 @@
   <div style="position: absolute; inset: 0; z-index: 3; pointer-events: none; background-image: linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px); background-size: 44px 44px;"></div>
 
   <div id="sem-seo-hero" class="hero-content" style="position: relative; z-index: 4; max-width: 640px;">
-    <div class="hero-pill">
+    <a href="#wf-asp-text" class="hero-pill">
       <span>✨</span>
       Amazon Ads Now Available
-    </div>
+    </a>
     <div class="wf-outer">
       <p class="hero-kicker">
         <span class="kicker-slash">//</span>
@@ -1501,12 +1613,12 @@
     </div>
     <div class="wf-outer">
       <p id="wf-sub" class="hero-sub">
-        Paid search and Google's native ad surfaces, engineered to put your business in front of buyers at the exact moment they're ready to convert.
+        Why pick just one? Combine the instant punch of paid search ads with the long-term power of organic search to completely own your market's attention.
       </p>
     </div>
     <div class="hero-cta-row">
-      <a href="services.html" class="btn hero-btn hero-btn-outline">View Services</a>
-      <a href="contact.html" class="btn hero-btn hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
+      <a href="#seo-pillars" class="btn hero-btn hero-btn-outline">SEO Services</a>
+      <a href="#wf-gsa-text" class="btn hero-btn hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
     </div>
   </div>
 </section>
@@ -1555,8 +1667,11 @@
         <p class="tip-banner-body" id="wf-gsa-tip-body"><b>Best For:</b> Capturing high-intent users actively searching for your specific product or service.</p>
       </div>
     </div>
-    <div class="tier-glider">
-      <p class="tier-kicker">Choose your tier</p>
+    <div class="tier-glider" data-service="Google Search Ads">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
+      </div>
       <div class="tier-slider-wrap">
         <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Search Ads tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
@@ -1586,10 +1701,8 @@
             <span class="tier-focus-band">Spend C$2,500–C$3,000</span>
           </div>
         </div>
-        <div class="tier-focus-icon">
-          <div class="tier-icon-ring">
-            <img src="brand_assets/icons/google-search-ads.png" alt="" />
-          </div>
+        <div class="tier-focus-icon" style="--icon-right:-120px; --icon-top:0%; --icon-transform:translateY(-21%); --icon-w:300px; --icon-h:300px; --icon-right-mobile:-35px; --icon-w-mobile:190px; --icon-h-mobile:190px; --icon-transform-mobile:translateY(-20%);">
+          <img src="brand_assets/icons/google-search-ads.png" alt="" />
         </div>
       </div>
     </div>
@@ -1676,27 +1789,43 @@
         <p class="tip-banner-body" id="wf-pmax-tip-body"><b>Best For:</b> Maximizing conversions using Google's AI without managing multiple individual campaigns.</p>
       </div>
     </div>
-    <p class="tier-kicker">Choose your tier</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">C$800/mo</span>
-        <span class="tier-chip-band">Spend C$1,500–C$2,125</span>
+    <div class="tier-glider" data-service="Performance Max">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">C$875/mo</span>
-        <span class="tier-chip-band">Spend C$2,125–C$2,750</span>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Performance Max tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">C$925/mo</span>
-        <span class="tier-chip-band">Spend C$2,750–C$3,375</span>
-      </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">C$1,000/mo</span>
-        <span class="tier-chip-band">Spend C$3,375–C$4,000</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$800/mo</span>
+            <span class="tier-focus-band">Spend C$1,500–C$2,125</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$875/mo</span>
+            <span class="tier-focus-band">Spend C$2,125–C$2,750</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$925/mo</span>
+            <span class="tier-focus-band">Spend C$2,750–C$3,375</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$1,000/mo</span>
+            <span class="tier-focus-band">Spend C$3,375–C$4,000</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon" style="--icon-right:-70px; --icon-top:0%; --icon-transform:translateY(-21%); --icon-w:260px; --icon-h:260px; --icon-right-mobile:-30px; --icon-w-mobile:170px; --icon-h-mobile:170px; --icon-transform-mobile:translateY(-15%);">
+          <img src="brand_assets/icons/PM-isometric-icon-transparent.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -1823,27 +1952,43 @@
         <p class="tip-banner-body" id="wf-shopping-tip-body"><b>Best For:</b> E-commerce retailers looking to drive direct product sales.</p>
       </div>
     </div>
-    <p class="tier-kicker">Choose your tier</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">C$700/mo</span>
-        <span class="tier-chip-band">Spend C$1,000–C$1,500</span>
+    <div class="tier-glider" data-service="Google Shopping Ads">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">C$750/mo</span>
-        <span class="tier-chip-band">Spend C$1,500–C$2,000</span>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Shopping Ads tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">C$800/mo</span>
-        <span class="tier-chip-band">Spend C$2,000–C$2,500</span>
-      </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">C$850/mo</span>
-        <span class="tier-chip-band">Spend C$2,500–C$3,000</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$700/mo</span>
+            <span class="tier-focus-band">Spend C$1,000–C$1,500</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$750/mo</span>
+            <span class="tier-focus-band">Spend C$1,500–C$2,000</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$800/mo</span>
+            <span class="tier-focus-band">Spend C$2,000–C$2,500</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$850/mo</span>
+            <span class="tier-focus-band">Spend C$2,500–C$3,000</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon" style="--icon-right:-110px; --icon-top:0%; --icon-transform:translateY(-26%); --icon-w:310px; --icon-h:310px; --icon-right-mobile:-70px; --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-transform-mobile:translateY(-25%);">
+          <img src="brand_assets/icons/GShoppingA-isometric-icon-transparent.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -1878,7 +2023,7 @@
       </div>
       <div class="shop-grid">
         <div class="shop-card">
-          <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/grey-hoodie-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
           <p class="shop-title">VardWeb Hoodie</p>
           <p class="shop-price">$65.00</p>
           <p class="shop-seller">vardweb.com</p>
@@ -1886,7 +2031,7 @@
           <p class="shop-attr">Apparel · Unisex</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/skincare-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
           <p class="shop-title">VardWeb Skincare Set</p>
           <p class="shop-price">$84.00</p>
           <p class="shop-seller">vardweb.ca</p>
@@ -1894,7 +2039,7 @@
           <p class="shop-attr">Beauty · Skincare</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/protein-powder-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
           <p class="shop-title">VardWeb Whey Protein</p>
           <p class="shop-price">$72.00</p>
           <p class="shop-seller">vardweb.io</p>
@@ -1908,7 +2053,7 @@
       </div>
       <div class="shop-grid organic">
         <div class="shop-card">
-          <div class="shop-img" style="background: linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,215,0,0.12));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/coffee-beans-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,215,0,0.12));"></div>
           <p class="shop-title">VardWeb Coffee Beans</p>
           <p class="shop-price">$15.00</p>
           <p class="shop-seller">vardweb.net</p>
@@ -1916,7 +2061,7 @@
           <p class="shop-attr">Grocery · Beverage</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,45,120,0.18), rgba(0,229,255,0.12));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/console-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,45,120,0.18), rgba(0,229,255,0.12));"></div>
           <p class="shop-title">VardWeb Console</p>
           <p class="shop-price">$150.00</p>
           <p class="shop-seller">vardweb.shop</p>
@@ -1924,7 +2069,7 @@
           <p class="shop-attr">Electronics · Gaming</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background: linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,45,120,0.12));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/exercise-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,45,120,0.12));"></div>
           <p class="shop-title">VardWeb Exercise Kit</p>
           <p class="shop-price">$40.00</p>
           <p class="shop-seller">vardweb.ai</p>
@@ -1963,27 +2108,43 @@
         <p class="tip-banner-body" id="wf-video-tip-body"><b>Best For:</b> Driving deep customer engagement and visual storytelling.</p>
       </div>
     </div>
-    <p class="tier-kicker">Choose your tier</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">C$900/mo</span>
-        <span class="tier-chip-band">Spend C$1,500–C$2,125</span>
+    <div class="tier-glider" data-service="Video &amp; YouTube Ads">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">C$1,000/mo</span>
-        <span class="tier-chip-band">Spend C$2,125–C$2,750</span>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Video &amp; YouTube Ads tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">C$1,100/mo</span>
-        <span class="tier-chip-band">Spend C$2,750–C$3,375</span>
-      </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">C$1,200/mo</span>
-        <span class="tier-chip-band">Spend C$3,375–C$4,000</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$900/mo</span>
+            <span class="tier-focus-band">Spend C$1,500–C$2,125</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$1,000/mo</span>
+            <span class="tier-focus-band">Spend C$2,125–C$2,750</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$1,100/mo</span>
+            <span class="tier-focus-band">Spend C$2,750–C$3,375</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$1,200/mo</span>
+            <span class="tier-focus-band">Spend C$3,375–C$4,000</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon" style="--icon-right:-130px; --icon-top:0%; --icon-transform:translateY(-31%); --icon-w:330px; --icon-h:330px; --icon-right-mobile:-65px; --icon-w-mobile:270px; --icon-h-mobile:270px; --icon-transform-mobile:translateY(-33%);">
+          <img src="brand_assets/icons/VaYTA-isometric-icon-transparent.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -2010,7 +2171,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-lsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Featured prominently at the very top of Google local search results. Simple business cards showing reviews, ratings, phone numbers, and a "Google Screened" or "Google Guaranteed" badge.<br><br>Connect your business with nearby customers who are ready to book — and you only pay for genuine leads.
+        Featured prominently at the very top of Google local search results. Simple business cards showing reviews, ratings, phone numbers, and a "Google Screened", "Google Guaranteed" or "Google Verified" badge.<br><br>Connect your business with nearby customers who are ready to book — and you only pay for genuine leads.
       </p>
     </div>
     <div class="tip-banner">
@@ -2024,27 +2185,43 @@
         <p class="tip-banner-body" id="wf-lsa-tip-body"><b>Best For:</b> Local service providers (like plumbers, electricians, or lawyers) looking for phone calls or direct bookings.</p>
       </div>
     </div>
-    <p class="tier-kicker">Choose your tier</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">C$450/mo</span>
-        <span class="tier-chip-band">Lead Budget C$800–C$975</span>
+    <div class="tier-glider" data-service="Local Service Ads">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">C$500/mo</span>
-        <span class="tier-chip-band">Lead Budget C$975–C$1,150</span>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Local Service Ads tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">C$550/mo</span>
-        <span class="tier-chip-band">Lead Budget C$1,150–C$1,325</span>
-      </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">C$600/mo</span>
-        <span class="tier-chip-band">Lead Budget C$1,325–C$1,500</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$450/mo</span>
+            <span class="tier-focus-band">Spend C$800–C$975</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$500/mo</span>
+            <span class="tier-focus-band">Spend C$975–C$1,150</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$550/mo</span>
+            <span class="tier-focus-band">Spend C$1,150–C$1,325</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$600/mo</span>
+            <span class="tier-focus-band">Spend C$1,325–C$1,500</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon" style="--icon-right:-100px; --icon-top:0%; --icon-transform:translateY(-31%); --icon-w:300px; --icon-h:300px; --icon-right-mobile:-50px; --icon-w-mobile:220px; --icon-h-mobile:220px; --icon-transform-mobile:translateY(-30%);">
+          <img src="brand_assets/icons/LSA-isometric-icon-transparent.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -2082,7 +2259,7 @@
           <p class="lsa-rating">★★★★★ <span>4.8 (132)</span></p>
           <div class="lsa-badge">
             <svg class="badge-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
-            GOOGLE SCREENED
+            GOOGLE GUARANTEED
           </div>
           <p class="lsa-years">24 years in business</p>
           <p class="lsa-phone">(770) 834-1969 <span class="lsa-status">· Open now</span></p>
@@ -2092,7 +2269,7 @@
           <p class="lsa-rating">★★★★★ <span>4.9 (34)</span></p>
           <div class="lsa-badge">
             <svg class="badge-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l5 5 11-11"/></svg>
-            GOOGLE SCREENED
+            GOOGLE VERIFIED
           </div>
           <p class="lsa-years">12 years in business</p>
           <p class="lsa-phone">(484) 852-4700 <span class="lsa-status">· Open now</span></p>
@@ -2157,27 +2334,43 @@
         <p class="tip-banner-body" id="wf-adsense-tip-body"><b>Best For:</b> Website owners, bloggers, and content creators who want to monetize their web traffic by selling ad space without having to manually find and manage advertisers.</p>
       </div>
     </div>
-    <p class="tier-kicker">Choose your tier — by site traffic, not ad spend.</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">C$600 setup</span>
-        <span class="tier-chip-band">C$250/mo monitoring · &lt;50k pageviews</span>
+    <div class="tier-glider" data-service="Google Ad Sense">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier — by site traffic, not ad spend.</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">C$700 setup</span>
-        <span class="tier-chip-band">C$283/mo monitoring · 50k–125k pageviews</span>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Ad Sense tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">C$800 setup</span>
-        <span class="tier-chip-band">C$317/mo monitoring · 125k–250k pageviews</span>
-      </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">C$900 setup</span>
-        <span class="tier-chip-band">C$350/mo monitoring · 250k+ pageviews</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$600 setup</span>
+            <span class="tier-focus-band">C$250/mo monitoring · &lt;50k views</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$700 setup</span>
+            <span class="tier-focus-band">C$283/mo monitoring · 50k–125k views</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$800 setup</span>
+            <span class="tier-focus-band">C$317/mo monitoring · 125k–250k views</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$900 setup</span>
+            <span class="tier-focus-band">C$350/mo monitoring · 250k+ views</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon" style="--icon-right:-120px; --icon-top:0%; --icon-transform:translateY(-26%); --icon-w:290px; --icon-h:290px; --icon-right-mobile:-35px; --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-transform-mobile:translateY(-32%);">
+          <img src="brand_assets/icons/GAS-isometric-icon-transparent.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -2251,27 +2444,43 @@
         <p class="tip-banner-body" id="wf-asp-tip-body"><b>Best For:</b> E-commerce brands, manufacturers, and third-party sellers who sell products directly on Amazon and want to drive immediate sales at the exact moment a customer is ready to buy.</p>
       </div>
     </div>
-    <p class="tier-kicker">Choose your tier</p>
-    <div class="tier-row">
-      <div class="tier-chip" data-tier="jack" style="--tier-color:#00E5FF;--tier-border:rgba(0,229,255,0.35);--tier-glow:rgba(0,229,255,0.18);--tier-bg:rgba(0,229,255,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Jack</span></div>
-        <span class="tier-chip-fee">C$1,200/mo</span>
-        <span class="tier-chip-band">Spend C$1,500–C$2,125</span>
+    <div class="tier-glider" data-service="Amazon Sponsored Products">
+      <div class="tier-kicker-row">
+        <p class="tier-kicker">Choose your tier</p>
+        <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
-      <div class="tier-chip" data-tier="queen" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.35);--tier-glow:rgba(168,85,247,0.18);--tier-bg:rgba(168,85,247,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Queen</span></div>
-        <span class="tier-chip-fee">C$1,400/mo</span>
-        <span class="tier-chip-band">Spend C$2,125–C$2,750</span>
+      <div class="tier-slider-wrap">
+        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Amazon Sponsored Products tier" />
+        <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+        </div>
       </div>
-      <div class="tier-chip" data-tier="king" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.35);--tier-glow:rgba(255,215,0,0.18);--tier-bg:rgba(255,215,0,0.04);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">King</span></div>
-        <span class="tier-chip-fee">C$1,600/mo</span>
-        <span class="tier-chip-band">Spend C$2,750–C$3,375</span>
-      </div>
-      <div class="tier-chip" data-tier="ace" style="--tier-color:#FF3B3B;--tier-border:rgba(255,59,59,0.4);--tier-glow:rgba(255,59,59,0.25);--tier-bg:rgba(255,59,59,0.03);">
-        <div class="tier-chip-head"><span class="tier-chip-dot"></span><span class="tier-chip-name">Ace</span></div>
-        <span class="tier-chip-fee">C$1,800/mo</span>
-        <span class="tier-chip-band">Spend C$3,375–C$4,000</span>
+      <div class="tier-focus-box">
+        <div class="tier-focus-info">
+          <div class="tier-focus-panel is-active" data-tier="jack">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+            <span class="tier-focus-fee">C$1,200/mo</span>
+            <span class="tier-focus-band">Spend C$1,500–C$2,125</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="queen">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+            <span class="tier-focus-fee">C$1,400/mo</span>
+            <span class="tier-focus-band">Spend C$2,125–C$2,750</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="king">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+            <span class="tier-focus-fee">C$1,600/mo</span>
+            <span class="tier-focus-band">Spend C$2,750–C$3,375</span>
+          </div>
+          <div class="tier-focus-panel" data-tier="ace">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+            <span class="tier-focus-fee">C$1,800/mo</span>
+            <span class="tier-focus-band">Spend C$3,375–C$4,000</span>
+          </div>
+        </div>
+        <div class="tier-focus-icon" style="--icon-right:-100px; --icon-top:0%; --icon-transform:translateY(-30%); --icon-w:330px; --icon-h:330px; --icon-right-mobile:-40px; --icon-w-mobile:210px; --icon-h-mobile:210px; --icon-transform-mobile:translateY(-30%);">
+          <img src="brand_assets/icons/ASP-isometric-icon-transparent.png" alt="" />
+        </div>
       </div>
     </div>
   </div>
@@ -2379,245 +2588,204 @@
 
 <div class="divider"></div>
 
-<!-- ── CONTENT: Email Sending Volume (pricing cards) ── -->
-<section class="email-pricing">
-  <div class="email-pricing-inner">
+<!-- ── CONTENT: SEO Pillars (3-card grid) ── -->
+<section class="seo-pillars" id="seo-pillars">
+  <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
+    <defs>
+      <linearGradient id="grad-strong" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#8FF5C2" />
+        <stop offset="100%" stop-color="#05DF72" />
+      </linearGradient>
+      <linearGradient id="grad-moderate" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#FFE985" />
+        <stop offset="100%" stop-color="#FFD700" />
+      </linearGradient>
+      <linearGradient id="grad-weak" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#FFB4B4" />
+        <stop offset="100%" stop-color="#FF3B3B" />
+      </linearGradient>
+    </defs>
+  </svg>
+  <div class="seo-pillars-head">
+    <p class="sec-tag" style="display: inline-flex;">// search engine optimization</p>
     <div class="wf-outer">
-      <div class="email-pricing-head">
-        <p class="sec-tag" id="wf-email-tag">// scale your sending</p>
-        <h2 id="wf-email-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
-          Inbox Ready, Scale Set
-        </h2>
-      </div>
+      <h2 id="wf-seopillars-heading">Most websites don't<br><span class="grad-cyan-orange">even break 70.</span></h2>
     </div>
     <div class="wf-outer">
-      <p id="wf-email-para" class="email-pricing-sub">
-        Every order confirmation, password reset, and promo blast needs somewhere to land — preferably the inbox, not the spam folder. Our tiers scale right alongside you, with a full suite of deliverability tools and analytics to keep your sending healthy and your reputation intact.
-      </p>
+      <p id="wf-seopillars-para">These are the estimated collective averages across the web for each pillar of SEO. Most sites land somewhere in the 40s to 70s. The fundamentals are half-done, real authority is rare, and performance is inconsistent. That gap between average and optimized is exactly where VardWeb's SEO service goes to work.</p>
     </div>
-
-    <div class="email-toggle" role="tablist" aria-label="Email pricing type">
-      <button type="button" class="email-toggle-btn is-active" data-tab="transactional" role="tab" aria-selected="true">Transactional emails</button>
-      <button type="button" class="email-toggle-btn" data-tab="marketing" role="tab" aria-selected="false">Marketing emails</button>
-    </div>
-
-    <!-- Transactional panel -->
-    <div class="email-tab-panel" data-panel="transactional">
-      <div class="email-slider-wrap">
-        <input type="range" class="email-range" min="0" max="8" step="1" value="0" aria-label="Estimated monthly transactional email volume" />
-        <div class="email-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0)"><span class="tick-full">3,000</span><span class="tick-short">3K</span></span><span style="left:calc(9px + (100% - 18px) * 0.125)"><span class="tick-full">25,000</span><span class="tick-short">25K</span></span><span style="left:calc(9px + (100% - 18px) * 0.25)"><span class="tick-full">50,000</span><span class="tick-short">50K</span></span><span style="left:calc(9px + (100% - 18px) * 0.375)"><span class="tick-full">100,000</span><span class="tick-short">100K</span></span><span style="left:calc(9px + (100% - 18px) * 0.5)"><span class="tick-full">200,000</span><span class="tick-short">200K</span></span><span style="left:calc(9px + (100% - 18px) * 0.625)"><span class="tick-full">500,000</span><span class="tick-short">500K</span></span><span style="left:calc(9px + (100% - 18px) * 0.75)"><span class="tick-full">1,000,000</span><span class="tick-short">1M</span></span><span style="left:calc(9px + (100% - 18px) * 0.875)"><span class="tick-full">1,500,000</span><span class="tick-short">1.5M</span></span><span style="left:calc(9px + (100% - 18px) * 1)"><span class="tick-full">2,500,000</span><span class="tick-short">2.5M</span></span>
+  </div>
+  <div class="seo-pillar-grid">
+    <article class="seo-score-card" data-tier="moderate" data-state="avg" style="--pillar-rgb: 255,215,0;" data-rgb-avg="255,215,0" data-rgb-vardweb="5,223,114">
+      <div class="seo-score-head">
+        <h3>On-Page SEO</h3>
+        <span class="seo-score-badge" data-badge-avg="Moderate" data-badge-vardweb="Strong">Moderate</span>
+      </div>
+      <div class="seo-score-gauge">
+        <svg class="seo-score-arc" viewBox="0 0 100 56" aria-hidden="true">
+          <path class="seo-score-track" d="M8 50 A42 42 0 0 1 92 50" pathLength="100" />
+          <path class="seo-score-fill" d="M8 50 A42 42 0 0 1 92 50" pathLength="100" stroke="url(#grad-moderate)" data-gradient-avg="grad-moderate" data-gradient-vardweb="grad-strong" />
+        </svg>
+        <div class="seo-score-value">
+          <span class="seo-score-number" data-score="65" data-score-avg="65" data-score-vardweb="94">0</span>
+          <span class="seo-score-outof">out of 100</span>
         </div>
       </div>
-
-      <div class="pricing-card-grid">
-        <div class="pricing-card is-active" data-card="free" style="--tier-color:#CD7F32; --tier-glow:rgba(205,127,50,0.16); --tier-bg:rgba(205,127,50,0.08);">
-          <p class="pricing-card-name">Bronze</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">Included</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">3,000 emails / mo</p>
-          <p class="pricing-card-extra">No extra emails</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>12-Hour ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 sending domain</li>
-            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>100 emails a day</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Get Started</a>
-        </div>
-
-        <div class="pricing-card" data-card="pro" style="--tier-color:#C2D0E8; --tier-glow:rgba(194,208,232,0.2); --tier-bg:rgba(194,208,232,0.08);">
-          <p class="pricing-card-name">Silver</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">Included</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">25,000 emails / mo</p>
-          <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>8-Hour ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Get Started</a>
-        </div>
-
-        <div class="pricing-card" data-card="scale" style="--tier-color:#FFD700; --tier-glow:rgba(255,215,0,0.14); --tier-bg:rgba(255,215,0,0.06);">
-          <p class="pricing-card-name">Gold</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">Included</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">50,000 emails / mo</p>
-          <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>4-Hour ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Get Started</a>
-        </div>
-
-        <div class="pricing-card" data-card="enterprise" style="--tier-color:#A855F7; --tier-glow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.06);">
-          <p class="pricing-card-name">Custom</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">C$90 / mo</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">100,000 emails / mo</p>
-          <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Sending &amp; receiving</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Priority ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1,000 sending domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Contact us</a>
+      <p data-panel="avg">Most sites we evaluate land in the 60s here. Basics like title tags and H1 headers are usually covered, but points get lost to missing meta descriptions, duplicate content tags, and unoptimized image alt text.</p>
+      <p data-panel="vardweb" hidden>With VardWeb, every page ships with keyword-mapped copy, complete title tags and meta descriptions, and a clean header hierarchy. The fundamentals other sites leave half-finished.</p>
+      <ul class="seo-pillar-list" data-panel="avg">
+        <li>Keyword-optimized content &amp; copy</li>
+        <li>Title tags &amp; meta descriptions</li>
+        <li>Header structure &amp; internal linking</li>
+      </ul>
+      <ul class="seo-pillar-list" data-panel="vardweb" hidden>
+        <li>Every page, keyword-optimized</li>
+        <li>Complete tags, meta &amp; alt text</li>
+        <li>Strategic headers &amp; internal links</li>
+      </ul>
+      <button type="button" class="btn-glass seo-score-toggle" aria-pressed="false">With VardWeb SEO →</button>
+    </article>
+    <article class="seo-score-card" data-tier="weak" data-state="avg" style="--pillar-rgb: 255,59,59;" data-rgb-avg="255,59,59" data-rgb-vardweb="5,223,114">
+      <div class="seo-score-head">
+        <h3>Off-Page SEO</h3>
+        <span class="seo-score-badge" data-badge-avg="Weak" data-badge-vardweb="Strong">Weak</span>
+      </div>
+      <div class="seo-score-gauge">
+        <svg class="seo-score-arc" viewBox="0 0 100 56" aria-hidden="true">
+          <path class="seo-score-track" d="M8 50 A42 42 0 0 1 92 50" pathLength="100" />
+          <path class="seo-score-fill" d="M8 50 A42 42 0 0 1 92 50" pathLength="100" stroke="url(#grad-weak)" data-gradient-avg="grad-weak" data-gradient-vardweb="grad-strong" />
+        </svg>
+        <div class="seo-score-value">
+          <span class="seo-score-number" data-score="47" data-score-avg="47" data-score-vardweb="85">0</span>
+          <span class="seo-score-outof">out of 100</span>
         </div>
       </div>
-    </div>
-
-    <!-- Marketing panel -->
-    <div class="email-tab-panel is-hidden" data-panel="marketing">
-      <div class="email-slider-wrap">
-        <input type="range" class="email-range" min="0" max="7" step="1" value="0" aria-label="Estimated monthly marketing contact volume" />
-        <div class="email-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0)">1K</span><span style="left:calc(9px + (100% - 18px) * 0.142857)">3K</span><span style="left:calc(9px + (100% - 18px) * 0.285714)">5K</span><span style="left:calc(9px + (100% - 18px) * 0.428571)">10K</span><span style="left:calc(9px + (100% - 18px) * 0.571429)">25K</span><span style="left:calc(9px + (100% - 18px) * 0.714286)">50K</span><span style="left:calc(9px + (100% - 18px) * 0.857143)">100K</span><span style="left:calc(9px + (100% - 18px) * 1)">150K</span>
+      <p data-panel="avg">The pillar most sites fall furthest behind on. The vast majority have few or no quality backlinks, since real domain authority is concentrated almost entirely among top-tier enterprise and media sites.</p>
+      <p data-panel="vardweb" hidden>VardWeb builds real domain authority. Active backlink outreach, a fully optimized Google Business Profile, and ongoing digital PR. We cannot control all external factors, but we catch off-page work most sites never touch.</p>
+      <ul class="seo-pillar-list" data-panel="avg">
+        <li>High-authority backlink building</li>
+        <li>Google Business Profile &amp; citations</li>
+        <li>Digital PR &amp; brand mentions</li>
+      </ul>
+      <ul class="seo-pillar-list" data-panel="vardweb" hidden>
+        <li>Active backlink campaigns</li>
+        <li>Google Business Profile, optimized</li>
+        <li>Active digital PR &amp; mentions</li>
+      </ul>
+      <button type="button" class="btn-glass seo-score-toggle" aria-pressed="false">With VardWeb SEO →</button>
+    </article>
+    <article class="seo-score-card" data-tier="moderate" data-state="avg" style="--pillar-rgb: 255,215,0;" data-rgb-avg="255,215,0" data-rgb-vardweb="5,223,114">
+      <div class="seo-score-head">
+        <h3>Technical SEO</h3>
+        <span class="seo-score-badge" data-badge-avg="Moderate" data-badge-vardweb="Strong">Moderate</span>
+      </div>
+      <div class="seo-score-gauge">
+        <svg class="seo-score-arc" viewBox="0 0 100 56" aria-hidden="true">
+          <path class="seo-score-track" d="M8 50 A42 42 0 0 1 92 50" pathLength="100" />
+          <path class="seo-score-fill" d="M8 50 A42 42 0 0 1 92 50" pathLength="100" stroke="url(#grad-moderate)" data-gradient-avg="grad-moderate" data-gradient-vardweb="grad-strong" />
+        </svg>
+        <div class="seo-score-value">
+          <span class="seo-score-number" data-score="70" data-score-avg="70" data-score-vardweb="96">0</span>
+          <span class="seo-score-outof">out of 100</span>
         </div>
       </div>
-
-      <div class="pricing-card-grid">
-        <div class="pricing-card is-active" data-card="free" style="--tier-color:#CD7F32; --tier-glow:rgba(205,127,50,0.16); --tier-bg:rgba(205,127,50,0.08);">
-          <p class="pricing-card-name">Bronze</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">Included</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">1,000 contacts</p>
-          <p class="pricing-card-extra">Unlimited broadcast sending</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>12-Hour Ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>3 segments</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 domain</li>
-            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Marketing analytics</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Get Started</a>
-        </div>
-
-        <div class="pricing-card" data-card="pro" style="--tier-color:#C2D0E8; --tier-glow:rgba(194,208,232,0.2); --tier-bg:rgba(194,208,232,0.08);">
-          <p class="pricing-card-name">Silver</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">Included</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">3,000 contacts</p>
-          <p class="pricing-card-extra">Unlimited broadcast sending</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>8-Hour Ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Get Started</a>
-        </div>
-
-        <div class="pricing-card" data-card="scale" style="--tier-color:#FFD700; --tier-glow:rgba(255,215,0,0.14); --tier-bg:rgba(255,215,0,0.06);">
-          <p class="pricing-card-name">Gold</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">Included</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">5,000 contacts</p>
-          <p class="pricing-card-extra">Unlimited broadcast sending</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>4-Hour Ticket support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Get Started</a>
-        </div>
-
-        <div class="pricing-card" data-card="enterprise" style="--tier-color:#A855F7; --tier-glow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.06);">
-          <p class="pricing-card-name">Custom</p>
-          <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">C$205 / mo</p>
-          <div class="pricing-card-divider"></div>
-          <p class="pricing-card-vol">10,000 contacts</p>
-          <p class="pricing-card-extra">Unlimited broadcast sending</p>
-          <div class="pricing-card-divider"></div>
-          <ul class="pricing-card-features">
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Priority support</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10,000 automatic runs</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
-            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
-          </ul>
-          <a href="contact.html" class="btn btn-ghost">Contact us</a>
-        </div>
-      </div>
-    </div>
+      <p data-panel="avg">HTTPS adoption is now standard, which helps the average here — but mobile speed and Core Web Vitals like Largest Contentful Paint are still where most sites lose the most ground.</p>
+      <p data-panel="vardweb" hidden>We tune Core Web Vitals and site speed from the ground up, keep sitemaps and crawlability clean, and implement structured data most sites never quite get around to fixing.</p>
+      <ul class="seo-pillar-list" data-panel="avg">
+        <li>Core Web Vitals &amp; site speed</li>
+        <li>XML sitemaps &amp; crawlability</li>
+        <li>Structured data &amp; schema markup</li>
+      </ul>
+      <ul class="seo-pillar-list" data-panel="vardweb" hidden>
+        <li>Optimized Core Web Vitals &amp; speed</li>
+        <li>XML sitemaps, fully crawlable</li>
+        <li>Structured data &amp; schema, live</li>
+      </ul>
+      <button type="button" class="btn-glass seo-score-toggle" aria-pressed="false">With VardWeb SEO →</button>
+    </article>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- ── CONTENT: Email feature comparison (static) ── -->
-<section class="email-compare">
-  <div class="email-compare-inner">
-    <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;">
-      Sending &amp; receiving
-    </h3>
-    <div class="compare-table-wrap wf-outer">
-      <table class="compare-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th style="--tier-color:#CD7F32; color:var(--tier-color);">Bronze</th>
-            <th style="--tier-color:#C2D0E8; color:var(--tier-color);">Silver</th>
-            <th style="--tier-color:#FFD700; color:var(--tier-color);">Gold</th>
-            <th style="--tier-color:#A855F7; color:var(--tier-color);">Custom</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 1.">Daily limit</span></th><td>100</td><td>No limit</td><td>No limit</td><td>No limit</td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 2.">Inbound emails</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 3.">RESTful API</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 4.">SMTP relay</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 5.">Official SDKs</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 6.">Schedule emails</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 7.">Batch sending</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 8.">Open tracking</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Lorem ipsum dolor sit amet, consectetur adipiscing elit 9.">Link tracking</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-        </tbody>
-      </table>
+<!-- ── CONTENT: Free SEO Checks & Monthly Reporting (2-column) ── -->
+<section class="content-2col" id="free-check-row">
+  <div class="check-report-text">
+    <p class="sec-tag" style="display: inline-flex;">// free checks &amp; reporting</p>
+    <div class="wf-outer">
+      <h2 id="wf-freecheck-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">See where you stand. <span class="grad-cyan-orange">Watch it climb.</span></h2>
     </div>
+    <div class="wf-outer">
+      <p id="wf-freecheck-para1" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">Have a website and want to see where it stands? VardWeb offers a free SEO check across all three pillars: on-page, technical, and off-page — no cost, no obligation.</p>
+    </div>
+    <div class="wf-outer">
+      <p id="wf-freecheck-para2" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">Once you're a client, you get a monthly report tracking exactly how much each score moves. Real, visible progress, month after month.</p>
+    </div>
+    <div class="seo-stat-grid">
+      <div class="seo-stat-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <div class="wf-outer">
+          <h4 id="wf-freecheck-stat1-head">Free, on request</h4>
+        </div>
+        <p>A full 3-pillar SEO check, no strings attached.</p>
+      </div>
+      <div class="seo-stat-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <div class="wf-outer">
+          <h4 id="wf-freecheck-stat2-head">Reported monthly</h4>
+        </div>
+        <p>Score movement tracked and delivered every month.</p>
+      </div>
+    </div>
+    <a href="contact.html?type=Free+SEO+Check" class="btn btn-primary-green">Request a Free Check →</a>
+  </div>
+  <div class="content-2col-visual" id="seo-report-box">
+    <div class="mini-card" tabindex="0">
+      <div class="mini-card-visual">
+        <div class="mini-card-grid" aria-hidden="true"></div>
+        <div class="mini-card-glow" aria-hidden="true"></div>
+        <svg class="mini-card-ridge" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="mini-card-ridge-fade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="var(--hero-orange)" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="var(--hero-orange)" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M0,51 L15,38 L25,40 L35,30 L45,24 L55,26 L65,14 L75,18 L85,7 L92,10 L100,1 L100,60 L0,60 Z" fill="url(#mini-card-ridge-fade)" />
+          <path d="M0,51 L15,38 L25,40 L35,30 L45,24 L55,26 L65,14 L75,18 L85,7 L92,10 L100,1" fill="none" stroke="var(--hero-orange)" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round" />
+        </svg>
+        <div class="mini-card-bars" aria-hidden="true">
+          <span style="height: 30%;"></span><span style="height: 20%;"></span><span style="height: 45%;"></span><span style="height: 25%;"></span><span style="height: 55%;"></span><span style="height: 40%;"></span><span style="height: 65%;"></span><span style="height: 35%;"></span><span style="height: 55%;"></span><span style="height: 50%;"></span><span style="height: 70%;"></span><span style="height: 60%;"></span>
+        </div>
+        <div class="mini-card-tags" aria-hidden="true">
+          <span class="mini-card-tag"><span class="mini-card-tag-dot" style="background: var(--hero-orange);"></span>Average</span>
+          <span class="mini-card-tag"><span class="mini-card-tag-dot" style="background: #f54900;"></span>VardWeb</span>
+        </div>
+        <div class="mini-card-caption">
+          <p class="mini-card-caption-title">Optimize Your SEO</p>
+          <p class="mini-card-caption-desc">Improve your search engine rankings and drive more organic traffic.</p>
+        </div>
+      </div>
+      <div class="mini-card-body">
+        <h3 class="mini-card-title">Unoptimized SEO leads to stale traffic</h3>
+        <p class="mini-card-desc">Month after month, your website loses visibility in search results.</p>
+      </div>
+    </div>
+    <div class="wf-box-clip"><div class="wf-box-block"></div></div>
   </div>
 </section>
 
 <div class="divider"></div>
 
 <!-- ── CTA ── -->
-<section style="padding: 70px 28px 100px; text-align: center;">
-  <p class="sec-tag" style="display: inline-flex;">// ready to launch</p>
-  <h3 style="font-size: 22px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; margin: 10px 0 18px;">Add SEM or SEO to any package.</h3>
-  <p style="color: var(--text-2); max-width: 480px; margin: 0 auto 26px; font-size: 14.5px; line-height: 1.8;">Both services are available as add-ons to any VardWeb web design engagement, or standalone for existing sites.</p>
-  <a href="contact.html" class="btn btn-primary">Get a Quote →</a>
+<section style="position: relative; overflow: hidden; padding: 70px 28px 100px; text-align: center;">
+  <canvas class="cta-shader" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;" aria-hidden="true"></canvas>
+  <div style="position: relative; z-index: 1;">
+    <p class="sec-tag" style="display: inline-flex;">// ready to launch</p>
+    <h3 style="font-size: 22px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; margin: 10px 0 18px;">Add SEM to any package.</h3>
+    <p style="color: var(--text-2); max-width: 480px; margin: 0 auto 26px; font-size: 14.5px; line-height: 1.8;">Not sure which service is right for you? Get a free consultation.</p>
+    <a href="contact.html" class="btn btn-primary">Inquire →</a>
+  </div>
 </section>
 
 <div class="divider"></div>
@@ -2664,7 +2832,7 @@
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link active">SEM &amp; SEO</a>
-        <a href="contact.html" class="footer-link">Maintenance</a>
+        <a href="email-marketing.html" class="footer-link">Email Marketing</a>
         <a href="contact.html" class="footer-link">Hosting Services</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
@@ -2743,72 +2911,6 @@
   restart();
 })();
 
-/* ── Email-compare row-label tooltips: hover on desktop, tap on mobile, tap
-   elsewhere closes it (mirrors mouseleave). Single shared tt-box positioned
-   with position:fixed + JS-measured coordinates so it escapes the
-   .compare-table-wrap overflow-x:auto clip instead of being cut off. ── */
-(function () {
-  var triggers = document.querySelectorAll('.tt-trigger');
-  if (!triggers.length) return;
-
-  var box = document.createElement('div');
-  box.className = 'tt-box';
-  box.id = 'tt-box-shared';
-  box.setAttribute('role', 'tooltip');
-  document.body.appendChild(box);
-
-  var openTrigger = null;
-  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-  function position(trigger) {
-    var r = trigger.getBoundingClientRect();
-    var bw = box.offsetWidth, bh = box.offsetHeight;
-    var left = r.left + r.width / 2 - bw / 2;
-    left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
-    var top = r.top - bh - 6;
-    var below = top < 8;
-    if (below) top = r.bottom + 6;
-    box.style.left = left + 'px';
-    box.style.top = top + 'px';
-    box.classList.toggle('tt-below', below);
-  }
-
-  function show(trigger) {
-    openTrigger = trigger;
-    box.textContent = trigger.getAttribute('data-tooltip') || '';
-    box.classList.add('is-open');
-    position(trigger);
-    trigger.setAttribute('aria-expanded', 'true');
-    trigger.setAttribute('aria-describedby', 'tt-box-shared');
-  }
-
-  function hide() {
-    if (!openTrigger) return;
-    openTrigger.setAttribute('aria-expanded', 'false');
-    openTrigger.removeAttribute('aria-describedby');
-    openTrigger = null;
-    box.classList.remove('is-open');
-  }
-
-  triggers.forEach(function (t) {
-    if (canHover) {
-      t.addEventListener('mouseenter', function () { show(t); });
-      t.addEventListener('mouseleave', function () { if (openTrigger === t) hide(); });
-      t.addEventListener('focus', function () { show(t); });
-      t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
-    } else {
-      t.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (openTrigger === t) { hide(); } else { show(t); }
-      });
-    }
-  });
-
-  document.addEventListener('click', function () { hide(); });
-  window.addEventListener('scroll', function () { if (openTrigger) position(openTrigger); }, true);
-  window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
-})();
-
 /* ── Hero entrance reveal (staggers each direct child via .hero-in, see CSS) ── */
 (function () {
   var el = document.getElementById('sem-seo-hero');
@@ -2823,6 +2925,208 @@
     obs.disconnect();
   }, { threshold: 0.01 });
   obs.observe(el);
+})();
+
+/* ── SEO score-gauge cards: on first scroll-into-view, fill each card's
+   semicircle arc (CSS transition on stroke-dashoffset) and count its digit
+   score up from 0 in lockstep (rAF over the same duration as the arc).
+   Each card's "Get a Quote" button doubles as an Average / With VardWeb SEO
+   toggle — clicking it re-tweens the same arc + number to the other state's
+   values and swaps the badge, color, paragraph, and pillar list. ── */
+(function () {
+  var cards = document.querySelectorAll('.seo-score-card');
+  if (!cards.length) return;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var DURATION = 1400;
+
+  function tweenNumber(numberEl, from, to) {
+    if (reduceMotion) {
+      numberEl.textContent = to;
+      return;
+    }
+    var start = performance.now();
+    function tick(now) {
+      var progress = Math.min((now - start) / DURATION, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      numberEl.textContent = Math.round(from + (to - from) * eased);
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  function animateCard(card) {
+    var fill = card.querySelector('.seo-score-fill');
+    var numberEl = card.querySelector('.seo-score-number');
+    var score = parseInt(numberEl.getAttribute('data-score'), 10) || 0;
+    fill.style.strokeDashoffset = String(100 - score);
+    tweenNumber(numberEl, 0, score);
+  }
+
+  function setState(card, state) {
+    var fill = card.querySelector('.seo-score-fill');
+    var numberEl = card.querySelector('.seo-score-number');
+    var badge = card.querySelector('.seo-score-badge');
+    var btn = card.querySelector('.seo-score-toggle');
+    var currentScore = parseInt(numberEl.textContent, 10) || 0;
+    var targetScore = parseInt(numberEl.getAttribute('data-score-' + state), 10) || 0;
+
+    card.dataset.state = state;
+    card.style.setProperty('--pillar-rgb', card.getAttribute('data-rgb-' + state));
+    badge.textContent = badge.getAttribute('data-badge-' + state);
+    fill.setAttribute('stroke', 'url(#' + fill.getAttribute('data-gradient-' + state) + ')');
+    fill.style.strokeDashoffset = String(100 - targetScore);
+    numberEl.setAttribute('data-score', targetScore);
+    tweenNumber(numberEl, currentScore, targetScore);
+
+    card.querySelectorAll('[data-panel]').forEach(function (panel) {
+      panel.hidden = panel.getAttribute('data-panel') !== state;
+    });
+
+    btn.textContent = state === 'avg' ? 'With VardWeb SEO →' : 'Without VardWeb SEO →';
+    btn.setAttribute('aria-pressed', state === 'vardweb' ? 'true' : 'false');
+  }
+
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      animateCard(entry.target);
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.4 });
+
+  cards.forEach(function (card) {
+    obs.observe(card);
+    var btn = card.querySelector('.seo-score-toggle');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      setState(card, card.dataset.state === 'vardweb' ? 'avg' : 'vardweb');
+    });
+  });
+})();
+
+/* ── Mobile: center-band highlight via IntersectionObserver (touch devices only) ── */
+(function () {
+  if (!window.matchMedia('(hover: none)').matches) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle('is-scroll-active', entry.isIntersecting);
+    });
+  }, { rootMargin: '-35% 0px -35% 0px', threshold: 0 });
+
+  document.querySelectorAll('.seo-score-card').forEach(function (el) { io.observe(el); });
+})();
+
+/* ── SEO score-gauge cards: lock each internal region (header row, paragraph,
+   each individual bullet <li>, toggle button) to whichever of its
+   avg/vardweb states is naturally taller at the current width, so pressing
+   "With/Without VardWeb SEO" never shifts anything — not just the card's
+   outer edges, but every element inside it. Locking only the outer card (an
+   earlier version of this) isn't enough: the paragraph still wraps to a
+   different number of lines per state, and since the card's *total* height
+   was pinned, that slack just showed up as extra/less whitespace directly
+   above the bullet list, sliding the <li>s up or down on toggle even though
+   the card border didn't move. Locking the list as a single block wasn't
+   enough either — individual <li>s within it can still wrap differently
+   from their same-index sibling in the other state, shifting each other
+   even though the list's own total height matched; each <li> is locked by
+   index against its counterpart in the other state's list for that reason.
+   Needed on both mobile (single-column, height is pure
+   content) and desktop (3-col grid with default align-items:stretch, where
+   one card's content height can ripple into its row-mates) — copy-length
+   alone can't guarantee parity across every breakpoint (e.g. the header
+   row: at narrow widths the h3 wraps to a 2nd line only when the badge text
+   is long enough to squeeze it, so "Moderate" vs "Strong" alone can change
+   that row's height).
+   Measuring via a detached clone (position:absolute, appended off-screen)
+   was tried first but proved unreliable: flex children (the head row, the
+   bullet items) resolve their text-wrap width slightly differently once
+   reparented outside the live grid, even at an identical explicit width —
+   so the clone silently under- or over-measures. Toggling the *real* card's
+   own state, reading each region's real height, then restoring it is what's
+   actually accurate, since it's the exact layout that will be displayed.
+   This all happens synchronously (no `await`/rAF between state changes),
+   and the browser only paints after the current task yields, so the
+   intermediate states are never actually shown on screen. ── */
+(function () {
+  var cards = document.querySelectorAll('.seo-score-card');
+  if (!cards.length) return;
+  var BTN_TEXT = { avg: 'With VardWeb SEO →', vardweb: 'Without VardWeb SEO →' };
+
+  function applyState(card, panels, badge, btn, state) {
+    panels.forEach(function (panel) {
+      panel.hidden = panel.getAttribute('data-panel') !== state;
+    });
+    if (badge) badge.textContent = badge.getAttribute('data-badge-' + state);
+    if (btn) btn.textContent = BTN_TEXT[state];
+  }
+
+  function lockCard(card) {
+    var head = card.querySelector('.seo-score-head');
+    var pAvg = card.querySelector('p[data-panel="avg"]');
+    var pVW = card.querySelector('p[data-panel="vardweb"]');
+    var ulAvg = card.querySelector('ul[data-panel="avg"]');
+    var ulVW = card.querySelector('ul[data-panel="vardweb"]');
+    var lisAvg = ulAvg ? ulAvg.querySelectorAll('li') : [];
+    var lisVW = ulVW ? ulVW.querySelectorAll('li') : [];
+    var btn = card.querySelector('.seo-score-toggle');
+    var badge = card.querySelector('.seo-score-badge');
+    var panels = card.querySelectorAll('[data-panel]');
+    var originalState = card.dataset.state === 'vardweb' ? 'vardweb' : 'avg';
+
+    [head, pAvg, pVW, ulAvg, ulVW, btn].forEach(function (el) {
+      if (el) el.style.minHeight = '';
+    });
+    lisAvg.forEach(function (li) { li.style.minHeight = ''; });
+    lisVW.forEach(function (li) { li.style.minHeight = ''; });
+
+    var heights = {};
+    ['avg', 'vardweb'].forEach(function (state) {
+      applyState(card, panels, badge, btn, state);
+      var lis = state === 'avg' ? lisAvg : lisVW;
+      heights[state] = {
+        head: head ? head.getBoundingClientRect().height : 0,
+        p: (state === 'avg' ? pAvg : pVW).getBoundingClientRect().height,
+        ul: (state === 'avg' ? ulAvg : ulVW).getBoundingClientRect().height,
+        li: Array.prototype.map.call(lis, function (li) { return li.getBoundingClientRect().height; }),
+        btn: btn ? btn.getBoundingClientRect().height : 0,
+      };
+    });
+    applyState(card, panels, badge, btn, originalState);
+
+    var headMax = Math.max(heights.avg.head, heights.vardweb.head);
+    var pMax = Math.max(heights.avg.p, heights.vardweb.p);
+    var ulMax = Math.max(heights.avg.ul, heights.vardweb.ul);
+    var btnMax = Math.max(heights.avg.btn, heights.vardweb.btn);
+
+    if (head) head.style.minHeight = headMax + 'px';
+    if (pAvg) pAvg.style.minHeight = pMax + 'px';
+    if (pVW) pVW.style.minHeight = pMax + 'px';
+    if (ulAvg) ulAvg.style.minHeight = ulMax + 'px';
+    if (ulVW) ulVW.style.minHeight = ulMax + 'px';
+    if (btn) btn.style.minHeight = btnMax + 'px';
+
+    var liCount = Math.min(lisAvg.length, lisVW.length);
+    for (var i = 0; i < liCount; i++) {
+      var liMax = Math.max(heights.avg.li[i] || 0, heights.vardweb.li[i] || 0);
+      lisAvg[i].style.minHeight = liMax + 'px';
+      lisVW[i].style.minHeight = liMax + 'px';
+    }
+  }
+
+  function lockAll() { cards.forEach(lockCard); }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(lockAll, 120);
+  });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(lockAll);
+  } else {
+    lockAll();
+  }
 })();
 
 /* ── Video/YouTube ad mockup: countdown timer and progress-bar fill driven from
@@ -2950,8 +3254,13 @@
     { el: document.getElementById('wf-asp-para'),          color: '#C8D4E8', delay: 0.2 },
     { el: document.getElementById('wf-asp-tip-head'),      color: '#05DF72', delay: 0.3 },
     { el: document.getElementById('wf-asp-tip-body'),      color: '#7BF1A8', delay: 0.4 },
-    { el: document.getElementById('wf-email-heading'),     color: 'var(--pink)' },
-    { el: document.getElementById('wf-email-para'),        color: '#C8D4E8', delay: 0.2 }
+    { el: document.getElementById('wf-seopillars-heading'),   color: 'var(--hero-orange)' },
+    { el: document.getElementById('wf-seopillars-para'),      color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-freecheck-heading'),    color: 'var(--hero-orange)' },
+    { el: document.getElementById('wf-freecheck-para1'),      color: '#C8D4E8', delay: 0.2 },
+    { el: document.getElementById('wf-freecheck-para2'),      color: '#C8D4E8', delay: 0.3 },
+    { el: document.getElementById('wf-freecheck-stat1-head'), color: 'var(--hero-orange)', delay: 0.3 },
+    { el: document.getElementById('wf-freecheck-stat2-head'), color: 'var(--hero-orange)', delay: 0.4 },
   ];
 
   function run() {
@@ -3033,7 +3342,8 @@
     { id: 'wf-video-box',    color: 'var(--cyan)' },
     { id: 'wf-lsa-box',      color: 'var(--pink)' },
     { id: 'wf-adsense-box',  color: 'var(--gold)' },
-    { id: 'wf-asp-box',      color: 'var(--cyan)' }
+    { id: 'wf-asp-box',      color: 'var(--cyan)' },
+    { id: 'seo-report-box',  color: 'var(--hero-orange)' }
   ];
   boxTargets.forEach(function (t) {
     var box = document.getElementById(t.id);
@@ -3057,188 +3367,36 @@
   });
 })();
 
-/* ── Email pricing — toggle between transactional/marketing panels, each
-   with its own discrete-stop slider (snapped to Resend's real plan
-   breakpoints, not continuous) driving a live readout and which of the
-   4 cards (Free/Pro/Scale/Enterprise) is focused. Hovering (desktop) or
-   pressing (touch) an unfocused card previews the same focused look. ── */
-(function () {
-  var section = document.querySelector('.email-pricing');
-  if (!section) return;
-
-  /* "Mobile" for the scroll-focus/compact-card behaviors below is the same
-     560px breakpoint that already collapses the grid to 1 column — a
-     width check, not a touch/hover capability check, so it stays correct
-     if the viewport is resized or rotated. */
-  var mobileQuery = window.matchMedia('(max-width: 560px)');
-
-  var DATA = {
-    transactional: [
-      { card: 'free',       vol: '3,000 emails / mo',     price: 'Included' },
-      { card: 'pro',        vol: '25,000 emails / mo',    price: 'Included' },
-      { card: 'scale',      vol: '50,000 emails / mo',    price: 'Included' },
-      { card: 'enterprise', vol: '100,000 emails / mo',   price: 'C$90 / mo',     extra: 'C$2.30 / 1000' },
-      { card: 'enterprise', vol: '200,000 emails / mo',   price: 'C$410 / mo',    extra: 'C$2.00 / 1000' },
-      { card: 'enterprise', vol: '500,000 emails / mo',   price: 'C$895 / mo',    extra: 'C$1.80 / 1000' },
-      { card: 'enterprise', vol: '1,000,000 emails / mo', price: 'C$1,650 / mo',  extra: 'C$1.70 / 1000' },
-      { card: 'enterprise', vol: '1,500,000 emails / mo', price: 'C$2,100 / mo',  extra: 'C$1.30 / 1000' },
-      { card: 'enterprise', vol: '2,500,000 emails / mo', price: 'C$2,925 / mo',  extra: 'C$1.20 / 1000' }
-    ],
-    marketing: [
-      { card: 'free',       vol: '1,000 contacts',   price: 'Included' },
-      { card: 'pro',        vol: '3,000 contacts',   price: 'Included' },
-      { card: 'scale',      vol: '5,000 contacts',   price: 'Included' },
-      { card: 'enterprise', vol: '10,000 contacts',  price: 'C$205 / mo' },
-      { card: 'enterprise', vol: '25,000 contacts',  price: 'C$460 / mo' },
-      { card: 'enterprise', vol: '50,000 contacts',  price: 'C$635 / mo' },
-      { card: 'enterprise', vol: '100,000 contacts', price: 'C$1,145 / mo' },
-      { card: 'enterprise', vol: '150,000 contacts', price: 'C$1,655 / mo' }
-    ]
-  };
-
-  var panelRenders = [];
-
-  function setupPanel(tab) {
-    var panel = section.querySelector('.email-tab-panel[data-panel="' + tab + '"]');
-    if (!panel) return;
-    var range = panel.querySelector('.email-range');
-    var grid  = panel.querySelector('.pricing-card-grid');
-    var cards = panel.querySelectorAll('.pricing-card');
-    var rows  = DATA[tab];
-
-    function render() {
-      var i   = +range.value;
-      var row = rows[i];
-      var f   = i / (rows.length - 1);
-
-      range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + f + ')');
-      range.setAttribute('aria-valuetext', row.vol + ', ' + row.price);
-
-      cards.forEach(function (card) {
-        var isActive = card.getAttribute('data-card') === row.card;
-        /* At step 0 on mobile, don't pin the matched card (Bronze)
-           visually focused — let the scroll observer's .is-peek drive
-           its focus state exactly like the other 3 cards, instead of
-           it staying lit regardless of scroll position. */
-        var suppressForScroll = mobileQuery.matches && i === 0;
-        card.classList.toggle('is-active', isActive && !suppressForScroll);
-        /* "Recommended" pill always tracks the true slider match (never
-           Bronze/Free, since that's always step 0) — independent of the
-           mobile scroll suppression above and of hover/peek previews on
-           other cards, which must not steal the badge. */
-        card.classList.toggle('is-recommended-active', isActive && i > 0);
-        if (isActive && row.card === 'enterprise') {
-          var priceEl = card.querySelector('.pricing-card-price');
-          var volEl   = card.querySelector('.pricing-card-vol');
-          var extraEl = card.querySelector('.pricing-card-extra');
-          if (priceEl) priceEl.textContent = row.price;
-          if (volEl) volEl.textContent = row.vol;
-          if (extraEl && row.extra) extraEl.textContent = 'Extra emails: ' + row.extra;
-        }
-      });
-
-      /* Mobile compact mode: once the slider leaves its starting point,
-         collapse the stack down to just the matched card so there's
-         nothing left to scroll past (see CSS's .is-compact rule, scoped
-         to the same 560px breakpoint). */
-      if (grid) grid.classList.toggle('is-compact', mobileQuery.matches && i > 0);
-    }
-
-    range.addEventListener('input', render);
-    render();
-    panelRenders.push(render);
-
-    /* Mobile scroll-focus: while the slider is still at its starting
-       point, scrolling a card near the center of the viewport previews
-       the same focused look hover/press already give it, so a mobile
-       user browsing by scroll (not touching the slider) can still see
-       each tier's focused state. Reuses the existing .is-peek class —
-       identical visual treatment to .is-active, no new CSS needed.
-       Gated on mobileQuery so this never fires on desktop, where
-       scrolling shouldn't drive focus at all. Cards hidden by compact
-       mode (display:none) never intersect, so no extra gating is needed
-       once the slider moves past 0. */
-    var scrollFocusObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        entry.target.classList.toggle('is-peek', mobileQuery.matches && entry.isIntersecting);
-      });
-    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
-    cards.forEach(function (card) { scrollFocusObserver.observe(card); });
-  }
-
-  setupPanel('transactional');
-  setupPanel('marketing');
-
-  /* Re-evaluate the compact-mode breakpoint if the viewport is resized or
-     rotated while the slider sits at a non-zero value. */
-  window.addEventListener('resize', function () {
-    panelRenders.forEach(function (render) { render(); });
-  });
-
-  /* Peek focus: desktop hover is handled entirely in CSS
-     (`.pricing-card:not(.is-active):hover`). Touch has no hover, so a
-     press adds `.is-peek` (same visual treatment as `.is-active`), and
-     releasing anywhere — including outside the card — clears it.
-     Desktop-only: on mobile, the round-6 scroll-focus IntersectionObserver
-     is the sole owner of `.is-peek` — without this guard, lifting a
-     finger after any scroll gesture fires the global pointerup below and
-     wipes out whatever card the scroll observer had legitimately
-     focused, forcing another scroll/tap to re-trigger it. */
-  section.querySelectorAll('.pricing-card').forEach(function (card) {
-    card.addEventListener('pointerdown', function (e) {
-      if (e.pointerType === 'touch' && !mobileQuery.matches) card.classList.add('is-peek');
-    });
-  });
-  function clearPeek() {
-    if (mobileQuery.matches) return;
-    section.querySelectorAll('.pricing-card.is-peek').forEach(function (card) {
-      card.classList.remove('is-peek');
-    });
-  }
-  document.addEventListener('pointerup', clearPeek);
-  document.addEventListener('pointercancel', clearPeek);
-
-  /* Toggle pills */
-  var toggleBtns = section.querySelectorAll('.email-toggle-btn');
-  var panels     = section.querySelectorAll('.email-tab-panel');
-  toggleBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var tab = btn.getAttribute('data-tab');
-      toggleBtns.forEach(function (b) {
-        var active = b === btn;
-        b.classList.toggle('is-active', active);
-        b.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      panels.forEach(function (p) {
-        p.classList.toggle('is-hidden', p.getAttribute('data-panel') !== tab);
-      });
-    });
-  });
-})();
-
 /* ── Tier glider — single-card slider variant of the Jack/Queen/King/Ace
    tier chips. Generic over any .tier-glider on the page (keyed by class,
    not per-section IDs) so future sections work by just copying the markup
    pattern in — no JS changes needed. ── */
 (function () {
   var TIER_COLORS = {
-    jack:  { color: '#00E5FF', border: 'rgba(0,229,255,0.35)',  glow: 'rgba(0,229,255,0.18)',  bg: 'rgba(0,229,255,0.04)' },
-    queen: { color: '#A855F7', border: 'rgba(168,85,247,0.35)', glow: 'rgba(168,85,247,0.18)', bg: 'rgba(168,85,247,0.04)' },
-    king:  { color: '#FFD700', border: 'rgba(255,215,0,0.35)',  glow: 'rgba(255,215,0,0.18)',  bg: 'rgba(255,215,0,0.04)' },
+    jack:  { color: '#00E5FF', border: 'rgba(0,229,255,0.35)',  glow: 'rgba(0,229,255,0.18)',  bg: 'rgba(0,229,255,0.04)',
+             btnBg: 'rgba(0,229,255,0.08)',  btnBgHover: 'rgba(0,229,255,0.16)' },
+    queen: { color: '#A855F7', border: 'rgba(168,85,247,0.35)', glow: 'rgba(168,85,247,0.18)', bg: 'rgba(168,85,247,0.04)',
+             btnBg: 'rgba(168,85,247,0.08)', btnBgHover: 'rgba(168,85,247,0.16)' },
+    king:  { color: '#FFD700', border: 'rgba(255,215,0,0.35)',  glow: 'rgba(255,215,0,0.18)',  bg: 'rgba(255,215,0,0.04)',
+             btnBg: 'rgba(255,215,0,0.08)',  btnBgHover: 'rgba(255,215,0,0.16)' },
     ace:   { color: '#FF3B3B', border: 'rgba(255,59,59,0.4)',   glow: 'rgba(255,59,59,0.25)',  bg: 'rgba(255,59,59,0.03)',
+             btnBg: 'rgba(255,59,59,0.08)',  btnBgHover: 'rgba(255,59,59,0.16)',
              foilBg: 'linear-gradient(135deg, rgba(255,59,59,0.05), rgba(185,28,28,0.05))' }
   };
   var TIERS = ['jack', 'queen', 'king', 'ace'];
 
   document.querySelectorAll('.tier-glider').forEach(function (glider) {
-    var range  = glider.querySelector('.email-range');
-    var box    = glider.querySelector('.tier-focus-box');
-    var panels = glider.querySelectorAll('.tier-focus-panel');
+    var range      = glider.querySelector('.email-range');
+    var box        = glider.querySelector('.tier-focus-box');
+    var panels     = glider.querySelectorAll('.tier-focus-panel');
+    var contactBtn = glider.querySelector('.tier-contact-btn');
+    var service    = glider.getAttribute('data-service') || '';
     if (!range || !box) return;
 
     function render() {
       var tier = TIERS[+range.value];
       var c = TIER_COLORS[tier];
+      var tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
       range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + (+range.value / 3) + ')');
       box.style.setProperty('--tier-color', c.color);
       box.style.setProperty('--tier-border', c.border);
@@ -3248,12 +3406,171 @@
       panels.forEach(function (p) {
         p.classList.toggle('is-active', p.getAttribute('data-tier') === tier);
       });
-      range.setAttribute('aria-valuetext', tier.charAt(0).toUpperCase() + tier.slice(1));
+      range.setAttribute('aria-valuetext', tierLabel);
+
+      if (contactBtn) {
+        contactBtn.style.setProperty('--tier-color', c.color);
+        contactBtn.style.setProperty('--tier-btn-bg', c.btnBg);
+        contactBtn.style.setProperty('--tier-btn-bg-hover', c.btnBgHover);
+        contactBtn.style.setProperty('--tier-btn-border', c.border);
+        contactBtn.style.setProperty('--tier-btn-glow', c.glow);
+        contactBtn.href = 'contact.html?' + new URLSearchParams({
+          type: 'SEM & SEO',
+          service: service,
+          tier: tierLabel
+        }).toString();
+      }
     }
 
     range.addEventListener('input', render);
     render();
   });
+})();
+
+/* ── CTA shader background — ambient WebGL noise/grain wash behind the
+   "ready to launch" CTA, in the page's cyan/orange theme. Ported directly
+   from GLSL (no framework); bails out quietly if WebGL is unavailable. ── */
+(function () {
+  var canvas = document.querySelector('.cta-shader');
+  if (!canvas) return;
+
+  var gl = canvas.getContext('webgl', { antialias: true });
+  if (!gl) return;
+
+  var vertexSrc = [
+    'attribute vec2 position;',
+    'varying vec2 vUv;',
+    'void main() {',
+    '  vUv = position * 0.5 + 0.5;',
+    '  gl_Position = vec4(position, 0.0, 1.0);',
+    '}'
+  ].join('\n');
+
+  var fragmentSrc = [
+    'precision highp float;',
+    'varying vec2 vUv;',
+    'uniform vec2  u_resolution;',
+    'uniform float u_time;',
+    'uniform float u_grain;',
+    'uniform vec3  u_colors[3];',
+    'vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+    'vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+    'vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }',
+    'float snoise(vec2 v) {',
+    '  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);',
+    '  vec2 i  = floor(v + dot(v, C.yy));',
+    '  vec2 x0 = v - i + dot(i, C.xx);',
+    '  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);',
+    '  vec4 x12 = x0.xyxy + C.xxzz;',
+    '  x12.xy -= i1;',
+    '  i = mod289(i);',
+    '  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));',
+    '  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);',
+    '  m = m*m; m = m*m;',
+    '  vec3 x = 2.0 * fract(p * C.www) - 1.0;',
+    '  vec3 h = abs(x) - 0.5;',
+    '  vec3 ox = floor(x + 0.5);',
+    '  vec3 a0 = x - ox;',
+    '  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);',
+    '  vec3 g;',
+    '  g.x  = a0.x  * x0.x  + h.x  * x0.y;',
+    '  g.yz = a0.yz * x12.xz + h.yz * x12.yw;',
+    '  return 130.0 * dot(m, g);',
+    '}',
+    'void main() {',
+    '  vec2 uv = vUv;',
+    '  float ratio = u_resolution.x / u_resolution.y;',
+    '  vec2 p = uv * vec2(ratio, 1.0);',
+    '  float t = u_time * 0.2;',
+    '  float n1 = snoise(p * 0.5 + t);',
+    '  float n2 = snoise(p * 0.9 - t * 0.5 + n1);',
+    '  float light = pow(abs(n2), 2.5) * 0.5;',
+    '  vec3 col = vec3(0.027, 0.035, 0.063);',
+    '  col += u_colors[0] * smoothstep(0.1, 1.0, n1) * 0.5;',
+    '  col += u_colors[1] * light;',
+    '  float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453 + u_time);',
+    '  col += (grain - 0.5) * u_grain * 0.5;',
+    '  float dist = length(uv - 0.5);',
+    '  col *= smoothstep(1.2, 0.2, dist);',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+  ].join('\n');
+
+  function createShader(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  var program = gl.createProgram();
+  gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexSrc));
+  gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentSrc));
+  gl.linkProgram(program);
+  gl.useProgram(program);
+
+  var buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+  var posLoc = gl.getAttribLocation(program, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  var locs = {
+    res:    gl.getUniformLocation(program, 'u_resolution'),
+    time:   gl.getUniformLocation(program, 'u_time'),
+    grain:  gl.getUniformLocation(program, 'u_grain'),
+    colors: gl.getUniformLocation(program, 'u_colors')
+  };
+
+  function hexToRgb(hex) {
+    var h = hex.replace('#', '');
+    return [
+      parseInt(h.slice(0, 2), 16) / 255,
+      parseInt(h.slice(2, 4), 16) / 255,
+      parseInt(h.slice(4, 6), 16) / 255
+    ];
+  }
+
+  var COLORS = new Float32Array(
+    ['#00E5FF', '#f97316', '#FF2D78'].reduce(function (acc, hex) {
+      return acc.concat(hexToRgb(hex));
+    }, [])
+  );
+  var GRAIN = 0.6;
+  var SPEED = 0.3;
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.max(1, canvas.clientWidth * dpr);
+    canvas.height = Math.max(1, canvas.clientHeight * dpr);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  var ro = new ResizeObserver(resize);
+  ro.observe(canvas);
+  resize();
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function draw(t) {
+    gl.uniform2f(locs.res, canvas.width, canvas.height);
+    gl.uniform1f(locs.time, t);
+    gl.uniform1f(locs.grain, GRAIN);
+    gl.uniform3fv(locs.colors, COLORS);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  if (reduceMotion) {
+    draw(0);
+  } else {
+    var raf;
+    (function render(ts) {
+      draw(ts * 0.001 * SPEED);
+      raf = requestAnimationFrame(render);
+    })(0);
+  }
 })();
 </script>
 </body>
