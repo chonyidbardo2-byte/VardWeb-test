@@ -148,7 +148,7 @@
       transition: color 0.2s ease, background 0.2s ease;
       white-space: nowrap;
     }
-    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
 
     /* logo in nav */
@@ -248,12 +248,15 @@
       border: 1px solid rgba(255,255,255,0.07);
       min-height: 288px;
       cursor: default;
-      transform: translateY(var(--reveal-y, 0px)) scale(var(--active-scale, 1)) translateY(var(--active-y, 0px));
+      transform: translateZ(0) translateY(var(--reveal-y, 0px)) translateY(var(--active-y, 0px));
       transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease;
+      will-change: transform;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
     }
     @media (hover: hover) {
       .svc-card:hover {
-        --active-scale: 1.03;
         --active-y: -4px;
         box-shadow:
           0 28px 60px rgba(0,0,0,0.6),
@@ -339,7 +342,6 @@
         animation: svc-dot-pulse 2.2s ease-in-out infinite;
       }
       .svc-card.is-scroll-active {
-        --active-scale: 1.03;
         --active-y: -4px;
         box-shadow:
           0 28px 60px rgba(0,0,0,0.6),
@@ -408,7 +410,7 @@
     /* Mobile: only :active press triggers animation — no scroll-activated states */
     @media (hover: none) {
       .svc-card:active {
-        transform: scale(1.02) translateY(-2px);
+        transform: translateY(-2px) translateZ(0);
         box-shadow: 0 18px 44px rgba(0,0,0,0.55);
       }
       .svc-card:active .svc-card-img img {
@@ -596,15 +598,15 @@
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item" role="menuitem">Web Design</a>
+          <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
-          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
+          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -665,7 +667,7 @@
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
-    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
+    <a href="hosting-services.html"  class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
@@ -706,7 +708,7 @@
       </p>
     </div>
     <div class="svc-hero-img" style="flex-shrink:0;width:190px;pointer-events:none;" aria-hidden="true">
-      <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-JUZxbhjFNx0lYfoIu6oeOnyqdF6E3y.png&w=320&q=75" alt="" loading="lazy" style="filter:drop-shadow(0 24px 48px rgba(0,0,0,0.45));"/>
+      <img src="brand_assets/icons/svc-hero-illustration.webp" alt="" loading="lazy" style="filter:drop-shadow(0 24px 48px rgba(0,0,0,0.45));"/>
     </div>
   </div>
 </div>
@@ -721,7 +723,7 @@
       <div class="svc-card" style="--c1:#00E5FF;--c2:#0099CC;--c3:#7CFCEC;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-gkeF65nuZ1n83kYnsYLNweiK4tjXz1.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-web-design.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);">
@@ -753,7 +755,7 @@
       <div class="svc-card" style="--c1:#FFD700;--c2:#FF9500;--c3:#FFEC80;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-aVMcBoKPxWSQV3iw3xPRFYGVBDZwzN.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-ecommerce.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(255,215,0,0.09);border:1px solid rgba(255,215,0,0.22);">
@@ -784,7 +786,7 @@
       <div class="svc-card" style="--c1:#FF2D78;--c2:#C4004F;--c3:#FF8FBA;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-CCwIWAzE77jGrCqKZB8s5kfubGGoqy.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-landing-pages.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(255,45,120,0.09);border:1px solid rgba(255,45,120,0.22);">
@@ -816,7 +818,7 @@
       <div class="svc-card" style="--c1:#A855F7;--c2:#7C3AED;--c3:#D8B4FE;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-LxbDZUY1gzuzF4AEv0OHAqsSGpAng8.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-app-development.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(168,85,247,0.09);border:1px solid rgba(168,85,247,0.22);">
@@ -850,7 +852,7 @@
       <div class="svc-card" style="--c1:#22D3EE;--c2:#0E7490;--c3:#67E8F9;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-YxKlwIcjJqTAeRHzfEN0Qra6tvwzNQ.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-sem-seo.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(34,211,238,0.09);border:1px solid rgba(34,211,238,0.22);">
@@ -883,7 +885,7 @@
       <div class="svc-card" style="--c1:#60A5FA;--c2:#1D4ED8;--c3:#BFDBFE;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-krpJdmUaFohx12nd4YmkMmcJombnwo.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-email-marketing.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(96,165,250,0.09);border:1px solid rgba(96,165,250,0.22);">
@@ -909,11 +911,11 @@
         </div>
       </div>
 
-      <!-- 7. Hosting Services -->
+      <!-- 7. Domain & Hosting -->
       <div class="svc-card" style="--c1:#34D399;--c2:#059669;--c3:#A7F3D0;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-dV91Dv10GSnCQam0qvqFmuuNRABTg2.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-hosting.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(52,211,153,0.09);border:1px solid rgba(52,211,153,0.22);">
@@ -928,14 +930,14 @@
               <line x1="6" y1="18" x2="6.01" y2="18"/>
             </svg>
           </div>
-          <h3>Hosting Services</h3>
+          <h3>Domain &amp; Hosting</h3>
           <p class="svc-card-caption">"Your site stays online. Even at 3am.<br class="br-desktop"> Yes, we checked."</p>
           <ul class="svc-bullets">
             <li>Managed hosting with 99.9% uptime SLA</li>
             <li>SSL, CDN &amp; DDoS protection included</li>
             <li>Auto-scaling for traffic spikes, no downtime</li>
           </ul>
-          <a class="svc-card-more" href="contact.html">
+          <a class="svc-card-more" href="hosting-services.html">
             Explore
             <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
@@ -946,7 +948,7 @@
       <div class="svc-card" style="--c1:#FBBF24;--c2:#D97706;--c3:#FDE68A;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-rNgb31NQyjGqcBzNSsAPDd1ITkT193.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-content-creation.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(251,191,36,0.09);border:1px solid rgba(251,191,36,0.22);">
@@ -977,7 +979,7 @@
       <div class="svc-card" style="--c1:#F472B6;--c2:#DB2777;--c3:#FBCFE8;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-2oWA4MooNeVATmlEtzrHjBiop4AJ8w.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-social-media.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(244,114,182,0.09);border:1px solid rgba(244,114,182,0.22);">
@@ -1011,7 +1013,7 @@
       <div class="svc-card" style="--c1:#00E5FF;--c2:#FF2D78;--c3:#FFD700;">
         <div class="svc-card-bg" aria-hidden="true"></div>
         <div class="svc-card-img" aria-hidden="true">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-xmrlNTMzdMRg1sBGiFIomSFpX0L2gj.png&w=320&q=75" alt="" loading="lazy"/>
+          <img src="brand_assets/icons/svc-custom-request.webp" alt="" loading="lazy"/>
         </div>
         <div class="svc-card-panel">
           <div class="svc-badge" style="background:rgba(0,229,255,0.09);border:1px solid rgba(0,229,255,0.22);">
@@ -1114,7 +1116,7 @@
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link">Email Marketing</a>
-        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
         <a href="contact.html" class="footer-link">Custom Request</a>

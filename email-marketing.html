@@ -132,7 +132,8 @@
       transition: color 0.2s ease, background 0.2s ease;
       white-space: nowrap;
     }
-    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
+    .dropdown-item.active { color: var(--em-blue); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
 
     .logo-nav-wrap {
@@ -295,6 +296,15 @@
       background: linear-gradient(120deg, var(--em-blue) 0%, var(--em-blue-deep) 100%);
       box-shadow: 0 8px 20px -6px rgba(96,165,250,0.5), 0 10px 28px -8px rgba(29,78,216,0.3);
     }
+    .em-hero-services-menu { position: relative; display: inline-flex; }
+    .em-hero-services-trigger { display: inline-flex; align-items: center; gap: 7px; }
+    .em-hero-services-trigger .chevron { transition: transform 0.2s ease; }
+    .em-hero-services-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .em-hero-services-panel {
+      position: fixed; left: 0; transform: translateY(6px);
+    }
+    .em-hero-services-panel.drop-down { transform: translateY(-6px); }
+    .em-hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .em-hero-btn-gradient:hover {
       background: linear-gradient(120deg, #86bbfb 0%, #2a5ce8 100%);
       box-shadow: 0 10px 28px -6px rgba(96,165,250,0.55), 0 12px 34px -8px rgba(29,78,216,0.45);
@@ -316,6 +326,10 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, rgba(96,165,250,0.18), transparent);
       margin: 0 auto; max-width: 1200px;
+    }
+    .em-heading-grad {
+      background: linear-gradient(120deg, var(--em-blue-pale) 0%, var(--em-blue) 45%, var(--em-blue-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
     /* ── Email pricing (ported from sem-seo.html's .email-pricing) ── */
@@ -489,13 +503,117 @@
       opacity: 1;
     }
 
+    /* ── Add-ons / Pay-as-you-go (rotating conic-gradient border cards) ── */
+    .email-addons { padding: 70px 28px 90px; }
+    .email-addons-inner { max-width: 1000px; margin: 0 auto; }
+    .addon-group + .addon-group { margin-top: 56px; }
+    #email-payg, #email-addons-list { scroll-margin-top: 84px; }
+    .addon-group-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(22px, 3vw, 30px); font-weight: 800;
+      letter-spacing: -0.02em; color: var(--text-1);
+      margin-bottom: 24px;
+    }
+    .addon-card-grid {
+      display: grid; grid-template-columns: 1fr; gap: 20px;
+    }
+
+    @property --border-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    .addon-card {
+      --addon-c1: #93C5FD;
+      --addon-c2: var(--em-blue);
+      --addon-c3: var(--em-blue-deep);
+      position: relative;
+      border-radius: 18px;
+      padding: 2.5px; /* visible rotating-border ring thickness */
+      background: conic-gradient(from var(--border-angle), var(--addon-c1), var(--addon-c2), var(--addon-c3), var(--addon-c1));
+      animation: addon-border-spin 7s linear infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .addon-card[data-addon="dedicated-ips"] {
+      --addon-c1: #D8B4FE; --addon-c2: #A855F7; --addon-c3: #7E22CE;
+    }
+    @keyframes addon-border-spin {
+      to { --border-angle: 360deg; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .addon-card { animation: none; }
+    }
+    @media (hover: hover) {
+      .addon-card:hover { transform: translateY(-4px); }
+    }
+    .addon-card-content {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #060606, #000000);
+      border-radius: 15.5px;
+      height: 100%;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 16px 34px -14px rgba(0,0,0,0.55), 0 0 22px color-mix(in srgb, var(--addon-c2) 12%, transparent);
+      overflow: hidden;
+    }
+    .addon-card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 19px; font-weight: 800; letter-spacing: -0.01em;
+      color: var(--text-1); margin-bottom: 8px;
+    }
+    .addon-card-desc {
+      font-family: 'Inter', sans-serif;
+      font-size: 14.5px; line-height: 1.7; color: var(--text-2);
+    }
+    .addon-card-cta {
+      flex-shrink: 0;
+      margin-top: auto;
+      border: none; color: #fff;
+      background: linear-gradient(120deg, var(--addon-c2) 0%, var(--addon-c3) 100%);
+      box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--addon-c2) 50%, transparent), 0 10px 28px -8px color-mix(in srgb, var(--addon-c3) 30%, transparent);
+    }
+    .addon-card-cta:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--addon-c2) 55%, transparent), 0 12px 34px -8px color-mix(in srgb, var(--addon-c3) 45%, transparent);
+      transform: translateY(-2px);
+    }
+    .addon-card.is-light-cta .addon-card-cta { color: #070910; }
+    @media (max-width: 560px) {
+      .addon-card-cta { align-self: stretch; justify-content: center; }
+    }
+    .addon-card-icon {
+      position: absolute;
+      right: var(--icon-right, 6%); top: var(--icon-top, 50%);
+      transform: var(--icon-transform, translateY(-50%)) rotate(var(--icon-rotate, 0deg));
+      z-index: -1;
+      pointer-events: none;
+    }
+    .addon-card-icon img { width: var(--icon-w, 140px); height: var(--icon-h, 140px); object-fit: contain; display: block; }
+    @media (max-width: 560px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile, var(--icon-right, 6%));
+        top: var(--icon-top-mobile, var(--icon-top, 50%));
+        transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-50%))) rotate(var(--icon-rotate-mobile, var(--icon-rotate, 0deg)));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 140px));
+        height: var(--icon-h-mobile, var(--icon-h, 140px));
+      }
+    }
+
     /* Comparison table — static feature grid, values are placeholders */
     .email-compare { padding: 90px 28px 90px; }
     .email-compare-inner { max-width: 1000px; margin: 0 auto; }
     .email-compare-inner + .email-compare-inner { margin-top: 64px; }
     .compare-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
-    .compare-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+    .compare-table { width: 100%; border-collapse: collapse; min-width: 560px; table-layout: fixed; }
+    .compare-table th:first-child, .compare-table td:first-child { width: 320px; }
     .compare-table th, .compare-table td { padding: 14px 18px; text-align: left; }
+    @media (max-width: 560px) {
+      .compare-table { min-width: 480px; }
+      .compare-table th:first-child, .compare-table td:first-child { width: 130px; }
+      .compare-table th, .compare-table td { padding: 10px 12px; }
+    }
     .compare-table thead th {
       font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.5);
@@ -564,6 +682,20 @@
     .em-faq-trigger:hover { background: rgba(96,165,250,0.03); }
     .em-faq-item.open .em-faq-trigger { background: rgba(96,165,250,0.05); }
     .em-faq-trigger:focus-visible { outline: 2px solid rgba(96,165,250,0.4); outline-offset: -2px; }
+
+    .em-faq-trigger-icon {
+      width: 38px; height: 38px;
+      border-radius: 11px;
+      background: rgba(96,165,250,0.06);
+      border: 1px solid rgba(96,165,250,0.14);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .em-faq-item.open .em-faq-trigger-icon {
+      background: rgba(96,165,250,0.12);
+      border-color: rgba(96,165,250,0.3);
+    }
 
     .em-faq-question {
       flex: 1;
@@ -661,7 +793,7 @@
       position: absolute; inset: 0; z-index: 0; pointer-events: none;
       opacity: 0.32; mix-blend-mode: screen;
     }
-    .em-cta-content { position: relative; z-index: 1; max-width: 720px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .em-cta-content { position: relative; z-index: 1; max-width: 720px; width: 100%; min-width: 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
     .em-cta-content .em-hero-pill { margin-bottom: 30px; }
     .em-cta-heading {
       font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
@@ -669,8 +801,8 @@
       font-size: clamp(34px, 6vw, 74px);
       color: var(--text-1); margin-bottom: 26px;
     }
-    .em-cta-heading span { display: block; }
-    .em-cta-heading .em-cta-heading-line2 { color: rgba(238,240,248,0.62); }
+    .em-cta-heading .em-cta-heading-line1 { display: block; }
+    .em-cta-heading .em-cta-heading-line2 { display: block; white-space: nowrap; color: rgba(238,240,248,0.62); }
     .em-cta-sub {
       font-size: 16.5px; line-height: 1.75; color: var(--text-2);
       max-width: 560px; margin: 0 0 38px;
@@ -678,11 +810,15 @@
     .em-cta-btn {
       padding: 15px 34px; border-radius: 999px; font-size: 13.5px;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .em-cta-btn:hover { transform: translateY(-2px) scale(1.035); }
+    .em-cta-btn:hover { transform: translateY(-2px) scale(1.035) translateZ(0); }
     .em-cta-btn:focus-visible { outline: 2px solid rgba(96,165,250,0.6); outline-offset: 2px; }
     .em-cta-btn svg { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
     .em-cta-btn:hover svg { transform: translateX(4px); }
+    .em-cta-content .em-hero-cta-row { justify-content: center; width: 100%; }
     @media (max-width: 640px) {
       .em-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
     }
@@ -742,7 +878,7 @@
       .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
       .mob-link:hover::before { transform: scaleY(1); }
       .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
-      .mob-link.active { color: var(--cyan); }
+      .mob-link.active { color: var(--em-blue); }
       .mob-link.active::before { transform: scaleY(1); }
       .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
       .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
@@ -786,6 +922,41 @@
           if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
         });
       });
+
+      document.querySelectorAll('.em-hero-services-menu').forEach(function (wrap) {
+        var svcTrigger = wrap.querySelector('.em-hero-services-trigger');
+        var svcPanel = wrap.querySelector('.em-hero-services-panel');
+        document.body.appendChild(svcPanel);
+        var closeSvc = function () { svcTrigger.setAttribute('aria-expanded', 'false'); svcPanel.classList.remove('open'); };
+        var openSvc = function () {
+          var rect = svcTrigger.getBoundingClientRect();
+          var panelHeight = svcPanel.offsetHeight;
+          var openDown = rect.top - panelHeight - 10 < 16;
+          if (openDown) {
+            svcPanel.style.top = (rect.bottom + 10) + 'px';
+            svcPanel.style.bottom = 'auto';
+            svcPanel.classList.add('drop-down');
+          } else {
+            svcPanel.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+            svcPanel.style.top = 'auto';
+            svcPanel.classList.remove('drop-down');
+          }
+          svcPanel.style.left = rect.left + 'px';
+          svcTrigger.setAttribute('aria-expanded', 'true');
+          svcPanel.classList.add('open');
+        };
+        svcTrigger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          svcTrigger.getAttribute('aria-expanded') === 'true' ? closeSvc() : openSvc();
+        });
+        svcPanel.querySelectorAll('.dropdown-item').forEach(function (item) {
+          item.addEventListener('click', closeSvc);
+        });
+        document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
+        window.addEventListener('scroll', closeSvc, true);
+        window.addEventListener('resize', closeSvc);
+      });
     });
   </script>
 </head>
@@ -820,18 +991,18 @@
       <a href="our-work.html" class="nav-link">Our Work</a>
       <a href="about.html"    class="nav-link">About</a>
       <div class="nav-dropdown">
-        <a href="services.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+        <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item" role="menuitem">Web Design</a>
+          <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
-          <a href="email-marketing.html" class="dropdown-item active" role="menuitem">Email Marketing</a>
-          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
+          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
+          <a href="email-marketing.html" class="dropdown-item active" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -874,7 +1045,7 @@
     <a href="about.html"    class="mob-link mob-sub">About Us</a>
     <a href="contact.html"  class="mob-link mob-sub">Contact</a>
     </div></div>
-    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+    <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
       Services
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
@@ -885,7 +1056,7 @@
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
+    <a href="hosting-services.html"  class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="email-marketing.html" class="mob-link mob-sub active">Email Marketing</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
@@ -945,7 +1116,19 @@
       Turn your boring emails into the digital equivalent of finding a twenty-dollar bill in your old jeans.
     </p>
     <div class="em-hero-cta-row">
-      <a href="#email-compare" class="btn em-hero-btn em-hero-btn-outline">View Details</a>
+      <div class="em-hero-services-menu">
+        <button type="button" class="btn em-hero-btn em-hero-btn-outline em-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="email-hero-services-panel">
+          View Details
+          <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-menu em-hero-services-panel" id="email-hero-services-panel" role="menu">
+          <a href="#email-pricing" class="dropdown-item" role="menuitem">Scale your sending</a>
+          <a href="#email-payg" class="dropdown-item" role="menuitem">Pay-as-you-go</a>
+          <a href="#email-addons-list" class="dropdown-item" role="menuitem">Add-ons</a>
+          <a href="#email-compare" class="dropdown-item" role="menuitem">Comparison Charts</a>
+          <a href="#email-faq" class="dropdown-item" role="menuitem">FAQ</a>
+        </div>
+      </div>
       <a href="#email-pricing" class="btn em-hero-btn em-hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
     </div>
   </div>
@@ -957,7 +1140,7 @@
     <div class="email-pricing-head">
       <p class="sec-tag">// scale your sending</p>
       <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
-        Inbox Ready, Scale Set
+        Inbox Ready, <span class="em-heading-grad">Scale Set</span>
       </h2>
     </div>
     <p class="email-pricing-sub">
@@ -994,6 +1177,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 sending domain</li>
             <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>100 emails a day</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IPs</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -1013,6 +1197,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IPs</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -1032,6 +1217,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>10 sending domains</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IPs</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -1039,7 +1225,7 @@
         <div class="pricing-card" data-card="enterprise" style="--tier-color:#A855F7; --tier-glow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.06);">
           <p class="pricing-card-name">Custom</p>
           <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">C$130 / mo</p>
+          <p class="pricing-card-price">C$230 / mo</p>
           <div class="pricing-card-divider"></div>
           <p class="pricing-card-vol">100,000 emails / mo</p>
           <p class="pricing-card-extra">Extra emails: C$2.30 / 1000</p>
@@ -1051,6 +1237,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>30-day data retention</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1,000 sending domains</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>No daily email cap</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Dedicated IP with add-on</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Contact us</a>
         </div>
@@ -1081,6 +1268,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>3 segments</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>1 domain</li>
             <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Marketing analytics</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IPs</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -1099,6 +1287,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IPs</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -1117,6 +1306,7 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IPs</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Get Started</a>
         </div>
@@ -1124,7 +1314,7 @@
         <div class="pricing-card" data-card="enterprise" style="--tier-color:#A855F7; --tier-glow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.06);">
           <p class="pricing-card-name">Custom</p>
           <span class="pricing-card-badge">Recommended</span>
-          <p class="pricing-card-price">C$290 / mo</p>
+          <p class="pricing-card-price">C$205 / mo</p>
           <div class="pricing-card-divider"></div>
           <p class="pricing-card-vol">10,000 contacts</p>
           <p class="pricing-card-extra">Unlimited broadcast sending</p>
@@ -1135,8 +1325,64 @@
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited segments</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Unlimited domains</li>
             <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Marketing analytics</li>
+            <li class="is-off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 9l6 6M15 9l-6 6"/></svg>Dedicated IP with add-on</li>
           </ul>
           <a href="contact.html" class="btn btn-ghost">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── EMAIL ADD-ONS ── -->
+<section class="email-addons" id="email-addons">
+  <div class="email-addons-inner">
+    <div class="addon-group" id="email-payg">
+      <h3 class="addon-group-heading">Pay-as-you-go</h3>
+      <div class="addon-card-grid">
+        <div class="addon-card" data-addon="emails">
+          <div class="addon-card-content">
+            <div class="addon-card-icon" style="--icon-right:29%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:180px; --icon-h:180px; --icon-rotate:17deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(14%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
+              <img src="brand_assets/icons/Email-isometric-icon-transparent.webp" alt="" />
+            </div>
+            <div>
+              <h4 class="addon-card-title">Emails</h4>
+              <p class="addon-card-desc">Continue sending and receiving emails beyond your quota. VardWeb automatically charges your plan's overage rate for each additional bucket of 1,000 emails. Available to Silver, Gold and Custom subscriptions.</p>
+            </div>
+            <a href="contact.html?type=Email%20Marketing&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
+          </div>
+        </div>
+        <div class="addon-card" data-addon="automations">
+          <div class="addon-card-content">
+            <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:6deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(9%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
+              <img src="brand_assets/icons/Automation-isometric-icon-transparent.webp" alt="" />
+            </div>
+            <div>
+              <h4 class="addon-card-title">Automations · C$0.0035 / per run</h4>
+              <p class="addon-card-desc">Start with 10,000 Automation Runs for free, and scale as you need. VardWeb automatically charges for each run beyond the free limit. Available to Silver, Gold and Custom subscriptions.</p>
+            </div>
+            <a href="contact.html?type=Email%20Marketing&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="addon-group" id="email-addons-list">
+      <h3 class="addon-group-heading">Add-ons</h3>
+      <div class="addon-card-grid">
+        <div class="addon-card" data-addon="dedicated-ips">
+          <div class="addon-card-content">
+            <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:9deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(18%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
+              <img src="brand_assets/icons/DedicatedIPs-isometric-icon-transparent.webp" alt="" />
+            </div>
+            <div>
+              <h4 class="addon-card-title">Dedicated IPs · C$65 / mo</h4>
+              <p class="addon-card-desc">Available to customers exceeding 3,000 emails sent per day on the Custom plan. We take great care to maintain good-standing shared IP's, but for some high-volume senders, you can't leave anything up to chance. We will warmup, monitor, and autoscale it based on your utilization so you can focus on one thing, sending.</p>
+            </div>
+            <a href="contact.html?type=Email%20Marketing&amp;bookCall=1" class="btn addon-card-cta">Request Dedicated IPs</a>
+          </div>
         </div>
       </div>
     </div>
@@ -1192,6 +1438,8 @@
         </thead>
         <tbody>
           <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Use your own domain for optimal deliverability and brand recognition.">Custom domains</span></th><td>1</td><td>10</td><td>10</td><td>1,000</td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Purchase a dedicated IP pool so a range of IPs are exclusively assigned to your sending.">Dedicated IPs</span></th><td class="xk">—</td><td class="xk">—</td><td class="xk">—</td><td>With add-on</td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="With VardWeb's Managed Dedicated IP Pools, the warmup process is handled automatically.">Dedicated IP warming</span></th><td class="xk">—</td><td class="xk">—</td><td class="xk">—</td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
           <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="By default, all VardWeb users utilize shared IPs that are carefully monitored and maintained.">Pristine shared IPs</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
           <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="When an email bounces permanently, VardWeb automatically adds the email address to the suppression list.">Automatic suppression list</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
           <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Understand the root cause of soft and hard bounces.">Bounce details</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
@@ -1250,7 +1498,7 @@
         </thead>
         <tbody>
           <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Access to help via email and ticket channels.">Ticket support</span></th><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
-          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Guaranteed first response time for critical issues affecting production environments.">Urgent response SLA</span></th><td>12 hours</td><td>8 hours</td><td>4 hours</td><td>4 hours</td></tr>
+          <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Guaranteed first response time for critical issues affecting production environments.">Urgent response SLA</span></th><td>12 hours</td><td>8 hours</td><td>4 hours</td><td>Priority</td></tr>
           <tr><th scope="row"><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Get personalized recommendations based on your actual sending.">Deliverability expertise</span></th><td class="xk">—</td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td><td class="ck"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#33D17A" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></td></tr>
         </tbody>
       </table>
@@ -1263,11 +1511,14 @@
   <div class="em-faq-inner">
     <p class="sec-tag">// frequently asked</p>
     <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px;">
-      Sending Questions, Answered
+      Sending Questions, <span class="em-heading-grad">Answered</span>
     </h2>
     
     <div class="em-faq-item">
       <button class="em-faq-trigger" aria-expanded="false">
+        <div class="em-faq-trigger-icon">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
         <span class="em-faq-question">What happens if I send more emails than my plan allows?</span>
         <div class="em-faq-toggle" aria-hidden="true">
           <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1285,6 +1536,9 @@
 
     <div class="em-faq-item">
       <button class="em-faq-trigger" aria-expanded="false">
+        <div class="em-faq-trigger-icon">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        </div>
         <span class="em-faq-question">What is the difference between transactional and marketing emails?</span>
         <div class="em-faq-toggle" aria-hidden="true">
           <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1304,6 +1558,9 @@
 
     <div class="em-faq-item">
       <button class="em-faq-trigger" aria-expanded="false">
+        <div class="em-faq-trigger-icon">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
+        </div>
         <span class="em-faq-question">What does "unlimited broadcast sending" mean?</span>
         <div class="em-faq-toggle" aria-hidden="true">
           <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1320,6 +1577,9 @@
 
     <div class="em-faq-item">
       <button class="em-faq-trigger" aria-expanded="false">
+        <div class="em-faq-trigger-icon">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
         <span class="em-faq-question">Do broadcast emails count against the transactional email limits?</span>
         <div class="em-faq-toggle" aria-hidden="true">
           <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1336,6 +1596,9 @@
 
     <div class="em-faq-item">
       <button class="em-faq-trigger" aria-expanded="false">
+        <div class="em-faq-trigger-icon">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        </div>
         <span class="em-faq-question">How are inbound emails counted?</span>
         <div class="em-faq-toggle" aria-hidden="true">
           <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1361,22 +1624,25 @@
       <div class="em-cta-content">
         <div class="em-hero-pill">
           <span class="em-hero-pill-dot"></span>
-          Deliverability, Not Guesswork
+          Let's Fill Your Inbox
         </div>
 
         <h2 class="em-cta-heading">
-          <span>Your emails,</span>
+          <span class="em-cta-heading-line1">Your emails,</span>
           <span class="em-cta-heading-line2">delivered perfectly.</span>
         </h2>
 
         <p class="em-cta-sub">
-          Join the businesses using VardWeb to turn their inbox into their highest-converting channel — clean, targeted, and built to land.
+          Join the businesses using VardWeb to turn their inbox into their highest-converting channel. Clean, targeted, and built to land.
         </p>
 
-        <a href="contact.html" class="btn em-cta-btn em-hero-btn-gradient">
-          Get Started
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
+        <div class="em-hero-cta-row">
+          <a href="#email-pricing" class="btn em-cta-btn em-hero-btn-gradient">
+            Get Started
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="contact.html?type=Email%20Marketing&amp;learnMore=1" class="btn em-cta-btn em-hero-btn-outline">Contact Us</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1426,7 +1692,7 @@
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link active">Email Marketing</a>
-        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
         <a href="contact.html" class="footer-link">Custom Request</a>
@@ -1476,6 +1742,37 @@
   (function () {
     var line = document.querySelector('.em-hero-heading-line2');
     var container = document.querySelector('.em-hero-content');
+    if (!line || !container) return;
+
+    function fit() {
+      line.style.fontSize = '';
+      var available = container.clientWidth;
+      var needed = line.scrollWidth;
+      if (needed > available) {
+        var current = parseFloat(getComputedStyle(line).fontSize);
+        line.style.fontSize = (current * (available / needed) * 0.98) + 'px';
+      }
+    }
+
+    var rafId = null;
+    function scheduleFit() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(fit);
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(scheduleFit);
+    } else {
+      scheduleFit();
+    }
+    window.addEventListener('resize', scheduleFit);
+  })();
+
+  /* Shrink .em-cta-heading-line2 to fit its container on one line
+     (same problem/fix as the hero heading above). */
+  (function () {
+    var line = document.querySelector('.em-cta-heading-line2');
+    var container = document.querySelector('.em-cta-content');
     if (!line || !container) return;
 
     function fit() {
@@ -1576,13 +1873,24 @@
       box.classList.remove('is-open');
     }
 
+    var HOVER_DELAY = 150;
+    var hoverTimer = null;
+
     triggers.forEach(function (t) {
-      if (canHover) {
-        t.addEventListener('mouseenter', function () { show(t); });
-        t.addEventListener('mouseleave', function () { if (openTrigger === t) hide(); });
-        t.addEventListener('focus', function () { show(t); });
-        t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
-      } else {
+      t.addEventListener('mouseenter', function () {
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(function () {
+          if (t.matches(':hover')) show(t);
+        }, HOVER_DELAY);
+      });
+      t.addEventListener('mouseleave', function () {
+        clearTimeout(hoverTimer);
+        if (openTrigger === t) hide();
+      });
+      t.addEventListener('focus', function () { show(t); });
+      t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
+
+      if (!canHover) {
         t.addEventListener('click', function (e) {
           e.stopPropagation();
           if (openTrigger === t) { hide(); } else { show(t); }
@@ -1609,25 +1917,31 @@
     var DATA = {
       transactional: [
         { card: 'free',       vol: '3,000 emails / mo',     price: 'Included' },
-        { card: 'pro',        vol: '25,000 emails / mo',    price: 'Included' },
-        { card: 'scale',      vol: '50,000 emails / mo',    price: 'Included' },
-        { card: 'enterprise', vol: '100,000 emails / mo',   price: 'C$130 / mo',    extra: 'C$2.30 / 1000' },
-        { card: 'enterprise', vol: '200,000 emails / mo',   price: 'C$575 / mo',    extra: 'C$2.00 / 1000' },
-        { card: 'enterprise', vol: '500,000 emails / mo',   price: 'C$1,255 / mo',  extra: 'C$1.80 / 1000' },
-        { card: 'enterprise', vol: '1,000,000 emails / mo', price: 'C$2,310 / mo',  extra: 'C$1.70 / 1000' },
-        { card: 'enterprise', vol: '1,500,000 emails / mo', price: 'C$2,940 / mo',  extra: 'C$1.30 / 1000' },
-        { card: 'enterprise', vol: '2,500,000 emails / mo', price: 'C$4,095 / mo',  extra: 'C$1.20 / 1000' }
+        { card: 'pro',        vol: '25,000 emails / mo',    price: 'Included', extra: 'C$2.30 / 1000' },
+        { card: 'scale',      vol: '50,000 emails / mo',    price: 'Included', extra: 'C$2.30 / 1000' },
+        { card: 'enterprise', vol: '100,000 emails / mo',   price: 'C$230 / mo',    extra: 'C$2.30 / 1000' },
+        { card: 'enterprise', vol: '200,000 emails / mo',   price: 'C$405 / mo',    extra: 'C$2.05 / 1000' },
+        { card: 'enterprise', vol: '500,000 emails / mo',   price: 'C$890 / mo',    extra: 'C$1.80 / 1000' },
+        { card: 'enterprise', vol: '1,000,000 emails / mo', price: 'C$1,655 / mo',  extra: 'C$1.65 / 1000' },
+        { card: 'enterprise', vol: '1,500,000 emails / mo', price: 'C$2,100 / mo',  extra: 'C$1.30 / 1000' },
+        { card: 'enterprise', vol: '2,500,000 emails / mo', price: 'C$2,925 / mo',  extra: 'C$1.15 / 1000' }
       ],
       marketing: [
         { card: 'free',       vol: '1,000 contacts',   price: 'Included' },
         { card: 'pro',        vol: '3,000 contacts',   price: 'Included' },
         { card: 'scale',      vol: '5,000 contacts',   price: 'Included' },
-        { card: 'enterprise', vol: '10,000 contacts',  price: 'C$290 / mo' },
-        { card: 'enterprise', vol: '25,000 contacts',  price: 'C$645 / mo' },
-        { card: 'enterprise', vol: '50,000 contacts',  price: 'C$890 / mo' },
-        { card: 'enterprise', vol: '100,000 contacts', price: 'C$1,605 / mo' },
-        { card: 'enterprise', vol: '150,000 contacts', price: 'C$2,320 / mo' }
+        { card: 'enterprise', vol: '10,000 contacts',  price: 'C$205 / mo' },
+        { card: 'enterprise', vol: '25,000 contacts',  price: 'C$460 / mo' },
+        { card: 'enterprise', vol: '50,000 contacts',  price: 'C$635 / mo' },
+        { card: 'enterprise', vol: '100,000 contacts', price: 'C$1,145 / mo' },
+        { card: 'enterprise', vol: '150,000 contacts', price: 'C$1,655 / mo' }
       ]
+    };
+
+    var ADDON_TIER_COLORS = {
+      pro:        ['#E4EAF7', '#C2D0E8', '#8FA3C7'],  // Silver
+      scale:      ['#FFEFA8', '#FFD700', '#B8940A'],  // Gold
+      enterprise: ['#D8B4FE', '#A855F7', '#7E22CE']   // Custom (purple)
     };
 
     var panelRenders = [];
@@ -1639,6 +1953,25 @@
       var grid  = panel.querySelector('.pricing-card-grid');
       var cards = panel.querySelectorAll('.pricing-card');
       var rows  = DATA[tab];
+      var enterpriseDefault = rows.filter(function (r) { return r.card === 'enterprise'; })[0];
+      var panelLabel = tab === 'transactional' ? 'Transactional Emails' : 'Marketing Emails';
+
+      /* Carry the selected tier + volume to contact.html, per card, like
+         web-design.html's pricing-card "Let's Talk" links do. */
+      function updateCardLinks() {
+        cards.forEach(function (card) {
+          var tierName = (card.querySelector('.pricing-card-name') || {}).textContent || '';
+          var volText  = (card.querySelector('.pricing-card-vol') || {}).textContent || '';
+          var params = new URLSearchParams();
+          params.set('type', 'Email Marketing');
+          if (tierName.trim()) params.set('tier', tierName.trim());
+          if (volText.trim()) params.set('service', panelLabel + ' — ' + volText.trim());
+          var href = 'contact.html?' + params.toString();
+          card.querySelectorAll('a[href^="contact.html"]').forEach(function (a) {
+            a.href = href;
+          });
+        });
+      }
 
       function render() {
         var i   = +range.value;
@@ -1653,17 +1986,41 @@
           var suppressForScroll = mobileQuery.matches && i === 0;
           card.classList.toggle('is-active', isActive && !suppressForScroll);
           card.classList.toggle('is-recommended-active', isActive && i > 0);
-          if (isActive && row.card === 'enterprise') {
+          if (card.getAttribute('data-card') === 'enterprise') {
+            var displayRow = row.card === 'enterprise' ? row : enterpriseDefault;
             var priceEl = card.querySelector('.pricing-card-price');
             var volEl   = card.querySelector('.pricing-card-vol');
             var extraEl = card.querySelector('.pricing-card-extra');
-            if (priceEl) priceEl.textContent = row.price;
-            if (volEl) volEl.textContent = row.vol;
-            if (extraEl && row.extra) extraEl.textContent = 'Extra emails: ' + row.extra;
+            if (priceEl) priceEl.textContent = displayRow.price;
+            if (volEl) volEl.textContent = displayRow.vol;
+            if (extraEl && displayRow.extra) extraEl.textContent = 'Extra emails: ' + displayRow.extra;
           }
         });
 
         if (grid) grid.classList.toggle('is-compact', mobileQuery.matches && i > 0);
+        updateCardLinks();
+
+        if (tab === 'transactional') {
+          var emailsCard = document.querySelector('.addon-card[data-addon="emails"]');
+          if (emailsCard) {
+            var titleEl = emailsCard.querySelector('.addon-card-title');
+            emailsCard.classList.toggle('is-light-cta', row.card === 'pro' || row.card === 'scale');
+            if (row.extra) {
+              titleEl.textContent = 'Emails · ' + row.extra.replace('1000', '1,000') + ' emails';
+              var colors = ADDON_TIER_COLORS[row.card];
+              if (colors) {
+                emailsCard.style.setProperty('--addon-c1', colors[0]);
+                emailsCard.style.setProperty('--addon-c2', colors[1]);
+                emailsCard.style.setProperty('--addon-c3', colors[2]);
+              }
+            } else {
+              titleEl.textContent = 'Emails';
+              emailsCard.style.removeProperty('--addon-c1');
+              emailsCard.style.removeProperty('--addon-c2');
+              emailsCard.style.removeProperty('--addon-c3');
+            }
+          }
+        }
       }
 
       range.addEventListener('input', render);
@@ -1682,6 +2039,16 @@
     setupPanel('marketing');
 
     window.addEventListener('resize', function () {
+      panelRenders.forEach(function (render) { render(); });
+    });
+
+    /* Always start the sliders at their lowest tier — on a fresh load this
+       is a no-op, but on back/forward navigation the browser can restore a
+       range input's raw value without re-running our --fill/card-sync
+       logic, leaving the native thumb and the custom track visually out of
+       sync. Forcing back to index 0 sidesteps that mismatch entirely. */
+    window.addEventListener('pageshow', function () {
+      section.querySelectorAll('.email-range').forEach(function (range) { range.value = 0; });
       panelRenders.forEach(function (render) { render(); });
     });
 
@@ -1891,14 +2258,16 @@
 
   /* ── CTA dithered-warp background ──
      Vanilla port of the supplied React CTASection's @paper-design/shaders-react
-     Dithering (shape="warp", type="4x4"): a domain-warped fbm noise field
-     quantized through an ordered (Bayer 4x4) dither matrix, recolored to this
-     page's blue accent. Speed ramps from 0.2 (idle) to 0.6 (hover), lerped
-     each frame rather than snapping instantly. Lazily initialized once the
-     CTA card scrolls into view, same pattern as the hero background above. */
+     Dithering (shape="warp", type="4x4"): a domain-warped fbm noise field, recolored
+     to this page's blue accent. The field is read as thin curling sheet contours
+     (not filled blobs) modulated by a slower independent field that dissipates
+     patches over time, with a light Bayer 4x4 dither blended in as grain texture.
+     Speed ramps from 0.8 (idle) to 2.6 (hover), lerped each frame rather than
+     snapping instantly. Lazily initialized once the CTA card scrolls into view,
+     same pattern as the hero background above. */
   function initEmailCtaBackground(bgEl, hoverEl) {
-    const RENDER_SCALE = 4; // render at 1/4 resolution and let the canvas scale up — the
-                             // blocky upscale is what makes the ordered dither read as visible grain
+    const RENDER_SCALE = 2; // render at 1/2 resolution and let the canvas scale up — soft
+                             // edges for the sheets, with just enough upscale for the dither grain
 
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
@@ -1974,21 +2343,29 @@
             fbm(uv + 3.5 * q + vec2(8.3, 2.8) + t * 0.08)
           );
           float f = fbm(uv + 3.5 * r);
-          f = clamp((f - 0.32) * 1.6, 0.0, 1.0);
 
-          float levels = 4.0;
-          float dither = bayer4(floor(gl_FragCoord.xy));
-          float quant = clamp(floor(f * levels + dither) / levels, 0.0, 1.0);
+          // Thin curling sheets: light up narrow bands near each iso-contour of f
+          // (following the domain-warp's S-curve bends) instead of filling solid blobs.
+          float sheet = 1.0 - abs(fract(f * 2.5) - 0.5) * 2.0;
+          sheet = pow(clamp(sheet, 0.0, 1.0), 4.0);
 
-          gl_FragColor = vec4(uColor, quant);
+          // Dissipating: a slower, larger-scale field drifting independently over time
+          // fades whole patches of sheet in and out, like smoke thinning and reforming.
+          float dissolve = smoothstep(0.25, 0.75, fbm(uv * 0.25 - t * 0.03));
+
+          // Bayer grain stays a light texture overlay, not the shape itself.
+          float grain = bayer4(floor(gl_FragCoord.xy)) - 0.5;
+          float alpha = clamp(sheet * dissolve + grain * 0.12, 0.0, 1.0);
+
+          gl_FragColor = vec4(uColor, alpha);
         }
       `
     });
 
     scene.add(new THREE.Mesh(geometry, material));
 
-    let speed = 0.2;
-    let targetSpeed = 0.2;
+    let speed = 0.8;
+    let targetSpeed = 0.8;
     let simTime = 0;
     const clock = new THREE.Clock();
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2025,8 +2402,8 @@
       simTime = 1.0;
       renderFrame();
     } else {
-      hoverEl.addEventListener('mouseenter', function () { targetSpeed = 0.6; });
-      hoverEl.addEventListener('mouseleave', function () { targetSpeed = 0.2; });
+      hoverEl.addEventListener('mouseenter', function () { targetSpeed = 2.6; });
+      hoverEl.addEventListener('mouseleave', function () { targetSpeed = 0.8; });
       animate();
     }
   }

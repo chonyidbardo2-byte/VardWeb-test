@@ -7,7 +7,7 @@
   <meta name="description" content="Social Media Marketing by VardWeb — build real engagement, real reach, and real ROI across every platform your customers scroll." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Grand+Hotel&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/gsap.min.js"></script>
   <script>
@@ -44,10 +44,15 @@
       --text-2:  rgba(200,212,232,0.62);
       --bronze:  #CD7F32;
       --silver:  #A8A9AD;
+
+      /* Social Media & SMM service accent — matches the card on services.html */
+      --smm-rose:      #F472B6;
+      --smm-rose-deep: #DB2777;
+      --smm-rose-pale: #FBCFE8;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; overflow-x: hidden; }
     body {
       background: var(--base);
       color: var(--text-1);
@@ -145,9 +150,9 @@
       transition: color 0.2s ease, background 0.2s ease;
       white-space: nowrap;
     }
-    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
-    .dropdown-item.active { color: var(--cyan); }
+    .dropdown-item.active { color: var(--smm-rose); }
 
     .logo-nav-wrap {
       display: inline-flex;
@@ -188,6 +193,134 @@
       color: #fff;
       background: rgba(255,255,255,0.05);
       transform: translateY(-2px);
+    }
+
+    /* ── Pill buttons (ported from email-marketing.html's hero/CTA buttons,
+       recolored from blue to this page's rose accent) ── */
+    .smm-pill-btn {
+      border-radius: 999px;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, background 0.25s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .smm-pill-btn:hover { transform: translateY(-2px) translateZ(0); }
+    .smm-pill-btn:focus-visible { outline: 2px solid rgba(244,114,182,0.6); outline-offset: 2px; }
+    .smm-hero-btn { padding: 14px 30px; font-size: 13px; }
+    .smm-cta-pill-btn { padding: 15px 34px; font-size: 13.5px; }
+    .smm-pill-btn-outline {
+      background: transparent; border: 2px solid rgba(255,255,255,0.3); color: #ffffff;
+    }
+    .smm-pill-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(244,114,182,0.55); }
+    .smm-pill-btn-gradient {
+      border: none; color: #070910;
+      background: linear-gradient(120deg, var(--smm-rose) 0%, var(--smm-rose-deep) 100%);
+      box-shadow: 0 8px 20px -6px rgba(244,114,182,0.5), 0 10px 28px -8px rgba(219,39,119,0.3);
+    }
+    .smm-pill-btn-gradient:hover {
+      background: linear-gradient(120deg, var(--smm-rose-pale) 0%, var(--smm-rose-deep) 100%);
+      box-shadow: 0 10px 28px -6px rgba(244,114,182,0.55), 0 12px 34px -8px rgba(219,39,119,0.45);
+    }
+    .smm-pill-btn-gradient svg { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .smm-pill-btn-gradient:hover svg { transform: translateX(4px); }
+
+    .smm-hero-services-menu { position: relative; display: inline-flex; }
+    .smm-hero-services-trigger { display: inline-flex; align-items: center; gap: 7px; }
+    .smm-hero-services-trigger .chevron { transition: transform 0.2s ease; }
+    .smm-hero-services-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .smm-hero-services-panel {
+      position: fixed; left: 0; transform: translateY(6px);
+    }
+    .smm-hero-services-panel.drop-down { transform: translateY(-6px); }
+    .smm-hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    /* ── Hero eyebrow (pill + kicker, ported from email-marketing.html's hero,
+       recolored to rose) ── */
+    .smm-hero-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(244,114,182,0.07);
+      border: 1.5px solid rgba(244,114,182,0.3);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: #ffffff; letter-spacing: 0.02em;
+      margin: 0 0 14px;
+    }
+    .smm-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--smm-rose); box-shadow: 0 0 8px var(--smm-rose); display: inline-block; flex-shrink: 0; }
+    .smm-cta .smm-hero-pill { margin-bottom: 30px; }
+
+    /* ── Nav pill (ported from sem-seo.html's clickable glass hero-pill,
+       recolored to rose) ── */
+    .smm-nav-pill {
+      position: relative;
+      top: -6px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      filter: url(#smm-hero-glass-effect);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: rgba(238,240,248,0.9); letter-spacing: 0.02em;
+      margin-bottom: 14px;
+      text-decoration: none; cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .smm-nav-pill:hover { transform: translateY(-5px) !important; }
+    .smm-nav-pill:active { transform: translateY(0) !important; }
+    .smm-nav-pill:focus-visible { outline: 2px solid rgba(244,114,182,0.5); outline-offset: 4px; }
+    .smm-nav-pill::before {
+      content: ''; position: absolute; top: 0; left: 6px; right: 6px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,114,182,0.3), transparent);
+    }
+    .smm-hero-kicker {
+      display: block;
+      position: relative;
+      top: -6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .smm-kicker-slash { color: var(--text-2); margin-right: 2px; }
+    .smm-kicker-kw {
+      display: inline-block;
+      animation: smm-kicker-wave 2.2s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--smm-rose-pale) 0%, #ffffff 50%, var(--smm-rose-deep) 100%);
+      background-size: 700% 100%;
+      background-position: calc(var(--i) / 14 * 100%) 0;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: url(#smm-hero-text-glow);
+    }
+    @keyframes smm-kicker-wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .smm-kicker-kw { animation: none; }
+    }
+
+    /* ── Hero heading split (two font treatments, ported from email-marketing.html's
+       hero h1: line1's light weight for the lead-in, the site's h2 recipe for the
+       statement, recolored to the rose brand gradient) ── */
+    .smm-hero-h1-line1 {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.4rem, 3.2vw, 2.1rem); font-weight: 300;
+      letter-spacing: 0.01em; margin-bottom: 2px;
+      color: rgba(238,240,248,0.86);
+    }
+    .smm-hero-h1-line2 {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.2rem, calc(9vw - 5px), 3.5rem); font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.015em; line-height: 1.05;
+      white-space: nowrap;
+      background: linear-gradient(135deg, var(--smm-rose-pale) 0%, var(--smm-rose) 45%, var(--smm-rose-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     /* ── Section tag ── */
@@ -258,7 +391,7 @@
       .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
       .mob-link:hover::before { transform: scaleY(1); }
       .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
-      .mob-link.active { color: var(--cyan); }
+      .mob-link.active { color: var(--smm-rose); }
       .mob-link.active::before { transform: scaleY(1); }
       .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
       .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
@@ -391,13 +524,587 @@
       background: linear-gradient(to top, var(--base) 10%, rgba(7,9,16,0.8) 40%, transparent 100%);
     }
 
-    /* ── Scroll-fade reveal (stub section) ── */
+    /* ── Scroll-fade reveal ── */
     .reveal-fade {
       opacity: 0;
       transform: translateY(28px);
       transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
     }
     .reveal-fade.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════════
+       PAGE-SPECIFIC STYLES — Content sections
+       (2-col layout, trust strip, tier glider ported from sem-seo.html;
+       kit-card / free-item / widget-card are new to this page)
+    ══════════════════════════════════════ */
+
+    .sec-inner { max-width: 1200px; margin: 0 auto; padding: 90px 28px; }
+    .sec-head { max-width: 620px; margin: 0 auto 48px; text-align: center; }
+    .sec-head h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900; letter-spacing: -0.03em; line-height: 1.08; color: var(--text-1);
+      margin-bottom: 14px;
+    }
+    .sec-head p { font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
+
+    /* Trust strip — reused shape from sem-seo.html, tinted rose for this page */
+    .trust-strip {
+      max-width: 1200px; margin: 0 auto;
+      padding: 22px 28px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px 18px; flex-wrap: wrap; text-align: center;
+    }
+    .trust-item {
+      display: inline-flex; align-items: flex-start; gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; font-weight: 600;
+      color: var(--text-2); letter-spacing: 0.01em;
+    }
+    .trust-item b { color: var(--text-1); font-weight: 700; }
+    .trust-item svg { color: var(--smm-rose); flex-shrink: 0; margin-top: 2px; }
+    .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(200,212,232,0.22); flex-shrink: 0; }
+    @media (max-width: 640px) {
+      .trust-strip { flex-direction: column; align-items: flex-start; padding: 18px 24px; gap: 10px; }
+      .trust-dot { display: none; }
+    }
+
+    /* Two-column content layout — ported from sem-seo.html's Content Section pattern. */
+    .content-2col {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr; gap: 40px;
+      padding: 70px 28px;
+    }
+    @media (min-width: 1024px) {
+      .content-2col { grid-template-columns: 1fr 1fr; padding: 100px 28px; align-items: center; }
+    }
+    .content-2col-text { display: flex; flex-direction: column; justify-content: center; gap: 22px; }
+    .content-2col-text > h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05;
+      color: var(--text-1); margin: 0;
+    }
+    .content-2col-text > p { font-size: 15.5px; line-height: 1.8; color: var(--text-2); margin: 0; }
+    /* #paid-social's left column has 5 children (sec-tag, h2, paragraph, tip-banner,
+       tier-glider) — same display:contents/nth-child mobile-reorder trick as
+       sem-seo.html's Content Section, tuned to land the visual between the
+       paragraph and the tip-banner instead of trailing the whole text block. */
+    @media (max-width: 1023px) {
+      .content-2col-text { display: contents; }
+      .content-2col-text > *:nth-child(1) { order: 1; }
+      .content-2col-text > *:nth-child(2) { order: 2; }
+      .content-2col-text > *:nth-child(3) { order: 3; }
+      .content-2col-visual { order: 4; }
+      .content-2col-text > *:nth-child(4) { order: 5; }
+      .content-2col-text > *:nth-child(5) { order: 6; }
+    }
+
+    /* Tip admonition banner — ported from sem-seo.html */
+    .tip-banner {
+      display: flex; flex-direction: column; gap: 6px;
+      max-width: 480px; margin: 4px 0 2px;
+      padding: 16px 18px; border-radius: 10px;
+      background: #08150D; border: 1px solid #016630;
+    }
+    .tip-banner-head { display: flex; align-items: center; gap: 8px; }
+    .tip-banner-icon { color: #05DF72; flex-shrink: 0; }
+    .tip-banner-title { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: #05DF72; }
+    .tip-banner-body { font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.7; color: rgba(123,241,168,0.65); }
+    .tip-banner-body b { color: #05DF72; font-weight: 700; }
+
+    /* ── Section A: free-item row + widget card ── */
+    .free-item-grid { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 32px; }
+    @media (min-width: 768px) { .free-item-grid { grid-template-columns: repeat(3, 1fr); } }
+    .free-item {
+      --free-c1: #6EE7B7; --free-c2: #10B981; --free-c3: #059669;
+      position: relative;
+      border-radius: 14px;
+      padding: 2px;
+      background: conic-gradient(from var(--border-angle), var(--free-c1), var(--free-c2), var(--free-c3), var(--free-c1));
+      animation: free-item-border-spin 7s linear infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.6s ease;
+    }
+    .free-item[data-free="open-graph"]     { --free-c1: #6EE7B7; --free-c2: #10B981; --free-c3: #059669; }
+    .free-item[data-free="tracking-pixel"] { --free-c1: #67E8F9; --free-c2: #06B6D4; --free-c3: #0064E0; }
+    .free-item[data-free="share-buttons"]  { --free-c1: #FFB4A8; --free-c2: #FF6B6B; --free-c3: #F43F5E; }
+    @keyframes free-item-border-spin {
+      to { --border-angle: 360deg; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .free-item { animation: none; }
+    }
+    @media (hover: hover) {
+      .free-item:hover { transform: translateY(-4px); }
+    }
+    .free-item-content {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #060606, #000000);
+      border-radius: 12.5px;
+      height: 100%;
+      display: flex; flex-direction: column; gap: 12px;
+      padding: 22px 20px;
+      box-shadow: 0 14px 32px -14px rgba(0,0,0,0.5), 0 0 18px color-mix(in srgb, var(--free-c2) 12%, transparent);
+      overflow: hidden;
+    }
+    .free-item-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: color-mix(in srgb, var(--free-c2) 14%, transparent);
+      border: 1px solid color-mix(in srgb, var(--free-c2) 35%, transparent);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--free-c2); flex-shrink: 0;
+    }
+    .free-item h3 { font-family: 'Inter', sans-serif; font-size: 15.5px; font-weight: 700; color: var(--text-1); letter-spacing: 0; }
+    .free-item p { font-size: 13.5px; line-height: 1.65; color: var(--text-2); flex: 1; }
+    .free-item-cta {
+      align-self: flex-start;
+      margin-top: auto;
+      border: none; color: #fff;
+      background: linear-gradient(120deg, var(--free-c2) 0%, var(--free-c3) 100%);
+      box-shadow: 0 8px 18px -6px color-mix(in srgb, var(--free-c2) 50%, transparent), 0 9px 24px -8px color-mix(in srgb, var(--free-c3) 30%, transparent);
+    }
+    .free-item-cta:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 9px 24px -6px color-mix(in srgb, var(--free-c2) 55%, transparent), 0 10px 30px -8px color-mix(in srgb, var(--free-c3) 45%, transparent);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 560px) {
+      .free-item-cta { align-self: stretch; justify-content: center; }
+    }
+    .free-item-corner-icon {
+      position: absolute;
+      top: var(--icon-top, -14px); right: var(--icon-right, -14px);
+      transform: var(--icon-transform, none) rotate(var(--icon-rotate, 12deg));
+      z-index: -1;
+      pointer-events: none;
+    }
+    .free-item-corner-icon img { width: var(--icon-w, 80px); height: var(--icon-h, 80px); object-fit: contain; display: block; opacity: 0.85; }
+    @media (max-width: 560px) {
+      .free-item-corner-icon {
+        top: var(--icon-top-mobile, var(--icon-top, -14px));
+        right: var(--icon-right-mobile, var(--icon-right, -14px));
+        transform: var(--icon-transform-mobile, var(--icon-transform, none)) rotate(var(--icon-rotate-mobile, var(--icon-rotate, 12deg)));
+      }
+      .free-item-corner-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 80px));
+        height: var(--icon-h-mobile, var(--icon-h, 80px));
+      }
+    }
+
+    .widget-group-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(22px, 3vw, 30px); font-weight: 800;
+      letter-spacing: -0.02em; color: var(--text-1);
+      margin-bottom: 24px;
+    }
+
+    @property --border-angle {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
+    .widget-card {
+      --wc-c1: var(--smm-rose-pale);
+      --wc-c2: var(--smm-rose);
+      --wc-c3: var(--smm-rose-deep);
+      position: relative;
+      border-radius: 18px;
+      padding: 2.5px;
+      background: conic-gradient(from var(--border-angle), var(--wc-c1), var(--wc-c2), var(--wc-c3), var(--wc-c1));
+      animation: widget-border-spin 7s linear infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.6s ease;
+    }
+    @keyframes widget-border-spin {
+      to { --border-angle: 360deg; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .widget-card { animation: none; }
+    }
+    @media (hover: hover) {
+      .widget-card:hover { transform: translateY(-4px); }
+    }
+    .widget-card-content {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #060606, #000000);
+      border-radius: 15.5px;
+      display: flex; flex-direction: column; gap: 18px;
+      padding: 34px 32px;
+      box-shadow: 0 16px 34px -14px rgba(0,0,0,0.55), 0 0 22px color-mix(in srgb, var(--wc-c2) 12%, transparent);
+      overflow: hidden;
+    }
+    @media (min-width: 900px) { .widget-card-content { flex-direction: row; align-items: center; gap: 40px; } }
+    .widget-card-body { flex: 1; }
+    .widget-card-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--smm-rose);
+      margin-bottom: 12px;
+    }
+    .widget-card-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--smm-rose); box-shadow: 0 0 8px var(--smm-rose); }
+    .widget-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 10px; }
+    .widget-card p { font-size: 14.5px; line-height: 1.75; color: var(--text-2); max-width: 460px; }
+    .widget-card-icon {
+      position: absolute;
+      right: var(--icon-right, 6%); top: var(--icon-top, 50%);
+      transform: var(--icon-transform, translateY(-50%)) rotate(var(--icon-rotate, 0deg));
+      z-index: -1;
+      pointer-events: none;
+    }
+    .widget-card-icon img { width: var(--icon-w, 160px); height: var(--icon-h, 160px); object-fit: contain; display: block; opacity: 0.92; }
+    @media (max-width: 560px) {
+      .widget-card-icon {
+        right: var(--icon-right-mobile, var(--icon-right, 6%));
+        top: var(--icon-top-mobile, var(--icon-top, 50%));
+        transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-50%))) rotate(var(--icon-rotate-mobile, var(--icon-rotate, 0deg)));
+      }
+      .widget-card-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 160px));
+        height: var(--icon-h-mobile, var(--icon-h, 160px));
+      }
+    }
+    .widget-price-row { display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0; }
+    .widget-price-chip {
+      display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      padding: 14px 26px; border-radius: 12px; min-width: 150px;
+      text-align: center; text-decoration: none;
+      border: none; color: #fff;
+      background: linear-gradient(120deg, var(--wc-c2) 0%, var(--wc-c3) 100%);
+      box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--wc-c2) 50%, transparent), 0 10px 28px -8px color-mix(in srgb, var(--wc-c3) 30%, transparent);
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, filter 0.2s ease;
+    }
+    .widget-price-chip:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--wc-c2) 55%, transparent), 0 12px 34px -8px color-mix(in srgb, var(--wc-c3) 45%, transparent);
+      transform: translateY(-2px);
+    }
+    .widget-price-chip:focus-visible { outline: 2px solid rgba(255,255,255,0.6); outline-offset: 2px; }
+    .widget-price-chip .wpc-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.85); }
+    .widget-price-chip .wpc-value { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: #fff; }
+
+    /* ── Section B: Brand Kit cards (split layout — details+CTA left, features+review right) ── */
+    .kit-cards-stack { display: flex; flex-direction: column; gap: 28px; max-width: 980px; margin: 0 auto; }
+    .kit-card {
+      position: relative;
+      border-radius: 18px;
+      background: var(--base);
+      border: 1px solid var(--kit-border, var(--border));
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.08);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, border-color 0.25s ease, opacity 0.6s ease;
+    }
+    @media (min-width: 800px) { .kit-card { flex-direction: row; } }
+    .kit-card::before {
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent 60%);
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .kit-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--kit-border-hover, rgba(244,114,182,0.4));
+      box-shadow: 0 18px 44px -14px rgba(0,0,0,0.55), 0 0 26px var(--kit-glow, rgba(244,114,182,0.14));
+    }
+    .kit-card:hover::before { opacity: 1; }
+    .kit-card.is-full { --kit-color: var(--gold); --kit-border: rgba(255,215,0,0.3); --kit-glow: rgba(255,215,0,0.18); --kit-border-hover: rgba(255,215,0,0.45); --kit-tag-bg: rgba(255,215,0,0.08); }
+    #master-template { scroll-margin-top: 60px; }
+    .kit-card .btn { width: 100%; margin-top: auto; }
+    .kit-btn-label { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .kit-btn-icon { width: 15px; height: 15px; flex-shrink: 0; }
+    .kit-btn-chevron { width: 15px; height: 15px; flex-shrink: 0; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .kit-card .btn:hover .kit-btn-chevron { transform: translateX(3px); }
+    .btn-white { background: #ffffff; border: 1px solid #ffffff; color: #0a0c12; }
+    .btn-white:hover { background: #f0f0f0; border-color: #f0f0f0; box-shadow: 0 6px 18px -6px rgba(255,255,255,0.25); }
+    .kit-card-main { position: relative; z-index: 1; padding: 32px 30px; display: flex; flex-direction: column; flex: 1 1 44%; }
+    .kit-card-side { position: relative; z-index: 1; padding: 32px 30px; display: flex; flex-direction: column; flex: 1 1 56%; border-top: 1px solid var(--kit-border, var(--border)); transition: border-color 0.25s ease; }
+    @media (min-width: 800px) { .kit-card-side { border-top: none; border-left: 1px solid var(--kit-border, var(--border)); } }
+    .kit-card:hover .kit-card-side { border-color: var(--kit-border-hover, rgba(244,114,182,0.4)); }
+    .kit-badge {
+      align-self: flex-start;
+      display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px;
+      padding: 4px 12px 4px 10px; border-radius: 9999px;
+      border: 1px solid var(--kit-border, rgba(244,114,182,0.3));
+      background: var(--kit-tag-bg, rgba(244,114,182,0.06));
+    }
+    .kit-badge-icon { width: 12px; height: 12px; flex-shrink: 0; color: var(--kit-color, var(--smm-rose)); }
+    .kit-badge-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 700; color: var(--kit-color, var(--smm-rose)); }
+    .kit-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 6px; }
+    .kit-card p.kit-desc { font-size: 13.5px; line-height: 1.7; color: var(--text-2); margin-bottom: 20px; }
+    .kit-price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
+    .kit-price { font-family: 'JetBrains Mono', monospace; font-size: 34px; font-weight: 700; color: var(--text-1); }
+    .kit-price span { font-size: 13px; font-weight: 600; color: var(--text-2); margin-left: 4px; }
+    .kit-price-original { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; color: rgba(200,212,232,0.4); text-decoration: line-through; }
+    .kit-tag-discount {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.02em; padding: 3px 10px; border-radius: 9999px;
+      color: #4ADE80; border: 1px solid rgba(74,222,128,0.3); background: rgba(74,222,128,0.06);
+    }
+    .kit-benefit-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+    .kit-benefit { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--text-1); }
+    .kit-benefit-icon { width: 16px; height: 16px; flex-shrink: 0; color: var(--kit-color, var(--smm-rose)); }
+    .kit-side-head { margin-bottom: 16px; }
+    .kit-side-head h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-1); }
+    .kit-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+    .kit-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; color: var(--text-1); }
+    .kit-feat-check {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.08);
+    }
+    .kit-feat-check svg { width: 11px; height: 11px; color: var(--kit-color, var(--smm-rose)); }
+    .kit-divider { height: 1px; background: var(--kit-border, var(--border)); margin: 4px 0 20px; border: none; transition: background-color 0.25s ease; }
+    .kit-card:hover .kit-divider { background: var(--kit-border-hover, rgba(244,114,182,0.4)); }
+    .kit-testimonial-box { position: relative; overflow: hidden; min-height: 152px; border-radius: 14px; padding: 18px 20px; border: 1px solid var(--kit-border, var(--border)); background: rgba(200,212,232,0.02); margin-top: auto; transition: border-color 0.25s ease; }
+    .kit-card:hover .kit-testimonial-box { border-color: var(--kit-border-hover, rgba(244,114,182,0.4)); }
+    .kit-testimonial-panel { position: absolute; inset: 0; padding: 18px 20px; opacity: 0; transform: translateY(22px); pointer-events: none; transition: opacity 0.8s ease, transform 0.8s ease; }
+    .kit-testimonial-panel.is-active { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .kit-testimonial-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .kit-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #0a0b10; background: var(--kit-color, var(--smm-rose)); }
+    .kit-testimonial-who { flex: 1; min-width: 0; }
+    .kit-testimonial-name { font-size: 12.5px; font-weight: 700; color: var(--text-1); }
+    .kit-testimonial-role { font-size: 11px; color: var(--text-2); }
+    .kit-stars { display: flex; gap: 2px; flex-shrink: 0; }
+    .kit-stars svg { width: 11px; height: 11px; color: var(--kit-color, var(--smm-rose)); fill: var(--kit-color, var(--smm-rose)); stroke: currentColor; stroke-width: 1; }
+    .kit-star-empty { fill: none; }
+    @media (max-width: 480px) {
+      .kit-testimonial-head { flex-wrap: wrap; }
+      .kit-stars { flex-basis: 100%; margin-top: 6px; margin-left: 42px; }
+    }
+    .kit-testimonial-quote { font-size: 12.5px; line-height: 1.65; color: var(--text-1); font-style: italic; }
+    .kit-dots { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+    .kit-dot { width: 6px; height: 6px; border-radius: 9999px; background: rgba(200,212,232,0.25); border: none; padding: 0; cursor: pointer; transition: width 0.25s ease, background 0.25s ease; }
+    .kit-dot.is-active { width: 16px; background: var(--kit-color, var(--smm-rose)); }
+    .kit-dot:focus-visible { outline: 2px solid var(--kit-color, var(--smm-rose)); outline-offset: 2px; }
+
+    /* ── tier chip / glider (ported verbatim from sem-seo.html) ── */
+    .tier-kicker-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 2px; }
+    .tier-kicker { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: rgba(200,212,232,0.4); margin: 0; }
+    .tier-contact-btn {
+      --tier-color: var(--smm-rose);
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      white-space: nowrap; text-decoration: none;
+      padding: 5px 13px; border-radius: 9999px;
+      color: var(--tier-color);
+      background: var(--tier-btn-bg, rgba(244,114,182,0.08));
+      border: 1px solid var(--tier-btn-border, rgba(244,114,182,0.4));
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .tier-contact-btn:hover { background: var(--tier-btn-bg-hover, rgba(244,114,182,0.16)); box-shadow: 0 0 14px var(--tier-btn-glow, rgba(244,114,182,0.28)); transform: translateY(-1px); }
+    .tier-contact-btn:active { transform: translateY(0); }
+    .tier-contact-btn:focus-visible { outline: 2px solid var(--tier-color); outline-offset: 2px; }
+    .tier-chip-head { display: flex; align-items: center; gap: 6px; }
+    .tier-chip-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: var(--tier-color, var(--smm-rose)); box-shadow: 0 0 6px var(--tier-color, var(--smm-rose)); }
+    .tier-chip-name { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--tier-color, var(--smm-rose)); }
+
+    .tier-glider { display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin-top: 2px; }
+    .tier-slider-wrap { max-width: 480px; margin: 0; padding: 0 9px; }
+    .tier-slider-ticks { position: relative; height: 13px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; letter-spacing: 0.01em; margin-top: 12px; }
+    .tier-slider-ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; color: var(--tier-color, rgba(255,255,255,0.65)); }
+    .tier-focus-box {
+      display: flex; align-items: stretch; position: relative;
+      min-height: 132px; border-radius: 14px; margin-top: 2cqmax;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.12));
+      background: var(--tier-bg, rgba(255,255,255,0.02));
+      box-shadow: 0 10px 24px -10px rgba(0,0,0,0.5), 0 0 18px var(--tier-glow, transparent);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .tier-focus-info { flex: 1; position: relative; padding: 20px 22px; }
+    .tier-focus-panel {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center; gap: 8px;
+      padding: 20px 22px;
+      opacity: 0; pointer-events: none; transform: translateY(4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .tier-focus-panel.is-active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .tier-focus-fee { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--text-1); }
+    .tier-focus-band { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-2); }
+    .tier-focus-icon {
+      position: absolute;
+      right: var(--icon-right, -50px); top: var(--icon-top, 0%); transform: var(--icon-transform, translateY(-30%));
+      pointer-events: none;
+    }
+    .tier-focus-icon img { width: var(--icon-w, 330px); height: var(--icon-h, 330px); object-fit: contain; display: block; }
+    @media (max-width: 480px) {
+      .tier-focus-icon {
+        right: var(--icon-right-mobile, var(--icon-right, 6px));
+        top: var(--icon-top-mobile, var(--icon-top, 0%));
+        transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-30%)));
+      }
+      .tier-focus-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 200px));
+        height: var(--icon-h-mobile, var(--icon-h, 200px));
+      }
+    }
+    @media (max-width: 340px) {
+      .tier-focus-icon {
+        right: var(--icon-right-mobile-sm, var(--icon-right-mobile, var(--icon-right, 6px)));
+        top: var(--icon-top-mobile-sm, var(--icon-top-mobile, var(--icon-top, 0%)));
+        transform: var(--icon-transform-mobile-sm, var(--icon-transform-mobile, var(--icon-transform, translateY(-30%))));
+      }
+      .tier-focus-icon img {
+        width: var(--icon-w-mobile-sm, var(--icon-w-mobile, var(--icon-w, 200px)));
+        height: var(--icon-h-mobile-sm, var(--icon-h-mobile, var(--icon-h, 200px)));
+      }
+    }
+
+    /* Range slider input — reused shape from sem-seo.html's .email-range */
+    .tier-range {
+      -webkit-appearance: none; appearance: none;
+      width: 100%; height: 6px; border-radius: 999px;
+      background: linear-gradient(to right,
+        rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.85) var(--fill, 0%),
+        rgba(255,255,255,0.1) var(--fill, 0%), rgba(255,255,255,0.1) 100%);
+      outline: none; cursor: pointer; margin: 0;
+    }
+    .tier-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 2px solid #070910;
+      box-shadow: 0 0 10px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .tier-range::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .tier-range:active::-webkit-slider-thumb { box-shadow: 0 0 16px rgba(255,255,255,0.65), 0 2px 6px rgba(0,0,0,0.4); }
+    .tier-range::-moz-range-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.1); }
+    .tier-range::-moz-range-progress { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.85); }
+    .tier-range::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 2px solid #070910;
+      box-shadow: 0 0 10px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .tier-range::-moz-range-thumb:hover { transform: scale(1.15); }
+    .tier-range:focus-visible::-webkit-slider-thumb { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 3px; }
+    .tier-range:focus-visible::-moz-range-thumb { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 3px; }
+
+    @keyframes badge-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .badge-pulse { animation: badge-pulse 2.4s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { .badge-pulse { animation: none; } }
+
+    /* Bespoke visual — phone-device frame around a single Instagram sponsored-post
+       mockup, built from the user-supplied reference screenshot (real Instagram
+       chrome: white app background, blue link button) rather than the page's own
+       dark theme, since it depicts a screenshot of a real light-mode app. */
+    .content-2col-visual {
+      position: relative; width: 100%; min-width: 0;
+      aspect-ratio: 9 / 19; max-width: 360px; justify-self: center;
+      overflow: visible; border-radius: 44px;
+      background: linear-gradient(155deg, #262a34, #0a0b0f 60%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 24px 60px -14px rgba(0,0,0,0.7), inset 0 0 0 2px rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      padding: 13px; text-align: center;
+    }
+    .content-2col-visual::before {
+      content: ''; position: absolute; left: -2px; top: 128px;
+      width: 3px; height: 20px; border-radius: 2px 0 0 2px;
+      background: #05060a;
+      box-shadow: 0 100px 0 0 #05060a, 0 160px 0 0 #05060a;
+    }
+    @media (max-width: 640px) {
+      .content-2col-visual { max-width: 280px; border-radius: 36px; padding: 10px; }
+    }
+
+    .viz-igfeed {
+      position: relative; z-index: 1; width: 100%; height: 100%;
+      background: #ffffff; border-radius: 32px; overflow: hidden;
+      display: flex; flex-direction: column; text-align: left;
+    }
+    .viz-igfeed::before {
+      content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+      width: 32%; height: 18px; background: #0a0b0f; border-radius: 10px; z-index: 5;
+    }
+    @media (max-width: 640px) { .viz-igfeed { border-radius: 26px; } }
+
+    .ig-app-header { display: flex; align-items: center; justify-content: flex-start; gap: 3px; padding: 20px 14px 10px; border-bottom: 1px solid #efefef; flex-shrink: 0; }
+    .ig-wordmark { font-family: 'Grand Hotel', cursive; font-size: 24px; font-weight: 400; color: #111; line-height: 1; }
+    .ig-chevron { width: 14px; height: 14px; color: #111; margin-top: 3px; }
+
+    .ig-post-header { display: flex; align-items: center; gap: 9px; padding: 10px 12px; flex-shrink: 0; }
+    .ig-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--smm-rose), #7C3AED); }
+    .ig-post-who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0; }
+    .ig-post-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ig-post-sponsored { font-family: 'Inter', sans-serif; font-size: 10.5px; color: #8e8e8e; }
+    .mock-kebab { color: #262626; font-size: 15px; line-height: 1; }
+
+    .ig-post-media { position: relative; width: 100%; aspect-ratio: 1 / 1; flex-shrink: 0; overflow: hidden; background: linear-gradient(135deg, var(--smm-rose), #7C3AED 55%, var(--cyan)); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; }
+    .ig-media-badge { position: absolute; top: 14px; right: 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: #fff; background: rgba(0,0,0,0.22); border-radius: 5px; padding: 4px 8px; }
+    .ig-media-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 21px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.12; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.25); margin: 0; }
+
+    .ig-cta-bar { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 14px; background: #0095F6; flex-shrink: 0; }
+    .ig-cta-bar span { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; color: #fff; }
+    .ig-cta-bar svg { width: 14px; height: 14px; color: #fff; }
+
+    .ig-post-actions { display: flex; align-items: center; gap: 13px; padding: 10px 12px 4px; flex-shrink: 0; }
+    .ig-post-actions svg { width: 21px; height: 21px; color: #262626; }
+    .ig-post-actions svg.ig-bookmark { margin-left: auto; }
+
+    .ig-post-likes { padding: 2px 12px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; color: #111; }
+    .ig-post-caption { padding: 3px 12px; font-size: 12px; line-height: 1.45; color: #262626; }
+    .ig-post-caption b { font-weight: 700; }
+
+    .ig-post-attribution { display: flex; align-items: center; gap: 6px; padding: 6px 12px 10px; font-family: 'Inter', sans-serif; font-size: 10.5px; color: #8e8e8e; }
+    .ig-mini-avatar { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--smm-rose), #7C3AED); }
+    .ig-note-icon { width: 10px; height: 10px; flex-shrink: 0; }
+
+    .ig-next-post { display: flex; align-items: center; gap: 8px; padding: 8px 12px 0; flex-shrink: 0; }
+    .ig-next-avatar { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; background: #fff; border: 1px solid #efefef; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .ig-next-avatar img { width: 68%; height: 68%; object-fit: contain; display: block; }
+    .ig-next-who { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .ig-next-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; color: #111; }
+    .ig-next-audio { display: flex; align-items: center; gap: 4px; font-family: 'Inter', sans-serif; font-size: 10.5px; color: #8e8e8e; }
+    .ig-next-audio svg { width: 9px; height: 9px; flex-shrink: 0; }
+    .ig-next-peek { flex: 1; min-height: 22px; margin-top: 8px; background: linear-gradient(120deg, rgba(244,114,182,0.4), rgba(124,58,237,0.32) 50%, rgba(0,229,255,0.35)); }
+
+    .ig-nav-hint { display: flex; align-items: center; justify-content: space-around; padding: 10px 20px; border-top: 1px solid #efefef; background: #fff; flex-shrink: 0; }
+    .ig-nav-hint svg { width: 17px; height: 17px; color: #111; }
+    .ig-nav-hint svg:nth-child(3) { color: #fff; background: #111; border-radius: 6px; padding: 2px; box-sizing: content-box; width: 15px; height: 15px; }
+
+    @media (max-width: 480px) {
+      .ig-app-header { padding: 16px 12px 8px; }
+      .ig-wordmark { font-size: 15px; }
+      .ig-post-header { padding: 8px 10px; }
+      .ig-media-headline { font-size: 17px; }
+      .ig-cta-bar { padding: 10px 12px; }
+      .ig-post-actions { padding: 8px 10px 2px; gap: 11px; }
+      .ig-post-actions svg { width: 18px; height: 18px; }
+      .ig-post-likes { font-size: 11px; padding: 2px 10px; }
+      .ig-post-caption { font-size: 11px; padding: 2px 10px; }
+      .ig-post-attribution { padding: 5px 10px 8px; }
+      .ig-next-post { padding: 6px 10px 0; gap: 6px; }
+      .ig-next-avatar { width: 22px; height: 22px; }
+      .ig-nav-hint { padding: 8px 16px; }
+    }
+
+    /* ── Closing CTA (card container, ported from email-marketing.html's
+       .em-cta-card sizing/format, recolored to rose; shader kept at full
+       vividness rather than the source's dimmed 32%-opacity treatment) ── */
+    .smm-cta-outer { padding: 90px 28px 110px; }
+    .smm-cta-inner { max-width: 1200px; margin: 0 auto; }
+    .smm-cta-card {
+      position: relative; overflow: hidden; border-radius: 48px;
+      min-height: 560px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px;
+      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      border: 1px solid rgba(244,114,182,0.14);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(244,114,182,0.08);
+    }
+    @media (max-width: 640px) {
+      .smm-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
+    }
+    .smm-cta {
+      position: relative; z-index: 1;
+      max-width: 1000px; width: 100%; margin: 0 auto; text-align: center;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .smm-cta h2 {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05;
+      font-size: clamp(30px, 5.2vw, 64px);
+      color: var(--text-1); margin-bottom: 16px;
+    }
+    .smm-cta h2 .smm-cta-h2-line2 { display: block; color: rgba(238,240,248,0.62); }
+    .smm-cta p { font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 560px; margin: 0 auto 32px; }
   </style>
 
   <script src="/supabase-config.js"></script>
@@ -415,6 +1122,41 @@
         dd.addEventListener('mouseleave', function () {
           if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
         });
+      });
+
+      document.querySelectorAll('.smm-hero-services-menu').forEach(function (wrap) {
+        var svcTrigger = wrap.querySelector('.smm-hero-services-trigger');
+        var svcPanel = wrap.querySelector('.smm-hero-services-panel');
+        document.body.appendChild(svcPanel);
+        var closeSvc = function () { svcTrigger.setAttribute('aria-expanded', 'false'); svcPanel.classList.remove('open'); };
+        var openSvc = function () {
+          var rect = svcTrigger.getBoundingClientRect();
+          var panelHeight = svcPanel.offsetHeight;
+          var openDown = rect.top - panelHeight - 10 < 16;
+          if (openDown) {
+            svcPanel.style.top = (rect.bottom + 10) + 'px';
+            svcPanel.style.bottom = 'auto';
+            svcPanel.classList.add('drop-down');
+          } else {
+            svcPanel.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+            svcPanel.style.top = 'auto';
+            svcPanel.classList.remove('drop-down');
+          }
+          svcPanel.style.left = rect.left + 'px';
+          svcTrigger.setAttribute('aria-expanded', 'true');
+          svcPanel.classList.add('open');
+        };
+        svcTrigger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          svcTrigger.getAttribute('aria-expanded') === 'true' ? closeSvc() : openSvc();
+        });
+        svcPanel.querySelectorAll('.dropdown-item').forEach(function (item) {
+          item.addEventListener('click', closeSvc);
+        });
+        document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
+        window.addEventListener('scroll', closeSvc, true);
+        window.addEventListener('resize', closeSvc);
       });
     });
   </script>
@@ -456,15 +1198,15 @@
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item" role="menuitem">Web Design</a>
+          <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
-          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
+          <a href="smm.html" class="dropdown-item active" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -514,7 +1256,7 @@
     <a href="about.html"    class="mob-link mob-sub">About Us</a>
     <a href="contact.html"  class="mob-link mob-sub">Contact</a>
     </div></div>
-    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+    <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
       Services
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
@@ -526,9 +1268,9 @@
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
-    <a href="contact.html"    class="mob-link mob-sub">Hosting Services</a>
+    <a href="hosting-services.html"    class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="contact.html"    class="mob-link mob-sub">Content Creation &amp; CM</a>
-    <a href="smm.html"    class="mob-link mob-sub">Social Media &amp; SMM</a>
+    <a href="smm.html"    class="mob-link mob-sub active">Social Media &amp; SMM</a>
     <a href="contact.html"    class="mob-link mob-sub">Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
@@ -555,60 +1297,76 @@
 ══════════════════════════════════════ -->
 <section class="smm-hero" aria-label="Social Media Marketing">
 
+  <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
+    <defs>
+      <filter id="smm-hero-text-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+      <filter id="smm-hero-glass-effect" x="-50%" y="-50%" width="200%" height="200%" color-interpolation-filters="sRGB">
+        <feTurbulence baseFrequency="0.005" numOctaves="1" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="0.3" />
+      </filter>
+    </defs>
+  </svg>
+
   <div class="smm-orbit-wrap">
     <div class="smm-orbit-inner">
 
       <div class="smm-layer smm-layer-back">
         <div class="smm-layer-inner">
-          <img src="https://framerusercontent.com/images/oqZEqzDEgSLygmUDuZAYNh2XQ9U.png?scale-down-to=2048" alt="" />
+          <img src="brand_assets/icons/smm-orbit-back.png" alt="" />
         </div>
       </div>
       <div class="smm-layer smm-layer-mid">
         <div class="smm-layer-inner">
-          <img src="https://framerusercontent.com/images/UbucGYsHDAUHfaGZNjwyCzViw8.png?scale-down-to=1024" alt="" />
+          <img src="brand_assets/icons/smm-orbit-mid.png" alt="" />
 
           <div class="smm-icon-patch smm-badge-stripe" style="top:5.3%; left:50.1%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(0.1deg);">
-            <img src="https://cdn.jsdelivr.net/npm/simple-icons@13/icons/stripe.svg" alt="Stripe" />
+            <img src="brand_assets/icons/smm-logo-stripe.svg" alt="Stripe" />
           </div>
           <div class="smm-icon-mask" style="top:72.5%; left:88.9%; width:126px; height:126px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch" style="top:72.5%; left:88.9%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(120deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/e3/c5/7f/e3c57fa0-64ff-acd0-6a48-4973b061718c/AppIcon-0-0-1x_U007emarketing-0-8-0-0-85-220.png/512x512bb.jpg" alt="Uber" />
+            <img src="brand_assets/icons/smm-logo-uber.webp" alt="Uber" />
           </div>
           <div class="smm-icon-mask" style="top:95.1%; left:50.1%; width:100px; height:100px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch" style="top:95.1%; left:50.1%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(-180.0deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/65/60/c4/6560c49b-c31d-a5d6-a84d-105344dfb019/BOEAppIcon-0-0-1x_U007epad-0-1-0-0-0-0-GLES2_U002c0-85-220.png/512x512bb.jpg" alt="Etsy" />
+            <img src="brand_assets/icons/smm-logo-etsy.webp" alt="Etsy" />
           </div>
           <div class="smm-icon-mask" style="top:72.5%; left:11.3%; width:126px; height:126px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch" style="top:72.5%; left:11.3%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(59.9deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/86/e4/58/86e45873-4d8a-7487-8612-eb155289e681/AppIcon-0-0-1x_U007emarketing-0-11-0-sRGB-0-85-220.png/512x512bb.jpg" alt="Netflix" />
+            <img src="brand_assets/icons/smm-logo-netflix.webp" alt="Netflix" />
           </div>
           <div class="smm-icon-mask" style="top:27.7%; left:11.1%; width:112px; height:112px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch smm-badge-ms" style="top:27.7%; left:11.1%; width:88px; height:88px; transform:translate(-50%,-50%) rotate(119.8deg);">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Microsoft_icon.svg" alt="Microsoft" />
+            <img src="brand_assets/icons/smm-logo-microsoft.svg" alt="Microsoft" />
           </div>
         </div>
       </div>
       <div class="smm-layer smm-layer-front">
         <div class="smm-layer-inner">
-          <img src="https://framerusercontent.com/images/Ans5PAxtJfg3CwxlrPMSshx2Pqc.png" alt="" />
+          <img src="brand_assets/icons/smm-orbit-front.png" alt="" />
 
           <div class="smm-icon-patch" style="top:40.4%; left:86.2%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(72deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d6/5b/f9/d65bf909-367e-9381-fbf3-1f15c6ff36ce/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg" alt="eBay" />
+            <img src="brand_assets/icons/smm-logo-ebay.webp" alt="eBay" />
           </div>
           <div class="smm-icon-mask" style="top:59.8%; left:86.2%; width:80px; height:80px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch" style="top:59.8%; left:86.2%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(109.7deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/90/06/94/900694e8-378d-c4ed-7922-82fe3eb8c245/AppIcon-0-0-1x_U007ephone-0-1-0-GLES2_U002c0-85-220.png/512x512bb.jpg" alt="PayPal" />
+            <img src="brand_assets/icons/smm-logo-paypal.webp" alt="PayPal" />
           </div>
           <div class="smm-icon-mask" style="top:76.5%; left:23.7%; width:80px; height:80px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch" style="top:76.5%; left:23.7%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(-135.2deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3d/77/75/3d7775af-f82f-6eb2-3e03-49ec4c77dd2b/Icon-Production-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg" alt="Facebook" />
+            <img src="brand_assets/icons/smm-logo-facebook.webp" alt="Facebook" />
           </div>
           <div class="smm-icon-patch" style="top:59.8%; left:14.2%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(-105.3deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5f/22/44/5f2244c7-6500-6b2f-f508-3c6f83e75c92/SuperG_ios26-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-0-0-85-220.png/512x512bb.jpg" alt="Google" />
+            <img src="brand_assets/icons/smm-logo-google.webp" alt="Google" />
           </div>
           <div class="smm-icon-mask" style="top:23.7%; left:23.7%; width:80px; height:80px; transform:translate(-50%,-50%);"></div>
           <div class="smm-icon-patch" style="top:23.7%; left:23.7%; width:65px; height:65px; transform:translate(-50%,-50%) rotate(-45.0deg);">
-            <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/54/13/00/54130033-a2ee-af7a-9365-8025080b7891/AppIcon-0-0-1x_U007epad-0-1-0-0-0-85-220.png/512x512bb.jpg" alt="Airbnb" />
+            <img src="brand_assets/icons/smm-logo-airbnb.webp" alt="Airbnb" />
           </div>
         </div>
       </div>
@@ -619,36 +1377,493 @@
   <div class="smm-hero-gradient"></div>
 
   <div style="position:relative;z-index:2;max-width:620px;margin:0 auto;text-align:center;">
+    <a href="#paid-social" class="smm-nav-pill">
+      <span>✨</span>
+      Meta Ads Now Available
+    </a>
+    <p class="smm-hero-kicker">
+      <span class="smm-kicker-slash">//</span>
+      <span class="smm-kicker-kw" style="--i:0; animation-delay:0s">S</span><span class="smm-kicker-kw" style="--i:1; animation-delay:0.07s">o</span><span class="smm-kicker-kw" style="--i:2; animation-delay:0.14s">c</span><span class="smm-kicker-kw" style="--i:3; animation-delay:0.21s">i</span><span class="smm-kicker-kw" style="--i:4; animation-delay:0.28s">a</span><span class="smm-kicker-kw" style="--i:5; animation-delay:0.35s">l</span>
+      <span class="smm-kicker-kw" style="--i:6; animation-delay:0.42s">M</span><span class="smm-kicker-kw" style="--i:7; animation-delay:0.49s">e</span><span class="smm-kicker-kw" style="--i:8; animation-delay:0.56s">d</span><span class="smm-kicker-kw" style="--i:9; animation-delay:0.63s">i</span><span class="smm-kicker-kw" style="--i:10; animation-delay:0.7s">a</span>
+      <span class="smm-kicker-kw" style="--i:11; animation-delay:0.77s">&amp;</span>
+      <span class="smm-kicker-kw" style="--i:12; animation-delay:0.84s">S</span><span class="smm-kicker-kw" style="--i:13; animation-delay:0.91s">M</span><span class="smm-kicker-kw" style="--i:14; animation-delay:0.98s">M</span>
+    </p>
     <div style="width:64px;height:64px;border-radius:16px;box-shadow:0 8px 24px -6px rgba(0,0,0,0.5);overflow:hidden;margin:0 auto 8px;border:1px solid rgba(255,255,255,0.1);background:#fff;display:flex;align-items:center;justify-content:center;">
       <img src="brand_assets/VardWeb_Favicon_2.png" alt="VardWeb" style="width:70%;height:70%;object-fit:contain;display:block;" />
     </div>
-    <h1 style="font-size:clamp(2.4rem,6vw,4rem);font-weight:800;line-height:1.08;margin-bottom:20px;color:var(--text-1);">
-    <span class="grad-cyan-pink">Social Media Marketing</span>
+    <h1 style="line-height:1.08;margin-bottom:20px;">
+      <span class="smm-hero-h1-line1">Stop the Scroll</span>
+      <span class="smm-hero-h1-line2">Start The Convert<span style="margin-left:0.05em"></span></span>
     </h1>
     <p style="font-size:16px;line-height:1.75;color:var(--text-2);max-width:480px;margin:0 auto 36px;">
-      Taking concepts out of your head and into the real world.
+      Boring creatives get skipped. VardWeb designs high-converting Templates and Campaigns that turn passive viewers into active buyers.
     </p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="contact.html" class="btn btn-primary">View Pricing →</a>
-      <a href="contact.html" class="btn btn-ghost">Book Discovery Call</a>
+      <div class="smm-hero-services-menu">
+        <button type="button" class="btn smm-pill-btn smm-hero-btn smm-pill-btn-outline smm-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="smm-hero-services-panel">
+          View Services
+          <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-menu smm-hero-services-panel" id="smm-hero-services-panel" role="menu">
+          <a href="#included" class="dropdown-item" role="menuitem">Integrations</a>
+          <a href="#brand-kit" class="dropdown-item" role="menuitem">Premium Template</a>
+          <a href="#master-template" class="dropdown-item" role="menuitem">Master Template</a>
+          <a href="#paid-social-ads" class="dropdown-item" role="menuitem">Advertising</a>
+        </div>
+      </div>
+      <a href="contact.html?type=Social%20Media%20%26%20SMM" class="btn smm-pill-btn smm-hero-btn smm-pill-btn-gradient">Book Discovery Call <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
     </div>
   </div>
 
 </section>
 
 <!-- ══════════════════════════════════════
-     STUB SECTION
+     A — Technical Integration & Optimization
 ══════════════════════════════════════ -->
-<section aria-label="More coming soon" style="padding:100px 28px;position:relative;background:var(--base);">
-  <div class="reveal-fade" style="max-width:640px;margin:0 auto;text-align:center;">
-    <p class="sec-tag">// Coming Soon</p>
-    <h2 style="font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:800;line-height:1.2;color:var(--text-1);margin-bottom:16px;">
-      The full SMM playbook is on its way.
-    </h2>
-    <p style="font-size:15px;line-height:1.75;color:var(--text-2);margin-bottom:32px;">
-      Platform strategy, content calendars, paid social, and performance reporting — all built around your brand. Want the details now?
-    </p>
-    <a href="contact.html" class="btn btn-primary">Book Discovery Call →</a>
+<section id="included" aria-label="Included at no charge" style="background:var(--base);">
+  <div class="sec-inner">
+    <div class="sec-head reveal-fade">
+      <p class="sec-tag" style="color:var(--smm-rose);">// Get Connected</p>
+      <h2>Technical Integration & Optimization</h2>
+      <p>Perfect pixels for an audience that will scroll past anyway. These 3 features are available to all clients at request. Live Social Feed Widget is a paid add-on. You decide when and where we need to track or implement. </p>
+    </div>
+
+    <h3 class="widget-group-heading reveal-fade">Free, on request</h3>
+    <div class="free-item-grid">
+      <div class="free-item reveal-fade" data-free="open-graph" style="transition-delay:0s">
+        <div class="free-item-content">
+          <div class="free-item-corner-icon" style="--icon-top:-35px; --icon-right:-35px; --icon-rotate:0deg; --icon-w:150px; --icon-h:150px; --icon-top-mobile:-32px; --icon-right-mobile:-32px; --icon-w-mobile:150px; --icon-h-mobile:150px;">
+            <img src="brand_assets/icons/OGT-isometric-icon.webp" alt="" />
+          </div>
+          <div class="free-item-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h3M8 12h8M8 16h5"/></svg>
+          </div>
+          <h3>Open Graph Tags</h3>
+          <p>Your links preview perfectly wherever they're shared — Facebook, LinkedIn, Slack, Discord, iMessage.</p>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Open%20Graph%20Tags" class="btn free-item-cta">Free, on request</a>
+        </div>
+      </div>
+      <div class="free-item reveal-fade" data-free="tracking-pixel" style="transition-delay:0.08s">
+        <div class="free-item-content">
+          <div class="free-item-corner-icon" style="--icon-top:-31px; --icon-right:-44px; --icon-rotate:12deg; --icon-w:150px; --icon-h:150px; --icon-top-mobile:-31px; --icon-right-mobile:-44px; --icon-w-mobile:150px; --icon-h-mobile:150px;">
+            <img src="brand_assets/icons/TPI-isometric-icon.webp" alt="" />
+          </div>
+          <div class="free-item-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <h3>Tracking Pixel Installs</h3>
+          <p>Meta, LinkedIn, and TikTok pixels wired in the moment you're ready to run ads.</p>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Tracking%20Pixel%20Installs" class="btn free-item-cta">Free, on request</a>
+        </div>
+      </div>
+      <div class="free-item reveal-fade" data-free="share-buttons" style="transition-delay:0.16s">
+        <div class="free-item-content">
+          <div class="free-item-corner-icon" style="--icon-top:-25px; --icon-right:-20px; --icon-rotate:0deg; --icon-w:150px; --icon-h:150px; --icon-top-mobile:-26px; --icon-right-mobile:-18px; --icon-w-mobile:150px; --icon-h-mobile:150px;">
+            <img src="brand_assets/icons/SB-isometric-icon.webp" alt="" />
+          </div>
+          <div class="free-item-icon">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+          <h3>Share Buttons</h3>
+          <p>One-tap sharing built right into your site, styled to match your brand instead of bolted on.</p>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Share%20Buttons" class="btn free-item-cta">Free, on request</a>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="widget-group-heading reveal-fade">Add-ons</h3>
+    <div class="widget-card reveal-fade">
+      <div class="widget-card-content">
+        <div class="widget-card-icon" style="--icon-right:23%; --icon-top:50%; --icon-transform:translateY(-50%); --icon-w:350px; --icon-h:350px; --icon-rotate:15deg; --icon-right-mobile:-20%; --icon-top-mobile:82%; --icon-transform-mobile:translateY(-50%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:15deg;">
+          <img src="brand_assets/icons/widget-isometric-icon.webp" alt="" />
+        </div>
+        <div class="widget-card-body">
+          <div class="widget-card-badge"><span class="widget-card-badge-dot"></span>Built by VardWeb</div>
+          <h3>Live Social Feed Widget</h3>
+          <p>Most agencies use third-party plugins, limit features and pass the monthly bill to you. VardWeb builds its own — so your site shows real, live Instagram, Facebook, YouTube or TikTok posts without watermarks and displaying exactly where you want them. Look, Mom! We are popular on the internet!</p>
+        </div>
+        <div class="widget-price-row">
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Live%20Social%20Feed%20Widget" class="widget-price-chip">
+            <div class="wpc-label">Request Widget</div>
+            <div class="wpc-value">C$15<span style="font-size:11px;">/mo</span></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     B — SOCIAL BRAND KIT
+══════════════════════════════════════ -->
+<section id="brand-kit" aria-label="Social Brand Kit" style="background:var(--surface);">
+  <div class="sec-inner">
+    <div class="sec-head reveal-fade">
+      <p class="sec-tag" style="color:var(--smm-rose);">// Templates</p>
+      <h2>Social Brand Kit</h2>
+      <p>Everything you need to make your social media profiles look like they actually belong to your business. We do it once, and you get to spend the rest of eternity tweaking it.</p>
+    </div>
+
+    <div class="kit-cards-stack">
+      <div class="kit-card reveal-fade" style="transition-delay:0s">
+        <div class="kit-card-main">
+          <div class="kit-badge"><svg class="kit-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg><span class="kit-badge-name">Premium Template</span></div>
+          <h3>Essentials</h3>
+          <p class="kit-desc">The core visual kit every profile needs to look finished from day one.</p>
+          <div class="kit-price-row">
+            <div class="kit-price">C$300</div>
+            <div class="kit-price-original">C$425</div>
+            <span class="kit-tag-discount">30% Off</span>
+          </div>
+          <div class="kit-benefit-list">
+            <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/></svg>One-time payment, lifetime ownership</div>
+            <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Matches your site's exact colors &amp; fonts</div>
+            <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"/></svg>Editable Canva templates, save and store</div>
+          </div>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Social%20Brand%20Kit&amp;tier=Essentials" class="btn btn-white">
+            <span class="kit-btn-label"><svg class="kit-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Purchase Essentials</span>
+            <svg class="kit-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+        <div class="kit-card-side">
+          <div class="kit-side-head">
+            <h4>Included Features</h4>
+          </div>
+          <ul class="kit-features">
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>Master profile avatar — Instagram &amp; Facebook (320×320), LinkedIn (400×400), YouTube (800×800), TikTok (200×200)</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>Facebook cover banner (851×315)</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>LinkedIn personal (1584×396) &amp; company (1128×191) banners</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>YouTube channel art (2560×1440, safe-zone checked)</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>6 editable post templates (1080×1350) — quote, service highlight, testimonial, tip card, promo, blank frame</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>Duplicable Canva folder, ready to self-edit</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>One-page PNG/PDF reference sheet</li>
+          </ul>
+          <hr class="kit-divider">
+          <div class="kit-testimonial-box">
+            <div class="kit-testimonial-panel is-active">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">MR</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Marcus R.</div>
+                  <div class="kit-testimonial-role">eBay Store Owner</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"My eBay listings looked fine, but Instagram and Facebook still had the logo I slapped together years ago. Now they all match."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">TH</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Tom H.</div>
+                  <div class="kit-testimonial-role">Independent Contractor</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Every trade page I saw looked more legit than mine. The templates fixed that in an afternoon."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">LB</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Lena B.</div>
+                  <div class="kit-testimonial-role">Airbnb Host</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Guests screenshot my listing photos, so having a matching Instagram finally makes sense."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">CM</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Carlos M.</div>
+                  <div class="kit-testimonial-role">Rideshare Fleet Owner</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="kit-star-empty" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Corporate clients check social before they book. Ours finally looks like a real fleet, not a side gig."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">GL</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Grace L.</div>
+                  <div class="kit-testimonial-role">Local Bakery Owner, Toronto ON</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Ten minutes in Canva and our Instagram matched the new site instead of looking like two different bakeries."</p>
+            </div>
+          </div>
+          <div class="kit-dots" data-dots></div>
+        </div>
+      </div>
+
+      <div class="kit-card is-full reveal-fade" id="master-template" style="transition-delay:0.1s">
+        <div class="kit-card-main">
+          <div class="kit-badge"><svg class="kit-badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19h18M4 19l-1-9 5 4 4-7 4 7 5-4-1 9"/></svg><span class="kit-badge-name">Master Template</span></div>
+          <h3>Full Kit</h3>
+          <p class="kit-desc">Everything in Essentials, plus Stories, Highlights, and a brand guide to keep it all consistent.</p>
+          <div class="kit-price-row">
+            <div class="kit-price">C$700</div>
+            <div class="kit-price-original">C$1,000</div>
+            <span class="kit-tag-discount">30% Off</span>
+          </div>
+          <div class="kit-benefit-list">
+            <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="8 12.5 11 15.5 16 9"/></svg>One-time payment, lifetime ownership</div>
+            <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Matches your site's exact colors &amp; fonts</div>
+            <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"/></svg>Includes a written brand usage guide</div>
+          </div>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Social%20Brand%20Kit&amp;tier=Full%20Kit" class="btn btn-white">
+            <span class="kit-btn-label"><svg class="kit-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Purchase Full Kit</span>
+            <svg class="kit-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+          </a>
+        </div>
+        <div class="kit-card-side">
+          <div class="kit-side-head">
+            <h4>Included Features</h4>
+          </div>
+          <ul class="kit-features">
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>Everything in Essentials — avatar, banners, channel art, post templates</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>4 Story templates (1080×1920) — announcement, link-sticker, behind-the-scenes, quote</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>Instagram Highlight Cover icon set — 6–8 icons (About, Services, Reviews, Contact, FAQ, New)</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>One-page brand usage guide — clear-space, your hex codes &amp; fonts, do's/don'ts</li>
+            <li><span class="kit-feat-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="5 12 10 17 19 6"/></svg></span>Same duplicable Canva folder + reference sheet delivery</li>
+          </ul>
+          <hr class="kit-divider">
+          <div class="kit-testimonial-box">
+            <div class="kit-testimonial-panel is-active">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">PS</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Priya S.</div>
+                  <div class="kit-testimonial-role">Amazon Marketplace Seller</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Wholesale buyers check Instagram before they wire a deposit. The Highlight icons alone made us look ten times more established."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">DW</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Daniel W.</div>
+                  <div class="kit-testimonial-role">LinkedIn Consultant</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Clients judge a consultant by their LinkedIn banner. Having one that actually matches my site closed that gap."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">AK</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Aisha K.</div>
+                  <div class="kit-testimonial-role">Facebook Shop Owner</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"We ran on a Facebook Shop for years with mismatched covers everywhere. The brand guide finally got everyone using the same colors."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">SN</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Sophie N.</div>
+                  <div class="kit-testimonial-role">Independent Musician</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"My Story templates used to be whatever I found that week. Now every post actually looks like it's from the same artist."</p>
+            </div>
+            <div class="kit-testimonial-panel">
+              <div class="kit-testimonial-head">
+                <div class="kit-avatar">BO</div>
+                <div class="kit-testimonial-who">
+                  <div class="kit-testimonial-name">Ben O.</div>
+                  <div class="kit-testimonial-role">International E-Commerce Founder</div>
+                </div>
+                <div class="kit-stars"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg class="kit-star-empty" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              </div>
+              <p class="kit-testimonial-quote">"Shipping to a dozen countries is confusing enough — at least our socials all look like one company now."</p>
+            </div>
+          </div>
+          <div class="kit-dots" data-dots></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     D — PAID SOCIAL ADVERTISING
+══════════════════════════════════════ -->
+<section id="paid-social" aria-label="Paid Social Advertising" style="background:var(--base);">
+  <div class="trust-strip reveal-fade">
+    <span class="trust-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span><b>One flat monthly fee</b>&nbsp;for management</span>
+    </span>
+    <span class="trust-dot" aria-hidden="true"></span>
+    <span class="trust-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <span>Ad spend&nbsp;<b>straight to Meta</b></span>
+    </span>
+    <span class="trust-dot" aria-hidden="true"></span>
+    <span class="trust-item">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+      <span>We never touch it,&nbsp;<b>never mark it up</b></span>
+    </span>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="content-2col" id="paid-social-ads">
+    <div class="content-2col-text">
+      <p class="sec-tag reveal-fade" style="color:var(--smm-rose);">// Social Media Marketing</p>
+      <h2 class="reveal-fade" style="transition-delay:0.05s">Meta &amp; Instagram Ads</h2>
+      <p class="reveal-fade" style="max-width:480px;transition-delay:0.1s">Selling visually appealing products, local services, digital courses, or mobile apps that rely on hyper-targeted demographic data and impulse-driven, emotional buying behavior rather than immediate search intent.<br><br>Reach the people scrolling past your competitors right now. One flat monthly fee — your ad budget goes straight to Meta, never through us.</p>
+      <div class="tip-banner reveal-fade" style="transition-delay:0.15s">
+        <div class="tip-banner-head">
+          <svg class="tip-banner-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          <span class="tip-banner-title">Tip</span>
+        </div>
+        <p class="tip-banner-body"><b>Best For:</b> Businesses that want to target customers based on who they are, what they like, and how they behave, rather than what they are searching for at that exact second.</p>
+      </div>
+      <div class="tier-glider reveal-fade" data-service="Meta &amp; Instagram Ads" style="max-width:520px;width:100%;transition-delay:0.2s">
+        <div class="tier-kicker-row">
+          <p class="tier-kicker">Choose your tier</p>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Paid%20Social" class="tier-contact-btn">Contact VardWeb</a>
+        </div>
+        <div class="tier-slider-wrap">
+          <input type="range" class="tier-range" min="0" max="4" step="1" value="0" autocomplete="off" aria-label="Choose your Meta and Instagram Ads tier" />
+          <div class="tier-slider-ticks" aria-hidden="true">
+            <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#F472B6">Custom</span>
+          </div>
+        </div>
+        <div class="tier-focus-box">
+          <div class="tier-focus-info">
+            <div class="tier-focus-panel is-active" data-tier="jack">
+              <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#00E5FF"></span><span class="tier-chip-name" style="--tier-color:#00E5FF">Jack</span></div>
+              <span class="tier-focus-fee">C$800/mo</span>
+              <span class="tier-focus-band">Spend C$1,000–C$1,500</span>
+            </div>
+            <div class="tier-focus-panel" data-tier="queen">
+              <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#A855F7"></span><span class="tier-chip-name" style="--tier-color:#A855F7">Queen</span></div>
+              <span class="tier-focus-fee">C$875/mo</span>
+              <span class="tier-focus-band">Spend C$1,500–C$2,000</span>
+            </div>
+            <div class="tier-focus-panel" data-tier="king">
+              <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FFD700"></span><span class="tier-chip-name" style="--tier-color:#FFD700">King</span></div>
+              <span class="tier-focus-fee">C$925/mo</span>
+              <span class="tier-focus-band">Spend C$2,000–C$2,500</span>
+            </div>
+            <div class="tier-focus-panel" data-tier="ace">
+              <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#FF3B3B"></span><span class="tier-chip-name" style="--tier-color:#FF3B3B">Ace</span></div>
+              <span class="tier-focus-fee">C$1,000/mo</span>
+              <span class="tier-focus-band">Spend C$2,500–C$3,000</span>
+            </div>
+            <div class="tier-focus-panel" data-tier="custom">
+              <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#F472B6"></span><span class="tier-chip-name" style="--tier-color:#F472B6">Custom</span></div>
+              <span class="tier-focus-fee">Bespoke</span>
+              <span class="tier-focus-band">Spend C$3,000+</span>
+            </div>
+          </div>
+          <div class="tier-focus-icon" style="--icon-right:-60px; --icon-top:50%; --icon-transform:translateY(-50%); --icon-w:275px; --icon-h:275px; --icon-right-mobile:-40px; --icon-w-mobile:190px; --icon-h-mobile:190px; --icon-transform-mobile:translateY(-55%); --icon-right-mobile-sm:-40px; --icon-w-mobile-sm:150px; --icon-h-mobile-sm:150px; --icon-transform-mobile-sm:translateY(-65%);">
+            <img src="brand_assets/icons/SMM-isometric-icon.webp" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-2col-visual reveal-fade" style="transition-delay:0.1s">
+      <div class="viz-igfeed" role="img" aria-label="Mockup of a phone showing an Instagram sponsored post: app header, Your Brand ad with a promotional image, a Learn More link button, like/comment/share/save icons, and a caption">
+        <div class="ig-app-header">
+          <span class="ig-wordmark">Instagram</span>
+          <svg class="ig-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ig-post-header">
+          <div class="ig-avatar">YB</div>
+          <div class="ig-post-who">
+            <span class="ig-post-name">Your Brand</span>
+            <span class="ig-post-sponsored badge-pulse">Sponsored</span>
+          </div>
+          <span class="mock-kebab">⋮</span>
+        </div>
+        <div class="ig-post-media">
+          <span class="ig-media-badge">YOUR BRAND</span>
+          <p class="ig-media-headline">Grow Your<br>Business Today</p>
+        </div>
+        <div class="ig-cta-bar">
+          <span>Learn More</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+        </div>
+        <div class="ig-post-actions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <svg class="ig-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <p class="ig-post-likes">1,204 likes</p>
+        <p class="ig-post-caption"><b>yourbrand</b> Helping local businesses grow online, one campaign at a time.</p>
+        <p class="ig-post-attribution">
+          <span class="ig-mini-avatar"></span> yourbrand
+          <svg class="ig-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Original audio
+        </p>
+        <div class="ig-next-post">
+          <div class="ig-next-avatar"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" /></div>
+          <div class="ig-next-who">
+            <span class="ig-next-name">VardWeb</span>
+            <span class="ig-next-audio">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              Original audio
+            </span>
+          </div>
+          <span class="mock-kebab">⋮</span>
+        </div>
+        <div class="ig-next-peek" aria-hidden="true"></div>
+        <div class="ig-nav-hint" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:90px;"></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════
+     CLOSING CTA
+══════════════════════════════════════ -->
+<section aria-label="Get started" class="smm-cta-outer">
+  <div class="smm-cta-inner">
+    <div class="smm-cta-card">
+      <canvas class="smm-cta-shader" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
+      <div class="smm-cta reveal-fade">
+        <div class="smm-hero-pill">
+          <span class="smm-hero-pill-dot"></span>
+          Design, Post, Advertise
+        </div>
+        <h2>READY TO TURN<span class="smm-cta-h2-line2">FOLLOWERS INTO FANATICS?</span></h2>
+        <p>Likes and shares don't pay the bills, but conversions do. We design high-converting social campaigns and templates that capture premium leads and maximize your returns.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="contact.html?type=Social%20Media%20%26%20SMM" class="btn smm-pill-btn smm-cta-pill-btn smm-pill-btn-gradient">Book Discovery Call <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a href="contact.html" class="btn smm-pill-btn smm-cta-pill-btn smm-pill-btn-outline">Contact Us</a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -696,7 +1911,7 @@
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link">Email Marketing</a>
-        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link active">Social Media &amp; SMM</a>
         <a href="contact.html" class="footer-link">Custom Request</a>
@@ -731,6 +1946,303 @@
       });
     }, { threshold: 0.2 });
     document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+  })();
+</script>
+
+<!-- ── CTA shader background — ambient WebGL noise/glow wash behind the closing
+     CTA, in the page's monochromatic rose theme. Same technique as the
+     .cta-shader IIFE on sem-seo.html (simplex noise → color blend → vignette
+     → grain), with layered noise + a glow term for busier, blobbier motion. ── -->
+<script>
+  (function () {
+    var canvas = document.querySelector('.smm-cta-shader');
+    if (!canvas) return;
+
+    var gl = canvas.getContext('webgl', { antialias: true });
+    if (!gl) return;
+
+    var vertexSrc = [
+      'attribute vec2 position;',
+      'varying vec2 vUv;',
+      'void main() {',
+      '  vUv = position * 0.5 + 0.5;',
+      '  gl_Position = vec4(position, 0.0, 1.0);',
+      '}'
+    ].join('\n');
+
+    var fragmentSrc = [
+      'precision highp float;',
+      'varying vec2 vUv;',
+      'uniform vec2  u_resolution;',
+      'uniform float u_time;',
+      'uniform float u_grain;',
+      'uniform vec3  u_colors[3];',
+      'uniform vec3  u_bg;',
+      'vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+      'vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+      'vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }',
+      'float snoise(vec2 v) {',
+      '  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);',
+      '  vec2 i  = floor(v + dot(v, C.yy));',
+      '  vec2 x0 = v - i + dot(i, C.xx);',
+      '  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);',
+      '  vec4 x12 = x0.xyxy + C.xxzz;',
+      '  x12.xy -= i1;',
+      '  i = mod289(i);',
+      '  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));',
+      '  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);',
+      '  m = m*m; m = m*m;',
+      '  vec3 x = 2.0 * fract(p * C.www) - 1.0;',
+      '  vec3 h = abs(x) - 0.5;',
+      '  vec3 ox = floor(x + 0.5);',
+      '  vec3 a0 = x - ox;',
+      '  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);',
+      '  vec3 g;',
+      '  g.x  = a0.x  * x0.x  + h.x  * x0.y;',
+      '  g.yz = a0.yz * x12.xz + h.yz * x12.yw;',
+      '  return 130.0 * dot(m, g);',
+      '}',
+      'void main() {',
+      '  vec2 uv = vUv;',
+      '  float ratio = u_resolution.x / u_resolution.y;',
+      '  vec2 p = (uv - 0.5) * vec2(ratio, 1.0);',
+      '  float t = u_time * 0.15;',
+      '  float n1 = snoise(p * 0.9 + vec2(t * 0.6, -t * 0.4));',
+      '  float n2 = snoise(p * 1.3 + vec2(-t * 0.5, t * 0.35) + n1 * 0.3);',
+      '  float n3 = snoise(p * 1.8 + vec2(t * 0.3, -t * 0.5) + n2 * 0.25);',
+      '  vec3 col = u_bg;',
+      '  col = mix(col, u_colors[0], smoothstep(-0.15, 0.55, n1) * 0.55);',
+      '  col = mix(col, u_colors[1], smoothstep(-0.05, 0.6, n2) * 0.5);',
+      '  col = mix(col, u_colors[2], smoothstep(0.0, 0.7, n1 * n2 + n3 * 0.3) * 0.2);',
+      '  float dist = length(p) * 1.4;',
+      '  float glow = smoothstep(0.85, 0.0, dist) * 0.14;',
+      '  col += u_colors[1] * glow;',
+      '  float vignette = 1.0 - smoothstep(0.35, 1.25, dist);',
+      '  col = mix(col * 0.15, col, vignette);',
+      '  float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453 + u_time);',
+      '  col += (grain - 0.5) * u_grain * 0.06;',
+      '  gl_FragColor = vec4(col, 1.0);',
+      '}'
+    ].join('\n');
+
+    function createShader(type, src) {
+      var s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    }
+
+    var program = gl.createProgram();
+    gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexSrc));
+    gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentSrc));
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    var buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+    var posLoc = gl.getAttribLocation(program, 'position');
+    gl.enableVertexAttribArray(posLoc);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+    var locs = {
+      res:    gl.getUniformLocation(program, 'u_resolution'),
+      time:   gl.getUniformLocation(program, 'u_time'),
+      grain:  gl.getUniformLocation(program, 'u_grain'),
+      colors: gl.getUniformLocation(program, 'u_colors'),
+      bg:     gl.getUniformLocation(program, 'u_bg')
+    };
+
+    function hexToRgb(hex) {
+      var h = hex.replace('#', '');
+      return [
+        parseInt(h.slice(0, 2), 16) / 255,
+        parseInt(h.slice(2, 4), 16) / 255,
+        parseInt(h.slice(4, 6), 16) / 255
+      ];
+    }
+
+    var BG = hexToRgb('#070910');
+    var COLORS = new Float32Array(
+      ['#F472B6', '#DB2777', '#FBCFE8'].reduce(function (acc, hex) {
+        return acc.concat(hexToRgb(hex));
+      }, [])
+    );
+    var GRAIN = 0.6;
+    var SPEED = 0.25;
+
+    function resize() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, canvas.clientWidth * dpr);
+      canvas.height = Math.max(1, canvas.clientHeight * dpr);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+
+    var ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+    resize();
+
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function draw(t) {
+      gl.uniform2f(locs.res, canvas.width, canvas.height);
+      gl.uniform1f(locs.time, t);
+      gl.uniform1f(locs.grain, GRAIN);
+      gl.uniform3fv(locs.colors, COLORS);
+      gl.uniform3f(locs.bg, BG[0], BG[1], BG[2]);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    }
+
+    if (reduceMotion) {
+      draw(0);
+    } else {
+      (function render(ts) {
+        draw(ts * 0.001 * SPEED);
+        requestAnimationFrame(render);
+      })(0);
+    }
+  })();
+</script>
+
+<!-- ── Tier glider — Jack/Queen/King/Ace slider, ported from sem-seo.html ── -->
+<script>
+  (function () {
+    var TIER_COLORS = {
+      jack:  { color: '#00E5FF', border: 'rgba(0,229,255,0.35)',  glow: 'rgba(0,229,255,0.18)',  bg: 'rgba(0,229,255,0.04)',
+               btnBg: 'rgba(0,229,255,0.08)',  btnBgHover: 'rgba(0,229,255,0.16)' },
+      queen: { color: '#A855F7', border: 'rgba(168,85,247,0.35)', glow: 'rgba(168,85,247,0.18)', bg: 'rgba(168,85,247,0.04)',
+               btnBg: 'rgba(168,85,247,0.08)', btnBgHover: 'rgba(168,85,247,0.16)' },
+      king:  { color: '#FFD700', border: 'rgba(255,215,0,0.35)',  glow: 'rgba(255,215,0,0.18)',  bg: 'rgba(255,215,0,0.04)',
+               btnBg: 'rgba(255,215,0,0.08)',  btnBgHover: 'rgba(255,215,0,0.16)' },
+      ace:   { color: '#FF3B3B', border: 'rgba(255,59,59,0.4)',   glow: 'rgba(255,59,59,0.25)',  bg: 'rgba(255,59,59,0.03)',
+               btnBg: 'rgba(255,59,59,0.08)',  btnBgHover: 'rgba(255,59,59,0.16)',
+               foilBg: 'linear-gradient(135deg, rgba(255,59,59,0.05), rgba(185,28,28,0.05))' },
+      custom: { color: '#F472B6', border: 'rgba(244,114,182,0.35)', glow: 'rgba(244,114,182,0.18)', bg: 'rgba(244,114,182,0.04)',
+               btnBg: 'rgba(244,114,182,0.08)', btnBgHover: 'rgba(244,114,182,0.16)' }
+    };
+    var TIERS = ['jack', 'queen', 'king', 'ace', 'custom'];
+
+    document.querySelectorAll('.tier-glider').forEach(function (glider) {
+      var range      = glider.querySelector('.tier-range');
+      var box        = glider.querySelector('.tier-focus-box');
+      var panels     = glider.querySelectorAll('.tier-focus-panel');
+      var contactBtn = glider.querySelector('.tier-contact-btn');
+      var service    = glider.getAttribute('data-service') || '';
+      if (!range || !box) return;
+      var maxVal = +range.max || 3;
+
+      function render() {
+        var tier = TIERS[+range.value];
+        var c = TIER_COLORS[tier];
+        var tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
+        range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + (+range.value / maxVal) + ')');
+        box.style.setProperty('--tier-color', c.color);
+        box.style.setProperty('--tier-border', c.border);
+        box.style.setProperty('--tier-glow', c.glow);
+        box.style.setProperty('--tier-bg', c.bg);
+        box.style.background = c.foilBg || '';
+        panels.forEach(function (p) {
+          p.classList.toggle('is-active', p.getAttribute('data-tier') === tier);
+        });
+        range.setAttribute('aria-valuetext', tierLabel);
+
+        if (contactBtn) {
+          contactBtn.style.setProperty('--tier-color', c.color);
+          contactBtn.style.setProperty('--tier-btn-bg', c.btnBg);
+          contactBtn.style.setProperty('--tier-btn-bg-hover', c.btnBgHover);
+          contactBtn.style.setProperty('--tier-btn-border', c.border);
+          contactBtn.style.setProperty('--tier-btn-glow', c.glow);
+          contactBtn.href = 'contact.html?' + new URLSearchParams({
+            type: 'Social Media & SMM',
+            service: service,
+            tier: tierLabel,
+            tierColor: c.color
+          }).toString();
+        }
+      }
+
+      range.addEventListener('input', render);
+      render();
+
+      // Browsers restore <input> values on back/forward navigation and bfcache
+      // restores without re-running the initial render() call, which can leave
+      // the thumb/price-card out of sync. pageshow fires on both fresh loads and
+      // bfcache restores, so force back to Jack every time the page is (re)shown.
+      window.addEventListener('pageshow', function () {
+        range.value = '0';
+        render();
+      });
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    function fitBoxToTallestPanel(box, panels) {
+      var tallest = 0;
+      panels.forEach(function (panel) {
+        var prevPosition = panel.style.position;
+        panel.style.position = 'static';
+        tallest = Math.max(tallest, panel.offsetHeight);
+        panel.style.position = prevPosition;
+      });
+      box.style.minHeight = tallest + 'px';
+    }
+
+    var resizeTimer;
+    var allBoxPanels = [];
+
+    document.querySelectorAll('.kit-testimonial-box').forEach(function (box) {
+      var panels = Array.prototype.slice.call(box.querySelectorAll('.kit-testimonial-panel'));
+      if (panels.length <= 1) return;
+
+      allBoxPanels.push({ box: box, panels: panels });
+      fitBoxToTallestPanel(box, panels);
+
+      var dotsWrap = box.parentElement.querySelector('[data-dots]');
+      var dots = panels.map(function (_, i) {
+        var b = document.createElement('button');
+        b.className = 'kit-dot' + (i === 0 ? ' is-active' : '');
+        b.setAttribute('aria-label', 'Show review ' + (i + 1));
+        dotsWrap.appendChild(b);
+        return b;
+      });
+
+      var current = 0;
+      var timer;
+
+      function show(index) {
+        panels[current].classList.remove('is-active');
+        dots[current].classList.remove('is-active');
+        current = index;
+        panels[current].classList.add('is-active');
+        dots[current].classList.add('is-active');
+      }
+
+      function next() { show((current + 1) % panels.length); }
+
+      function restart() {
+        clearInterval(timer);
+        timer = setInterval(next, 10000);
+      }
+
+      dots.forEach(function (dot, i) {
+        dot.addEventListener('click', function () {
+          if (i !== current) show(i);
+          restart();
+        });
+      });
+
+      restart();
+    });
+
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        allBoxPanels.forEach(function (entry) { fitBoxToTallestPanel(entry.box, entry.panels); });
+      }, 150);
+    });
   })();
 </script>
 
