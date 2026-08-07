@@ -81,6 +81,16 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
+    .grad-tier {
+      background: linear-gradient(90deg, #FF3B3B 0%, #FFD700 50%, #05DF72 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .grad-hero-kicker {
+      background: linear-gradient(90deg, var(--cyan) 0%, #ffffff 50%, var(--hero-orange) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
     /* Nav */
     .nav {
@@ -149,8 +159,26 @@
       transition: color 0.2s ease, background 0.2s ease;
       white-space: nowrap;
     }
-    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+    .dropdown-item.active { color: var(--hero-orange); }
+
+    /* Click-toggled services menu attached to the hero "View Services" button —
+       reuses .dropdown-menu/.dropdown-item's glass panel look, but opens on a
+       .open class instead of :hover/:focus-within since it's a standalone button. */
+    .hero-services-menu { position: relative; display: inline-flex; }
+    .hero-services-trigger { display: inline-flex; align-items: center; gap: 7px; }
+    .hero-services-trigger .chevron { transition: transform 0.2s ease; }
+    .hero-services-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    /* position: fixed (not inherited absolute) so the panel escapes
+       overflow: hidden sections it may sit inside — JS sets top/bottom/left
+       from the trigger's viewport rect on open, flipping between opening
+       upward or downward depending on available space (see openSvc). */
+    .hero-services-panel {
+      position: fixed; left: 0; transform: translateY(6px);
+    }
+    .hero-services-panel.drop-down { transform: translateY(-6px); }
+    .hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
     .logo-nav-wrap {
       display: inline-flex;
@@ -200,6 +228,7 @@
       letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--cyan);
       margin-bottom: 16px;
+      align-self: flex-start;
     }
 
     /* Hero (animated mesh-gradient shader background) */
@@ -290,15 +319,13 @@
     .hero-btn {
       padding: 14px 30px; border-radius: 999px; font-size: 13px;
       transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
-      transform: translateZ(0);
-      backface-visibility: hidden;
       -webkit-font-smoothing: antialiased;
     }
-    .hero-btn:hover { transform: translateY(-1px) scale(1.035) translateZ(0); }
+    .hero-btn:hover { transform: translateY(-2px); }
     .hero-btn-outline {
       background: transparent; border: 2px solid rgba(255,255,255,0.3); color: #ffffff;
     }
-    .hero-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,229,255,0.5); }
+    .hero-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(249,115,22,0.55); }
     .hero-btn-gradient {
       border: none; color: #070910;
       background: linear-gradient(120deg, var(--cyan) 0%, var(--hero-orange) 100%);
@@ -316,6 +343,54 @@
     }
     @media (prefers-reduced-motion: reduce) {
       .hero-btn-gradient { animation: none; box-shadow: 0 8px 20px -6px rgba(0,229,255,0.35), 0 10px 28px -8px rgba(249,115,22,0.3); }
+    }
+
+    /* Closing CTA — card format ported from email-marketing.html's .em-cta-card
+       (rounded/bordered/shadowed shell + two-line heading + pill), recolored
+       to this page's cyan/orange tokens instead of email-marketing's blue. */
+    .sem-cta { padding: 70px 28px 110px; }
+    .sem-cta-inner { max-width: 1200px; margin: 0 auto; }
+    .sem-cta-card {
+      position: relative; overflow: hidden; border-radius: 48px;
+      min-height: 460px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px;
+      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      border: 1px solid rgba(249,115,22,0.3);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(249,115,22,0.15);
+      text-align: center;
+    }
+    .sem-cta-content { position: relative; z-index: 1; max-width: 900px; width: 100%; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+    .sem-cta-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(249,115,22,0.07);
+      border: 1.5px solid rgba(249,115,22,0.3);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: #ffffff; letter-spacing: 0.02em;
+      margin-bottom: 26px;
+    }
+    .sem-cta-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--hero-orange); box-shadow: 0 0 8px var(--hero-orange); display: inline-block; flex-shrink: 0; }
+    .sem-cta-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.01em; line-height: 1.05;
+      font-size: clamp(28px, 5vw, 56px);
+      margin-bottom: 22px;
+    }
+    .sem-cta-heading-line1, .sem-cta-heading-line2 { display: inline-block; white-space: nowrap; }
+    .sem-cta-heading-line1 { color: var(--text-1); }
+    @media (max-width: 640px) {
+      .sem-cta-heading-line1, .sem-cta-heading-line2 { display: block; white-space: normal; }
+    }
+    .sem-cta-sub {
+      font-size: 14.5px; line-height: 1.8; color: var(--text-2);
+      max-width: 480px; margin: 0 0 26px;
+    }
+    .sem-cta-content .hero-cta-row { justify-content: center; width: 100%; }
+    @media (max-width: 640px) {
+      .sem-cta-card { padding: 48px 22px; min-height: 380px; border-radius: 32px; }
     }
 
     .hero-content > * {
@@ -410,6 +485,14 @@
        .wf-box-clip cover sits at z-index 3, so it needs a scoped bump here
        to actually hide them. */
     #seo-report-box .wf-box-clip { z-index: 8; }
+    /* At ≤374px the 4:3 box gets too short for .mini-card-body's fixed-height
+       text block (it doesn't shrink), leaving the chart visual squeezed
+       thinner than the text below it — the opposite of the intended emphasis.
+       Taller ratio here gives the visual its headroom back; 375px+ (where the
+       fixed body is comfortably smaller than the remaining visual) is untouched. */
+    @media (max-width: 374px) {
+      #seo-report-box { aspect-ratio: 5 / 6; }
+    }
     /* Below the 2-column breakpoint, un-box .content-2col-text so its children
        (heading, paragraph, tier-kicker, tier-row) become direct grid items
        alongside .content-2col-visual — lets us interleave the box between the
@@ -727,10 +810,65 @@
        count, so a plain flex column avoids re-triggering that fragility). */
     .check-report-text { display: flex; flex-direction: column; gap: 22px; }
     .seo-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .seo-stat-item { display: flex; flex-direction: column; gap: 8px; }
+    .seo-stat-item { position: relative; display: flex; flex-direction: column; gap: 8px; }
     .seo-stat-item svg { color: var(--hero-orange); }
     .seo-stat-item h4 { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; color: var(--text-1); }
     .seo-stat-item p { font-size: 12.5px; line-height: 1.5; color: var(--text-2); }
+
+    /* Meme hover-preview — hovering/focusing "Free, on request" or "Reported
+       monthly" reveals a small glass card (image + short title + caption).
+       .meme-popup lives as a direct child of .seo-stat-item (a sibling of
+       .wf-outer, NOT nested inside it) because .wf-outer is a scroll-reveal
+       clipping wrapper (overflow:hidden) that would otherwise clip the
+       popup — :has() lets the card react to the trigger's state despite
+       living outside it. Two independent, non-overlapping reveal paths:
+       :focus-visible below is keyboard-Tab-only (deliberately NOT plain
+       :focus — a tap or click focuses the trigger too, but only real
+       keyboard nav satisfies :focus-visible, so a mobile tap can't trigger
+       this path at all); touch press is handled purely by JS toggling
+       .is-open (see closing script block) — no CSS :hover/:focus ambiguity
+       involved, which is what previously let two previews show at once on
+       mobile. Desktop mouse hover is a third, separate path: the JS
+       floating card that follows the cursor. */
+    .meme-hover-trigger { cursor: help; }
+    .meme-popup {
+      position: absolute; bottom: 100%; left: 0; z-index: 20;
+      width: 220px; margin-bottom: 8px;
+      transform: translateY(8px); opacity: 0; pointer-events: none;
+      background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.6,0.6,0,1);
+    }
+    .meme-popup img { display: block; width: 100%; height: auto; }
+    .meme-popup-title { display: block; padding: 10px 12px 0; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--text-1); }
+    .meme-popup-desc { display: block; padding: 3px 12px 12px; font-size: 11.5px; line-height: 1.4; color: var(--text-2); }
+    .seo-stat-item:has(.meme-hover-trigger:focus-visible) .meme-popup { opacity: 1; transform: translateY(0); }
+    .meme-popup.is-open { opacity: 1; transform: translateY(0); }
+
+    /* Desktop-only floating card, positioned via JS (left/top, set once per
+       mousemove — no transition on those) on mousemove. The scale/fade
+       entrance is a separate transform on the inner wrapper so it never
+       fights with the JS-driven position. */
+    .meme-float-card {
+      position: fixed; top: 0; left: 0; z-index: 1000;
+      width: 220px; pointer-events: none; opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .meme-float-card.visible { opacity: 1; }
+    .meme-float-card-inner {
+      background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+      transform: translateY(10px) scale(0.96);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .meme-float-card.visible .meme-float-card-inner { transform: translateY(0) scale(1); }
+    .meme-float-card img { display: block; width: 100%; height: auto; }
+    .meme-float-card-title { display: block; padding: 10px 12px 0; font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--text-1); }
+    .meme-float-card-desc { display: block; padding: 3px 12px 12px; font-size: 11.5px; line-height: 1.4; color: var(--text-2); }
 
     /* Mini animated card — hover-triggered stat card ported from the
        reference "AnimatedCard" component (grid bg + glow + bar chart +
@@ -854,6 +992,21 @@
       .tier-focus-icon img {
         width: var(--icon-w-mobile, var(--icon-w, 200px));
         height: var(--icon-h-mobile, var(--icon-h, 200px));
+      }
+    }
+    /* Narrow phones (iPhone SE / small Android, ~320-360px) have a much tighter
+       .tier-focus-box than the 375-428px range the block above was tuned for,
+       so the same icon sizes there swallow the tier text. Third fallback tier,
+       -mobile-sm, shrinks and re-tucks the icon so it's a small corner accent again. */
+    @media (max-width: 374px) {
+      .tier-focus-icon {
+        right: var(--icon-right-mobile-sm, var(--icon-right-mobile, var(--icon-right, 6px)));
+        top: var(--icon-top-mobile-sm, var(--icon-top-mobile, var(--icon-top, 0%)));
+        transform: var(--icon-transform-mobile-sm, var(--icon-transform-mobile, var(--icon-transform, translateY(-30%))));
+      }
+      .tier-focus-icon img {
+        width: var(--icon-w-mobile-sm, var(--icon-w-mobile, var(--icon-w, 200px)));
+        height: var(--icon-h-mobile-sm, var(--icon-h-mobile, var(--icon-h, 200px)));
       }
     }
 
@@ -1268,6 +1421,39 @@
       .ads-earnings-label { font-size: 6.5px; }
       .ads-earnings-val { font-size: 11px; }
     }
+    /* Narrow phones (~320-400px): the 480px tier above sizes the mockup for a
+       ~424px-wide box, but .content-2col-visual is a 1:1 square that shrinks
+       with the viewport, so below ~400px there isn't enough height left for
+       those fixed pixel sizes. The left column's content (top+hero+line-group)
+       needed more height than .ads-page-row-combined's min-height allowed,
+       so it silently overflowed past the row's box and collided with
+       .ads-unit.wide right below it. Everything here is scaled down further
+       so the real content fits inside the row's own min-height again. */
+    @media (max-width: 400px) {
+      .viz-adsense { padding: 10px 12px; }
+      .ads-chrome { margin-bottom: 4px; }
+      .ads-chrome-url { font-size: 7px; padding: 1px 5px; }
+      .ads-page { gap: 4px; padding-bottom: 16px; }
+      .ads-headline { font-size: 10px; }
+      .ads-byline { margin-top: -2px; gap: 4px; }
+      .ads-byline-avatar { width: 11px; height: 11px; }
+      .ads-byline-text { font-size: 6px; }
+      .ads-page-row-combined { flex-basis: 85px; min-height: 85px; }
+      .ads-page-left-col { gap: 5px; }
+      .ads-page-right-col { gap: 6px; }
+      .ads-top-block { height: 22px; }
+      .ads-hero-block { flex-basis: 16px; min-height: 16px; }
+      .ads-line-group { gap: 4px; }
+      .ads-line { height: 5px; }
+      .ads-unit { width: 40px; height: 26px; font-size: 6.5px; }
+      .ads-unit span { font-size: 4.5px; }
+      .ads-unit.wide { height: 14px; margin-top: 1px; gap: 4px; }
+      .ads-unit.tall { width: 28px; }
+      .ads-mini-block { height: 10px; }
+      .ads-earnings { right: 8px; bottom: 8px; padding: 5px 7px; gap: 2px; }
+      .ads-earnings-label { font-size: 5.5px; }
+      .ads-earnings-val { font-size: 9px; }
+    }
 
     /* Bespoke visual — Amazon Sponsored Brands ad-format carousel: 3 slides
        (Product collection / Store spotlight / Video) auto-rotating in place,
@@ -1372,7 +1558,7 @@
       .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
       .mob-link:hover::before { transform: scaleY(1); }
       .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
-      .mob-link.active { color: var(--cyan); }
+      .mob-link.active { color: var(--hero-orange); }
       .mob-link.active::before { transform: scaleY(1); }
       .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
       .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
@@ -1430,6 +1616,45 @@
           if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
         });
       });
+
+      document.querySelectorAll('.hero-services-menu').forEach(function (wrap) {
+        var svcTrigger = wrap.querySelector('.hero-services-trigger');
+        var svcPanel = wrap.querySelector('.hero-services-panel');
+        // Moved to <body> so position:fixed resolves against the viewport, not
+        // a transformed ancestor (e.g. the hero reveal animation's
+        // .hero-content > * transform), and so it isn't clipped by the
+        // section's overflow: hidden (used for background shaders/gradients).
+        document.body.appendChild(svcPanel);
+        var closeSvc = function () { svcTrigger.setAttribute('aria-expanded', 'false'); svcPanel.classList.remove('open'); };
+        var openSvc = function () {
+          var rect = svcTrigger.getBoundingClientRect();
+          var panelHeight = svcPanel.offsetHeight;
+          var openDown = rect.top - panelHeight - 10 < 16;
+          if (openDown) {
+            svcPanel.style.top = (rect.bottom + 10) + 'px';
+            svcPanel.style.bottom = 'auto';
+            svcPanel.classList.add('drop-down');
+          } else {
+            svcPanel.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+            svcPanel.style.top = 'auto';
+            svcPanel.classList.remove('drop-down');
+          }
+          svcPanel.style.left = rect.left + 'px';
+          svcTrigger.setAttribute('aria-expanded', 'true');
+          svcPanel.classList.add('open');
+        };
+        svcTrigger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          svcTrigger.getAttribute('aria-expanded') === 'true' ? closeSvc() : openSvc();
+        });
+        svcPanel.querySelectorAll('.dropdown-item').forEach(function (item) {
+          item.addEventListener('click', closeSvc);
+        });
+        document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
+        window.addEventListener('scroll', closeSvc, true);
+        window.addEventListener('resize', closeSvc);
+      });
     });
   </script>
 </head>
@@ -1464,19 +1689,19 @@
       <a href="our-work.html" class="nav-link">Our Work</a>
       <a href="about.html"    class="nav-link">About</a>
       <div class="nav-dropdown">
-        <a href="services.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+        <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item" role="menuitem">Web Design</a>
+          <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="sem-seo.html" class="dropdown-item active" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
-          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
+          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -1519,7 +1744,7 @@
     <a href="about.html"    class="mob-link mob-sub">About Us</a>
     <a href="contact.html"  class="mob-link mob-sub">Contact</a>
     </div></div>
-    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+    <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
       Services
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
@@ -1529,9 +1754,9 @@
     <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
-    <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
+    <a href="sem-seo.html"  class="mob-link mob-sub active">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
-    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
+    <a href="hosting-services.html"  class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
@@ -1617,7 +1842,22 @@
       </p>
     </div>
     <div class="hero-cta-row">
-      <a href="#seo-pillars" class="btn hero-btn hero-btn-outline">SEO Services</a>
+      <div class="hero-services-menu">
+        <button type="button" class="btn hero-btn hero-btn-outline hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="hero-services-panel">
+          View Services
+          <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-menu hero-services-panel" id="hero-services-panel" role="menu">
+          <a href="#wf-gsa-text" class="dropdown-item" role="menuitem">Google Search Ads</a>
+          <a href="#wf-pmax-text" class="dropdown-item" role="menuitem">Performance Max</a>
+          <a href="#wf-shopping-text" class="dropdown-item" role="menuitem">Google Shopping Ads</a>
+          <a href="#wf-video-text" class="dropdown-item" role="menuitem">Video &amp; YouTube Ads</a>
+          <a href="#wf-lsa-text" class="dropdown-item" role="menuitem">Local Service Ads</a>
+          <a href="#wf-adsense-text" class="dropdown-item" role="menuitem">Google Ad Sense</a>
+          <a href="#wf-asp-text" class="dropdown-item" role="menuitem">Amazon Sponsored Products</a>
+          <a href="#seo-pillars" class="dropdown-item" role="menuitem">Search Engine Optimization</a>
+        </div>
+      </div>
       <a href="#wf-gsa-text" class="btn hero-btn hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
     </div>
   </div>
@@ -1653,7 +1893,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-gsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision intent-targeting ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.<br><br>Every account also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
+        Google Search Ads place your business at the top of search results precisely when potential customers are actively looking for your solutions. Precision <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">intent-targeting</code> ensures your budget is spent exclusively on motivated buyers who are ready to convert immediately.<br><br><code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">Every account</code> also carries a remarketing layer across Google's Display Network, keeping your brand in front of visitors who didn't convert the first time.
       </p>
     </div>
     <div class="tip-banner">
@@ -1673,9 +1913,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Search Ads tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Google Search Ads tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -1700,9 +1940,14 @@
             <span class="tier-focus-fee">C$900/mo</span>
             <span class="tier-focus-band">Spend C$2,500–C$3,000</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">Spend C$3,000+</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-120px; --icon-top:0%; --icon-transform:translateY(-21%); --icon-w:300px; --icon-h:300px; --icon-right-mobile:-35px; --icon-w-mobile:190px; --icon-h-mobile:190px; --icon-transform-mobile:translateY(-20%);">
-          <img src="brand_assets/icons/google-search-ads.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-120px; --icon-top:0%; --icon-transform:translateY(-21%); --icon-w:300px; --icon-h:300px; --icon-right-mobile:-35px; --icon-w-mobile:190px; --icon-h-mobile:190px; --icon-transform-mobile:translateY(-20%); --icon-right-mobile-sm:-30px; --icon-w-mobile-sm:160px; --icon-h-mobile-sm:160px; --icon-transform-mobile-sm:translateY(-25%);">
+          <img src="brand_assets/icons/google-search-ads.webp" alt="" />
         </div>
       </div>
     </div>
@@ -1775,7 +2020,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-pmax-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Performance Max runs one AI-driven campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time. Google's own recommended default once an account has enough conversion history to fuel the automation.<br><br>We configure the feed and asset groups, set the right conversion goals, and review signals monthly, including the newer Demand Gen format for visual, feed-native placements.
+        Performance Max runs one <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">AI-driven</code> campaign across Search, Display, YouTube, Gmail, Maps, and Discover at the same time. Google's own recommended default once an account has enough conversion history to fuel the automation.<br><br>We configure the feed and asset groups, set the right conversion goals, and review signals monthly, <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">including</code> the newer Demand Gen format for visual, feed-native placements.
       </p>
     </div>
     <div class="tip-banner">
@@ -1795,9 +2040,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Performance Max tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Performance Max tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -1822,9 +2067,14 @@
             <span class="tier-focus-fee">C$1,000/mo</span>
             <span class="tier-focus-band">Spend C$3,375–C$4,000</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">Spend C$4,000+</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-70px; --icon-top:0%; --icon-transform:translateY(-21%); --icon-w:260px; --icon-h:260px; --icon-right-mobile:-30px; --icon-w-mobile:170px; --icon-h-mobile:170px; --icon-transform-mobile:translateY(-15%);">
-          <img src="brand_assets/icons/PM-isometric-icon-transparent.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-70px; --icon-top:0%; --icon-transform:translateY(-21%); --icon-w:260px; --icon-h:260px; --icon-right-mobile:-30px; --icon-w-mobile:170px; --icon-h-mobile:170px; --icon-transform-mobile:translateY(-15%); --icon-right-mobile-sm:-25px; --icon-w-mobile-sm:140px; --icon-h-mobile-sm:140px; --icon-transform-mobile-sm:translateY(-15%);">
+          <img src="brand_assets/icons/PM-isometric-icon-transparent.webp" alt="" />
         </div>
       </div>
     </div>
@@ -1938,7 +2188,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-shopping-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Shopping Ads showcase your products with image, price, and reviews directly in search results. Putting your catalog in front of shoppers who are already comparing and ready to buy.<br><br>We build and maintain the Merchant Center feed and shipping/tax rules so listings stay live whether they run standalone or wrapped inside Performance Max.
+        Google Shopping Ads <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">showcase</code> your products with image, price, and reviews directly in search results. Putting your catalog in front of shoppers who are already comparing and ready to buy.<br><br>We build and maintain the Merchant Center feed and shipping/tax rules so listings <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">stay live</code> whether they run standalone or wrapped inside Performance Max.
       </p>
     </div>
     <div class="tip-banner">
@@ -1958,9 +2208,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Shopping Ads tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Google Shopping Ads tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -1985,9 +2235,14 @@
             <span class="tier-focus-fee">C$850/mo</span>
             <span class="tier-focus-band">Spend C$2,500–C$3,000</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">Spend C$3,000+</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-110px; --icon-top:0%; --icon-transform:translateY(-26%); --icon-w:310px; --icon-h:310px; --icon-right-mobile:-70px; --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-transform-mobile:translateY(-25%);">
-          <img src="brand_assets/icons/GShoppingA-isometric-icon-transparent.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-110px; --icon-top:0%; --icon-transform:translateY(-26%); --icon-w:310px; --icon-h:310px; --icon-right-mobile:-70px; --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-transform-mobile:translateY(-25%); --icon-right-mobile-sm:-50px; --icon-w-mobile-sm:180px; --icon-h-mobile-sm:180px; --icon-transform-mobile-sm:translateY(-30%);">
+          <img src="brand_assets/icons/GShoppingA-isometric-icon-transparent.webp" alt="" />
         </div>
       </div>
     </div>
@@ -2023,7 +2278,7 @@
       </div>
       <div class="shop-grid">
         <div class="shop-card">
-          <div class="shop-img" style="background-image: url('brand_assets/icons/grey-hoodie-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/grey-hoodie-isometric-icon-transparent.webp'), linear-gradient(135deg, rgba(0,229,255,0.25), rgba(255,45,120,0.15));"></div>
           <p class="shop-title">VardWeb Hoodie</p>
           <p class="shop-price">$65.00</p>
           <p class="shop-seller">vardweb.com</p>
@@ -2031,7 +2286,7 @@
           <p class="shop-attr">Apparel · Unisex</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background-image: url('brand_assets/icons/skincare-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/skincare-isometric-icon-transparent.webp'), linear-gradient(135deg, rgba(255,215,0,0.22), rgba(0,229,255,0.15));"></div>
           <p class="shop-title">VardWeb Skincare Set</p>
           <p class="shop-price">$84.00</p>
           <p class="shop-seller">vardweb.ca</p>
@@ -2039,7 +2294,7 @@
           <p class="shop-attr">Beauty · Skincare</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background-image: url('brand_assets/icons/protein-powder-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/protein-powder-isometric-icon-transparent.webp'), linear-gradient(135deg, rgba(255,45,120,0.22), rgba(255,215,0,0.15));"></div>
           <p class="shop-title">VardWeb Whey Protein</p>
           <p class="shop-price">$72.00</p>
           <p class="shop-seller">vardweb.io</p>
@@ -2053,7 +2308,7 @@
       </div>
       <div class="shop-grid organic">
         <div class="shop-card">
-          <div class="shop-img" style="background-image: url('brand_assets/icons/coffee-beans-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,215,0,0.12));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/coffee-beans-isometric-icon-transparent.webp'), linear-gradient(135deg, rgba(0,229,255,0.18), rgba(255,215,0,0.12));"></div>
           <p class="shop-title">VardWeb Coffee Beans</p>
           <p class="shop-price">$15.00</p>
           <p class="shop-seller">vardweb.net</p>
@@ -2061,7 +2316,7 @@
           <p class="shop-attr">Grocery · Beverage</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background-image: url('brand_assets/icons/console-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,45,120,0.18), rgba(0,229,255,0.12));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/console-isometric-icon-transparent.webp'), linear-gradient(135deg, rgba(255,45,120,0.18), rgba(0,229,255,0.12));"></div>
           <p class="shop-title">VardWeb Console</p>
           <p class="shop-price">$150.00</p>
           <p class="shop-seller">vardweb.shop</p>
@@ -2069,7 +2324,7 @@
           <p class="shop-attr">Electronics · Gaming</p>
         </div>
         <div class="shop-card">
-          <div class="shop-img" style="background-image: url('brand_assets/icons/exercise-isometric-icon-transparent.png'), linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,45,120,0.12));"></div>
+          <div class="shop-img" style="background-image: url('brand_assets/icons/exercise-isometric-icon-transparent.webp'), linear-gradient(135deg, rgba(255,215,0,0.18), rgba(255,45,120,0.12));"></div>
           <p class="shop-title">VardWeb Exercise Kit</p>
           <p class="shop-price">$40.00</p>
           <p class="shop-seller">vardweb.ai</p>
@@ -2094,7 +2349,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-video-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Video Ads put your brand in front of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could.<br><br>We handle campaign structure, audience targeting, and bid strategy; if you need the video itself, our Content Creation &amp; CM add-on covers production.
+        Video Ads put your brand <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">in front</code> of buyers while they're already watching — in-stream, in-feed, and Shorts placements across YouTube reach people earlier in their decision than a text or image ad ever could.<br><br>We handle campaign structure, audience targeting, and bid strategy; <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">provide us</code> the video creative and we'll make sure it gets in front of the right people at the right time.
       </p>
     </div>
     <div class="tip-banner">
@@ -2114,9 +2369,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Video &amp; YouTube Ads tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Video &amp; YouTube Ads tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -2141,9 +2396,14 @@
             <span class="tier-focus-fee">C$1,200/mo</span>
             <span class="tier-focus-band">Spend C$3,375–C$4,000</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">Spend C$4,000+</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-130px; --icon-top:0%; --icon-transform:translateY(-31%); --icon-w:330px; --icon-h:330px; --icon-right-mobile:-65px; --icon-w-mobile:270px; --icon-h-mobile:270px; --icon-transform-mobile:translateY(-33%);">
-          <img src="brand_assets/icons/VaYTA-isometric-icon-transparent.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-130px; --icon-top:0%; --icon-transform:translateY(-31%); --icon-w:330px; --icon-h:330px; --icon-right-mobile:-65px; --icon-w-mobile:270px; --icon-h-mobile:270px; --icon-transform-mobile:translateY(-33%); --icon-right-mobile-sm:-50px; --icon-w-mobile-sm:210px; --icon-h-mobile-sm:210px; --icon-transform-mobile-sm:translateY(-28%);">
+          <img src="brand_assets/icons/VaYTA-isometric-icon-transparent.webp" alt="" />
         </div>
       </div>
     </div>
@@ -2171,7 +2431,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-lsa-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Featured prominently at the very top of Google local search results. Simple business cards showing reviews, ratings, phone numbers, and a "Google Screened", "Google Guaranteed" or "Google Verified" badge.<br><br>Connect your business with nearby customers who are ready to book — and you only pay for genuine leads.
+        Featured prominently at the <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">very top</code> of Google local search results. Simple business cards showing reviews, ratings, phone numbers, and a "Google Screened", "Google Guaranteed" or "Google Verified" badge.<br><br>Connect your business with <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">nearby customers</code> who are ready to book — and you only pay for genuine leads.
       </p>
     </div>
     <div class="tip-banner">
@@ -2191,9 +2451,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Local Service Ads tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Local Service Ads tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -2218,9 +2478,14 @@
             <span class="tier-focus-fee">C$600/mo</span>
             <span class="tier-focus-band">Spend C$1,325–C$1,500</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">Spend C$1,500+</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-100px; --icon-top:0%; --icon-transform:translateY(-31%); --icon-w:300px; --icon-h:300px; --icon-right-mobile:-50px; --icon-w-mobile:220px; --icon-h-mobile:220px; --icon-transform-mobile:translateY(-30%);">
-          <img src="brand_assets/icons/LSA-isometric-icon-transparent.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-100px; --icon-top:0%; --icon-transform:translateY(-31%); --icon-w:300px; --icon-h:300px; --icon-right-mobile:-50px; --icon-w-mobile:220px; --icon-h-mobile:220px; --icon-transform-mobile:translateY(-30%); --icon-right-mobile-sm:-45px; --icon-w-mobile-sm:180px; --icon-h-mobile-sm:180px; --icon-transform-mobile-sm:translateY(-30%);">
+          <img src="brand_assets/icons/LSA-isometric-icon-transparent.webp" alt="" />
         </div>
       </div>
     </div>
@@ -2320,7 +2585,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-adsense-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Google Ad Sense turns your existing web traffic into a secondary revenue stream by serving contextually relevant display ads across your site.<br><br>Placements are tuned to protect user experience while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
+        Google Ad Sense turns your existing web traffic into a <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">secondary revenue</code> stream by serving contextually relevant display ads across your site.<br><br>Placements are tuned to protect <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">user experience</code> while maximizing yield per page view — this is the one channel here that pays you, not the other way around.
       </p>
     </div>
     <div class="tip-banner">
@@ -2340,9 +2605,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Google Ad Sense tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Google Ad Sense tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -2367,9 +2632,14 @@
             <span class="tier-focus-fee">C$900 setup</span>
             <span class="tier-focus-band">C$350/mo monitoring · 250k+ views</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">500k+ views</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-120px; --icon-top:0%; --icon-transform:translateY(-26%); --icon-w:290px; --icon-h:290px; --icon-right-mobile:-35px; --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-transform-mobile:translateY(-32%);">
-          <img src="brand_assets/icons/GAS-isometric-icon-transparent.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-120px; --icon-top:0%; --icon-transform:translateY(-26%); --icon-w:290px; --icon-h:290px; --icon-right-mobile:-35px; --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-transform-mobile:translateY(-32%); --icon-right-mobile-sm:-30px; --icon-w-mobile-sm:130px; --icon-h-mobile-sm:130px; --icon-transform-mobile-sm:translateY(-37%);">
+          <img src="brand_assets/icons/GAS-isometric-icon-transparent.webp" alt="" />
         </div>
       </div>
     </div>
@@ -2430,7 +2700,7 @@
     </div>
     <div class="wf-outer">
       <p id="wf-asp-para" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">
-        Amazon Sponsored Products place your listings directly within Amazon search results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace.<br><br>We handle campaign structure, keyword targeting, and bid strategy; if you need product photography or copywriting, our Content Creation &amp; CM add-on covers production.
+        Amazon Sponsored Products place your listings directly within <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">Amazon search</code> results and product pages, capturing shoppers at the exact moment of purchase intent on the world's largest marketplace.<br><br>Provide us with your product catalog and we'll create, manage, and optimize your campaigns to <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">maximize ROAS</code> while keeping your listings competitive.
       </p>
     </div>
     <div class="tip-banner">
@@ -2450,9 +2720,9 @@
         <a href="contact.html" class="tier-contact-btn">Contact VardWeb</a>
       </div>
       <div class="tier-slider-wrap">
-        <input type="range" class="email-range" min="0" max="3" step="1" value="0" aria-label="Choose your Amazon Sponsored Products tier" />
+        <input type="range" class="email-range" min="0" max="4" step="1" value="0" aria-label="Choose your Amazon Sponsored Products tier" />
         <div class="email-slider-ticks tier-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.3333); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.6667); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#FF3B3B">Ace</span>
+          <span style="left:calc(9px + (100% - 18px) * 0); --tier-color:#00E5FF">Jack</span><span style="left:calc(9px + (100% - 18px) * 0.25); --tier-color:#A855F7">Queen</span><span style="left:calc(9px + (100% - 18px) * 0.5); --tier-color:#FFD700">King</span><span style="left:calc(9px + (100% - 18px) * 0.75); --tier-color:#FF3B3B">Ace</span><span style="left:calc(9px + (100% - 18px) * 1); --tier-color:#f97316">Custom</span>
         </div>
       </div>
       <div class="tier-focus-box">
@@ -2477,9 +2747,14 @@
             <span class="tier-focus-fee">C$1,800/mo</span>
             <span class="tier-focus-band">Spend C$3,375–C$4,000</span>
           </div>
+          <div class="tier-focus-panel" data-tier="custom">
+            <div class="tier-chip-head"><span class="tier-chip-dot" style="--tier-color:#f97316"></span><span class="tier-chip-name" style="--tier-color:#f97316">Custom</span></div>
+            <span class="tier-focus-fee">Bespoke</span>
+            <span class="tier-focus-band">Spend C$4,000+</span>
+          </div>
         </div>
-        <div class="tier-focus-icon" style="--icon-right:-100px; --icon-top:0%; --icon-transform:translateY(-30%); --icon-w:330px; --icon-h:330px; --icon-right-mobile:-40px; --icon-w-mobile:210px; --icon-h-mobile:210px; --icon-transform-mobile:translateY(-30%);">
-          <img src="brand_assets/icons/ASP-isometric-icon-transparent.png" alt="" />
+        <div class="tier-focus-icon" style="--icon-right:-100px; --icon-top:0%; --icon-transform:translateY(-30%); --icon-w:330px; --icon-h:330px; --icon-right-mobile:-40px; --icon-w-mobile:210px; --icon-h-mobile:210px; --icon-transform-mobile:translateY(-30%); --icon-right-mobile-sm:-40px; --icon-w-mobile-sm:160px; --icon-h-mobile-sm:160px; --icon-transform-mobile-sm:translateY(-35%);">
+          <img src="brand_assets/icons/ASP-isometric-icon-transparent.webp" alt="" />
         </div>
       </div>
     </div>
@@ -2607,12 +2882,12 @@
     </defs>
   </svg>
   <div class="seo-pillars-head">
-    <p class="sec-tag" style="display: inline-flex;">// search engine optimization</p>
+    <p class="sec-tag grad-tier" style="display: inline-flex;">// search engine optimization</p>
     <div class="wf-outer">
       <h2 id="wf-seopillars-heading">Most websites don't<br><span class="grad-cyan-orange">even break 70.</span></h2>
     </div>
     <div class="wf-outer">
-      <p id="wf-seopillars-para">These are the estimated collective averages across the web for each pillar of SEO. Most sites land somewhere in the 40s to 70s. The fundamentals are half-done, real authority is rare, and performance is inconsistent. That gap between average and optimized is exactly where VardWeb's SEO service goes to work.</p>
+      <p id="wf-seopillars-para">These are the estimated <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">collective averages</code> across the web for each pillar of SEO. Most sites land somewhere in the 40s to 70s. The fundamentals are half-done, real authority is rare, and performance is inconsistent. That gap between average and optimized is exactly where <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">VardWeb's SEO</code> service goes to work.</p>
     </div>
   </div>
   <div class="seo-pillar-grid">
@@ -2631,8 +2906,8 @@
           <span class="seo-score-outof">out of 100</span>
         </div>
       </div>
-      <p data-panel="avg">Most sites we evaluate land in the 60s here. Basics like title tags and H1 headers are usually covered, but points get lost to missing meta descriptions, duplicate content tags, and unoptimized image alt text.</p>
-      <p data-panel="vardweb" hidden>With VardWeb, every page ships with keyword-mapped copy, complete title tags and meta descriptions, and a clean header hierarchy. The fundamentals other sites leave half-finished.</p>
+      <p data-panel="avg"><code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">Most sites</code> we evaluate land in the 60s here. Basics like title tags and H1 headers are usually covered, but points get lost to missing meta descriptions, duplicate content tags, and unoptimized image alt text.</p>
+      <p data-panel="vardweb" hidden>With VardWeb, every page ships with keyword-mapped copy, complete title tags and meta descriptions, and a clean header hierarchy. The <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">fundamentals</code> other sites leave half-finished.</p>
       <ul class="seo-pillar-list" data-panel="avg">
         <li>Keyword-optimized content &amp; copy</li>
         <li>Title tags &amp; meta descriptions</li>
@@ -2660,8 +2935,8 @@
           <span class="seo-score-outof">out of 100</span>
         </div>
       </div>
-      <p data-panel="avg">The pillar most sites fall furthest behind on. The vast majority have few or no quality backlinks, since real domain authority is concentrated almost entirely among top-tier enterprise and media sites.</p>
-      <p data-panel="vardweb" hidden>VardWeb builds real domain authority. Active backlink outreach, a fully optimized Google Business Profile, and ongoing digital PR. We cannot control all external factors, but we catch off-page work most sites never touch.</p>
+      <p data-panel="avg">The pillar most sites fall furthest behind on. The <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">vast majority</code> have few or no quality backlinks, since real domain authority is concentrated almost entirely among top-tier enterprise and media sites.</p>
+      <p data-panel="vardweb" hidden>VardWeb builds real <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">domain authority.</code> Active backlink outreach, a fully optimized Google BP, and ongoing digital PR. We cannot control all external factors, but we catch off-page work most sites never touch.</p>
       <ul class="seo-pillar-list" data-panel="avg">
         <li>High-authority backlink building</li>
         <li>Google Business Profile &amp; citations</li>
@@ -2689,8 +2964,8 @@
           <span class="seo-score-outof">out of 100</span>
         </div>
       </div>
-      <p data-panel="avg">HTTPS adoption is now standard, which helps the average here — but mobile speed and Core Web Vitals like Largest Contentful Paint are still where most sites lose the most ground.</p>
-      <p data-panel="vardweb" hidden>We tune Core Web Vitals and site speed from the ground up, keep sitemaps and crawlability clean, and implement structured data most sites never quite get around to fixing.</p>
+      <p data-panel="avg"><code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">HTTPS adoption</code> is now standard, which helps the average here — but mobile speed and Core Web Vitals like Largest Contentful Paint are still where most sites lose the most ground.</p>
+      <p data-panel="vardweb" hidden>We tune Core Web Vitals and site speed from the ground up, keep sitemaps and crawlability clean, and implement <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">structured data</code> most sites never quite get around to fixing.</p>
       <ul class="seo-pillar-list" data-panel="avg">
         <li>Core Web Vitals &amp; site speed</li>
         <li>XML sitemaps &amp; crawlability</li>
@@ -2711,29 +2986,35 @@
 <!-- ── CONTENT: Free SEO Checks & Monthly Reporting (2-column) ── -->
 <section class="content-2col" id="free-check-row">
   <div class="check-report-text">
-    <p class="sec-tag" style="display: inline-flex;">// free checks &amp; reporting</p>
+    <p class="sec-tag grad-hero-kicker" style="display: inline-flex;">// free checks &amp; reporting</p>
     <div class="wf-outer">
       <h2 id="wf-freecheck-heading" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">See where you stand. <span class="grad-cyan-orange">Watch it climb.</span></h2>
     </div>
     <div class="wf-outer">
-      <p id="wf-freecheck-para1" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">Have a website and want to see where it stands? VardWeb offers a free SEO check across all three pillars: on-page, technical, and off-page — no cost, no obligation.</p>
+      <p id="wf-freecheck-para1" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">Have a website and want to see where it stands? VardWeb offers a <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">free SEO</code> check across all three pillars: on-page, technical, and off-page — no cost, no obligation.</p>
     </div>
     <div class="wf-outer">
-      <p id="wf-freecheck-para2" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">Once you're a client, you get a monthly report tracking exactly how much each score moves. Real, visible progress, month after month.</p>
+      <p id="wf-freecheck-para2" style="font-size: 15.5px; line-height: 1.8; color: var(--text-2); max-width: 480px;">Once you're a client, you get a <code style="background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--hero-orange);white-space:nowrap;">monthly report</code> tracking exactly how much each score moves. Real, visible progress, month after month.</p>
     </div>
     <div class="seo-stat-grid">
       <div class="seo-stat-item">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
         <div class="wf-outer">
-          <h4 id="wf-freecheck-stat1-head">Free, on request</h4>
+          <h4 id="wf-freecheck-stat1-head">
+            <span class="meme-hover-trigger" tabindex="0">Free, on request</span>
+          </h4>
         </div>
+        <span class="meme-popup" aria-hidden="true"><img src="brand_assets/memes/Free-Shrek-Meme.webp" alt="" loading="lazy"><span class="meme-popup-title">Free, you say?</span><span class="meme-popup-desc">No cost, no catch — just a full SEO check on the house.</span></span>
         <p>A full 3-pillar SEO check, no strings attached.</p>
       </div>
       <div class="seo-stat-item">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         <div class="wf-outer">
-          <h4 id="wf-freecheck-stat2-head">Reported monthly</h4>
+          <h4 id="wf-freecheck-stat2-head">
+            <span class="meme-hover-trigger" tabindex="0">Reported monthly</span>
+          </h4>
         </div>
+        <span class="meme-popup" aria-hidden="true"><img src="brand_assets/memes/Reported-208-Meme.webp" alt="" loading="lazy"><span class="meme-popup-title">208: Already Reported</span><span class="meme-popup-desc">Your score movement, logged and delivered like clockwork.</span></span>
         <p>Score movement tracked and delivered every month.</p>
       </div>
     </div>
@@ -2778,13 +3059,41 @@
 <div class="divider"></div>
 
 <!-- ── CTA ── -->
-<section style="position: relative; overflow: hidden; padding: 70px 28px 100px; text-align: center;">
-  <canvas class="cta-shader" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;" aria-hidden="true"></canvas>
-  <div style="position: relative; z-index: 1;">
-    <p class="sec-tag" style="display: inline-flex;">// ready to launch</p>
-    <h3 style="font-size: 22px; font-weight: 700; color: var(--text-1); letter-spacing: -0.02em; margin: 10px 0 18px;">Add SEM to any package.</h3>
-    <p style="color: var(--text-2); max-width: 480px; margin: 0 auto 26px; font-size: 14.5px; line-height: 1.8;">Not sure which service is right for you? Get a free consultation.</p>
-    <a href="contact.html" class="btn btn-primary">Inquire →</a>
+<section class="sem-cta">
+  <div class="sem-cta-inner">
+    <div class="sem-cta-card">
+      <canvas class="cta-shader" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;" aria-hidden="true"></canvas>
+      <div class="sem-cta-content">
+        <div class="sem-cta-pill">
+          <span class="sem-cta-pill-dot"></span>
+          Pay-to-Win Today
+        </div>
+        <h2 class="sem-cta-heading">
+          <span class="sem-cta-heading-line1">Page Two of Google is</span>
+          <span class="sem-cta-heading-line2 grad-cyan-orange">Great for Hiding Bodies.</span>
+        </h2>
+        <p class="sem-cta-sub">If your business isn't at the top of the search page, you basically don't exist to modern consumers. Stop being a well-kept secret and put your brand where people look. Get on top of search results.</p>
+        <div class="hero-cta-row" style="justify-content: center;">
+          <div class="hero-services-menu">
+            <button type="button" class="btn hero-btn hero-btn-outline hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="cta-services-panel">
+              View Services
+              <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="dropdown-menu hero-services-panel" id="cta-services-panel" role="menu">
+              <a href="#wf-gsa-text" class="dropdown-item" role="menuitem">Google Search Ads</a>
+              <a href="#wf-pmax-text" class="dropdown-item" role="menuitem">Performance Max</a>
+              <a href="#wf-shopping-text" class="dropdown-item" role="menuitem">Google Shopping Ads</a>
+              <a href="#wf-video-text" class="dropdown-item" role="menuitem">Video &amp; YouTube Ads</a>
+              <a href="#wf-lsa-text" class="dropdown-item" role="menuitem">Local Service Ads</a>
+              <a href="#wf-adsense-text" class="dropdown-item" role="menuitem">Google Ad Sense</a>
+              <a href="#wf-asp-text" class="dropdown-item" role="menuitem">Amazon Sponsored Products</a>
+              <a href="#seo-pillars" class="dropdown-item" role="menuitem">Search Engine Optimization</a>
+            </div>
+          </div>
+          <a href="contact.html?type=SEM%20%26%20SEO&amp;learnMore=1" class="btn hero-btn hero-btn-gradient">Inquire <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -2833,7 +3142,7 @@
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link active">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link">Email Marketing</a>
-        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
         <a href="contact.html" class="footer-link">Custom Request</a>
@@ -3277,6 +3586,23 @@
       var rects = words.map(function (word) { return word.getBoundingClientRect(); });
       var GAP_BUFFER = 2; // px of breathing room between two adjacent blocks
 
+      /* Splitting into per-word boxes breaks a gradient span's continuous
+         background-clip: text (each word would otherwise restart the
+         gradient 0%-100% across its own narrow width). Re-map each word's
+         background to the gradient span's full bounding box so the words
+         line back up into one continuous gradient across the phrase. */
+      var gradSpan = t.el.querySelector('.grad-cyan-orange, .grad-cyan-pink');
+      if (gradSpan) {
+        var spanRect = gradSpan.getBoundingClientRect();
+        words.forEach(function (word, i) {
+          if (!gradSpan.contains(word)) return;
+          var r = rects[i];
+          word.style.backgroundSize = spanRect.width + 'px ' + spanRect.height + 'px';
+          word.style.backgroundPosition =
+            (-(r.left - spanRect.left)) + 'px ' + (-(r.top - spanRect.top)) + 'px';
+        });
+      }
+
       var colorBoxes = words.map(function (word, i) {
         var rect = rects[i];
         var prev = rects[i - 1];
@@ -3381,9 +3707,12 @@
              btnBg: 'rgba(255,215,0,0.08)',  btnBgHover: 'rgba(255,215,0,0.16)' },
     ace:   { color: '#FF3B3B', border: 'rgba(255,59,59,0.4)',   glow: 'rgba(255,59,59,0.25)',  bg: 'rgba(255,59,59,0.03)',
              btnBg: 'rgba(255,59,59,0.08)',  btnBgHover: 'rgba(255,59,59,0.16)',
-             foilBg: 'linear-gradient(135deg, rgba(255,59,59,0.05), rgba(185,28,28,0.05))' }
+             foilBg: 'linear-gradient(135deg, rgba(255,59,59,0.05), rgba(185,28,28,0.05))' },
+    custom: { color: '#f97316', border: 'rgba(249,115,22,0.35)', glow: 'rgba(249,115,22,0.18)', bg: 'rgba(249,115,22,0.04)',
+             btnBg: 'rgba(249,115,22,0.08)', btnBgHover: 'rgba(249,115,22,0.16)' }
   };
-  var TIERS = ['jack', 'queen', 'king', 'ace'];
+  var TIERS = ['jack', 'queen', 'king', 'ace', 'custom'];
+  var gliders = [];
 
   document.querySelectorAll('.tier-glider').forEach(function (glider) {
     var range      = glider.querySelector('.email-range');
@@ -3397,7 +3726,8 @@
       var tier = TIERS[+range.value];
       var c = TIER_COLORS[tier];
       var tierLabel = tier.charAt(0).toUpperCase() + tier.slice(1);
-      range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + (+range.value / 3) + ')');
+      var maxVal = +range.max || 4;
+      range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + (+range.value / maxVal) + ')');
       box.style.setProperty('--tier-color', c.color);
       box.style.setProperty('--tier-border', c.border);
       box.style.setProperty('--tier-glow', c.glow);
@@ -3417,13 +3747,30 @@
         contactBtn.href = 'contact.html?' + new URLSearchParams({
           type: 'SEM & SEO',
           service: service,
-          tier: tierLabel
+          tier: tierLabel,
+          tierColor: c.color
         }).toString();
       }
     }
 
     range.addEventListener('input', render);
     render();
+    gliders.push({ range: range, render: render });
+  });
+
+  /* Browsers restore <input> values (including type="range") from session
+     history on back/forward navigation, setting the value directly without
+     firing an 'input' event — and bfcache restores skip DOMContentLoaded
+     entirely. Either way our render() above can end up out of sync with
+     the browser-restored thumb position (native thumb shows the old tier,
+     everything else still shows whatever render() last computed). Forcing
+     every glider back to Jack and re-rendering on 'pageshow' (which fires
+     on *every* visit, including bfcache restores) keeps them consistent. */
+  window.addEventListener('pageshow', function () {
+    gliders.forEach(function (g) {
+      g.range.value = '0';
+      g.render();
+    });
   });
 })();
 
@@ -3571,6 +3918,103 @@
       raf = requestAnimationFrame(render);
     })(0);
   }
+})();
+</script>
+
+<!-- Meme hover-preview: desktop-only floating card that follows the cursor
+     when hovering "Free, on request" / "Reported monthly". Touch and
+     keyboard-focus users get the CSS-only .meme-popup instead (see styles
+     near .seo-stat-item). -->
+<div class="meme-float-card" id="meme-float-card" aria-hidden="true">
+  <div class="meme-float-card-inner">
+    <img id="meme-float-card-img" src="" alt="">
+    <span class="meme-float-card-title" id="meme-float-card-title"></span>
+    <span class="meme-float-card-desc" id="meme-float-card-desc"></span>
+  </div>
+</div>
+<script>
+(function () {
+  if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  var card = document.getElementById('meme-float-card');
+  var img = document.getElementById('meme-float-card-img');
+  var title = document.getElementById('meme-float-card-title');
+  var desc = document.getElementById('meme-float-card-desc');
+  var triggers = document.querySelectorAll('.meme-hover-trigger');
+  if (!card || !triggers.length) return;
+
+  var CARD_WIDTH = 220;
+  var cardHeight = 200; // fallback estimate until the first real measurement
+  var OFFSET_Y = 18;
+
+  function updatePosition(e) {
+    var x = e.clientX - CARD_WIDTH / 2;
+    var y = e.clientY - cardHeight - OFFSET_Y;
+
+    if (x + CARD_WIDTH > window.innerWidth - 16) x = window.innerWidth - CARD_WIDTH - 16;
+    if (x < 16) x = 16;
+    if (y < 16) y = e.clientY + OFFSET_Y;
+
+    card.style.left = x + 'px';
+    card.style.top = y + 'px';
+  }
+
+  triggers.forEach(function (trigger) {
+    var item = trigger.closest('.seo-stat-item');
+    var popup = item ? item.querySelector('.meme-popup') : null;
+    if (!popup) return;
+    var popupImg = popup.querySelector('img');
+    var popupTitle = popup.querySelector('.meme-popup-title');
+    var popupDesc = popup.querySelector('.meme-popup-desc');
+
+    trigger.addEventListener('mouseenter', function (e) {
+      img.src = popupImg ? popupImg.src : '';
+      title.textContent = popupTitle ? popupTitle.textContent : '';
+      desc.textContent = popupDesc ? popupDesc.textContent : '';
+      card.classList.add('visible');
+      cardHeight = card.offsetHeight || cardHeight;
+      updatePosition(e);
+    });
+    trigger.addEventListener('mousemove', updatePosition);
+    trigger.addEventListener('mouseleave', function () {
+      card.classList.remove('visible');
+    });
+  });
+})();
+</script>
+
+<!-- Meme hover-preview: touch open + dismiss. Gated on touch capability
+     (not the hover/pointer media query the desktop card above uses) so it
+     can't fight with that card or with the :focus-visible keyboard path —
+     a tap here only ever toggles .is-open on the tapped trigger's own
+     .meme-popup, nothing CSS-hover/focus-driven is involved. -->
+<script>
+(function () {
+  if (!('ontouchstart' in window) && !(navigator.maxTouchPoints > 0)) return;
+
+  function closeAllOpen() {
+    document.querySelectorAll('.meme-popup.is-open').forEach(function (p) {
+      p.classList.remove('is-open');
+    });
+  }
+
+  document.querySelectorAll('.meme-hover-trigger').forEach(function (trigger) {
+    var item = trigger.closest('.seo-stat-item');
+    var popup = item ? item.querySelector('.meme-popup') : null;
+    if (!popup) return;
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var wasOpen = popup.classList.contains('is-open');
+      closeAllOpen();
+      if (!wasOpen) popup.classList.add('is-open');
+    });
+  });
+
+  document.addEventListener('touchstart', function (e) {
+    if (!e.target.closest('.meme-hover-trigger')) closeAllOpen();
+  }, { passive: true });
+
+  window.addEventListener('scroll', closeAllOpen, { passive: true });
 })();
 </script>
 </body>
