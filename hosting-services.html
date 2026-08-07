@@ -544,10 +544,12 @@
       .host-hero-frame { padding: 84px 12px 48px; }
       #host-hero { padding: 46px 20px; border-radius: 20px; }
       .host-hero-sub { white-space: normal; max-width: 460px; }
-      .host-search-bar { flex-wrap: wrap; border-radius: 16px; }
-      .host-search-input-wrap { width: 100%; padding: 10px 10px 4px; }
-      .host-tld-badge { margin: 0 0 8px 10px; }
-      .host-search-btn { width: 100%; justify-content: center; padding: 12px; margin: 4px; border-radius: 10px; }
+      .host-search-bar { border-radius: 16px; }
+      .host-search-input-wrap { padding: 0 12px; }
+      .host-search-input-wrap svg { display: none; }
+      .host-tld-badge { display: none; }
+      .host-search-btn { padding: 0 16px; margin: 0; border-radius: 10px; }
+      .host-search-btn-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     }
   </style>
 </head>
@@ -703,7 +705,7 @@
           </div>
           <button type="submit" class="btn host-search-btn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Search Domains
+            <span class="host-search-btn-label">Search Domains</span>
           </button>
         </form>
 
@@ -723,7 +725,7 @@
         </div>
 
         <p class="host-hero-note">No markup at signup — and even at renewal, it's a flat, disclosed 10%.</p>
-        <p class="host-hero-note">Honest by design — see the full breakdown in our <a href="terms.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">Terms of Service §07</a>.</p>
+        <p class="host-hero-note">Honest by design. See the full breakdown in our <a href="terms.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">Terms of Service §07</a>.</p>
     </section>
     </div>
 
@@ -1144,7 +1146,10 @@
         if (tldBadge) tldBadge.hidden = true;
       }
       tldPills.forEach(function (pill) {
-        pill.addEventListener('click', function () { setTld(pill.dataset.tld); });
+        pill.addEventListener('click', function () {
+          if (pill.classList.contains('active')) { clearTld(); }
+          else { setTld(pill.dataset.tld); }
+        });
       });
       var tldBadgeClear = document.getElementById('tld-badge-clear');
       if (tldBadgeClear) {
