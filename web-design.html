@@ -10,6 +10,15 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="/gsap.min.js"></script>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
   <script>
     tailwind.config = {
       theme: {
@@ -34,6 +43,7 @@
   <style>
     :root {
       --cyan:    #00E5FF;
+      --wd-purple: #A855F7;
       --pink:    #FF2D78;
       --gold:    #FFD700;
       --base:    #070910;
@@ -151,9 +161,9 @@
       transition: color 0.2s ease, background 0.2s ease;
       white-space: nowrap;
     }
-    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
-    .dropdown-item.active { color: var(--cyan); }
+    .dropdown-item.active { color: var(--wd-purple); }
 
     .logo-nav-wrap {
       display: inline-flex;
@@ -203,6 +213,102 @@
       letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--cyan);
       margin-bottom: 16px;
+    }
+
+    /* ── Hero kicker (animated, hero-only) ── */
+    .wd-hero-kicker {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .wd-kicker-slash { color: var(--text-2); margin-right: 2px; }
+    .wd-kw {
+      display: inline-block;
+      animation: wd-kicker-wave 2.2s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--cyan) 0%, #ffffff 50%, var(--wd-purple) 100%);
+      background-size: 700% 100%;
+      background-position: calc(var(--i) / 8 * 100%) 0;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: url(#wd-hero-text-glow);
+    }
+    @keyframes wd-kicker-wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wd-kw { animation: none; }
+    }
+
+    /* ── CTA (pre-footer) ── */
+    .wd-cta { padding: 60px 28px 110px; }
+    .wd-cta-inner { max-width: 1200px; margin: 0 auto; }
+    .wd-cta-card {
+      position: relative; overflow: hidden; border-radius: 48px;
+      min-height: 560px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px;
+      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      border: 1px solid rgba(168,85,247,0.14);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(0,229,255,0.08);
+    }
+    .wd-cta-bg {
+      position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      opacity: 0.32; mix-blend-mode: screen;
+    }
+    .wd-cta-content { position: relative; z-index: 1; max-width: 720px; width: 100%; min-width: 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .wd-cta-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(168,85,247,0.07);
+      border: 1.5px solid rgba(168,85,247,0.3);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: #ffffff; letter-spacing: 0.02em;
+      margin-bottom: 30px;
+    }
+    .wd-cta-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--wd-purple); box-shadow: 0 0 8px var(--wd-purple); display: inline-block; flex-shrink: 0; }
+    .wd-cta-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05;
+      font-size: clamp(34px, 6vw, 74px);
+      color: var(--text-1); margin-bottom: 26px;
+    }
+    .wd-cta-heading .wd-cta-heading-line1 { display: block; }
+    .wd-cta-heading .wd-cta-heading-line2 { display: block; white-space: nowrap; color: rgba(238,240,248,0.62); }
+    .wd-cta-sub {
+      font-size: 16.5px; line-height: 1.75; color: var(--text-2);
+      max-width: 560px; margin: 0 0 38px;
+    }
+    .wd-cta-row { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; width: 100%; }
+    .wd-cta-btn {
+      padding: 15px 34px; border-radius: 999px; font-size: 13.5px;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wd-cta-btn:hover { transform: translateY(-2px) scale(1.035) translateZ(0); }
+    .wd-cta-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.6); outline-offset: 2px; }
+    .wd-cta-btn svg { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .wd-cta-btn:hover svg { transform: translateX(4px); }
+    .wd-cta-btn-gradient {
+      border: none; color: #070910;
+      background: linear-gradient(120deg, var(--cyan) 0%, var(--wd-purple) 100%);
+      box-shadow: 0 8px 20px -6px rgba(0,229,255,0.5), 0 10px 28px -8px rgba(168,85,247,0.3);
+    }
+    .wd-cta-btn-gradient:hover {
+      background: linear-gradient(120deg, #66edff 0%, #c084fc 100%);
+      box-shadow: 0 10px 28px -6px rgba(0,229,255,0.55), 0 12px 34px -8px rgba(168,85,247,0.45);
+    }
+    .wd-cta-btn-outline {
+      background: transparent; border: 2px solid rgba(255,255,255,0.3); color: #ffffff;
+    }
+    .wd-cta-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(168,85,247,0.55); }
+    @media (max-width: 640px) {
+      .wd-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
     }
 
     /* ── Divider ── */
@@ -264,7 +370,7 @@
       .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
       .mob-link:hover::before { transform: scaleY(1); }
       .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
-      .mob-link.active { color: var(--cyan); }
+      .mob-link.active { color: var(--wd-purple); }
       .mob-link.active::before { transform: scaleY(1); }
       .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
       .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
@@ -783,7 +889,7 @@
     /* ── Feature grid (How it works) ── */
     .feature-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 28px;
       padding-top: 16px;
     }
@@ -1126,15 +1232,15 @@
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item active" role="menuitem">Web Design</a>
+          <a href="web-design.html" class="dropdown-item active" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
-          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
+          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -1184,7 +1290,7 @@
     <a href="about.html"    class="mob-link mob-sub">About Us</a>
     <a href="contact.html"  class="mob-link mob-sub">Contact</a>
     </div></div>
-    <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+    <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
       Services
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
@@ -1196,7 +1302,7 @@
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
-    <a href="contact.html"    class="mob-link mob-sub">Hosting Services</a>
+    <a href="hosting-services.html"    class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="contact.html"    class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"    class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"    class="mob-link mob-sub">Custom Request</a>
@@ -1224,6 +1330,17 @@
      HERO HEADER
 ══════════════════════════════════════ -->
 <section style="padding:120px 28px 0;position:relative;overflow:hidden;">
+  <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
+    <defs>
+      <filter id="wd-hero-text-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.5" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
   <!-- Radial gradient bg orbs -->
   <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
     <div style="position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.065) 0%,transparent 68%);"></div>
@@ -1233,7 +1350,11 @@
 
   <!-- Heading + paragraph -->
   <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;text-align:center;">
-    <p class="sec-tag" style="margin-bottom:14px;">// Web Design</p>
+    <p class="wd-hero-kicker">
+      <span class="wd-kicker-slash">//</span>
+      <span class="wd-kw" style="--i:0; animation-delay:0s">W</span><span class="wd-kw" style="--i:1; animation-delay:0.07s">e</span><span class="wd-kw" style="--i:2; animation-delay:0.14s">b</span>
+      <span class="wd-kw" style="--i:3; animation-delay:0.21s">D</span><span class="wd-kw" style="--i:4; animation-delay:0.28s">e</span><span class="wd-kw" style="--i:5; animation-delay:0.35s">s</span><span class="wd-kw" style="--i:6; animation-delay:0.42s">i</span><span class="wd-kw" style="--i:7; animation-delay:0.49s">g</span><span class="wd-kw" style="--i:8; animation-delay:0.56s">n</span>
+    </p>
     <h1 class="hero-h1" style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:800;line-height:1.05;margin-bottom:20px;color:var(--text-1);">
       Your digital home,<br>
       <span class="grad-cyan-purple">Just a click away</span>
@@ -1293,7 +1414,7 @@
   <!-- CTA buttons -->
   <div style="position:relative;z-index:1;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;padding-bottom:72px;">
     <a href="#pricing" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">View Pricing →</a>
-    <a href="contact.html" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">Book Discovery Call</a>
+    <a href="contact.html?type=Web%20Design&amp;bookCall=1" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">Book Discovery Call</a>
   </div>
 
   <!-- 4 Feature Cards Grid -->
@@ -1469,7 +1590,7 @@
       <div class="wyg-row" style="--tier-color:#22D3A5;--tier-border:rgba(34,211,165,0.28);--tier-glow:rgba(34,211,165,0.08);">
         <div class="wyg-content">
           <div class="wyg-img-card">
-            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-SsfjxCJh43Hr1dqzkbFWUGH3ICZQbH.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+            <img class="wyg-img" src="brand_assets/icons/wd-seo-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
           </div>
           <div class="wyg-quote">
             <div>
@@ -1520,7 +1641,7 @@
       <div class="wyg-row wyg-row--rev" style="--tier-color:#4F8EF7;--tier-border:rgba(79,142,247,0.28);--tier-glow:rgba(79,142,247,0.08);">
         <div class="wyg-content">
           <div class="wyg-img-card">
-            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-X6NHDfd7AMu1XYsXSKxZu25fkTtQJ1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+            <img class="wyg-img" src="brand_assets/icons/wd-crm-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
           </div>
           <div class="wyg-quote">
             <div>
@@ -1571,7 +1692,7 @@
       <div class="wyg-row" style="--tier-color:#FF6B35;--tier-border:rgba(255,107,53,0.28);--tier-glow:rgba(255,107,53,0.08);">
         <div class="wyg-content">
           <div class="wyg-img-card">
-            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-fSMgViPMUbS0kVcbqdCIHuTbarLfB5.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+            <img class="wyg-img" src="brand_assets/icons/wd-tci-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
           </div>
           <div class="wyg-quote">
             <div>
@@ -1622,7 +1743,7 @@
       <div class="wyg-row wyg-row--rev" style="--tier-color:#F72585;--tier-border:rgba(247,37,133,0.28);--tier-glow:rgba(247,37,133,0.08);">
         <div class="wyg-content">
           <div class="wyg-img-card">
-            <img class="wyg-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-Y0bADTeBeWdeCNqMUYn2kiBmGPzOMu.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+            <img class="wyg-img" src="brand_assets/icons/wd-cms-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
           </div>
           <div class="wyg-quote">
             <div>
@@ -1699,7 +1820,7 @@
         </p>
       </div>
       <div class="cap-hero-img" style="flex-shrink:0;">
-        <img src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-At8AKNZB4KbOR8I9GDOawl4dmCyYfg.png" alt="" aria-hidden="true" style="width:192px;height:auto;border-radius:12px;display:block;" loading="lazy" />
+        <img src="brand_assets/icons/wd-google-stack-hero.webp" alt="" aria-hidden="true" style="width:192px;height:auto;border-radius:12px;display:block;" loading="lazy" />
       </div>
     </div>
 
@@ -2081,7 +2202,7 @@
       <div class="feature-card">
         <span class="stat-bubble">↑ 180% CTR avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-UN1NRnC5SEYcBvC7jJ1HjGKB22Q6Eb.png&w=320&q=75" alt="Discovery Call" width="96" height="96" style="object-fit:contain;">
+          <img src="brand_assets/icons/wd-sem-icon.webp" alt="Discovery Call" width="96" height="96" style="object-fit:contain;">
         </div>
         <div>
           <h4>SEM - Search Engine Marketing</h4>
@@ -2094,7 +2215,7 @@
       <div class="feature-card">
         <span class="stat-bubble">↑ 78% engagement avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-6rqerTtgwzIutgGOdsY7OsW09Liojd.png&w=320&q=75" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;transform:scale(1.15);transform-origin:center;">
+          <img src="brand_assets/icons/wd-smm-icon.webp" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;transform:scale(1.15);transform-origin:center;">
         </div>
         <div>
           <h4>SMM - Social Media Marketing</h4>
@@ -2107,7 +2228,7 @@
       <div class="feature-card">
         <span class="stat-bubble">↑ 500% lead gen avg.</span>
         <div class="feature-card-img">
-          <img src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-n1AUE9vtM2iK5wufbqniEiX1g9L3LV.png&w=320&q=75" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;">
+          <img src="brand_assets/icons/wd-cm-icon.webp" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;">
         </div>
         <div>
           <h4>CM - Content Marketing</h4>
@@ -2151,7 +2272,7 @@
       <!-- ── BRONZE ── -->
       <div class="pricing-card" data-tier="bronze" style="--tier-color:#CD7F32;--tier-border:rgba(205,127,50,0.28);--tier-glow:rgba(205,127,50,0.08);--tier-shadow:rgba(205,127,50,0.12);--tier-bg:rgba(205,127,50,0.05);--tier-btn-bg1:rgba(205,127,50,0.14);--tier-btn-bg2:rgba(205,127,50,0.07);--tier-btn-hover1:rgba(205,127,50,0.22);--tier-btn-hover2:rgba(205,127,50,0.12);--li-pad-y:9px;">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-57TdoPW2tQTCBO8PGaHLRnB77EeRmI.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-bronze.webp" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -2308,7 +2429,7 @@
       <!-- ── SILVER ── -->
       <div class="pricing-card" data-tier="silver" style="--tier-color:#C2D0E8;--tier-border:rgba(194,208,232,0.40);--tier-glow:rgba(194,208,232,0.12);--tier-shadow:rgba(194,208,232,0.22);--tier-bg:rgba(194,208,232,0.08);--tier-btn-bg1:rgba(194,208,232,0.16);--tier-btn-bg2:rgba(194,208,232,0.09);--tier-btn-hover1:rgba(194,208,232,0.28);--tier-btn-hover2:rgba(194,208,232,0.15);--li-pad-y:8px;">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-FuyDPaLKBrjIiOmneRjZ5p1n5k6Nw1.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-silver.webp" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -2465,7 +2586,7 @@
       <!-- ── GOLD ── -->
       <div class="pricing-card" data-tier="gold" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);--li-pad-y:15px;">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-ObYG6zcPcX739HLghAbh7vzhtB79g6.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-gold.webp" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -2622,7 +2743,7 @@
       <!-- ── CUSTOM ── -->
       <div class="pricing-card" data-tier="custom" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);--tier-shadow:rgba(168,85,247,0.14);--tier-bg:rgba(168,85,247,0.04);--tier-btn-bg1:rgba(168,85,247,0.12);--tier-btn-bg2:rgba(168,85,247,0.06);--tier-btn-hover1:rgba(168,85,247,0.2);--tier-btn-hover2:rgba(168,85,247,0.1);">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="https://www.thiings.co/_next/image?url=https%3A%2F%2Flftz25oez4aqbxpq.public.blob.vercel-storage.com%2Fimage-WkK9N2UX4NHi2lw4ZiBVRIa9nyMMZj.png&w=320&q=75" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-custom.webp" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
@@ -2785,30 +2906,32 @@
 <!-- ══════════════════════════════════════
      CTA SECTION
 ══════════════════════════════════════ -->
-<section style="padding:80px 28px 100px;" aria-label="Call to action">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="position:relative;overflow:hidden;border-radius:28px;padding:72px 60px;background:var(--raised);border:1px solid rgba(0,229,255,0.1);text-align:center;">
+<section class="wd-cta" aria-label="Call to action">
+  <div class="wd-cta-inner">
+    <div class="wd-cta-card" id="wd-cta-card">
+      <div class="wd-cta-bg" id="wd-cta-bg"></div>
 
-      <!-- Background radials -->
-      <div style="position:absolute;inset:0;pointer-events:none;">
-        <div style="position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(0,229,255,0.07) 0%,transparent 70%);"></div>
-        <div style="position:absolute;bottom:-80px;right:0;width:400px;height:300px;background:radial-gradient(ellipse,rgba(255,45,120,0.05) 0%,transparent 70%);"></div>
-      </div>
+      <div class="wd-cta-content">
+        <div class="wd-cta-pill">
+          <span class="wd-cta-pill-dot"></span>
+          Let's Build Your Site
+        </div>
 
-      <div style="position:relative;z-index:1;max-width:580px;margin:0 auto;">
-        <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.1;margin-bottom:14px;color:var(--text-1);">
-          Let's build something<br>
-          <span class="grad-cyan-purple">worth visiting</span>
+        <h2 class="wd-cta-heading">
+          <span class="wd-cta-heading-line1">Build something</span>
+          <span class="wd-cta-heading-line2">Worth visiting.</span>
         </h2>
-        <p style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;">Not sure which tier is right for you?</p>
-        <p style="font-size:16px;line-height:1.78;color:var(--text-2);margin-bottom:36px;">
+
+        <p class="wd-cta-sub">
           Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together — no commitment required.
         </p>
-        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-          <a href="contact.html" class="btn btn-primary" style="font-size:14px;padding:14px 32px;">
-            Start Your Project <span aria-hidden="true">→</span>
-          </a>
 
+        <div class="wd-cta-row">
+          <a href="#pricing" class="btn wd-cta-btn wd-cta-btn-gradient">
+            Get Started
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="contact.html?type=Web%20Design&amp;learnMore=1" class="btn wd-cta-btn wd-cta-btn-outline">Contact Us</a>
         </div>
       </div>
     </div>
@@ -2860,7 +2983,7 @@
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link">Email Marketing</a>
-        <a href="contact.html" class="footer-link">Hosting Services</a>
+        <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
         <a href="contact.html" class="footer-link">Custom Request</a>
@@ -3545,6 +3668,172 @@
 
   heroRafObs.observe(heroEl);
 })();
+</script>
+
+<script type="module">
+  /* ── CTA animated background ──
+     Vanilla port of email-marketing.html's initEmailCtaBackground (itself a
+     port of the supplied React CTASection's @paper-design/shaders-react
+     Dithering shader): a domain-warped fbm noise field read as thin curling
+     sheet contours, dithered with Bayer 4x4 grain. Recolored here to blend
+     between this page's cyan and purple theme accents (instead of a single
+     flat tint) by mixing uColor/uColor2 across the fbm field. Speed ramps
+     from 0.8 (idle) to 2.6 (hover), lazily initialized once the CTA card
+     scrolls into view. */
+  import * as THREE from 'three';
+
+  function initWebDesignCtaBackground(bgEl, hoverEl) {
+    const RENDER_SCALE = 2;
+
+    const renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: true,
+      powerPreference: 'low-power'
+    });
+    renderer.setPixelRatio(1);
+    renderer.setClearColor(0x000000, 0);
+    renderer.domElement.style.imageRendering = 'pixelated';
+    bgEl.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const material = new THREE.ShaderMaterial({
+      transparent: true,
+      uniforms: {
+        uTime:       { value: 0 },
+        uResolution: { value: new THREE.Vector2(1, 1) },
+        uColor:      { value: new THREE.Color(0x00e5ff) },
+        uColor2:     { value: new THREE.Color(0xa855f7) }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = vec4(position.xy, 0.0, 1.0);
+        }
+      `,
+      fragmentShader: `
+        precision highp float;
+        varying vec2 vUv;
+        uniform float uTime;
+        uniform vec2  uResolution;
+        uniform vec3  uColor;
+        uniform vec3  uColor2;
+
+        float hash(vec2 p) {
+          p = fract(p * vec2(123.34, 456.21));
+          p += dot(p, p + 45.32);
+          return fract(p.x * p.y);
+        }
+        float noise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0, 0.0));
+          float c = hash(i + vec2(0.0, 1.0));
+          float d = hash(i + vec2(1.0, 1.0));
+          vec2 u = f * f * (3.0 - 2.0 * f);
+          return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+        }
+        float fbm(vec2 p) {
+          float v = 0.0;
+          float amp = 0.5;
+          for (int i = 0; i < 5; i++) {
+            v += amp * noise(p);
+            p *= 2.02;
+            amp *= 0.5;
+          }
+          return v;
+        }
+        float bayer2(vec2 a) { return fract(a.x / 2.0 + a.y * a.y * 0.75); }
+        float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
+
+        void main() {
+          vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
+          vec2 uv = (vUv - 0.5) * aspect * 3.0;
+          float t = uTime;
+
+          vec2 q = vec2(fbm(uv + t * 0.05), fbm(uv + vec2(5.2, 1.3) + t * 0.05));
+          vec2 r = vec2(
+            fbm(uv + 3.5 * q + vec2(1.7, 9.2) + t * 0.08),
+            fbm(uv + 3.5 * q + vec2(8.3, 2.8) + t * 0.08)
+          );
+          float f = fbm(uv + 3.5 * r);
+
+          float sheet = 1.0 - abs(fract(f * 2.5) - 0.5) * 2.0;
+          sheet = pow(clamp(sheet, 0.0, 1.0), 4.0);
+
+          float dissolve = smoothstep(0.25, 0.75, fbm(uv * 0.25 - t * 0.03));
+
+          float grain = bayer4(floor(gl_FragCoord.xy)) - 0.5;
+          float alpha = clamp(sheet * dissolve + grain * 0.12, 0.0, 1.0);
+
+          vec3 color = mix(uColor, uColor2, smoothstep(0.3, 0.7, f));
+
+          gl_FragColor = vec4(color, alpha);
+        }
+      `
+    });
+
+    scene.add(new THREE.Mesh(geometry, material));
+
+    let speed = 0.8;
+    let targetSpeed = 0.8;
+    let simTime = 0;
+    const clock = new THREE.Clock();
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function renderFrame() {
+      const delta = reduceMotion ? 0 : clock.getDelta();
+      speed += (targetSpeed - speed) * 0.05;
+      simTime += delta * speed;
+      material.uniforms.uTime.value = simTime;
+      renderer.render(scene, camera);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      renderFrame();
+    }
+
+    function resize() {
+      const w = bgEl.clientWidth;
+      const h = bgEl.clientHeight;
+      const rw = Math.max(1, Math.round(w / RENDER_SCALE));
+      const rh = Math.max(1, Math.round(h / RENDER_SCALE));
+      renderer.setSize(rw, rh, false);
+      renderer.domElement.style.width = w + 'px';
+      renderer.domElement.style.height = h + 'px';
+      material.uniforms.uResolution.value.set(rw, rh);
+    }
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(bgEl);
+    resize();
+
+    if (reduceMotion) {
+      simTime = 1.0;
+      renderFrame();
+    } else {
+      hoverEl.addEventListener('mouseenter', function () { targetSpeed = 2.6; });
+      hoverEl.addEventListener('mouseleave', function () { targetSpeed = 0.8; });
+      animate();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const bg = document.getElementById('wd-cta-bg');
+    const card = document.getElementById('wd-cta-card');
+    if (!bg || !card) return;
+    const ctaObserver = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      initWebDesignCtaBackground(bg, card);
+      ctaObserver.disconnect();
+    }, { threshold: 0.01 });
+    ctaObserver.observe(card);
+  });
 </script>
 </body>
 </html>

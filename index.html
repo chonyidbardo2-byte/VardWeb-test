@@ -75,11 +75,13 @@
       background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
+      white-space: nowrap;
     }
     .grad-gold {
       background: linear-gradient(135deg, var(--gold) 0%, #FF8C00 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
+      white-space: nowrap;
     }
 
     /* ── Nav ── */
@@ -154,7 +156,7 @@
       transition: color 0.2s ease, background 0.2s ease;
       white-space: nowrap;
     }
-    .dropdown-item:hover { color: #fff; background: rgba(0,229,255,0.06); }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
     .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
 
     /* ── Buttons ── */
@@ -336,6 +338,258 @@
       font-size: 11px; font-weight: 600;
       text-transform: uppercase; letter-spacing: 0.1em;
       color: rgba(200,212,232,0.45);
+      line-height: 1.4;
+      min-height: 31px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Industry marquee ── */
+    .industry-marquee-wrap {
+      --im-gap-top: 40px;      /* stats-wrap bottom → heading top */
+      --im-gap-header: 14px;   /* heading bottom → cards row (visual gap; the hover buffer below adds more) */
+      --im-gap-bottom: var(--im-gap-top); /* cards row → why-us top — same value as the top gap */
+      --im-hover-buffer-top: 24px;    /* DO NOT reduce much — reserves room so the card's hover-lift isn't clipped */
+      --im-hover-buffer-bottom: 56px; /* DO NOT reduce much — reserves room so the card's box-shadow isn't clipped */
+      padding: var(--im-gap-top) 0 var(--im-gap-bottom);
+    }
+    .industry-marquee-wrap .sec-header { margin-bottom: var(--im-gap-header); text-align: center; }
+    .industry-marquee-track-wrap {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      overflow: hidden;
+      padding: var(--im-hover-buffer-top) 0 var(--im-hover-buffer-bottom);
+      cursor: grab;
+      touch-action: pan-y;
+    }
+    .industry-marquee-track-wrap.is-dragging { cursor: grabbing; }
+    .industry-marquee-track-wrap,
+    .industry-marquee-track-wrap * {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .industry-marquee-track {
+      display: flex;
+      width: max-content;
+    }
+    .industry-marquee-set {
+      display: flex;
+      gap: 20px;
+      padding: 0 10px;
+    }
+    .industry-card {
+      position: relative;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      width: clamp(230px, 19vw, 300px);
+      aspect-ratio: 2.3 / 1;
+      padding: 18px 20px;
+      display: flex;
+      align-items: flex-start;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .industry-card:hover { transform: translateY(-6px); }
+    .industry-card-title {
+      position: relative;
+      z-index: 2;
+      max-width: 58%;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(14px, 1.6vw, 17px);
+      font-weight: 800;
+      line-height: 1.22;
+      color: rgba(255,255,255,0.96);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    }
+    .industry-card-title-mobile { display: none; }
+    .industry-card-img {
+      position: absolute;
+      pointer-events: none;
+      filter: drop-shadow(0 14px 26px rgba(0,0,0,0.4));
+    }
+    /* ── Per-card desktop icon position/rotation ── */
+    .ind-img-ecommerce { right:-24px;bottom:-50px;width:75%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-real-estate { right:-6px;bottom:-20px;width:58%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-law-firms { right:-6px;bottom:-44px;width:70%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-medical { right:-18px;bottom:-49px;width:80%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-home-service { right:-10px;bottom:-44px;width:75%;transform:translateX(25%) rotate(-20deg); }
+    .ind-img-restaurants { right:6px;bottom:-30px;width:65%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-hotels { right:-4px;bottom:-35px;width:65%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-fitness { right:-52px;bottom:-78px;width:88%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-accountants { right:-10px;bottom:-58px;width:75%;transform:translateX(25%) rotate(-8deg); }
+    .ind-img-digital-marketing { right:0px;bottom:-50px;width:75%;transform:translateX(25%) rotate(-30deg); }
+    .ind-img-photographers { right:-16px;bottom:-65px;width:85%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-consulting { right:-8px;bottom:-35px;width:70%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-auto-repair { right:-6px;bottom:-22px;width:57%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-saas { right:-4px;bottom:-55px;width:75%;transform:translateX(25%) rotate(9deg); }
+    .ind-img-salons { right:-6px;bottom:-40px;width:65%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-construction { right:-18px;bottom:-40px;width:70%;transform:translateX(25%) rotate(6deg); }
+    .ind-img-educational { right:-4px;bottom:-20px;width:62%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-events { right:-10px;bottom:-55px;width:80%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-interior-design { right:-26px;bottom:-43px;width:75%;transform:translateX(25%) rotate(-10deg); }
+    .ind-img-cleaning { right:0px;bottom:-35px;width:65%;transform:translateX(25%) rotate(5deg); }
+    .ind-img-pet-grooming { right:-4px;bottom:-45px;width:70%;transform:translateX(25%) rotate(-60deg); }
+    .ind-img-nonprofit { right:-18px;bottom:-47px;width:80%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-musicians { right:-12px;bottom:-45px;width:75%;transform:translateX(25%) rotate(-7deg); }
+    .ind-img-travel { right:-6px;bottom:-60px;width:80%;transform:translateX(25%) rotate(4deg); }
+    .ind-img-landscaping { right:10px;bottom:-30px;width:65%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-security { right:-6px;bottom:-30px;width:62%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-pest-control { right:0px;bottom:-30px;width:65%;transform:translateX(25%) rotate(20deg); }
+    .ind-img-storage { right:-10px;bottom:-30px;width:65%;transform:translateX(25%) rotate(0deg); }
+    .ind-img-logistics { right:-10px;bottom:-40px;width:75%;transform:translateX(25%) rotate(-6deg); }
+    .ind-img-podcasters { right:-6px;bottom:-30px;width:64%;transform:translateX(25%) rotate(0deg); }
+    
+    /* ── Laptop tier (769–1200px) — covers the dead zone where the base 19vw
+       card-width clamp is pinned at its 230px floor while the font clamp keeps
+       growing, causing unclamped titles to overflow past 3 lines ── */
+    @media (min-width: 769px) and (max-width: 1200px) {
+      .industry-card { width: clamp(220px, 21vw, 260px); aspect-ratio: 2.3 / 1; padding: 18px 20px; }
+      .industry-card-title.industry-card-title-desktop { display: none; }
+      .industry-card-title.industry-card-title-mobile { display: -webkit-box; }
+      .industry-card-title.mobile-title-wide { max-width: 140px; }
+      .industry-card-title {
+        font-size: clamp(13px, 1.3vw, 15px);
+        line-height: 1.22;
+        max-width: 62%;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      /* ── Per-card icon position/rotation (starting values — hand-tune as needed) ── */
+      .ind-img-ecommerce { right:-22px;bottom:-43.7px;width:76.3%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-real-estate { right:-5.5px;bottom:-18.5px;width:61.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-law-firms { right:-6px;bottom:-40.5px;width:73.8%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-medical { right:-23px;bottom:-46px;width:85%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-home-service { right:-10px;bottom:-40.5px;width:76.3%;transform:translateX(25%) rotate(-25deg); }
+      .ind-img-restaurants { right:2px;bottom:-26px;width:66.3%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-hotels { right:-1.5px;bottom:-30.7px;width:67%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-fitness { right:-15px;bottom:-50px;width:80%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-accountants { right:-11px;bottom:-53px;width:78.8%;transform:translateX(25%) rotate(-6deg); }
+      .ind-img-digital-marketing { right:0px;bottom:-45px;width:75%;transform:translateX(25%) rotate(-32.5deg); }
+      .ind-img-photographers { right:-18.5px;bottom:-57.5px;width:85.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-consulting { right:-7px;bottom:-34.5px;width:71.3%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-auto-repair { right:-7.5px;bottom:-20px;width:59%;transform:translateX(25%) rotate(-1.5deg); }
+      .ind-img-saas { right:-4.5px;bottom:-48.7px;width:77%;transform:translateX(25%) rotate(9deg); }
+      .ind-img-salons { right:-8.5px;bottom:-37.5px;width:68.8%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-construction { right:-18px;bottom:-36.2px;width:72.5%;transform:translateX(25%) rotate(5.5deg); }
+      .ind-img-educational { right:-4.5px;bottom:-18.5px;width:65.3%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-events { right:-10px;bottom:-47.5px;width:80%;transform:translateX(25%) rotate(1.5deg); }
+      .ind-img-interior-design { right:-24px;bottom:-37.2px;width:76.3%;transform:translateX(25%) rotate(-10deg); }
+      .ind-img-cleaning { right:0px;bottom:-31.2px;width:67.5%;transform:translateX(25%) rotate(5deg); }
+      .ind-img-pet-grooming { right:-4px;bottom:-41.2px;width:71.3%;transform:translateX(25%) rotate(-60deg); }
+      .ind-img-nonprofit { right:-16px;bottom:-43.2px;width:83.8%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-musicians { right:-11.5px;bottom:-41.2px;width:76.3%;transform:translateX(25%) rotate(-7deg); }
+      .ind-img-travel { right:-6px;bottom:-55px;width:82.5%;transform:translateX(25%) rotate(8.5deg); }
+      .ind-img-landscaping { right:8.5px;bottom:-27.5px;width:67.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-security { right:-7.5px;bottom:-27.5px;width:65.3%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-pest-control { right:-1.2px;bottom:-27.5px;width:67%;transform:translateX(25%) rotate(20deg); }
+      .ind-img-storage { right:-9px;bottom:-27.5px;width:67.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-logistics { right:-10.5px;bottom:-35.5px;width:76.3%;transform:translateX(25%) rotate(-6deg); }
+      .ind-img-podcasters { right:-7.5px;bottom:-26px;width:65.5%;transform:translateX(25%) rotate(0deg); }
+    }
+
+    /* ── Tablet tier (426–768px) — card no longer balloons via 44vw; own
+       font-size/width formula scaled for a tablet-sized card ── */
+    @media (min-width: 426px) and (max-width: 768px) {
+      .industry-card { width: clamp(180px, 26vw, 230px); aspect-ratio: 2 / 1; padding: 16px 18px; }
+      .industry-marquee-set { gap: 16px; padding: 0 8px; }
+      .industry-card-title.industry-card-title-desktop { display: none; }
+      .industry-card-title.industry-card-title-mobile { display: -webkit-box; }
+      .industry-card-title.mobile-title-wide { max-width: 128px; }
+      .industry-card-title {
+        font-size: clamp(12.5px, 1.7vw, 14px);
+        line-height: 1.2;
+        max-width: 68%;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      /* ── Per-card icon position/rotation (starting values — hand-tune as needed) ── */
+      .ind-img-ecommerce { right:-19.4px;bottom:-35.5px;width:77.9%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-real-estate { right:-4.8px;bottom:-16.5px;width:66.1%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-law-firms { right:-6px;bottom:-35.9px;width:78.7%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-medical { right:-29.6px;bottom:-42px;width:91.6%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-home-service { right:-10px;bottom:-35.9px;width:77.9%;transform:translateX(25%) rotate(-31.6deg); }
+      .ind-img-restaurants { right:-3.3px;bottom:-20.7px;width:67.9%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-hotels { right:1.8px;bottom:-25.1px;width:69.6%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-fitness { right:-20px;bottom:-40px;width:88.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-accountants { right:-12.3px;bottom:-46.4px;width:83.7%;transform:translateX(25%) rotate(-3.4deg); }
+      .ind-img-digital-marketing { right:0px;bottom:-38.4px;width:75%;transform:translateX(25%) rotate(-35.8deg); }
+      .ind-img-photographers { right:-21.8px;bottom:-47.6px;width:86.2%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-consulting { right:-5.7px;bottom:-33.8px;width:72.9%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-auto-repair { right:-9.5px;bottom:-17.4px;width:61.6%;transform:translateX(25%) rotate(-3.5deg); }
+      .ind-img-saas { right:-5.2px;bottom:-40.5px;width:79.6%;transform:translateX(25%) rotate(9deg); }
+      .ind-img-salons { right:-11.8px;bottom:-34.2px;width:73.7%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-construction { right:-18px;bottom:-31.3px;width:75.8%;transform:translateX(25%) rotate(4.8deg); }
+      .ind-img-educational { right:-5.2px;bottom:-16.5px;width:69.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-events { right:-10px;bottom:-37.6px;width:80%;transform:translateX(25%) rotate(3.5deg); }
+      .ind-img-interior-design { right:-21.4px;bottom:-29.7px;width:77.9%;transform:translateX(25%) rotate(-10deg); }
+      .ind-img-cleaning { right:0px;bottom:-26.3px;width:70.8%;transform:translateX(25%) rotate(5deg); }
+      .ind-img-pet-grooming { right:-4px;bottom:-36.3px;width:72.9%;transform:translateX(25%) rotate(-60deg); }
+      .ind-img-nonprofit { right:-13.4px;bottom:-38.3px;width:88.7%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-musicians { right:-10.8px;bottom:-36.3px;width:77.9%;transform:translateX(25%) rotate(-7deg); }
+      .ind-img-travel { right:-6px;bottom:-48.4px;width:85.8%;transform:translateX(25%) rotate(14.4deg); }
+      .ind-img-landscaping { right:6.5px;bottom:-24.2px;width:70.8%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-security { right:-9.5px;bottom:-24.2px;width:69.5%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-pest-control { right:-2.9px;bottom:-24.2px;width:69.6%;transform:translateX(25%) rotate(20deg); }
+      .ind-img-storage { right:-7.7px;bottom:-24.2px;width:70.8%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-logistics { right:-11.2px;bottom:-29.6px;width:77.9%;transform:translateX(25%) rotate(-6deg); }
+      .ind-img-podcasters { right:-9.5px;bottom:-20.7px;width:67.5%;transform:translateX(25%) rotate(0deg); }
+    }
+
+    @media (max-width: 425px) {
+      .industry-card { width: 44vw; aspect-ratio: 1.9 / 1; padding: 14px 16px; }
+      .industry-marquee-set { gap: 14px; padding: 0 7px; }
+      /* ── Mobile card title text (3-line cap; desktop untouched) ── */
+      .industry-card-title.industry-card-title-desktop { display: none; }
+      .industry-card-title.industry-card-title-mobile { display: -webkit-box; }
+      .industry-card-title.mobile-title-wide { max-width: 112px; }
+      .industry-card-title {
+        font-size: 12.5px;
+        line-height: 1.2;
+        max-width: 70%;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      /* ── Per-card mobile icon position/rotation ── */
+      .ind-img-ecommerce { right:-16px;bottom:-25px;width:80%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-real-estate { right:-4px;bottom:-14px;width:72%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-law-firms { right:-6px;bottom:-30px;width:85%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-medical { right:-38px;bottom:-37px;width:100%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-home-service { right:-10px;bottom:-30px;width:80%;transform:translateX(25%) rotate(-40deg); }
+      .ind-img-restaurants { right:-10px;bottom:-14px;width:70%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-hotels { right:6px;bottom:-18px;width:73%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-fitness { right:-20px;bottom:-30px;width:90%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-accountants { right:-14px;bottom:-38px;width:90%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-digital-marketing { right:0px;bottom:-30px;width:75%;transform:translateX(25%) rotate(-40deg); }
+      .ind-img-photographers { right:-26px;bottom:-35px;width:87%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-consulting { right:-4px;bottom:-33px;width:75%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-auto-repair { right:-12px;bottom:-14px;width:65%;transform:translateX(25%) rotate(-6deg); }
+      .ind-img-saas { right:-6px;bottom:-30px;width:83%;transform:translateX(25%) rotate(9deg); }
+      .ind-img-salons { right:-16px;bottom:-30px;width:80%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-construction { right:-18px;bottom:-25px;width:80%;transform:translateX(25%) rotate(4deg); }
+      .ind-img-educational { right:-6px;bottom:-14px;width:75%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-events { right:-10px;bottom:-25px;width:80%;transform:translateX(25%) rotate(6deg); }
+      .ind-img-interior-design { right:-18px;bottom:-20px;width:80%;transform:translateX(25%) rotate(-10deg); }
+      .ind-img-cleaning { right:0px;bottom:-20px;width:75%;transform:translateX(25%) rotate(5deg); }
+      .ind-img-pet-grooming { right:-4px;bottom:-30px;width:75%;transform:translateX(25%) rotate(-60deg); }
+      .ind-img-nonprofit { right:-10px;bottom:-32px;width:95%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-musicians { right:-10px;bottom:-30px;width:80%;transform:translateX(25%) rotate(-7deg); }
+      .ind-img-travel { right:-6px;bottom:-40px;width:90%;transform:translateX(25%) rotate(22deg); }
+      .ind-img-landscaping { right:4px;bottom:-20px;width:75%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-security { right:-12px;bottom:-20px;width:75%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-pest-control { right:-5px;bottom:-20px;width:73%;transform:translateX(25%) rotate(20deg); }
+      .ind-img-storage { right:-6px;bottom:-20px;width:75%;transform:translateX(25%) rotate(0deg); }
+      .ind-img-logistics { right:-12px;bottom:-22px;width:80%;transform:translateX(25%) rotate(-6deg); }
+      .ind-img-podcasters { right:-12px;bottom:-14px;width:70%;transform:translateX(25%) rotate(0deg); }
     }
 
     /* ── Section tag ── */
@@ -688,9 +942,9 @@
     /* ── Responsive ── */
     .hero-content { max-width: 740px; text-align: center; position: relative; z-index: 1; }
 
-    .stats-grid { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+    .stats-grid { max-width: 960px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 20px; }
     .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 0; align-items: center; }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 80px; row-gap: 0; align-items: start; }
     .about-grid .ah-intro   { grid-column: 1; grid-row: 1; }
     .about-grid .ah-outro   { grid-column: 1; grid-row: 2; }
     .about-grid .code-block { grid-column: 2; grid-row: 1 / span 2; }
@@ -721,12 +975,12 @@
     @media (max-width: 860px) {
       .features-grid { grid-template-columns: repeat(2,1fr); }
       .tcard-grid    { grid-template-columns: 1fr; }
-      .stats-grid    { grid-template-columns: repeat(2,1fr); }
+      .stats-grid    { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .nav-links     { display: none; }
     }
     @media (max-width: 560px) {
       .features-grid { grid-template-columns: 1fr; }
-      .stats-grid    { grid-template-columns: repeat(2,1fr); }
+      .stats-grid    { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .footer-grid   { grid-template-columns: 1fr; gap: 36px; }
       .logo-card img { height: 64px; }
       .logo-card     { padding: 14px 24px; }
@@ -1088,15 +1342,15 @@
           Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item" role="menuitem">Web Design</a>
+          <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html"    class="dropdown-item" role="menuitem">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem">Email Marketing</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Hosting Services</a>
+          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Content Creation &amp; CM</a>
-          <a href="smm.html"    class="dropdown-item" role="menuitem">Social Media &amp; SMM</a>
+          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
       </div>
@@ -1157,7 +1411,7 @@
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
-    <a href="contact.html"  class="mob-link mob-sub">Hosting Services</a>
+    <a href="hosting-services.html"  class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="contact.html"  class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
@@ -1277,8 +1531,369 @@
 </section>
 
 
+<!-- ────────────────────── INDUSTRY MARQUEE ────────────────────── -->
+<section class="industry-marquee-wrap">
+  <div class="sec-header" style="max-width:1200px;margin:0 auto;padding:0 28px;">
+    <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
+      Every industry
+    </h2>
+  </div>
+
+  <div class="industry-marquee-track-wrap">
+    <div class="industry-marquee-track">
+        <div class="industry-marquee-set">
+          <div class="industry-card" style="background:linear-gradient(135deg,#E91E86 0%,#B8125F 100%);box-shadow:0 18px 40px rgba(184,18,95,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">E-Commerce<br>&amp; Online<br>Retail</span>
+            <span class="industry-card-title industry-card-title-mobile">E-Commerce & Online Retail</span>
+            <img class="industry-card-img ind-img-ecommerce" src="brand_assets/icons/E-Commerce-Online-Retail-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2C4F8C 0%,#16294D 100%);box-shadow:0 18px 40px rgba(22,41,77,0.35);">
+            <span class="industry-card-title">Real Estate Agencies</span>
+            <img class="industry-card-img ind-img-real-estate" src="brand_assets/icons/Real-Estate-Agencies-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#7A2340 0%,#4A1226 100%);box-shadow:0 18px 40px rgba(74,18,38,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Law Firms & Legal Practices</span>
+            <span class="industry-card-title industry-card-title-mobile">Law Firms &<br>Legal<br>Practices</span>
+            <img class="industry-card-img ind-img-law-firms" src="brand_assets/icons/Law-Firms-Legal-Practices-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#14958F 0%,#0A5C58 100%);box-shadow:0 18px 40px rgba(10,92,88,0.35);">
+            <span class="industry-card-title">Medical Clinics & Healthcare</span>
+            <img class="industry-card-img ind-img-medical" src="brand_assets/icons/Medical-Clinics-Healthcare-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#D97328 0%,#A84F14 100%);box-shadow:0 18px 40px rgba(168,79,20,0.35);">
+            <span class="industry-card-title">Home Service Contractors</span>
+            <img class="industry-card-img ind-img-home-service" src="brand_assets/icons/Home-Service-Contractors-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#C43A2E 0%,#8C2018 100%);box-shadow:0 18px 40px rgba(140,32,24,0.35);">
+            <span class="industry-card-title">Restaurants, Cafes & Bars</span>
+            <img class="industry-card-img ind-img-restaurants" src="brand_assets/icons/Restaurants-Cafes-Bars-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#6B3FA0 0%,#402163 100%);box-shadow:0 18px 40px rgba(64,33,99,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Hotels & Lodging</span>
+            <span class="industry-card-title industry-card-title-mobile">Hotels &<br>Lodging</span>
+            <img class="industry-card-img ind-img-hotels" src="brand_assets/icons/Hotels-Lodging-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#6FA524 0%,#46700F 100%);box-shadow:0 18px 40px rgba(70,112,15,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Fitness Studios & Gyms</span>
+            <span class="industry-card-title industry-card-title-mobile">Fitness<br>Studios &<br>Gyms</span>
+            <img class="industry-card-img ind-img-fitness" src="brand_assets/icons/Fitness-Studios-and-Gyms-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#227A52 0%,#124F34 100%);box-shadow:0 18px 40px rgba(18,79,52,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Accountants & Financial Advisors</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Accountants<br>&amp; Financial<br>Advisors</span>
+            <img class="industry-card-img ind-img-accountants" src="brand_assets/icons/Accountants-Financial-Advisors-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#7A3FC9 0%,#4E1F8C 100%);box-shadow:0 18px 40px rgba(78,31,140,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Digital Marketing & Creative Agencies</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Digital Marketing<br>&amp; Creative<br>Agencies</span>
+            <img class="industry-card-img ind-img-digital-marketing" src="brand_assets/icons/Digital-Marketing-Creative-Agencies-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#3A4A63 0%,#1F2937 100%);box-shadow:0 18px 40px rgba(31,41,55,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Photographers & Videographers</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Photographers<br>&<br>Videographers</span>
+            <img class="industry-card-img ind-img-photographers" src="brand_assets/icons/Photographers-Videographers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2F5F8A 0%,#1A3B57 100%);box-shadow:0 18px 40px rgba(26,59,87,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Consulting & Coaching Firms</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Consulting &<br>Coaching<br>Firms</span>
+            <img class="industry-card-img ind-img-consulting" src="brand_assets/icons/Consulting-Coaching-Firms-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#5C6470 0%,#33383F 100%);box-shadow:0 18px 40px rgba(51,56,63,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Auto Repair & Car Dealerships</span>
+            <span class="industry-card-title industry-card-title-mobile">Auto Repair<br>&amp; Car<br>Dealerships</span>
+            <img class="industry-card-img ind-img-auto-repair" src="brand_assets/icons/Auto-Repair-and-Car-Dealerships-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#1279C4 0%,#0A4C7D 100%);box-shadow:0 18px 40px rgba(10,76,125,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">SaaS & Software Startups</span>
+            <span class="industry-card-title industry-card-title-mobile">SaaS &<br>Software<br>Startups</span>
+            <img class="industry-card-img ind-img-saas" src="brand_assets/icons/SaaS-Software-Startups-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#C24F8C 0%,#8C2F60 100%);box-shadow:0 18px 40px rgba(140,47,96,0.35);">
+            <span class="industry-card-title">Salons, Spas & Grooming</span>
+            <img class="industry-card-img ind-img-salons" src="brand_assets/icons/Salons-Spas-Grooming-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#D9901F 0%,#A8650F 100%);box-shadow:0 18px 40px rgba(168,101,15,0.35);">
+            <span class="industry-card-title">Construction & Remodeling</span>
+            <img class="industry-card-img ind-img-construction" src="brand_assets/icons/Construction-Remodeling-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2748A8 0%,#142A66 100%);box-shadow:0 18px 40px rgba(20,42,102,0.35);">
+            <span class="industry-card-title">Educational Institutions</span>
+            <img class="industry-card-img ind-img-educational" src="brand_assets/icons/Educational-Institutions-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#A8267F 0%,#6B1550 100%);box-shadow:0 18px 40px rgba(107,21,80,0.35);">
+            <span class="industry-card-title">Event Planners & Venues</span>
+            <img class="industry-card-img ind-img-events" src="brand_assets/icons/Event-Planners-Venues-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#A8683F 0%,#7A4826 100%);box-shadow:0 18px 40px rgba(122,72,38,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Interior Designers & Architects</span>
+            <span class="industry-card-title industry-card-title-mobile">Interior<br>Designers &<br>Architects</span>
+            <img class="industry-card-img ind-img-interior-design" src="brand_assets/icons/Interior-Designers-Architects-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#17A0AD 0%,#0D6670 100%);box-shadow:0 18px 40px rgba(13,102,112,0.35);">
+            <span class="industry-card-title">Cleaning & Janitorial Services</span>
+            <img class="industry-card-img ind-img-cleaning" src="brand_assets/icons/Cleaning-Janitorial-Services-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#3F9A5C 0%,#226B3A 100%);box-shadow:0 18px 40px rgba(34,107,58,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Pet Grooming & Veterinary Clinics</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Pet Grooming<br>& Veterinary<br>Clinics</span>
+            <img class="industry-card-img ind-img-pet-grooming" src="brand_assets/icons/Pet-Grooming-Veterinary-Clinics-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#D9584A 0%,#A8382C 100%);box-shadow:0 18px 40px rgba(168,56,44,0.35);">
+            <span class="industry-card-title">Nonprofit & Charity Organizations</span>
+            <img class="industry-card-img ind-img-nonprofit" src="brand_assets/icons/Nonprofit-Charity-Organizations-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#5A2FA0 0%,#351A66 100%);box-shadow:0 18px 40px rgba(53,26,102,0.35);">
+            <span class="industry-card-title">Independent Musicians & Artists</span>
+            <img class="industry-card-img ind-img-musicians" src="brand_assets/icons/Independent-Musicians-Artists-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#1C8FA0 0%,#0F5C68 100%);box-shadow:0 18px 40px rgba(15,92,104,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Travel Agencies & Tour Operators</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Travel Agencies<br>&amp; Tour<br>Operators</span>
+            <img class="industry-card-img ind-img-travel" src="brand_assets/icons/Travel-Agencies-Tour-Operators-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#4A8A28 0%,#2E5C16 100%);box-shadow:0 18px 40px rgba(46,92,22,0.35);">
+            <span class="industry-card-title">Landscaping & Lawn Care</span>
+            <img class="industry-card-img ind-img-landscaping" src="brand_assets/icons/Landscaping-Lawn-Care-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2A3A52 0%,#151E2E 100%);box-shadow:0 18px 40px rgba(21,30,46,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Security & Alarm System Installers</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Security &<br>Alarm System<br>Installers</span>
+            <img class="industry-card-img ind-img-security" src="brand_assets/icons/Security-Alarm-System-Installers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#7A8A2A 0%,#4E5C16 100%);box-shadow:0 18px 40px rgba(78,92,22,0.35);">
+            <span class="industry-card-title">Pest Control Services</span>
+            <img class="industry-card-img ind-img-pest-control" src="brand_assets/icons/Pest-Control-Services-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#5C5C66 0%,#35353D 100%);box-shadow:0 18px 40px rgba(53,53,61,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Storage Facility Providers</span>
+            <span class="industry-card-title industry-card-title-mobile">Storage<br>Facility<br>Providers</span>
+            <img class="industry-card-img ind-img-storage" src="brand_assets/icons/Storage-Facility-Providers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#B8862A 0%,#855E16 100%);box-shadow:0 18px 40px rgba(133,94,22,0.35);">
+            <span class="industry-card-title">Logistics & Moving Companies</span>
+            <img class="industry-card-img ind-img-logistics" src="brand_assets/icons/Logistics-Moving-Companies-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#8A2A63 0%,#5C1740 100%);box-shadow:0 18px 40px rgba(92,23,64,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Podcasters & Media Producers</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Podcasters &<br>Media<br>Producers</span>
+            <img class="industry-card-img ind-img-podcasters" src="brand_assets/icons/Podcasters-Media-Producers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+        </div>
+        <div class="industry-marquee-set" aria-hidden="true">
+          <div class="industry-card" style="background:linear-gradient(135deg,#E91E86 0%,#B8125F 100%);box-shadow:0 18px 40px rgba(184,18,95,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">E-Commerce<br>&amp; Online<br>Retail</span>
+            <span class="industry-card-title industry-card-title-mobile">E-Commerce & Online Retail</span>
+            <img class="industry-card-img ind-img-ecommerce" src="brand_assets/icons/E-Commerce-Online-Retail-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2C4F8C 0%,#16294D 100%);box-shadow:0 18px 40px rgba(22,41,77,0.35);">
+            <span class="industry-card-title">Real Estate Agencies</span>
+            <img class="industry-card-img ind-img-real-estate" src="brand_assets/icons/Real-Estate-Agencies-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#7A2340 0%,#4A1226 100%);box-shadow:0 18px 40px rgba(74,18,38,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Law Firms & Legal Practices</span>
+            <span class="industry-card-title industry-card-title-mobile">Law Firms &<br>Legal<br>Practices</span>
+            <img class="industry-card-img ind-img-law-firms" src="brand_assets/icons/Law-Firms-Legal-Practices-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#14958F 0%,#0A5C58 100%);box-shadow:0 18px 40px rgba(10,92,88,0.35);">
+            <span class="industry-card-title">Medical Clinics & Healthcare</span>
+            <img class="industry-card-img ind-img-medical" src="brand_assets/icons/Medical-Clinics-Healthcare-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#D97328 0%,#A84F14 100%);box-shadow:0 18px 40px rgba(168,79,20,0.35);">
+            <span class="industry-card-title">Home Service Contractors</span>
+            <img class="industry-card-img ind-img-home-service" src="brand_assets/icons/Home-Service-Contractors-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#C43A2E 0%,#8C2018 100%);box-shadow:0 18px 40px rgba(140,32,24,0.35);">
+            <span class="industry-card-title">Restaurants, Cafes & Bars</span>
+            <img class="industry-card-img ind-img-restaurants" src="brand_assets/icons/Restaurants-Cafes-Bars-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#6B3FA0 0%,#402163 100%);box-shadow:0 18px 40px rgba(64,33,99,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Hotels & Lodging</span>
+            <span class="industry-card-title industry-card-title-mobile">Hotels &<br>Lodging</span>
+            <img class="industry-card-img ind-img-hotels" src="brand_assets/icons/Hotels-Lodging-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#6FA524 0%,#46700F 100%);box-shadow:0 18px 40px rgba(70,112,15,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Fitness Studios & Gyms</span>
+            <span class="industry-card-title industry-card-title-mobile">Fitness<br>Studios &<br>Gyms</span>
+            <img class="industry-card-img ind-img-fitness" src="brand_assets/icons/Fitness-Studios-and-Gyms-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#227A52 0%,#124F34 100%);box-shadow:0 18px 40px rgba(18,79,52,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Accountants & Financial Advisors</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Accountants<br>&amp; Financial<br>Advisors</span>
+            <img class="industry-card-img ind-img-accountants" src="brand_assets/icons/Accountants-Financial-Advisors-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#7A3FC9 0%,#4E1F8C 100%);box-shadow:0 18px 40px rgba(78,31,140,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Digital Marketing & Creative Agencies</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Digital Marketing<br>&amp; Creative<br>Agencies</span>
+            <img class="industry-card-img ind-img-digital-marketing" src="brand_assets/icons/Digital-Marketing-Creative-Agencies-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#3A4A63 0%,#1F2937 100%);box-shadow:0 18px 40px rgba(31,41,55,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Photographers & Videographers</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Photographers<br>&<br>Videographers</span>
+            <img class="industry-card-img ind-img-photographers" src="brand_assets/icons/Photographers-Videographers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2F5F8A 0%,#1A3B57 100%);box-shadow:0 18px 40px rgba(26,59,87,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Consulting & Coaching Firms</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Consulting &<br>Coaching<br>Firms</span>
+            <img class="industry-card-img ind-img-consulting" src="brand_assets/icons/Consulting-Coaching-Firms-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#5C6470 0%,#33383F 100%);box-shadow:0 18px 40px rgba(51,56,63,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Auto Repair & Car Dealerships</span>
+            <span class="industry-card-title industry-card-title-mobile">Auto Repair<br>&amp; Car<br>Dealerships</span>
+            <img class="industry-card-img ind-img-auto-repair" src="brand_assets/icons/Auto-Repair-and-Car-Dealerships-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#1279C4 0%,#0A4C7D 100%);box-shadow:0 18px 40px rgba(10,76,125,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">SaaS & Software Startups</span>
+            <span class="industry-card-title industry-card-title-mobile">SaaS &<br>Software<br>Startups</span>
+            <img class="industry-card-img ind-img-saas" src="brand_assets/icons/SaaS-Software-Startups-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#C24F8C 0%,#8C2F60 100%);box-shadow:0 18px 40px rgba(140,47,96,0.35);">
+            <span class="industry-card-title">Salons, Spas & Grooming</span>
+            <img class="industry-card-img ind-img-salons" src="brand_assets/icons/Salons-Spas-Grooming-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#D9901F 0%,#A8650F 100%);box-shadow:0 18px 40px rgba(168,101,15,0.35);">
+            <span class="industry-card-title">Construction & Remodeling</span>
+            <img class="industry-card-img ind-img-construction" src="brand_assets/icons/Construction-Remodeling-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2748A8 0%,#142A66 100%);box-shadow:0 18px 40px rgba(20,42,102,0.35);">
+            <span class="industry-card-title">Educational Institutions</span>
+            <img class="industry-card-img ind-img-educational" src="brand_assets/icons/Educational-Institutions-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#A8267F 0%,#6B1550 100%);box-shadow:0 18px 40px rgba(107,21,80,0.35);">
+            <span class="industry-card-title">Event Planners & Venues</span>
+            <img class="industry-card-img ind-img-events" src="brand_assets/icons/Event-Planners-Venues-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#A8683F 0%,#7A4826 100%);box-shadow:0 18px 40px rgba(122,72,38,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Interior Designers & Architects</span>
+            <span class="industry-card-title industry-card-title-mobile">Interior<br>Designers &<br>Architects</span>
+            <img class="industry-card-img ind-img-interior-design" src="brand_assets/icons/Interior-Designers-Architects-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#17A0AD 0%,#0D6670 100%);box-shadow:0 18px 40px rgba(13,102,112,0.35);">
+            <span class="industry-card-title">Cleaning & Janitorial Services</span>
+            <img class="industry-card-img ind-img-cleaning" src="brand_assets/icons/Cleaning-Janitorial-Services-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#3F9A5C 0%,#226B3A 100%);box-shadow:0 18px 40px rgba(34,107,58,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Pet Grooming & Veterinary Clinics</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Pet Grooming<br>& Veterinary<br>Clinics</span>
+            <img class="industry-card-img ind-img-pet-grooming" src="brand_assets/icons/Pet-Grooming-Veterinary-Clinics-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#D9584A 0%,#A8382C 100%);box-shadow:0 18px 40px rgba(168,56,44,0.35);">
+            <span class="industry-card-title">Nonprofit & Charity Organizations</span>
+            <img class="industry-card-img ind-img-nonprofit" src="brand_assets/icons/Nonprofit-Charity-Organizations-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#5A2FA0 0%,#351A66 100%);box-shadow:0 18px 40px rgba(53,26,102,0.35);">
+            <span class="industry-card-title">Independent Musicians & Artists</span>
+            <img class="industry-card-img ind-img-musicians" src="brand_assets/icons/Independent-Musicians-Artists-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#1C8FA0 0%,#0F5C68 100%);box-shadow:0 18px 40px rgba(15,92,104,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Travel Agencies & Tour Operators</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Travel Agencies<br>&amp; Tour<br>Operators</span>
+            <img class="industry-card-img ind-img-travel" src="brand_assets/icons/Travel-Agencies-Tour-Operators-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#4A8A28 0%,#2E5C16 100%);box-shadow:0 18px 40px rgba(46,92,22,0.35);">
+            <span class="industry-card-title">Landscaping & Lawn Care</span>
+            <img class="industry-card-img ind-img-landscaping" src="brand_assets/icons/Landscaping-Lawn-Care-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#2A3A52 0%,#151E2E 100%);box-shadow:0 18px 40px rgba(21,30,46,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Security & Alarm System Installers</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Security &<br>Alarm System<br>Installers</span>
+            <img class="industry-card-img ind-img-security" src="brand_assets/icons/Security-Alarm-System-Installers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#7A8A2A 0%,#4E5C16 100%);box-shadow:0 18px 40px rgba(78,92,22,0.35);">
+            <span class="industry-card-title">Pest Control Services</span>
+            <img class="industry-card-img ind-img-pest-control" src="brand_assets/icons/Pest-Control-Services-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#5C5C66 0%,#35353D 100%);box-shadow:0 18px 40px rgba(53,53,61,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Storage Facility Providers</span>
+            <span class="industry-card-title industry-card-title-mobile">Storage<br>Facility<br>Providers</span>
+            <img class="industry-card-img ind-img-storage" src="brand_assets/icons/Storage-Facility-Providers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#B8862A 0%,#855E16 100%);box-shadow:0 18px 40px rgba(133,94,22,0.35);">
+            <span class="industry-card-title">Logistics & Moving Companies</span>
+            <img class="industry-card-img ind-img-logistics" src="brand_assets/icons/Logistics-Moving-Companies-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+          <div class="industry-card" style="background:linear-gradient(135deg,#8A2A63 0%,#5C1740 100%);box-shadow:0 18px 40px rgba(92,23,64,0.35);">
+            <span class="industry-card-title industry-card-title-desktop">Podcasters & Media Producers</span>
+            <span class="industry-card-title industry-card-title-mobile mobile-title-wide">Podcasters &<br>Media<br>Producers</span>
+            <img class="industry-card-img ind-img-podcasters" src="brand_assets/icons/Podcasters-Media-Producers-isometric-icon.webp" alt="" loading="lazy">
+          </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ── Industry marquee: auto-scroll + drag ── */
+;(function() {
+  const wrap = document.querySelector('.industry-marquee-track-wrap');
+  const track = document.querySelector('.industry-marquee-track');
+  if (!wrap || !track) return;
+
+  const DURATION_S = 125; // full loop duration in seconds (25% slower than the original 100s)
+  let halfWidth = track.scrollWidth / 2; // width of one (of the two duplicated) card sets
+  let offset = 0;
+  let isDragging = false;
+  let isHovering = false;
+  let startX = 0;
+  let startOffset = 0;
+  let lastT = null;
+
+  function wrapOffset() {
+    if (halfWidth <= 0) return;
+    while (offset <= -halfWidth) offset += halfWidth;
+    while (offset > 0) offset -= halfWidth;
+  }
+
+  function render() {
+    track.style.transform = 'translateX(' + offset + 'px)';
+  }
+
+  function tick(t) {
+    if (lastT === null) lastT = t;
+    const dt = (t - lastT) / 1000;
+    lastT = t;
+    if (!isDragging && !isHovering) {
+      offset -= (halfWidth / DURATION_S) * dt;
+      wrapOffset();
+      render();
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  document.querySelectorAll('.industry-card').forEach(function (card) {
+    card.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') isHovering = true; });
+    card.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') isHovering = false; });
+  });
+
+  wrap.addEventListener('pointerdown', function (e) {
+    isDragging = true;
+    startX = e.clientX;
+    startOffset = offset;
+    wrap.classList.add('is-dragging');
+    wrap.setPointerCapture(e.pointerId);
+  });
+  wrap.addEventListener('pointermove', function (e) {
+    if (!isDragging) return;
+    offset = startOffset + (e.clientX - startX);
+    wrapOffset();
+    render();
+  });
+  function endDrag(e) {
+    if (!isDragging) return;
+    isDragging = false;
+    wrap.classList.remove('is-dragging');
+    try { wrap.releasePointerCapture(e.pointerId); } catch (_) {}
+  }
+  wrap.addEventListener('pointerup', endDrag);
+  wrap.addEventListener('pointercancel', endDrag);
+
+  window.addEventListener('resize', function () { halfWidth = track.scrollWidth / 2; });
+})();
+</script>
+
+
 <!-- ────────────────────── ABOUT / WHY ────────────────────── -->
-<section id="why-us" style="padding:120px 28px;">
+<section id="why-us" style="padding:0 28px 120px;">
   <div style="max-width:1200px;margin:0 auto;">
     <div class="about-grid">
 
@@ -1289,7 +1904,7 @@
           Rank higher,<br><span class="grad-cyan-pink">Convert better</span>
         </h2>
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:20px;">
-          In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">conversion.</code> VardWeb builds sites that work as hard as you do.
+          In today's market, your website is your most important sales tool. Every pixel is intentional, every interaction is smooth, and every page is optimized for <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">conversion.</code> VardWeb builds sites that work as hard as you do.
         </p>
       </div>
 
@@ -1309,11 +1924,11 @@
       <!-- Text outro -->
       <div class="ah-outro">
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);margin-bottom:36px;">
-          From landing pages to full web applications, we deliver results. Clean code, lightning-fast load times, and structured data built to satisfy both search engines and the people using them — so you <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">rank higher</code> and keep visitors once they arrive.
+          From landing pages to full web applications, we deliver results. Clean code, lightning-fast load times, and structured data built to satisfy both search engines and the people using them — so you <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">rank higher</code> and keep visitors once they arrive.
         </p>
         <div style="display:flex;gap:14px;flex-wrap:wrap;">
-          <a href="contact.html" class="btn btn-primary">Start Your Project</a>
-          <a href="#services" class="btn btn-ghost">See Services</a>
+          <a href="contact.html?bookCall=1" class="btn btn-primary">Start Your Project</a>
+          <a href="services.html" class="btn btn-ghost">See Services</a>
         </div>
       </div>
 
@@ -1333,7 +1948,7 @@
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
         Engage Your Audience,<br><span class="grad-cyan-pink">Elevate Your Brand</span>
       </h2>
-      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">Everything your site needs to perform, rank, and convert — included as standard, not as an upsell. Mobile-first by default, fast by design, and <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">optimised</code> for search before a single visitor lands.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">Everything your site needs to perform, rank, and convert — included as standard, not as an upsell. Mobile-first by default, fast by design, and <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">optimised</code> for search before a single visitor lands.</p>
     </div>
 
     <div class="features-grid">
@@ -1482,7 +2097,7 @@
       pointer-events: none;
       filter: drop-shadow(0 6px 20px rgba(0,0,0,0.35));
       user-select: none;
-      transform: rotate(0deg) scale(1);
+      transform: translateY(0%) scale(1) rotate(0deg);
       transition: transform 1.05s cubic-bezier(0.34,1.56,0.64,1);
     }
     .adv-card:hover .adv-card-img,
@@ -1508,7 +2123,7 @@
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
         Optimize presence,<br><span class="grad-gold">Transform traffic</span>
       </h2>
-      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">When your business outgrows a simple brochure site, we don't panic — </br><code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">we build.</code> From full e-commerce flows to custom functionality that doesn't have a template, consider it handled.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">When your business outgrows a simple brochure site, we don't panic — </br><code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">we build.</code> From full e-commerce flows to custom functionality that doesn't have a template, consider it handled.</p>
     </div>
 
     <div class="adv-grid">
@@ -1520,7 +2135,7 @@
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-bjp0aw1YdBEUx14mtm9IQCUABWUxWz.png" alt="" aria-hidden="true">
+        <img class="adv-card-img" src="brand_assets/icons/idx-ecommerce.webp" alt="" aria-hidden="true">
       </div>
       <div class="adv-card" style="background:#CC2020;">
         <div class="adv-card-body">
@@ -1530,7 +2145,7 @@
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-DFiJBJyUFg9QYTZOWEFeeza18HBnty.png" alt="" aria-hidden="true">
+        <img class="adv-card-img" src="brand_assets/icons/idx-product-catalogs.webp" alt="" aria-hidden="true">
       </div>
       <div class="adv-card" style="background:#2D3038;">
         <div class="adv-card-body">
@@ -1540,7 +2155,7 @@
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-J7XYh5Cix5CceVeAtkuVXYSGgrhjDL.png" alt="" aria-hidden="true">
+        <img class="adv-card-img" src="brand_assets/icons/idx-funnels-leadflows.webp" alt="" aria-hidden="true">
       </div>
       <div class="adv-card" style="background:#1A6DE8;">
         <div class="adv-card-body">
@@ -1550,7 +2165,7 @@
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-fQPoDfvDVubJHgM4XlyFBuEY4iubg6.png" alt="" aria-hidden="true">
+        <img class="adv-card-img" src="brand_assets/icons/idx-memberships-portals.webp" alt="" aria-hidden="true">
       </div>
       <div class="adv-card" style="background:#141820;">
         <div class="adv-card-body">
@@ -1560,7 +2175,7 @@
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-SxvnIpN2RVwLK77XxK3MnVCU6Xgc29.png" alt="" aria-hidden="true">
+        <img class="adv-card-img" src="brand_assets/icons/idx-integrations.webp" alt="" aria-hidden="true">
       </div>
       <div class="adv-card" style="background:#7B52C8;">
         <div class="adv-card-body">
@@ -1570,7 +2185,7 @@
           </div>
           <a href="services.html" class="adv-card-more">Learn More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <img class="adv-card-img" src="https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-GNGLsMOruOXjdF1rtx2ajfpU3YzrIS.png" alt="" aria-hidden="true">
+        <img class="adv-card-img" src="brand_assets/icons/idx-custom-functionality.webp" alt="" aria-hidden="true">
       </div>
     </div>
 
@@ -1579,29 +2194,41 @@
     document.querySelectorAll('.adv-card').forEach(function(card) {
       var img = card.querySelector('.adv-card-img');
       var rafId = null;
-      var timeoutId = null;
+      var fallbackId = null;
       var T = 2000;
 
+      function startFloat() {
+        if (rafId) return;
+        var start = performance.now();
+
+        (function loop(now) {
+          var phase = Math.cos(((now - start) / T) * Math.PI * 2);
+          var dy = (-10.5 + phase * 0.5).toFixed(3);
+          var dr = (5.5  - phase * 0.5).toFixed(3);
+          img.style.transform = 'translateY(' + dy + '%) scale(1.2) rotate(' + dr + 'deg)';
+          rafId = requestAnimationFrame(loop);
+        }(performance.now()));
+      }
+
+      img.addEventListener('transitionend', function(e) {
+        if (e.target !== img || e.propertyName !== 'transform') return;
+        if (!card.matches(':hover') || card.matches(':active')) return;
+        clearTimeout(fallbackId);
+        startFloat();
+      });
+
       card.addEventListener('mouseenter', function() {
-        clearTimeout(timeoutId);
+        clearTimeout(fallbackId);
         if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
 
-        timeoutId = setTimeout(function() {
-          if (!card.matches(':hover')) return;
-          var start = performance.now();
-
-          (function loop(now) {
-            var phase = Math.cos(((now - start) / T) * Math.PI * 2);
-            var dy = (-10.5 + phase * 0.5).toFixed(3);
-            var dr = (5.5  - phase * 0.5).toFixed(3);
-            img.style.transform = 'translateY(' + dy + '%) scale(1.2) rotate(' + dr + 'deg)';
-            rafId = requestAnimationFrame(loop);
-          }(performance.now()));
-        }, 1050);
+        fallbackId = setTimeout(function() {
+          if (!card.matches(':hover') || card.matches(':active')) return;
+          startFloat();
+        }, 1200);
       });
 
       card.addEventListener('mouseleave', function() {
-        clearTimeout(timeoutId);
+        clearTimeout(fallbackId);
         if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
         img.style.transform = '';
       });
@@ -1935,7 +2562,7 @@
       <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
         From overhead cost,<br><span class="grad-cyan-pink">To unfair advantage</span>
       </h2>
-      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">A monthly maintenance fee is not an optional line item; it is a critical <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">business investment</code> that safeguards your operations, prevents costly emergencies, drives long-term value, and ensures your business remains competitive.</p>
+      <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">A monthly maintenance fee is not an optional line item; it is a critical <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">business investment</code> that safeguards your operations, prevents costly emergencies, drives long-term value, and ensures your business remains competitive.</p>
     </div>
 
     <div class="inv-grid">
@@ -1947,7 +2574,7 @@
         </div>
         <div class="inv-card-meta">
           <h3>Eliminating Admin Mistakes</h3>
-          <p>Software updates <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">frequently break</code> integrations, CRM, and booking tools. Regular maintenance ensures data syncs perfectly.<br><br>Permanently stopping expensive administrative typos, broken forms, and lost customer files.</p>
+          <p>Software updates <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">frequently break</code> integrations, CRM, and booking tools. Regular maintenance ensures data syncs perfectly.<br><br>Permanently stopping expensive administrative typos, broken forms, and lost customer files.</p>
         </div>
       </div>
 
@@ -1962,7 +2589,7 @@
         </div>
         <div class="inv-card-meta">
           <h3>Ending Brand Embarrassment</h3>
-          <p>Websites <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">naturally decay</code> over time. Links break, images corrupt, and layouts misalign after browser updates.<br><br>Routine visual audits keep your platform looking sharp, modern, and worthy of premium pricing.</p>
+          <p>Websites <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">naturally decay</code> over time. Links break, images corrupt, and layouts misalign after browser updates.<br><br>Routine visual audits keep your platform looking sharp, modern, and worthy of premium pricing.</p>
         </div>
       </div>
 
@@ -1988,7 +2615,7 @@
         </div>
         <div class="inv-card-meta">
           <h3>Instant Lead Capture</h3>
-          <p>Contact forms or automated auto-responders <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">fail</code> due to an unpatched plugins, and hot leads cool down instantly.<br><br>Continuous uptime monitoring ensures you never miss a high-value customer inquiry.</p>
+          <p>Contact forms or automated auto-responders <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">fail</code> due to an unpatched plugins, and hot leads cool down instantly.<br><br>Continuous uptime monitoring ensures you never miss a high-value customer inquiry.</p>
         </div>
       </div>
 
@@ -2049,7 +2676,7 @@
         </div>
         <div class="inv-card-meta">
           <h3>Predictable Maintenance</h3>
-          <p>Skipping updates leaves your site <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">vulnerable</code> to security breaches, malware, and sudden crashes.<br><br>A fixed maintenance fee completely eliminates unexpected, expensive emergency developer bills when things inevitably break.</p>
+          <p>Skipping updates leaves your site <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">vulnerable</code> to security breaches, malware, and sudden crashes.<br><br>A fixed maintenance fee completely eliminates unexpected, expensive emergency developer bills when things inevitably break.</p>
         </div>
       </div>
 
@@ -2123,7 +2750,7 @@
         </div>
         <div class="inv-card-meta">
           <h3>Capturing Existing Demand</h3>
-          <p>Apple and Google <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">constantly</code> update mobile browser standards. Monthly checks ensure your mobile layout remains flawless.<br><br>Stop mobile traffic from bouncing to a competitor due to a broken button, shifted text or an easily fixable bug. *Squash*</p>
+          <p>Apple and Google <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">constantly</code> update mobile browser standards. Monthly checks ensure your mobile layout remains flawless.<br><br>Stop mobile traffic from bouncing to a competitor due to a broken button, shifted text or an easily fixable bug. *Squash*</p>
         </div>
       </div>
 
@@ -2204,7 +2831,7 @@
         </div>
         <div class="inv-card-meta">
           <h3>Frictionless Journey</h3>
-          <p>Your address, phone number, and booking links <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">must work</code> 100% of the time. Protecting your daily sales volume.<br><br>Poor navigation sours customer experience. Continuous link-testing and speed optimization keeps your customer path entirely friction-free.</p>
+          <p>Your address, phone number, and booking links <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">must work</code> 100% of the time. Protecting your daily sales volume.<br><br>Poor navigation sours customer experience. Continuous link-testing and speed optimization keeps your customer path entirely friction-free.</p>
         </div>
       </div>
 
@@ -2664,7 +3291,7 @@
         </h2>
 
         <p style="font-size:15.5px;line-height:1.82;color:var(--text-2);max-width:400px;margin-bottom:38px;">
-          Don't just take <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">our word</code> for it. See what our clients say after working with VardWeb. From local owners to domestic founders and international entrepreneurs.
+          Don't just take <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">our word</code> for it. See what our clients say after working with VardWeb. From local owners to domestic founders and international entrepreneurs.
         </p>
 
         <div style="display:flex;align-items:center;gap:10px;" role="tablist" aria-label="Client testimonials">
@@ -3464,10 +4091,10 @@
 
   <div class="sec-header">
     <p class="sec-tag">// The Roadmap</p>
-    <h2 style="font-size:clamp(26px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
+    <h2 style="font-size:clamp(20px,4vw,46px);font-weight:800;line-height:1.12;color:var(--text-1);">
       Discovery begins on,<br><span class="grad-gold">The yellow brick road</span>
     </h2>
-    <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">Four steps. <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);">No surprises.</code> We plan, design, launch, and maintain your site with the kind of discipline that would make a project manager tear up. The yellow brick road has never been this well-paved.</p>
+    <p style="margin-top:16px;font-size:16px;line-height:1.7;color:var(--text-2);max-width:560px;">Four steps. <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">No surprises.</code> We plan, design, launch, and maintain your site with the kind of discipline that would make a project manager tear up. The yellow brick road has never been this well-paved.</p>
   </div>
 
   <div class="feat-grid">
@@ -3475,7 +4102,7 @@
     <div class="feat-card">
       <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(255,140,0,0.22) 0%,transparent 68%);"></div>
       <div class="feat-card-idx">001</div>
-      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Compass/3D/compass_3d.png" alt="Compass" draggable="false"></div>
+      <div class="feat-card-icon"><img src="brand_assets/icons/idx-roadmap-compass.webp" alt="Compass" draggable="false"></div>
       <div class="feat-card-content">
         <span class="feat-card-tag" style="background:rgba(255,140,0,0.12);color:#FFA030;border:1px solid rgba(255,140,0,0.22);">PLAN</span>
         <p class="feat-card-title">Build trust, understand goals, determine requirements, create roadmap, build designs uniquely curated for your business.</p>
@@ -3485,7 +4112,7 @@
     <div class="feat-card">
       <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(138,79,255,0.22) 0%,transparent 68%);"></div>
       <div class="feat-card-idx">002</div>
-      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Artist%20palette/3D/artist_palette_3d.png" alt="Artist palette" draggable="false"></div>
+      <div class="feat-card-icon"><img src="brand_assets/icons/idx-roadmap-artist-palette.webp" alt="Artist palette" draggable="false"></div>
       <div class="feat-card-content">
         <span class="feat-card-tag" style="background:rgba(138,79,255,0.12);color:#A070FF;border:1px solid rgba(138,79,255,0.22);">DESIGN</span>
         <p class="feat-card-title">Easy to navigate, mobile responsive, lightning fast, pixel-perfect visuals crafted to reflect your brand and convert at glance.</p>
@@ -3495,7 +4122,7 @@
     <div class="feat-card">
       <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(0,229,255,0.18) 0%,transparent 68%);"></div>
       <div class="feat-card-idx">003</div>
-      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Rocket/3D/rocket_3d.png" alt="Rocket" draggable="false" style="transform:scaleX(-1);"></div>
+      <div class="feat-card-icon"><img src="brand_assets/icons/idx-roadmap-rocket.webp" alt="Rocket" draggable="false" style="transform:scaleX(-1);"></div>
       <div class="feat-card-content">
         <span class="feat-card-tag" style="background:rgba(0,229,255,0.10);color:#00E5FF;border:1px solid rgba(0,229,255,0.20);">LAUNCH</span>
         <p class="feat-card-title">Review and sign off, site will be launched live worldwide — tested, optimised, and ready to rank from day one.</p>
@@ -3505,7 +4132,7 @@
     <div class="feat-card">
       <div class="feat-card-glow" style="background:radial-gradient(circle at 50% 30%,rgba(255,45,120,0.20) 0%,transparent 68%);"></div>
       <div class="feat-card-idx">004</div>
-      <div class="feat-card-icon"><img src="https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@latest/assets/Wrench/3D/wrench_3d.png" alt="Wrench" draggable="false"></div>
+      <div class="feat-card-icon"><img src="brand_assets/icons/idx-roadmap-wrench.webp" alt="Wrench" draggable="false"></div>
       <div class="feat-card-content">
         <span class="feat-card-tag" style="background:rgba(255,45,120,0.10);color:#FF2D78;border:1px solid rgba(255,45,120,0.20);">MAINTAIN</span>
         <p class="feat-card-title">Ongoing monthly maintenance, updates, analysis, revisions, and 4, 8 or 12-hour emergency + 24-hour general support.</p>
@@ -3624,7 +4251,7 @@
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">App Development</a>
               <a href="sem-seo.html"    class="footer-pill-home-sub" role="menuitem">SEM &amp; SEO</a>
               <a href="email-marketing.html" class="footer-pill-home-sub" role="menuitem">Email Marketing</a>
-              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Hosting Services</a>
+              <a href="hosting-services.html"    class="footer-pill-home-sub" role="menuitem">Domain &amp; Hosting</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Content Creation &amp; CM</a>
               <a href="smm.html"    class="footer-pill-home-sub" role="menuitem">Social Media &amp; SMM</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Custom Request</a>
@@ -4479,6 +5106,8 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeAll();
   });
+
+  window.addEventListener('scroll', closeAll, true);
 })();
 </script>
 
@@ -4610,35 +5239,57 @@
   /* rAF oscillation for adv-cards — mirrors desktop mouseenter/mouseleave exactly */
   var T = 2000;
   var stateMap = new Map();
+
+  function startFloat(img, s) {
+    if (s.rafId) return;
+    var start = performance.now();
+
+    (function loop(now) {
+      var phase = Math.cos(((now - start) / T) * Math.PI * 2);
+      img.style.transform = 'translateY(' + (-10.5 + phase * 0.5).toFixed(3) + '%) scale(1.2) rotate(' + (5.5 - phase * 0.5).toFixed(3) + 'deg)';
+      s.rafId = requestAnimationFrame(loop);
+    }(performance.now()));
+  }
+
   var advObs = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
       var card = entry.target;
       var img = card.querySelector('.adv-card-img');
       if (!img) return;
       var s = stateMap.get(card);
-      if (!s) { s = { rafId: null, timeoutId: null }; stateMap.set(card, s); }
+      if (!s) { s = { rafId: null, fallbackId: null }; stateMap.set(card, s); }
 
-      clearTimeout(s.timeoutId);
+      clearTimeout(s.fallbackId);
       if (s.rafId) { cancelAnimationFrame(s.rafId); s.rafId = null; }
 
       if (entry.isIntersecting) {
         card.classList.add('is-scroll-active');
-        s.timeoutId = setTimeout(function () {
-          var start = performance.now();
-          (function loop(now) {
-            var phase = Math.cos(((now - start) / T) * Math.PI * 2);
-            img.style.transform = 'translateY(' + (-10.5 + phase * 0.5).toFixed(3) + '%) scale(1.2) rotate(' + (5.5 - phase * 0.5).toFixed(3) + 'deg)';
-            s.rafId = requestAnimationFrame(loop);
-          }(performance.now()));
-        }, 1050);
+        s.fallbackId = setTimeout(function () {
+          if (!card.classList.contains('is-scroll-active') || card.matches(':active')) return;
+          startFloat(img, s);
+        }, 1200);
       } else {
         card.classList.remove('is-scroll-active');
         img.style.transform = '';
       }
     });
   }, ioOpts);
+
   [].slice.call(document.querySelectorAll('#advanced .adv-card'))
-    .forEach(function (el) { advObs.observe(el); });
+    .forEach(function (el) {
+      var img = el.querySelector('.adv-card-img');
+      if (img) {
+        var s = stateMap.get(el);
+        if (!s) { s = { rafId: null, fallbackId: null }; stateMap.set(el, s); }
+        img.addEventListener('transitionend', function (e) {
+          if (e.target !== img || e.propertyName !== 'transform') return;
+          if (!el.classList.contains('is-scroll-active') || el.matches(':active')) return;
+          clearTimeout(s.fallbackId);
+          startFloat(img, s);
+        });
+      }
+      advObs.observe(el);
+    });
 })();
 </script>
 
