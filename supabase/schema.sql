@@ -162,6 +162,27 @@ CREATE TABLE IF NOT EXISTS blog_subscribers (
   created_at         TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- domain_orders — V2 self-serve domain purchases (hosting-services.html cart
+-- checkout). client_id is nullable: walk-up buyers with no CRM account can
+-- purchase without logging in. Rows are written/read exclusively by
+-- service-role Edge Functions (create-domain-checkout, stripe-domain-webhook)
+-- — there is deliberately no public SELECT/INSERT policy, so buyer PII in
+-- `registrant` never needs to be exposed on an anon-readable surface.
+CREATE TABLE IF NOT EXISTS domain_orders (
+  id                    UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  client_id             UUID REFERENCES clients(id) ON DELETE SET NULL,
+  buyer_email           TEXT NOT NULL,
+  registrant            JSONB NOT NULL,   -- name, phone, address, city, state, postal_code, country
+  items                 JSONB NOT NULL,   -- [{domain, tld, price}, ...]
+  total                 NUMERIC NOT NULL,
+  status                TEXT DEFAULT 'pending',  -- pending | paid | completed | failed
+  stripe_session_id     TEXT,
+  stripe_payment_intent TEXT,
+  openprovider_results  JSONB,   -- per-domain registration outcome, filled in by the webhook
+  created_at            TIMESTAMPTZ DEFAULT NOW(),
+  updated_at            TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Must be last — references auth.users (Supabase built-in)
 CREATE TABLE IF NOT EXISTS user_profiles (
   id        UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -209,6 +230,7 @@ ALTER TABLE seo_reports    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE social_links   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blog_subscribers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE domain_orders  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles  ENABLE ROW LEVEL SECURITY;
 
 
@@ -313,6 +335,13 @@ DROP POLICY IF EXISTS "admin_all_blog_subscribers"     ON blog_subscribers;
 DROP POLICY IF EXISTS "public_insert_blog_subscribers" ON blog_subscribers;
 CREATE POLICY "admin_all_blog_subscribers"     ON blog_subscribers FOR ALL    USING (is_admin());
 CREATE POLICY "public_insert_blog_subscribers" ON blog_subscribers FOR INSERT WITH CHECK (true);
+
+-- domain_orders — admin manages; clients read their own past purchases.
+-- No public policy at all: writes come only from service-role Edge Functions.
+DROP POLICY IF EXISTS "admin_all_domain_orders"  ON domain_orders;
+DROP POLICY IF EXISTS "client_own_domain_orders" ON domain_orders;
+CREATE POLICY "admin_all_domain_orders"  ON domain_orders FOR ALL    USING (is_admin());
+CREATE POLICY "client_own_domain_orders" ON domain_orders FOR SELECT USING (client_id = my_client_id());
 
 -- user_profiles — users read their own; admin reads all
 DROP POLICY IF EXISTS "own_profile"        ON user_profiles;
