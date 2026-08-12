@@ -169,6 +169,18 @@
       background: rgba(255,255,255,0.05);
       transform: translateY(-2px);
     }
+    .btn-outline-brand {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      color: #fff;
+    }
+    .btn-outline-brand:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--host-green-deep);
+      transform: translateY(-2px);
+    }
+    .btn-arrow { display: inline-block; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .btn:hover .btn-arrow { transform: translateX(4px); }
 
     .sec-tag {
       font-family: 'JetBrains Mono', monospace;
@@ -191,7 +203,7 @@
     .section-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
     .section-head { text-align: center; max-width: 640px; margin: 0 auto 56px; }
     .section-head h2 { font-size: clamp(26px,3.4vw,38px); font-weight: 700; color: var(--text-1); margin-bottom: 14px; }
-    .section-head p { font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
+    .section-head p:not(.sec-tag) { font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
 
     /* ── Hero ── */
     .host-hero-frame { padding: 100px 24px 64px; }
@@ -233,8 +245,15 @@
       padding: 10px; max-width: 820px; margin: 0 auto;
       box-shadow: 0 20px 60px -14px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.3);
     }
-    .host-search-input-wrap { flex: 1; display: flex; align-items: center; gap: 12px; padding: 0 18px; min-width: 0; }
+    .host-search-input-wrap { flex: 1; padding: 0 18px; min-width: 0; overflow: hidden; }
+    .host-search-input-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .host-search-input-wrap svg { flex-shrink: 0; width: 20px; height: 20px; color: rgba(20,24,34,0.4); }
+    @media (min-width: 1025px) {
+      .host-search-input-row { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+      .host-search-input-wrap svg { transition: opacity 0.25s ease; }
+      .host-search-input-wrap.is-focused .host-search-input-row { transform: translateX(-32px); }
+      .host-search-input-wrap.is-focused svg { opacity: 0; }
+    }
     #domain-input {
       border: none; outline: none; background: transparent;
       font-family: 'Inter', sans-serif; font-size: 19px; font-weight: 500;
@@ -288,7 +307,165 @@
 
     .host-hero-note { font-size: 13px; color: var(--text-2); }
     .host-tld-row + .host-hero-note { margin-top: 18px; }
-    .host-hero-note + .host-hero-note { margin-top: 6px; }
+
+    .host-hero-concierge { font-size: 12.5px; color: var(--text-2); margin-top: 14px; }
+    .host-hero-concierge a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); transition: color 0.2s ease, border-color 0.2s ease; }
+    .host-hero-concierge a:hover { color: var(--host-green-pale); border-color: var(--host-green-pale); }
+    .host-hero-concierge a:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Search results ── */
+    .host-search-results { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; max-width: 820px; margin-left: auto; margin-right: auto; text-align: left; }
+    .host-search-results[hidden] { display: none; }
+
+    .host-result-skeleton {
+      height: 68px; border-radius: 14px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%;
+      animation: hostSkeletonSweep 1.4s ease-in-out infinite;
+    }
+    @keyframes hostSkeletonSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .host-result-error {
+      padding: 16px 20px; border-radius: 14px;
+      background: rgba(255,45,120,0.07); border: 1px solid rgba(255,45,120,0.28);
+      color: rgba(255,180,205,0.92); font-size: 13.5px; line-height: 1.6;
+    }
+
+    .host-result-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px; border-radius: 14px;
+      background: var(--raised);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 12px 32px -18px rgba(0,0,0,0.6);
+      transform: translateZ(0); backface-visibility: hidden;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s ease;
+    }
+    .host-result-card[data-available="true"] { border-color: rgba(52,211,153,0.3); }
+    .host-result-card[data-available="true"]:hover { transform: translateY(-2px) translateZ(0); }
+    .host-result-card[data-available="false"] { opacity: 0.55; }
+
+    .host-result-domain { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15.5px; color: var(--text-1); flex: 1; min-width: 0; overflow-wrap: anywhere; }
+    .host-result-status { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; flex-shrink: 0; }
+    .host-result-card[data-available="true"] .host-result-status { color: var(--host-green); background: rgba(52,211,153,0.12); }
+    .host-result-card[data-available="false"] .host-result-status { color: rgba(200,212,232,0.5); background: rgba(255,255,255,0.06); }
+    .host-result-price { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--text-2); flex-shrink: 0; min-width: 68px; text-align: right; }
+
+    .host-result-cta {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
+      color: #06251b; background: var(--host-green); border: none; border-radius: 9px;
+      padding: 9px 16px; cursor: pointer; flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .host-result-cta:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px -6px rgba(52,211,153,0.45); }
+    .host-result-cta:active:not(:disabled) { transform: translateY(0); }
+    .host-result-cta:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .host-result-cta:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); cursor: default; }
+    .host-result-cta.added { background: var(--raised); color: var(--host-green); border: 1px solid rgba(52,211,153,0.4); }
+
+    @media (max-width: 640px) {
+      .host-result-card { flex-wrap: wrap; }
+      .host-result-domain { flex-basis: 100%; }
+    }
+
+    /* ── Cart drawer ── */
+    #cart-backdrop {
+      position: fixed; inset: 0; z-index: 340;
+      background: rgba(4,6,10,0.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
+    }
+    #cart-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    #cart-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 350;
+      width: min(420px, 100vw);
+      background: var(--surface); border-left: 1px solid rgba(255,255,255,0.08);
+      box-shadow: -24px 0 64px -20px rgba(0,0,0,0.6);
+      display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.34,1,0.64,1);
+    }
+    #cart-drawer.open { transform: translateX(0); }
+
+    .cart-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .cart-drawer-head h3 { font-size: 17px; color: var(--text-1); }
+    .cart-drawer-close {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); color: var(--text-2); border: none; cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .cart-drawer-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .cart-drawer-close:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .cart-drawer-items { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; }
+    .cart-drawer-empty-text { color: var(--text-2); font-size: 13.5px; text-align: center; margin-top: 40px; line-height: 1.7; }
+    .cart-drawer-empty-text a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); transition: color 0.2s ease, border-color 0.2s ease; }
+    .cart-drawer-empty-text a:hover { color: var(--host-green-pale); border-color: var(--host-green-pale); }
+    .cart-drawer-empty-text a:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; border-radius: 2px; }
+    .cart-continue-btn {
+      display: block; margin: 20px auto 0; padding: 11px 24px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      color: var(--text-1); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px;
+      cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease, border-color 0.2s ease;
+    }
+    .cart-continue-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.28); transform: translateY(-2px); }
+    .cart-continue-btn:active { transform: translateY(0); }
+    .cart-continue-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .cart-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--raised); border: 1px solid rgba(255,255,255,0.07); }
+    .cart-item-domain { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 600; color: var(--text-1); flex: 1; min-width: 0; overflow-wrap: anywhere; }
+    .cart-item-price { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-2); flex-shrink: 0; }
+    .cart-item-remove {
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,45,120,0.1); color: rgba(255,150,185,0.85); border: none; cursor: pointer; font-size: 14px; line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .cart-item-remove:hover { background: rgba(255,45,120,0.2); color: #fff; }
+    .cart-item-remove:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .cart-drawer-foot { padding: 20px 24px 24px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .cart-drawer-total { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+    .cart-drawer-total-label { font-size: 13px; color: var(--text-2); }
+    .cart-drawer-total-value { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--host-green); }
+    .cart-checkout-btn {
+      display: flex; width: 100%; justify-content: center; align-items: center; gap: 8px;
+      padding: 13px 22px; font-size: 13.5px;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; border: none; cursor: pointer; border-radius: 10px;
+      background: var(--host-green); color: #06251b;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .cart-checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.5); }
+    .cart-checkout-btn:active:not(:disabled) { transform: translateY(0); }
+    .cart-checkout-btn:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .cart-checkout-btn:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); opacity: 1; cursor: default; }
+
+    /* ── Registrant / checkout panel (inside cart drawer) ── */
+    .cart-checkout-panel { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; }
+    .cart-checkout-panel[hidden] { display: none; }
+    .cart-back-btn {
+      display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      color: var(--text-2); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 18px;
+      transition: color 0.2s ease;
+    }
+    .cart-back-btn:hover { color: var(--host-green); }
+    .cart-back-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .registrant-form { display: flex; flex-direction: column; gap: 12px; }
+    .registrant-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-2); }
+    .registrant-form input {
+      font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-1);
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.1); border-radius: 9px;
+      padding: 10px 12px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .registrant-form input::placeholder { color: rgba(200,212,232,0.32); }
+    .registrant-form input:focus { border-color: var(--host-green); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+    .registrant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .registrant-total { display: flex; align-items: baseline; justify-content: space-between; margin: 6px 0 4px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .registrant-error { font-size: 12.5px; color: rgba(255,150,185,0.92); background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25); border-radius: 9px; padding: 10px 12px; }
+    .registrant-error[hidden] { display: none; }
+    .registrant-submit-btn { margin-top: 4px; }
+    .registrant-submit-btn:disabled .btn-arrow { display: none; }
 
     /* ── Included-free banner ── */
     #host-included {
@@ -371,34 +548,49 @@
     .host-path-card h3 { font-size: 18px; color: var(--text-1); }
     .host-path-card p { font-size: 14px; color: var(--text-2); line-height: 1.7; flex: 1; }
     .host-path-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .host-path-actions .addon-card-cta { font-size: 13px; padding: 11px 24px; }
 
     /* ── Pricing model ── */
-    .host-price-flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; max-width: 900px; margin: 0 auto 40px; }
+    .host-price-flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; max-width: 900px; margin: 0 auto 40px; }
     @media (max-width: 700px) { .host-price-flow { grid-template-columns: 1fr; } .host-price-arrow { transform: rotate(90deg); margin: 0 auto; } }
     .host-price-card {
-      background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px;
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px;
       padding: 30px 28px; text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25);
     }
-    .host-price-card.is-y2 { border-color: rgba(52,211,153,0.3); box-shadow: 0 0 0 1px rgba(52,211,153,0.12), 0 20px 50px -20px rgba(52,211,153,0.25); }
-    .host-price-card .k { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; display: block; }
-    .host-price-card .v { font-size: 30px; font-weight: 800; color: var(--text-1); margin-bottom: 10px; }
+    .host-price-card.is-y2 { border-color: rgba(52,211,153,0.3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25), 0 0 0 1px rgba(52,211,153,0.12), 0 20px 50px -20px rgba(52,211,153,0.25); }
+    .host-price-card .k { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 14px; display: block; }
+    .host-price-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .host-price-row-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-2); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+    .host-price-row-label--brand { color: var(--host-green); }
+    .host-price-row-label--muted { color: rgba(200,212,232,0.32); }
+    .host-price-divider { height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 14px; }
+    .host-price-card .v { font-size: clamp(1.8rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); white-space: nowrap; font-variant-numeric: tabular-nums; }
     .host-price-card .v.grad { color: var(--host-green); }
+    .host-price-card .v.is-muted { color: rgba(200,212,232,0.32); }
     .host-price-card .d { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
-    .host-price-arrow { color: rgba(255,255,255,0.25); }
+    .host-price-arrow { display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.25); animation: host-arrow-pulse 3s ease-in-out infinite; }
+    @keyframes host-arrow-pulse {
+      0%, 100% { color: rgba(255,255,255,0.25); }
+      50%      { color: var(--host-green); }
+    }
+    @media (prefers-reduced-motion: reduce) { .host-price-arrow { animation: none; } }
     .host-price-note { max-width: 640px; margin: 0 auto; text-align: center; font-size: 14.5px; color: var(--text-2); line-height: 1.75; }
     .host-price-note b { color: var(--text-1); }
 
     /* ── Compare table (ported from email-marketing.html's .compare-table) ── */
-    .compare-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
-    .compare-table { width: 100%; border-collapse: collapse; min-width: 620px; table-layout: fixed; }
-    .compare-table th:first-child, .compare-table td:first-child { width: 200px; }
-    .compare-table th, .compare-table td { padding: 14px 18px; text-align: left; }
+    .compare-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); background: var(--base); }
+    .compare-table { width: 100%; border-collapse: collapse; min-width: 640px; table-layout: fixed; }
+    .compare-table th:first-child, .compare-table td:first-child { width: 150px; }
+    .compare-table th:last-child, .compare-table td:last-child { width: 260px; }
+    .compare-table th, .compare-table td { padding: 14px 16px; text-align: left; }
     @media (max-width: 560px) {
-      .compare-table { min-width: 520px; }
-      .compare-table th:first-child, .compare-table td:first-child { width: 120px; }
+      .compare-table { min-width: 540px; }
+      .compare-table th:first-child, .compare-table td:first-child { width: 110px; }
+      .compare-table th:last-child, .compare-table td:last-child { width: 160px; }
       .compare-table th, .compare-table td { padding: 10px 12px; }
     }
-    .compare-table thead th { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.5); background: rgba(255,255,255,0.03); }
+    .compare-table thead th { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--host-green); background: rgba(255,255,255,0.03); }
     .compare-table thead th:first-child { color: transparent; }
     .compare-table tbody th { font-size: 13px; font-weight: 600; color: var(--text-1); }
     .compare-table tbody td { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-1); }
@@ -407,73 +599,227 @@
     .compare-table .ck { color: #33D17A; }
     .compare-table .xk { color: rgba(200,212,232,0.28); }
 
-    /* ── Add-ons (ported from email-marketing.html's .addon-card) ── */
+    /* Row-label tooltip triggers — scoped to the label text itself, not the whole cell */
+    .compare-table tbody .tt-label.tt-trigger {
+      cursor: help;
+      border-bottom: 1px dashed rgba(255,255,255,0.3);
+      padding-bottom: 1px;
+    }
+    .compare-table tbody .tt-label.tt-trigger:focus-visible {
+      outline: 2px solid #60A5FA; outline-offset: 2px; border-radius: 3px;
+    }
+    @media (hover: hover) {
+      .compare-table tbody .tt-label.tt-trigger:hover { border-bottom-color: rgba(96,165,250,0.55); }
+    }
+
+    /* Shared floating tooltip (position: fixed, escapes .compare-table-wrap's overflow-x:auto clip) */
+    .tt-box {
+      position: fixed; z-index: 500; max-width: 35ch;
+      background: #0a0a0a;
+      border: 1px solid #3a3a3a; border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
+      color: #fff;
+      box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
+      opacity: 0; transform: translateY(4px) scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* ── Add-ons (matched to email-marketing.html's .addon-card sizing/formatting) ── */
     @property --border-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
-    .addon-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-    @media (max-width: 900px) { .addon-card-grid { grid-template-columns: 1fr; } }
+    #host-addons .section-inner { max-width: 1000px; }
+    .addon-card-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
     .addon-card {
       --addon-c1: #A7F3D0; --addon-c2: var(--host-green); --addon-c3: var(--host-green-deep);
       border-radius: 18px; padding: 2.5px;
       background: conic-gradient(from var(--border-angle), var(--addon-c1), var(--addon-c2), var(--addon-c3), var(--addon-c1));
       animation: addon-border-spin 7s linear infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
     @keyframes addon-border-spin { to { --border-angle: 360deg; } }
     @media (prefers-reduced-motion: reduce) { .addon-card { animation: none; } }
-    .addon-card-content {
-      background: linear-gradient(180deg, #060606, #000000);
-      border-radius: 15.5px; height: 100%; position: relative; overflow: hidden;
-      display: flex; flex-direction: column; gap: 14px;
-      padding: 26px 26px 28px;
+    @media (hover: hover) {
+      .addon-card:hover { transform: translateY(-4px); }
     }
-    .addon-card-icon { position: absolute; right: -8%; bottom: -10%; z-index: 0; pointer-events: none; opacity: 0.9; }
-    .addon-card-icon img { width: 120px; height: 120px; object-fit: contain; display: block; }
-    .addon-card-title { font-size: 16px; color: var(--text-1); position: relative; z-index: 1; }
-    .addon-card-desc { font-size: 13px; color: var(--text-2); line-height: 1.65; position: relative; z-index: 1; max-width: 85%; }
-    .addon-card-cta { align-self: flex-start; position: relative; z-index: 1; margin-top: auto; font-size: 12.5px; padding: 8px 16px; }
+    .addon-card-content {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #060606, #000000);
+      border-radius: 15.5px; height: 100%; overflow: hidden;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 16px 34px -14px rgba(0,0,0,0.55), 0 0 22px color-mix(in srgb, var(--addon-c2) 12%, transparent);
+    }
+    .addon-card-icon {
+      position: absolute;
+      right: var(--icon-right, 6%); top: var(--icon-top, 50%);
+      transform: var(--icon-transform, translateY(-50%)) rotate(var(--icon-rotate, 0deg));
+      z-index: -1; pointer-events: none;
+    }
+    .addon-card-icon img { width: var(--icon-w, 140px); height: var(--icon-h, 140px); object-fit: contain; display: block; }
+    @media (max-width: 374px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile, var(--icon-right, 6%));
+        top: var(--icon-top-mobile, var(--icon-top, 50%));
+        transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-50%))) rotate(var(--icon-rotate-mobile, var(--icon-rotate, 0deg)));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 140px));
+        height: var(--icon-h-mobile, var(--icon-h, 140px));
+      }
+    }
+    @media (min-width: 375px) and (max-width: 424px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile-375, var(--icon-right-mobile, var(--icon-right, 6%)));
+        top: var(--icon-top-mobile-375, var(--icon-top-mobile, var(--icon-top, 50%)));
+        transform: var(--icon-transform-mobile-375, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-mobile-375, var(--icon-rotate-mobile, var(--icon-rotate, 0deg))));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile-375, var(--icon-w-mobile, var(--icon-w, 140px)));
+        height: var(--icon-h-mobile-375, var(--icon-h-mobile, var(--icon-h, 140px)));
+      }
+    }
+    @media (min-width: 425px) and (max-width: 560px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile-425, var(--icon-right-mobile, var(--icon-right, 6%)));
+        top: var(--icon-top-mobile-425, var(--icon-top-mobile, var(--icon-top, 50%)));
+        transform: var(--icon-transform-mobile-425, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-mobile-425, var(--icon-rotate-mobile, var(--icon-rotate, 0deg))));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile-425, var(--icon-w-mobile, var(--icon-w, 140px)));
+        height: var(--icon-h-mobile-425, var(--icon-h-mobile, var(--icon-h, 140px)));
+      }
+    }
+    .addon-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 8px; }
+    .addon-card-desc { font-family: 'Inter', sans-serif; font-size: 14.5px; color: var(--text-2); line-height: 1.7; }
+    .addon-card-cta {
+      flex-shrink: 0; margin-top: auto;
+      border: none; color: #000;
+      background: linear-gradient(120deg, var(--host-green) 0%, var(--host-green-deep) 100%);
+      box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--host-green) 50%, transparent), 0 10px 28px -8px color-mix(in srgb, var(--host-green-deep) 30%, transparent);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+    }
+    .addon-card-cta:hover {
+      box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--host-green) 55%, transparent), 0 12px 34px -8px color-mix(in srgb, var(--host-green-deep) 45%, transparent);
+      transform: translateY(-2px) translateZ(0);
+    }
+    @media (max-width: 560px) {
+      .addon-card-cta { align-self: stretch; justify-content: center; }
+    }
 
     /* ── FAQ (ported from email-marketing.html's .em-faq-*) ── */
-    .host-faq-list { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
-    .host-faq-item { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; }
-    .host-faq-trigger {
-      width: 100%; display: flex; align-items: center; gap: 14px;
-      background: none; border: none; cursor: pointer; text-align: left;
-      padding: 18px 20px; font-family: 'Inter', sans-serif;
+    .host-faq-inner { max-width: 1000px; margin: 0 auto; }
+    .host-faq-list { display: flex; flex-direction: column; gap: 10px; }
+    .host-faq-item {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
     }
+    .host-faq-item:hover { border-color: rgba(52,211,153,0.22); }
+    .host-faq-item.open { border-color: rgba(52,211,153,0.3); box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 20px rgba(52,211,153,0.04); }
+    .host-faq-trigger {
+      width: 100%; display: flex; align-items: center; gap: 16px;
+      background: none; border: none; cursor: pointer; text-align: left;
+      padding: 22px 26px; font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease;
+    }
+    .host-faq-trigger:hover { background: rgba(52,211,153,0.03); }
+    .host-faq-item.open .host-faq-trigger { background: rgba(52,211,153,0.05); }
     .host-faq-trigger-icon {
-      flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
-      background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2);
+      flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px;
+      background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.14);
       display: flex; align-items: center; justify-content: center;
       transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .host-faq-item.open .host-faq-trigger-icon { background: rgba(52,211,153,0.16); border-color: rgba(52,211,153,0.4); }
-    .host-faq-question { flex: 1; font-size: 14.5px; font-weight: 600; color: var(--text-1); }
-    .host-faq-toggle { position: relative; width: 18px; height: 18px; flex-shrink: 0; }
-    .host-faq-plus, .host-faq-minus { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transition: opacity 0.2s ease, transform 0.2s ease; }
+    .host-faq-item.open .host-faq-trigger-icon { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); }
+    .host-faq-question { flex: 1; font-size: 15px; font-weight: 600; color: var(--text-1); font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; }
+    .host-faq-toggle {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.14);
+      flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .host-faq-item.open .host-faq-toggle { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); }
+    .host-faq-plus, .host-faq-minus { position: absolute; transition: opacity 0.2s ease, transform 0.2s ease; }
     .host-faq-plus { opacity: 1; transform: rotate(0deg); }
     .host-faq-minus { opacity: 0; transform: rotate(-90deg); }
     .host-faq-item.open .host-faq-plus { opacity: 0; transform: rotate(90deg); }
     .host-faq-item.open .host-faq-minus { opacity: 1; transform: rotate(0deg); }
     .host-faq-content { max-height: 0; overflow: hidden; transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1); }
-    .host-faq-content-inner { padding: 0 20px 20px 64px; font-size: 13.5px; color: var(--text-2); line-height: 1.75; }
+    .host-faq-content-inner { padding: 0 26px 22px 44px; font-size: 14.5px; color: var(--text-2); line-height: 1.85; position: relative; }
+    .host-faq-content-inner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 26px;
+      width: 2px; height: calc(100% - 22px);
+      background: linear-gradient(to bottom, var(--host-green), transparent);
+      opacity: 0;
+      border-radius: 2px;
+      transition: opacity 0.3s ease;
+    }
+    .host-faq-item.open .host-faq-content-inner::before { opacity: 0.38; }
     .host-faq-trigger:focus-visible { outline: 2px solid rgba(52,211,153,0.5); outline-offset: -2px; }
 
-    /* ── CTA (ported from email-marketing.html's .em-cta) ── */
-    .host-cta { padding: 40px 28px 110px; }
+    @media (max-width: 600px) {
+      .host-faq-trigger { padding: 18px 20px; gap: 12px; }
+      .host-faq-content-inner { padding: 0 20px 20px 20px; }
+      .host-faq-content-inner::before { display: none; }
+    }
+
+    /* ── Small-mobile button safety net (425/375/320px) ── */
+    @media (max-width: 480px) {
+      .btn { white-space: nowrap; font-size: 12px; padding: 9px 15px; justify-content: center; }
+      .host-path-actions, .host-cta-actions { flex-direction: column; align-items: stretch; }
+      .host-cta-actions .btn, .host-cta-actions .addon-card-cta { padding: 13px 20px; }
+    }
+
+    /* ── CTA (ported from email-marketing.html's .em-cta, expanded to match
+       smm.html's .smm-cta-card footprint/heading treatment) ── */
+    .host-cta { padding: 90px 28px 110px; }
     .host-cta-card {
-      max-width: 1000px; margin: 0 auto; position: relative; overflow: hidden;
-      border-radius: 28px; padding: 64px 48px; text-align: center;
-      background: var(--surface); border: 1px solid rgba(52,211,153,0.18);
+      max-width: 1200px; margin: 0 auto; position: relative; overflow: hidden;
+      border-radius: 48px; min-height: 560px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px; text-align: center;
+      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      border: 1px solid rgba(52,211,153,0.14);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(52,211,153,0.08);
     }
-    .host-cta-card::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 90% at 50% -10%, rgba(52,211,153,0.14) 0%, transparent 65%);
-      pointer-events: none;
+    .host-cta-content {
+      position: relative; z-index: 1;
+      max-width: 1000px; width: 100%; margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center;
     }
-    .host-cta-content { position: relative; z-index: 1; }
-    .host-cta-heading { font-size: clamp(24px,3.4vw,36px); color: var(--text-1); margin: 18px 0 14px; }
+    .host-cta-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05;
+      font-size: clamp(30px, 5.2vw, 64px);
+      color: var(--text-1); margin: 18px 0 16px;
+    }
     .host-cta-heading .muted { color: rgba(238,240,248,0.55); display: block; }
+    .host-cta-break { display: none; }
+    @media (min-width: 641px) { .host-cta-break { display: block; } }
+    @media (max-width: 640px) {
+      .host-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
+    }
+    @media (max-width: 340px) {
+      .host-cta-heading { font-size: 26px; }
+    }
     .host-cta-sub { font-size: 15px; color: var(--text-2); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
     .host-cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .host-cta-actions .btn {
+      padding: 15px 34px; font-size: 13.5px;
+      transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased;
+    }
+    .host-cta-actions .btn:hover { transform: translateY(-2px) translateZ(0); }
+    .host-cta-actions .btn:focus-visible { outline: 2px solid rgba(52,211,153,0.6); outline-offset: 2px; }
+    .host-cta-actions .addon-card-cta { padding: 17px 36px; }
 
     /* ── Footer (shared site chrome) ── */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -493,8 +839,12 @@
     .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
     .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
     .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
-    @keyframes footer-heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.18); } }
-    .animate-footer-heartbeat { animation: footer-heartbeat 1.8s ease-in-out infinite; }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
+    }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
     @media (prefers-reduced-motion: reduce) { .animate-footer-heartbeat { animation: none; } }
     @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } .footer-bottom-bar { flex-direction: column; align-items: flex-start; } }
@@ -503,13 +853,44 @@
     @media (max-width: 768px) { .nav-links { display: none; } }
     .nav-hamburger { display: none; }
     .nav-mobile-menu { display: none; }
-    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+
+    .nav-account-btn {
+      background: none; border: none; padding: 0; gap: 8px;
+      color: rgba(238,240,248,0.85); font-weight: 600;
+      transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
+    .nav-account-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 4px; border-radius: 4px; }
+
+    .nav-cart-btn {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      background: none; border: none; padding: 4px; margin: 0; cursor: pointer; color: #fff;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+    }
+    .nav-cart-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nav-cart-btn:hover { transform: translateY(-2px); opacity: 0.85; }
+    .nav-cart-btn:active { transform: translateY(0); }
+    .nav-cart-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; border-radius: 6px; }
+    .cart-count-badge {
+      position: absolute; top: -3px; right: -4px;
+      min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+      background: var(--host-green); color: #06251b;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 2px #070910;
+    }
+    .cart-count-badge[hidden] { display: none; }
+
     @media (max-width: 1024px) {
       .nav-inner { position: relative; }
       .nav-links { display: none; }
       .nav-right .btn { display: none; }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
+      #nav-cart-btn { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
+      #nav-cart-btn:hover, #nav-cart-btn:active { transform: translateY(-50%); opacity: 1; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
@@ -587,13 +968,14 @@
             Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </a>
           <div class="dropdown-menu" id="dd-services-menu" role="menu">
-            <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#A855F7;--item-bg:rgba(168,85,247,0.08)">Web Design</a>
+            <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
             <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
             <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
             <a href="hosting-services.html" class="dropdown-item active" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
+            <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
             <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
           </div>
@@ -601,11 +983,14 @@
         <a href="contact.html"  class="nav-link">Contact</a>
       </div>
       <div class="nav-right">
-        <a href="/crm/login.html" class="btn btn-ghost" id="nav-login-btn" style="font-size:13px;padding:9px 18px;align-items:center;gap:7px;">
-          <svg width="13" height="13" viewBox="0 0 20 22" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:-1px;"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
-          Login
+        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
+          <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
+          Account
         </a>
-        <a href="contact.html" class="btn btn-primary">Get a Quote <span aria-hidden="true">→</span></a>
+        <button type="button" class="nav-cart-btn" id="nav-cart-btn" aria-haspopup="dialog" aria-controls="cart-drawer" aria-label="Open cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span id="cart-count-badge" class="cart-count-badge" hidden>0</span>
+        </button>
         <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
@@ -650,6 +1035,7 @@
       <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
       <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
       <a href="hosting-services.html" class="mob-link mob-sub active">Domain &amp; Hosting</a>
+      <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
       <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
       <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
       </div></div>
@@ -665,8 +1051,7 @@
       <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
       </div></div>
       <div class="mob-divider"></div>
-      <a href="/crm/login.html" class="mob-link mob-cta-ghost">Login →</a>
-      <a href="contact.html"    class="mob-link mob-cta-primary">Get a Quote →</a>
+      <a href="/crm/login.html" class="mob-link mob-cta-ghost">Account →</a>
     </div>
   </nav>
 
@@ -696,8 +1081,10 @@
         <form id="domain-search-form" class="host-search-bar" role="search" aria-label="Domain search">
           <label for="domain-input" class="sr-only">Domain name</label>
           <div class="host-search-input-wrap">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="domain-input" name="domain" placeholder="Type the domain you want" autocomplete="off" />
+            <div class="host-search-input-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="domain-input" name="domain" placeholder="Type the domain you want" autocomplete="off" />
+            </div>
           </div>
           <div class="host-tld-badge" id="tld-badge">
             <span id="tld-badge-text">.com</span>
@@ -725,8 +1112,60 @@
         </div>
 
         <p class="host-hero-note">No markup at signup — and even at renewal, it's a flat, disclosed 10%.</p>
-        <p class="host-hero-note">Honest by design. See the full breakdown in our <a href="terms.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">Terms of Service §07</a>.</p>
+
+        <div id="host-search-results" class="host-search-results" hidden aria-live="polite"></div>
+
+        <p class="host-hero-concierge">Prefer us to just handle it? <a href="contact.html?type=Domain%20%26%20Hosting&learnMore=1">Talk to a human instead →</a></p>
     </section>
+    </div>
+
+    <div id="cart-backdrop" tabindex="-1"></div>
+    <div id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
+      <div class="cart-drawer-head">
+        <h3 id="cart-drawer-title">Your cart is empty</h3>
+        <button type="button" class="cart-drawer-close" id="cart-drawer-close" aria-label="Close cart">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="cart-drawer-items" id="cart-drawer-items">
+        <p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out faster.</p>
+        <button type="button" class="cart-continue-btn" id="cart-continue-btn">Continue Shopping</button>
+      </div>
+
+      <div class="cart-checkout-panel" id="cart-checkout-panel" hidden>
+        <button type="button" class="cart-back-btn" id="cart-back-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to cart
+        </button>
+        <form id="registrant-form" class="registrant-form">
+          <label>Full name <input type="text" name="name" autocomplete="name" required /></label>
+          <label>Email <input type="email" name="email" autocomplete="email" required /></label>
+          <label>Phone <input type="tel" name="phone" autocomplete="tel" required /></label>
+          <label>Address <input type="text" name="address" autocomplete="street-address" required /></label>
+          <div class="registrant-row">
+            <label>City <input type="text" name="city" autocomplete="address-level2" required /></label>
+            <label>State / Province <input type="text" name="state" autocomplete="address-level1" required /></label>
+          </div>
+          <div class="registrant-row">
+            <label>Postal code <input type="text" name="postal_code" autocomplete="postal-code" required /></label>
+            <label>Country <input type="text" name="country" autocomplete="country" placeholder="e.g. CA, US" required /></label>
+          </div>
+          <p class="registrant-error" id="registrant-error" hidden></p>
+          <div class="registrant-total">
+            <span class="cart-drawer-total-label">Total</span>
+            <span class="cart-drawer-total-value" id="registrant-total">$0.00</span>
+          </div>
+          <button type="submit" class="cart-checkout-btn registrant-submit-btn" id="registrant-submit-btn">Continue to payment →</button>
+        </form>
+      </div>
+
+      <div class="cart-drawer-foot" id="cart-drawer-foot">
+        <div class="cart-drawer-total">
+          <span class="cart-drawer-total-label">Total</span>
+          <span class="cart-drawer-total-value" id="cart-drawer-total">$0.00</span>
+        </div>
+        <button type="button" class="cart-checkout-btn" id="cart-checkout-btn" disabled>Checkout →</button>
+      </div>
     </div>
 
     <!-- ============ INCLUDED FREE BANNER ============ -->
@@ -749,9 +1188,9 @@
     <section id="host-process">
       <div class="section-inner">
         <div class="section-head">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// how it works</p>
-          <h2>New domain, or bringing one with you?</h2>
-          <p>Either way, VardWeb handles the errand — you stay the registrant, always.</p>
+          <p class="sec-tag" style="display:flex;justify-content:center;">// New vs. Existing</p>
+          <h2>Clean Slates vs.<br><span class="host-heading-grad">Established Infrastructure</span></h2>
+          <p>Either way, VardWeb handles the errand. You stay the registrant, always.</p>
         </div>
         <div class="host-process-grid">
           <div class="host-process-card">
@@ -780,7 +1219,7 @@
         <div class="host-managed-grid">
           <div>
             <p class="sec-tag">// managed hosting</p>
-            <h2 style="font-size:clamp(24px,3vw,32px);color:var(--text-1);margin-bottom:18px;">Your site stays online. We make sure of it.</h2>
+            <h2 style="font-size:clamp(24px,3vw,32px);color:var(--text-1);margin-bottom:18px;">Your site stays online.<br><span class="host-heading-grad">We make sure of it.</span></h2>
             <div class="host-managed-list">
               <div class="host-managed-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -788,7 +1227,7 @@
               </div>
               <div class="host-managed-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <div><h4>WHOIS, DNS,SSL, CDN &amp; DDoS protection included</h4><p>Built into every domain we manage, not sold as an upsell or add-on. Every domain gets the same baseline protection.</p></div>
+                <div><h4>SSL, CDN &amp; DDoS protection included</h4><p>Built into every domain we manage, not sold as an upsell or add-on. Every domain gets the same baseline protection.</p></div>
               </div>
               <div class="host-managed-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
@@ -810,56 +1249,74 @@
     <section id="host-concierge">
       <div class="section-inner">
         <div class="section-head">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// two ways to get your domain</p>
-          <h2>Search it yourself, or let us find it.</h2>
-          <p>Both land in the same place — a domain that's yours, managed through Cloudflare, priced at true cost.</p>
+          <p class="sec-tag" style="display:flex;justify-content:center;">// two paths</p>
+          <h2>Search It Yourself vs.<br><span class="host-heading-grad">Let Us Find It</span></h2>
+          <p>Purchase a domain, or let us find it for you. Domain Hosting & Delegation available for all clients on Bronze, Silver, Gold or Custom plans.</p>
         </div>
         <div class="host-path-grid">
           <div class="host-path-card">
             <div class="host-path-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
             <h3>Search it yourself</h3>
-            <p>Use the search bar above — type what you want, pick an extension, and send us the result. We'll register it in your name and have it live on Cloudflare within a day.</p>
+            <p>Type your brand name above, choose your preferred domain extension, and secure it immediately.</p>
             <div class="host-path-actions">
-              <a href="#host-hero" class="btn btn-primary">Back to search ↑</a>
+              <a href="#" class="btn addon-card-cta">Back to search ↑</a>
             </div>
           </div>
           <div class="host-path-card">
             <div class="host-path-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
             <h3>Let's find it together</h3>
-            <p>Not sure what you want, or juggling a rebrand? Talk it through with us directly — email, or book a short call.</p>
+            <p>Not sure what you want, or juggling a rebrand? Talk it through with us directly by email, or book a short call.</p>
             <div class="host-path-actions">
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;bookCall=1" class="btn btn-primary">Book a Call</a>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;learnMore=1" class="btn btn-ghost">Send a Message</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;bookCall=1&amp;bookCallColor=%2334D399" class="btn addon-card-cta">Book a Call</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;learnMore=1&amp;learnMoreColor=%2334D399" class="btn btn-outline-brand">Send a Message</a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
+    <div class="divider"></div>
+
     <!-- ============ PRICING MODEL ============ -->
     <section id="host-pricing">
       <div class="section-inner">
         <div class="section-head">
           <p class="sec-tag" style="display:flex;justify-content:center;">// pricing model</p>
-          <h2>Zero margin to get you in. A flat 10% if you stay.</h2>
-          <p>The inverse of how most registrars price — a cheap teaser year, then a steep unannounced jump.</p>
+          <h2>The Renewal<br><span class="host-heading-grad">Bait-and-Switch</span></h2>
+          <p>Go ahead, buy that C$0.01 domain from our competitors. Just try not to cry next year when they quietly bill you $34.99 to renew it. We skip the pricing traps, charging a transparent, boring, flat 10% over wholesale from year two until forever.</p>
         </div>
         <div class="host-price-flow">
           <div class="host-price-card">
             <span class="k">Year 1 — Registration</span>
-            <div class="v">True cost</div>
-            <p class="d">You pay exactly what we pay the registry. Zero margin, zero risk.</p>
+            <div class="host-price-row">
+              <span class="host-price-row-label host-price-row-label--brand">With VardWeb</span>
+              <div class="v grad"><span aria-hidden="true">~C$</span><span data-count>9.15</span></div>
+            </div>
+            <div class="host-price-divider"></div>
+            <div class="host-price-row">
+              <span class="host-price-row-label host-price-row-label--muted">Without</span>
+              <div class="v is-muted"><span aria-hidden="true">~C$</span><span data-count>9.99</span></div>
+            </div>
+            <p class="d">Network Solutions opens at C$9.99 — close enough to wholesale to look reasonable. That's exactly the point: year two is where the real number shows up.</p>
           </div>
           <div class="host-price-arrow" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="13" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </div>
           <div class="host-price-card is-y2">
             <span class="k">Year 2+ — Renewal</span>
-            <div class="v grad">+10% flat</div>
-            <p class="d">The only place we earn anything — and only if you're still happy enough to keep the domain.</p>
+            <div class="host-price-row">
+              <span class="host-price-row-label host-price-row-label--brand">With VardWeb</span>
+              <div class="v grad" data-count>+10%</div>
+            </div>
+            <div class="host-price-divider"></div>
+            <div class="host-price-row">
+              <span class="host-price-row-label host-price-row-label--muted">Without</span>
+              <div class="v is-muted" data-count>+241%</div>
+            </div>
+            <p class="d">Network Solutions marks renewals up to 241% over wholesale. VardWeb caps it at a flat 10%, every year, forever.</p>
           </div>
         </div>
-        <p class="host-price-note"><b>Billed separately, always.</b> Domain charges never fold into your site-package invoice — a one-off charge at registration, then an automated renewal charge each year, priced fresh from live wholesale cost so the 10% stays honest as registry pricing changes.</p>
+        <p class="host-price-note"><b>Billed separately, always.</b> Domain charges never fold into your site-package invoice. A one-off charge at registration, then an automated renewal charge each year, priced fresh from live wholesale cost so the 10% stays honest as registry pricing changes.</p>
       </div>
     </section>
 
@@ -867,9 +1324,9 @@
     <section id="host-compare" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
       <div class="section-inner">
         <div class="section-head">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// how we compare</p>
-          <h2>Less margin than everyone we checked.</h2>
-          <p>Markup is measured against ~$9.15–10.44/yr wholesale — Cloudflare's own published at-cost .com price, the best public reference point.</p>
+          <p class="sec-tag" style="display:flex;justify-content:center;">// Comparisons</p>
+          <h2>We Run on Transparency.<br><span class="host-heading-grad">They Run on Amnesia.</span></h2>
+          <p>Markup is measured against ~$9.15–10.44/yr wholesale. Cloudflare's own published at-cost .com price, the best public reference point for what a domain actually costs.</p>
         </div>
         <div class="compare-table-wrap">
           <table class="compare-table">
@@ -877,8 +1334,9 @@
               <tr>
                 <th></th>
                 <th>Year 1</th>
-                <th>Renewal</th>
+                <th>Year 2</th>
                 <th>Markup</th>
+                <th>The Catch</th>
               </tr>
             </thead>
             <tbody>
@@ -887,30 +1345,49 @@
                 <td class="ck">At cost — 0%</td>
                 <td class="ck">+10% flat</td>
                 <td class="ck">Lowest of the group</td>
+                <td class="ck">Predictable, honest pricing that treats users like adults.</td>
               </tr>
               <tr>
-                <th scope="row">Cloudflare (direct)</th>
-                <td>~$9–10/yr</td>
-                <td>Same as Yr 1</td>
-                <td class="ck">0%, always</td>
+                <th scope="row" style="--tier-color:#A3E635; color:var(--tier-color);">Hostinger</th>
+                <td>$2.99</td>
+                <td>$10.99</td>
+                <td style="color:#A3E635;font-weight:700;">~7%</td>
+                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Low markup only because they use domains to force expensive hosting bundles.">Hosting bundle trap</span></td>
               </tr>
               <tr>
-                <th scope="row">Namecheap</th>
-                <td>~$8–13 (promo)</td>
-                <td>$13.98–18.48/yr</td>
-                <td>~+45–95%</td>
+                <th scope="row" style="--tier-color:#FACC15; color:var(--tier-color);">Namecheap</th>
+                <td>$6.79</td>
+                <td>$18.48</td>
+                <td style="color:#FACC15;font-weight:700;">~80%</td>
+                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Billed as the affordable alternative, but still pockets a massive premium.">Still a premium</span></td>
               </tr>
               <tr>
-                <th scope="row">Squarespace Domains</th>
-                <td>~$12–15</td>
-                <td>$20+/yr</td>
-                <td class="xk">~+110%+</td>
+                <th scope="row" style="--tier-color:#FB923C; color:var(--tier-color);">Domain.com</th>
+                <td>$9.99</td>
+                <td>$19.99</td>
+                <td style="color:#FB923C;font-weight:700;">~95%</td>
+                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Standard pricing that hides the fact they charge extra for data privacy.">Hidden privacy fee</span></td>
               </tr>
               <tr>
-                <th scope="row">GoDaddy</th>
-                <td>~$11.99</td>
-                <td>$21.99–22.99/yr</td>
-                <td class="xk">~+130–140%</td>
+                <th scope="row" style="--tier-color:#F97316; color:var(--tier-color);">Squarespace</th>
+                <td>$20.00</td>
+                <td>$20.00</td>
+                <td style="color:#F97316;font-weight:700;">~95%</td>
+                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="No intro discount, just a flat, bloated premium to support their ecosystem.">Flat bloated premium</span></td>
+              </tr>
+              <tr>
+                <th scope="row" style="--tier-color:#EF4444; color:var(--tier-color);">GoDaddy</th>
+                <td>$0.99</td>
+                <td>$21.99</td>
+                <td style="color:#EF4444;font-weight:700;">~114%</td>
+                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="The ultimate bait-and-switch; they bleed wallets dry in year two.">Bait-and-switch</span></td>
+              </tr>
+              <tr>
+                <th scope="row" style="--tier-color:#B91C1C; color:var(--tier-color);">Network Solutions</th>
+                <td>$9.99</td>
+                <td>$34.99</td>
+                <td style="color:#B91C1C;font-weight:700;">~241%</td>
+                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Pure corporate extortion relying strictly on historical legacy.">Legacy extortion</span></td>
               </tr>
             </tbody>
           </table>
@@ -921,33 +1398,39 @@
     <!-- ============ ADD-ONS ============ -->
     <section id="host-addons">
       <div class="section-inner">
-        <div class="section-head">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// add-ons</p>
-          <h2>A few things worth adding on.</h2>
+        <div style="margin-bottom:24px;">
+          <p class="sec-tag">// Maximize</p>
+          <h2 style="font-size:clamp(26px,3.4vw,38px);font-weight:700;color:var(--text-1);margin-bottom:14px;">Add-ons</h2>
         </div>
         <div class="addon-card-grid">
           <div class="addon-card">
             <div class="addon-card-content">
-              <div class="addon-card-icon"><img src="brand_assets/icons/DedicatedIPs-isometric-icon-transparent.webp" alt="" loading="lazy" /></div>
-              <h4 class="addon-card-title">Dedicated IP</h4>
-              <p class="addon-card-desc">A static IP address for services that need one — payment gateways, legacy integrations, or compliance requirements.</p>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;bookCall=1" class="btn addon-card-cta">Request a quote</a>
+              <div class="addon-card-icon" style="--icon-right:-5%; --icon-top:65%; --icon-transform:translateY(-35%); --icon-w:250px; --icon-h:250px; --icon-rotate:2deg; --icon-right-mobile:-15%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:200px; --icon-h-mobile:200px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-12.7%; --icon-top-mobile-375:53.4%; --icon-transform-mobile-375:translateY(9.7%); --icon-w-mobile-375:211px; --icon-h-mobile-375:211px; --icon-rotate-mobile-375:2.8deg; --icon-right-mobile-425:-10.6%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-8%); --icon-w-mobile-425:222px; --icon-h-mobile-425:222px; --icon-rotate-mobile-425:2.6deg;"><img src="brand_assets/icons/DedicatedIPs-isometric-icon-transparent.webp" alt="" loading="lazy" /></div>
+              <div>
+                <h4 class="addon-card-title">Dedicated IP · From C$39 / mo</h4>
+                <p class="addon-card-desc">A static IP address for services that need one. Payment gateways, legacy integrations, or compliance requirements.<br>Shared and non-shared pool proxies available.</p>
+              </div>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;service=Dedicated%20IP&amp;serviceColor=%2334D399&amp;serviceDesc=A%20static%20IP%20for%20payment%20gateways%2C%20legacy%20integrations%2C%20or%20compliance%20needs%2C%20from%20C%2439%2Fmo." class="btn addon-card-cta">Request a quote</a>
             </div>
           </div>
           <div class="addon-card">
             <div class="addon-card-content">
-              <div class="addon-card-icon"><img src="brand_assets/icons/svc-hosting.webp" alt="" loading="lazy" /></div>
-              <h4 class="addon-card-title">Premium domain sourcing</h4>
-              <p class="addon-card-desc">Looking for a short, brandable, or already-claimed domain? We'll track it down and handle the acquisition on your behalf.</p>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;bookCall=1" class="btn addon-card-cta">Request a quote</a>
+              <div class="addon-card-icon" style="--icon-w:220px; --icon-h:220px; --icon-rotate:3deg; --icon-right:-7%; --icon-top:65%; --icon-transform:translateY(-41%); --icon-right-mobile:-18%; --icon-top-mobile:52%; --icon-transform-mobile:translateY(31%); --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-15.5%; --icon-top-mobile-375:55%; --icon-transform-mobile-375:translateY(14.5%); --icon-w-mobile-375:180px; --icon-h-mobile-375:180px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-13.2%; --icon-top-mobile-425:57.7%; --icon-transform-mobile-425:translateY(-0.5%); --icon-w-mobile-425:190px; --icon-h-mobile-425:190px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/PDS-isometric-icon.webp" alt="" loading="lazy" /></div>
+              <div>
+                <h4 class="addon-card-title">Premium domain sourcing · 15% success fee</h4>
+                <p class="addon-card-desc">Looking for a short, brandable, or already-claimed domain? We'll track it down and handle the acquisition on your behalf.<br>No upfront cost. You only pay if we land the domain.</p>
+              </div>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;service=Premium%20Domain%20Sourcing&amp;serviceColor=%2334D399&amp;serviceDesc=We'll%20track%20down%20your%20ideal%20domain%20and%20handle%20the%20acquisition%2C%20no%20upfront%20cost%2C%2015%25%20fee%20only%20if%20we%20land%20it." class="btn addon-card-cta">Start my search</a>
             </div>
           </div>
           <div class="addon-card">
             <div class="addon-card-content">
-              <div class="addon-card-icon"><img src="brand_assets/icons/Automation-isometric-icon-transparent.webp" alt="" loading="lazy" /></div>
-              <h4 class="addon-card-title">Extra subdomains &amp; DNS records</h4>
-              <p class="addon-card-desc">Staging environments, custom mail routing, or multi-app setups — additional DNS configuration beyond the default.</p>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;bookCall=1" class="btn addon-card-cta">Request a quote</a>
+              <div class="addon-card-icon" style="--icon-right:-4%; --icon-top:65%; --icon-transform:translateY(-38%); --icon-w:250px; --icon-h:250px; --icon-rotate:3deg; --icon-right-mobile:-13%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:220px; --icon-h-mobile:220px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-10.9%; --icon-top-mobile-375:53.4%; --icon-transform-mobile-375:translateY(3%); --icon-w-mobile-375:227px; --icon-h-mobile-375:227px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-9.1%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-6%); --icon-w-mobile-425:233px; --icon-h-mobile-425:233px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/ESDDNS-isometric-icon.webp" alt="" loading="lazy" /></div>
+              <div>
+                <h4 class="addon-card-title">Extra subdomains &amp; DNS records · Included for clients</h4>
+                <p class="addon-card-desc">Staging environments, custom mail routing, or multi-app setups. Additional DNS configuration beyond the default.<br>Immediate propagation and granular records management.</p>
+              </div>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;service=Extra%20Subdomains%20%26%20DNS%20Records&amp;serviceColor=%2334D399&amp;serviceDesc=Staging%20environments%2C%20custom%20mail%20routing%2C%20or%20multi-app%20DNS%20setups%2C%20included%20at%20no%20extra%20cost%20for%20clients." class="btn addon-card-cta">Make a request →</a>
             </div>
           </div>
         </div>
@@ -956,37 +1439,37 @@
 
     <!-- ============ FAQ ============ -->
     <section id="host-faq" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
-      <div class="section-inner">
-        <div class="section-head">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// faq</p>
-          <h2>Common questions</h2>
-        </div>
+      <div class="host-faq-inner">
+        <p class="sec-tag">// frequently asked</p>
+        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px;">
+          Domain Questions, <span class="host-heading-grad">Answered</span>
+        </h2>
         <div class="host-faq-list">
           <div class="host-faq-item">
             <button class="host-faq-trigger" aria-expanded="false">
-              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
               <span class="host-faq-question">Will I actually own my domain?</span>
               <div class="host-faq-toggle" aria-hidden="true">
                 <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Yes, always. The registrant contact is set to your name or business at the moment of registration — VardWeb executes the purchase and handles billing, but we are never the legal owner of your domain, even briefly.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Yes, always. The registrant contact is set to your name or business at the moment of registration. VardWeb executes the purchase and handles billing, but we are never the legal owner of your domain, even briefly.</div></div>
           </div>
           <div class="host-faq-item">
             <button class="host-faq-trigger" aria-expanded="false">
-              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div>
               <span class="host-faq-question">What does the 10% renewal fee actually cover?</span>
               <div class="host-faq-toggle" aria-hidden="true">
                 <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">It's the only margin we take on a domain, and only from year two onward. It covers the ongoing management, renewal handling, and support that comes with keeping your domain and DNS running correctly — well under what most registrars mark up on renewal (see the comparison above).</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">It's the only margin we take on a domain, and only from year two onward. It covers the ongoing management, renewal handling, and support that comes with keeping your domain and/or DNS running correctly. Well under what most registrars mark up on renewal (see the comparison above).</div></div>
           </div>
           <div class="host-faq-item">
             <button class="host-faq-trigger" aria-expanded="false">
-              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
               <span class="host-faq-question">Can I transfer a domain I already own?</span>
               <div class="host-faq-toggle" aria-hidden="true">
                 <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -997,25 +1480,36 @@
           </div>
           <div class="host-faq-item">
             <button class="host-faq-trigger" aria-expanded="false">
-              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-              <span class="host-faq-question">Why Cloudflare specifically?</span>
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg></div>
+              <span class="host-faq-question">What actually protects my domain once it's live?</span>
               <div class="host-faq-toggle" aria-hidden="true">
                 <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Fastest DNS network available, free WHOIS privacy and DNSSEC on every domain, and CDN/DDoS/SSL bundled at no extra cost — see the comparison table above for exactly how that stacks up against GoDaddy, Namecheap, and Squarespace Domains.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Every domain we manage runs on Cloudflare's network, with WHOIS privacy, DNSSEC, SSL, and DDoS protection bundled in by default. Never sold back to you as an add-on. See the comparison table above for how that holds up on price against other registrars.</div></div>
           </div>
           <div class="host-faq-item">
             <button class="host-faq-trigger" aria-expanded="false">
-              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
               <span class="host-faq-question">What if I already have hosting elsewhere?</span>
               <div class="host-faq-toggle" aria-hidden="true">
                 <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">No problem — we can work with what you have, or make the case for moving to Cloudflare if it's a better fit. Either way, nothing changes without your say-so. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See more general FAQs →</a></div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">No problem. We can work with what you have, or make the case for moving to our network if it's a better fit. Either way, nothing changes without your say-so.</div></div>
+          </div>
+          <div class="host-faq-item">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
+              <span class="host-faq-question">How does the premium domain sourcing fee work?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">If the domain you want is short, brandable, or already claimed by someone else, we'll track down the owner and handle the acquisition on your behalf. No upfront cost. We only charge a 15% success fee if we actually land it for you, on top of whatever the acquisition itself costs. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See more general FAQs →</a></div></div>
           </div>
         </div>
       </div>
@@ -1024,19 +1518,19 @@
     <!-- ============ CTA ============ -->
     <section class="host-cta">
       <div class="host-cta-card">
+        <canvas class="host-cta-shader" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
         <div class="host-cta-content">
           <div class="host-hero-pill" style="margin-bottom:0;">
             <span class="host-hero-pill-dot"></span>
-            Let's Get Your Domain Sorted
+            Your domain is waiting
           </div>
           <h2 class="host-cta-heading">
-            Your domain, at true cost.
-            <span class="muted">Managed through Cloudflare, from day one.</span>
+            Search for your<br class="host-cta-break"> <span class="host-heading-grad">domain name now.</span>
           </h2>
-          <p class="host-cta-sub">Search above, or talk it through with us directly — either way, you own it, and we don't make a cent until you renew.</p>
+          <p class="host-cta-sub">Search above, or talk it through with us directly. Either way, you own it, and we don't make a cent until you renew.</p>
           <div class="host-cta-actions">
-            <a href="#host-hero" class="btn btn-primary">Search a Domain <span aria-hidden="true">→</span></a>
-            <a href="contact.html?type=Domain%20%26%20Hosting&amp;learnMore=1" class="btn btn-ghost">Contact Us</a>
+            <a href="#" class="btn addon-card-cta">Search a Domain <span class="btn-arrow" aria-hidden="true">→</span></a>
+            <a href="contact.html?type=Domain%20%26%20Hosting&amp;learnMore=1&amp;learnMoreColor=%2334D399" class="btn btn-outline-brand">Contact Us</a>
           </div>
         </div>
       </div>
@@ -1087,7 +1581,7 @@
           <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
           <a href="email-marketing.html" class="footer-link">Email Marketing</a>
           <a href="hosting-services.html" class="footer-link active">Domain &amp; Hosting</a>
-          <a href="contact.html" class="footer-link">Content Creation &amp; CM</a>
+          <a href="content-creation.html" class="footer-link">Content Creation &amp; CM</a>
           <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
           <a href="contact.html" class="footer-link">Custom Request</a>
         </div>
@@ -1168,18 +1662,252 @@
         });
       }
 
-      // Domain search — front-end only, routes to the V1 concierge contact flow
+      // Domain search — V2 self-serve: live Openprovider availability check + cart.
+      // V1 concierge path (contact.html redirect) stays reachable via the
+      // "Talk to a human instead" link added next to the results panel.
+      var domainInput = document.getElementById('domain-input');
+      var searchInputWrap = document.querySelector('.host-search-input-wrap');
+      if (domainInput && searchInputWrap) {
+        domainInput.addEventListener('focus', function () { searchInputWrap.classList.add('is-focused'); });
+        domainInput.addEventListener('blur', function () { searchInputWrap.classList.remove('is-focused'); });
+      }
+
+      function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function formatPrice(price) {
+        return typeof price === 'number' ? '$' + price.toFixed(2) + '/yr' : '—';
+      }
+
+      // ── Cart (localStorage, no login required) ──────────────────────
+      var CART_KEY = 'vardweb_domain_cart';
+      function loadCart() {
+        try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+        catch (e) { return []; }
+      }
+      function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+        renderCart();
+      }
+      function cartHasItem(domain, tld) {
+        return loadCart().some(function (i) { return i.domain === domain && i.tld === tld; });
+      }
+      function addToCart(item) {
+        var cart = loadCart();
+        if (cart.some(function (i) { return i.domain === item.domain && i.tld === item.tld; })) return;
+        cart.push(item);
+        saveCart(cart);
+      }
+      function removeFromCart(index) {
+        var cart = loadCart();
+        cart.splice(index, 1);
+        saveCart(cart);
+      }
+
+      var cartHeaderBtn = document.getElementById('nav-cart-btn');
+      var cartCountBadge = document.getElementById('cart-count-badge');
+      var cartDrawer = document.getElementById('cart-drawer');
+      var cartBackdrop = document.getElementById('cart-backdrop');
+      var cartDrawerTitle = document.getElementById('cart-drawer-title');
+      var cartItemsEl = document.getElementById('cart-drawer-items');
+      var cartDrawerFoot = document.getElementById('cart-drawer-foot');
+      var cartTotalEl = document.getElementById('cart-drawer-total');
+      var cartCheckoutBtn = document.getElementById('cart-checkout-btn');
+
+      function renderCart() {
+        var cart = loadCart();
+        if (cartCountBadge) {
+          cartCountBadge.textContent = String(cart.length);
+          cartCountBadge.hidden = cart.length === 0;
+        }
+
+        if (!cartItemsEl) return;
+        if (cart.length === 0) {
+          if (cartDrawerTitle) cartDrawerTitle.textContent = 'Your cart is empty';
+          cartItemsEl.innerHTML =
+            '<p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out faster.</p>' +
+            '<button type="button" class="cart-continue-btn" id="cart-continue-btn">Continue Shopping</button>';
+          var continueBtn = document.getElementById('cart-continue-btn');
+          if (continueBtn) continueBtn.addEventListener('click', closeCart);
+          if (cartDrawerFoot) cartDrawerFoot.hidden = true;
+        } else {
+          if (cartDrawerTitle) cartDrawerTitle.textContent = 'Your Cart';
+          cartItemsEl.innerHTML = cart.map(function (item, i) {
+            return '<div class="cart-item">' +
+              '<span class="cart-item-domain">' + escapeHtml(item.domain) + '</span>' +
+              '<span class="cart-item-price">' + formatPrice(item.price) + '</span>' +
+              '<button type="button" class="cart-item-remove" data-index="' + i + '" aria-label="Remove ' + escapeHtml(item.domain) + '">×</button>' +
+              '</div>';
+          }).join('');
+          cartItemsEl.querySelectorAll('.cart-item-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () { removeFromCart(Number(btn.dataset.index)); });
+          });
+          if (cartDrawerFoot) cartDrawerFoot.hidden = false;
+        }
+
+        var total = cart.reduce(function (sum, i) { return sum + (typeof i.price === 'number' ? i.price : 0); }, 0);
+        if (cartTotalEl) cartTotalEl.textContent = '$' + total.toFixed(2);
+        if (cartCheckoutBtn) cartCheckoutBtn.disabled = cart.length === 0;
+
+        // Reflect cart state on any currently-rendered result cards
+        document.querySelectorAll('.host-result-cta[data-domain]').forEach(function (btn) {
+          var inCart = cartHasItem(btn.dataset.domain, btn.dataset.tld);
+          if (btn.dataset.available === 'true') {
+            btn.textContent = inCart ? 'Added ✓' : 'Add to Cart';
+            btn.classList.toggle('added', inCart);
+            btn.disabled = inCart;
+          }
+        });
+      }
+
+      function openCart() {
+        showCartView();
+        if (cartDrawer) cartDrawer.classList.add('open');
+        if (cartBackdrop) cartBackdrop.classList.add('open');
+      }
+      function closeCart() {
+        if (cartDrawer) cartDrawer.classList.remove('open');
+        if (cartBackdrop) cartBackdrop.classList.remove('open');
+      }
+      if (cartHeaderBtn) cartHeaderBtn.addEventListener('click', openCart);
+      var cartDrawerClose = document.getElementById('cart-drawer-close');
+      if (cartDrawerClose) cartDrawerClose.addEventListener('click', closeCart);
+      if (cartBackdrop) cartBackdrop.addEventListener('click', closeCart);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeCart();
+      });
+
+      renderCart();
+
+      // ── Checkout: registrant form → create-domain-checkout → Stripe ───
+      var _sbCfg = window.SUPABASE_CONFIG || {};
+      var cartDrawerItemsWrap = document.getElementById('cart-drawer-items');
+      var cartCheckoutPanel = document.getElementById('cart-checkout-panel');
+      var registrantForm = document.getElementById('registrant-form');
+      var registrantError = document.getElementById('registrant-error');
+      var registrantSubmitBtn = document.getElementById('registrant-submit-btn');
+      var registrantTotalEl = document.getElementById('registrant-total');
+
+      function showCheckoutPanel() {
+        var cart = loadCart();
+        if (cart.length === 0) return;
+        var total = cart.reduce(function (sum, i) { return sum + (typeof i.price === 'number' ? i.price : 0); }, 0);
+        if (registrantTotalEl) registrantTotalEl.textContent = '$' + total.toFixed(2);
+        if (cartDrawerItemsWrap) cartDrawerItemsWrap.hidden = true;
+        if (cartDrawerFoot) cartDrawerFoot.hidden = true;
+        if (cartCheckoutPanel) cartCheckoutPanel.hidden = false;
+      }
+      function showCartView() {
+        if (cartDrawerItemsWrap) cartDrawerItemsWrap.hidden = false;
+        if (cartCheckoutPanel) cartCheckoutPanel.hidden = true;
+        if (registrantError) registrantError.hidden = true;
+        renderCart();
+      }
+      if (cartCheckoutBtn) cartCheckoutBtn.addEventListener('click', showCheckoutPanel);
+      var cartBackBtn = document.getElementById('cart-back-btn');
+      if (cartBackBtn) cartBackBtn.addEventListener('click', showCartView);
+
+      if (registrantForm) {
+        registrantForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var cart = loadCart();
+          if (cart.length === 0) return;
+
+          var fd = new FormData(registrantForm);
+          var registrant = {
+            name: fd.get('name'), phone: fd.get('phone'), address: fd.get('address'),
+            city: fd.get('city'), state: fd.get('state'), postal_code: fd.get('postal_code'), country: fd.get('country'),
+          };
+          var buyerEmail = fd.get('email');
+
+          if (registrantError) registrantError.hidden = true;
+          registrantSubmitBtn.disabled = true;
+          registrantSubmitBtn.textContent = 'Redirecting to payment…';
+
+          fetch(_sbCfg.url + '/functions/v1/create-domain-checkout', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: cart, registrant: registrant, buyer_email: buyerEmail }),
+          })
+            .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+            .then(function (r) {
+              if (!r.ok || r.json.error || !r.json.checkout_url) {
+                throw new Error(r.json.error || 'Checkout failed');
+              }
+              window.location.href = r.json.checkout_url;
+            })
+            .catch(function (err) {
+              registrantSubmitBtn.disabled = false;
+              registrantSubmitBtn.textContent = 'Continue to payment →';
+              if (registrantError) {
+                registrantError.textContent = err.message || 'Something went wrong starting checkout — please try again.';
+                registrantError.hidden = false;
+              }
+            });
+        });
+      }
+
+      // ── Live availability search ─────────────────────────────────────
+      var resultsEl = document.getElementById('host-search-results');
+
+      function renderResultsLoading() {
+        resultsEl.hidden = false;
+        resultsEl.innerHTML = '<div class="host-result-skeleton"></div>';
+      }
+      function renderResultsError(message) {
+        resultsEl.hidden = false;
+        resultsEl.innerHTML = '<div class="host-result-error">' + escapeHtml(message) +
+          ' — you can also <a href="contact.html?type=' + encodeURIComponent('Domain & Hosting') + '&learnMore=1" style="color:inherit;text-decoration:underline;">talk to us directly</a>.</div>';
+      }
+      function renderResults(results) {
+        resultsEl.hidden = false;
+        if (!results.length) {
+          resultsEl.innerHTML = '<div class="host-result-error">No results came back — try a different name.</div>';
+          return;
+        }
+        resultsEl.innerHTML = results.map(function (r) {
+          var domainFull = r.domain + r.tld;
+          var available = Boolean(r.available);
+          return '<div class="host-result-card" data-available="' + available + '">' +
+            '<span class="host-result-domain">' + escapeHtml(domainFull) + '</span>' +
+            '<span class="host-result-status">' + (available ? 'Available' : 'Taken') + '</span>' +
+            '<span class="host-result-price">' + (available ? formatPrice(r.price) : '') + '</span>' +
+            '<button type="button" class="host-result-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" data-available="' + available + '" ' + (available ? '' : 'disabled') + '>' +
+            (available ? 'Add to Cart' : 'Taken') + '</button>' +
+            '</div>';
+        }).join('');
+        resultsEl.querySelectorAll('.host-result-cta[data-available="true"]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            addToCart({ domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price) });
+          });
+        });
+        renderCart();
+      }
+
       var searchForm = document.getElementById('domain-search-form');
       if (searchForm) {
         searchForm.addEventListener('submit', function (e) {
           e.preventDefault();
           var input = document.getElementById('domain-input');
           var base = (input.value || '').trim().replace(/\s+/g, '').replace(/\.[a-z]+$/i, '');
+          if (!base) { input.focus(); return; }
           var tld = (tldBadgeText && tldBadgeText.textContent) || '.com';
-          var domain = (base || 'yourbrand') + tld;
-          var url = 'contact.html?type=' + encodeURIComponent('Domain & Hosting') +
-                     '&learnMore=1&domain=' + encodeURIComponent(domain);
-          window.location.href = url;
+
+          renderResultsLoading();
+
+          fetch(_sbCfg.url + '/functions/v1/check-domain-availability', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domains: [{ name: base, tld: tld }] }),
+          })
+            .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+            .then(function (r) {
+              if (!r.ok || r.json.error) { renderResultsError(r.json.error || 'Domain lookup failed'); return; }
+              renderResults(r.json.results || []);
+            })
+            .catch(function () { renderResultsError('Could not reach the domain lookup service'); });
         });
       }
 
@@ -1208,6 +1936,279 @@
         });
       });
     });
+  </script>
+
+  <script>
+    /* ── Shared floating tooltip for .tt-trigger elements (compare table) ── */
+    (function () {
+      var triggers = document.querySelectorAll('.tt-trigger');
+      if (!triggers.length) return;
+
+      var box = document.createElement('div');
+      box.className = 'tt-box';
+      box.id = 'tt-box-shared';
+      box.setAttribute('role', 'tooltip');
+      document.body.appendChild(box);
+
+      var openTrigger = null;
+      var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      function position(trigger) {
+        var r = trigger.getBoundingClientRect();
+        var bw = box.offsetWidth, bh = box.offsetHeight;
+        var left = r.left + r.width / 2 - bw / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
+        var top = r.top - bh - 6;
+        var below = top < 8;
+        if (below) top = r.bottom + 6;
+        box.style.left = left + 'px';
+        box.style.top = top + 'px';
+        box.classList.toggle('tt-below', below);
+      }
+
+      function show(trigger) {
+        openTrigger = trigger;
+        box.textContent = trigger.getAttribute('data-tooltip') || '';
+        box.classList.add('is-open');
+        position(trigger);
+        trigger.setAttribute('aria-expanded', 'true');
+        trigger.setAttribute('aria-describedby', 'tt-box-shared');
+      }
+
+      function hide() {
+        if (!openTrigger) return;
+        openTrigger.setAttribute('aria-expanded', 'false');
+        openTrigger.removeAttribute('aria-describedby');
+        openTrigger = null;
+        box.classList.remove('is-open');
+      }
+
+      var HOVER_DELAY = 150;
+      var hoverTimer = null;
+
+      triggers.forEach(function (t) {
+        t.addEventListener('mouseenter', function () {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(function () {
+            if (t.matches(':hover')) show(t);
+          }, HOVER_DELAY);
+        });
+        t.addEventListener('mouseleave', function () {
+          clearTimeout(hoverTimer);
+          if (openTrigger === t) hide();
+        });
+        t.addEventListener('focus', function () { show(t); });
+        t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
+
+        if (!canHover) {
+          t.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (openTrigger === t) { hide(); } else { show(t); }
+          });
+        }
+      });
+
+      document.addEventListener('click', function () { hide(); });
+      document.addEventListener('pointerdown', function (e) {
+        if (!openTrigger) return;
+        if (e.target === openTrigger || openTrigger.contains(e.target)) return;
+        hide();
+      }, true);
+      window.addEventListener('scroll', function () {
+        if (!openTrigger) return;
+        if (canHover) { position(openTrigger); } else { hide(); }
+      }, true);
+      window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
+    })();
+  </script>
+
+  <script>
+  (function () {
+    function parse(text) {
+      var m = text.trim().match(/^([+\-]?)(\d+(?:\.\d+)?)(.*)$/);
+      if (!m) return null;
+      var dec = (m[2].split('.')[1] || '').length;
+      return { prefix: m[1], target: parseFloat(m[2]), suffix: m[3], decimals: dec, original: text.trim() };
+    }
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function animateSpan(el) {
+      var parsed = parse(el.textContent);
+      if (!parsed) return;
+      el.setAttribute('data-count-done', '');
+      var duration = 1600, start = performance.now();
+      (function tick(now) {
+        var t = Math.min((now - start) / duration, 1);
+        el.textContent = parsed.prefix + (parsed.target * easeOutCubic(t)).toFixed(parsed.decimals) + parsed.suffix;
+        if (t < 1) requestAnimationFrame(tick); else el.textContent = parsed.original;
+      })(start);
+    }
+    var flow = document.querySelector('.host-price-flow');
+    if (!flow) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        entry.target.querySelectorAll('[data-count]:not([data-count-done])').forEach(animateSpan);
+      });
+    }, { threshold: 0.3 });
+    observer.observe(flow);
+  })();
+  </script>
+
+  <!-- ── CTA shader background — ambient WebGL noise/glow wash behind the closing
+       CTA, in the page's green domain/hosting theme. Same technique as the
+       .smm-cta-shader IIFE on smm.html (simplex noise → color blend → vignette
+       → grain), recolored to --host-green / --host-green-deep / --host-green-pale. ── -->
+  <script>
+    (function () {
+      var canvas = document.querySelector('.host-cta-shader');
+      if (!canvas) return;
+
+      var gl = canvas.getContext('webgl', { antialias: true });
+      if (!gl) return;
+
+      var vertexSrc = [
+        'attribute vec2 position;',
+        'varying vec2 vUv;',
+        'void main() {',
+        '  vUv = position * 0.5 + 0.5;',
+        '  gl_Position = vec4(position, 0.0, 1.0);',
+        '}'
+      ].join('\n');
+
+      var fragmentSrc = [
+        'precision highp float;',
+        'varying vec2 vUv;',
+        'uniform vec2  u_resolution;',
+        'uniform float u_time;',
+        'uniform float u_grain;',
+        'uniform vec3  u_colors[3];',
+        'uniform vec3  u_bg;',
+        'vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+        'vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+        'vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }',
+        'float snoise(vec2 v) {',
+        '  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);',
+        '  vec2 i  = floor(v + dot(v, C.yy));',
+        '  vec2 x0 = v - i + dot(i, C.xx);',
+        '  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);',
+        '  vec4 x12 = x0.xyxy + C.xxzz;',
+        '  x12.xy -= i1;',
+        '  i = mod289(i);',
+        '  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));',
+        '  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);',
+        '  m = m*m; m = m*m;',
+        '  vec3 x = 2.0 * fract(p * C.www) - 1.0;',
+        '  vec3 h = abs(x) - 0.5;',
+        '  vec3 ox = floor(x + 0.5);',
+        '  vec3 a0 = x - ox;',
+        '  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);',
+        '  vec3 g;',
+        '  g.x  = a0.x  * x0.x  + h.x  * x0.y;',
+        '  g.yz = a0.yz * x12.xz + h.yz * x12.yw;',
+        '  return 130.0 * dot(m, g);',
+        '}',
+        'void main() {',
+        '  vec2 uv = vUv;',
+        '  float ratio = u_resolution.x / u_resolution.y;',
+        '  vec2 p = (uv - 0.5) * vec2(ratio, 1.0);',
+        '  float t = u_time * 0.15;',
+        '  float n1 = snoise(p * 0.9 + vec2(t * 0.6, -t * 0.4));',
+        '  float n2 = snoise(p * 1.3 + vec2(-t * 0.5, t * 0.35) + n1 * 0.3);',
+        '  float n3 = snoise(p * 1.8 + vec2(t * 0.3, -t * 0.5) + n2 * 0.25);',
+        '  vec3 col = u_bg;',
+        '  col = mix(col, u_colors[0], smoothstep(-0.15, 0.55, n1) * 0.55);',
+        '  col = mix(col, u_colors[1], smoothstep(-0.05, 0.6, n2) * 0.5);',
+        '  col = mix(col, u_colors[2], smoothstep(0.0, 0.7, n1 * n2 + n3 * 0.3) * 0.2);',
+        '  float dist = length(p) * 1.4;',
+        '  float glow = smoothstep(0.85, 0.0, dist) * 0.14;',
+        '  col += u_colors[1] * glow;',
+        '  float vignette = 1.0 - smoothstep(0.35, 1.25, dist);',
+        '  col = mix(col * 0.15, col, vignette);',
+        '  float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453 + u_time);',
+        '  col += (grain - 0.5) * u_grain * 0.06;',
+        '  gl_FragColor = vec4(col, 1.0);',
+        '}'
+      ].join('\n');
+
+      function createShader(type, src) {
+        var s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+
+      var program = gl.createProgram();
+      gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexSrc));
+      gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentSrc));
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      var buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+      var posLoc = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+      var locs = {
+        res:    gl.getUniformLocation(program, 'u_resolution'),
+        time:   gl.getUniformLocation(program, 'u_time'),
+        grain:  gl.getUniformLocation(program, 'u_grain'),
+        colors: gl.getUniformLocation(program, 'u_colors'),
+        bg:     gl.getUniformLocation(program, 'u_bg')
+      };
+
+      function hexToRgb(hex) {
+        var h = hex.replace('#', '');
+        return [
+          parseInt(h.slice(0, 2), 16) / 255,
+          parseInt(h.slice(2, 4), 16) / 255,
+          parseInt(h.slice(4, 6), 16) / 255
+        ];
+      }
+
+      var BG = hexToRgb('#070910');
+      var COLORS = new Float32Array(
+        ['#34D399', '#059669', '#A7F3D0'].reduce(function (acc, hex) {
+          return acc.concat(hexToRgb(hex));
+        }, [])
+      );
+      var GRAIN = 0.6;
+      var SPEED = 0.25;
+
+      function resize() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, canvas.clientWidth * dpr);
+        canvas.height = Math.max(1, canvas.clientHeight * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+
+      var ro = new ResizeObserver(resize);
+      ro.observe(canvas);
+      resize();
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function draw(t) {
+        gl.uniform2f(locs.res, canvas.width, canvas.height);
+        gl.uniform1f(locs.time, t);
+        gl.uniform1f(locs.grain, GRAIN);
+        gl.uniform3fv(locs.colors, COLORS);
+        gl.uniform3f(locs.bg, BG[0], BG[1], BG[2]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+
+      if (reduceMotion) {
+        draw(0);
+      } else {
+        (function render(ts) {
+          draw(ts * 0.001 * SPEED);
+          requestAnimationFrame(render);
+        })(0);
+      }
+    })();
   </script>
 </body>
 </html>
