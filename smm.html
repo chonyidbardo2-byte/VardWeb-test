@@ -115,6 +115,8 @@
     .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
     .nav-link.active { color: var(--cyan); }
     .nav-link.active::after { width: 100%; }
+    .nav-link.nav-dropdown-trigger.active { color: var(--smm-rose); }
+    .nav-link.nav-dropdown-trigger.active::after { background: var(--smm-rose-deep); }
 
     /* ── Nav Dropdown ── */
     .nav-dropdown { position: relative; display: flex; align-items: center; }
@@ -122,9 +124,12 @@
     .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
     .nav-dropdown:hover .chevron,
     .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
     .dropdown-menu {
       position: absolute;
-      top: 100%; left: 50%;
+      top: calc(100% + 6px); left: 50%;
       transform: translateX(-50%) translateY(-6px);
       background: rgba(15,18,25,0.96);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -266,7 +271,7 @@
       color: rgba(238,240,248,0.9); letter-spacing: 0.02em;
       margin-bottom: 14px;
       text-decoration: none; cursor: pointer;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
     }
     .smm-nav-pill:hover { transform: translateY(-5px) !important; }
     .smm-nav-pill:active { transform: translateY(0) !important; }
@@ -353,6 +358,32 @@
     .footer-link:hover { color: var(--cyan); }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--cyan); }
+    .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .trust-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      width: 130px;
+      padding: 7px 16px 7px 7px;
+      white-space: nowrap;
+      background: var(--text-1);
+      border: 1px solid rgba(20,16,10,0.22);
+      border-radius: 13px;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(20,16,10,0.2), 0 10px 24px -12px rgba(20,16,10,0.55);
+      transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      -webkit-font-smoothing: antialiased;
+    }
+    .trust-badge:hover { transform: translateY(-3px) translateZ(0); box-shadow: 0 2px 4px rgba(20,16,10,0.22), 0 16px 32px -12px rgba(20,16,10,0.55); }
+    .trust-badge:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .trust-badge:active { transform: translateY(-1px) translateZ(0); }
+    .trust-badge-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trust-badge-text { display: flex; flex-direction: column; line-height: 1.28; }
+    .trust-badge-text span:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    .trust-badge-text span:last-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    @media (max-width: 768px) { .trust-badge-row { justify-content: center; } }
+    @media (max-width: 560px) { .trust-badge-row { gap: 10px; } .trust-badge { padding: 6px 13px 6px 6px; } }
     .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
     .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
     .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
@@ -1208,7 +1239,7 @@
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
           <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+          <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
@@ -1266,7 +1297,7 @@
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
     <a href="services.html"   class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
-    <a href="contact.html"    class="mob-link mob-sub">E-Commerce</a>
+    <a href="ecommerce.html"    class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
@@ -1380,7 +1411,7 @@
 
   <div style="position:relative;z-index:2;max-width:620px;margin:0 auto;text-align:center;">
     <a href="#paid-social" class="smm-nav-pill">
-      <span>✨</span>
+      <span>🔥</span>
       Meta Ads Now Available
     </a>
     <p class="smm-hero-kicker">
@@ -1413,7 +1444,7 @@
           <a href="#paid-social-ads" class="dropdown-item" role="menuitem">Advertising</a>
         </div>
       </div>
-      <a href="contact.html?type=Social%20Media%20%26%20SMM" class="btn smm-pill-btn smm-hero-btn smm-pill-btn-gradient">Book Discovery Call <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6" class="btn smm-pill-btn smm-hero-btn smm-pill-btn-gradient">Book Discovery Call <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
     </div>
   </div>
 
@@ -1442,7 +1473,7 @@
           </div>
           <h3>Open Graph Tags</h3>
           <p>Your links preview perfectly wherever they're shared — Facebook, LinkedIn, Slack, Discord, iMessage.</p>
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Open%20Graph%20Tags" class="btn free-item-cta">Free, on request</a>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Open%20Graph%20Tags" class="btn free-item-cta">Free, on request</a>
         </div>
       </div>
       <div class="free-item reveal-fade" data-free="tracking-pixel" style="transition-delay:0.08s">
@@ -1455,7 +1486,7 @@
           </div>
           <h3>Tracking Pixel Installs</h3>
           <p>Meta, LinkedIn, and TikTok pixels wired in the moment you're ready to run ads.</p>
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Tracking%20Pixel%20Installs" class="btn free-item-cta">Free, on request</a>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Tracking%20Pixel%20Installs" class="btn free-item-cta">Free, on request</a>
         </div>
       </div>
       <div class="free-item reveal-fade" data-free="share-buttons" style="transition-delay:0.16s">
@@ -1468,7 +1499,7 @@
           </div>
           <h3>Share Buttons</h3>
           <p>One-tap sharing built right into your site, styled to match your brand instead of bolted on.</p>
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Share%20Buttons" class="btn free-item-cta">Free, on request</a>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Share%20Buttons" class="btn free-item-cta">Free, on request</a>
         </div>
       </div>
     </div>
@@ -1485,7 +1516,7 @@
           <p>Most agencies use third-party plugins, limit features and pass the monthly bill to you. VardWeb builds its own — so your site shows real, live Instagram, Facebook, YouTube or TikTok posts without watermarks and displaying exactly where you want them. Look, Mom! We are popular on the internet!</p>
         </div>
         <div class="widget-price-row">
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Live%20Social%20Feed%20Widget" class="widget-price-chip">
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Live%20Social%20Feed%20Widget" class="widget-price-chip">
             <div class="wpc-label">Request Widget</div>
             <div class="wpc-value">C$15<span style="font-size:11px;">/mo</span></div>
           </a>
@@ -1524,7 +1555,7 @@
             <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Matches your site's exact colors &amp; fonts</div>
             <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"/></svg>Editable Canva templates, save and store</div>
           </div>
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Social%20Brand%20Kit&amp;tier=Essentials" class="btn btn-white">
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Social%20Brand%20Kit&amp;tier=Essentials" class="btn btn-white">
             <span class="kit-btn-label"><svg class="kit-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Purchase Essentials</span>
             <svg class="kit-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </a>
@@ -1619,7 +1650,7 @@
             <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Matches your site's exact colors &amp; fonts</div>
             <div class="kit-benefit"><svg class="kit-benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 4v5c0 5-3 8-7 9-4-1-7-4-7-9V7l7-4z"/></svg>Includes a written brand usage guide</div>
           </div>
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Social%20Brand%20Kit&amp;tier=Full%20Kit" class="btn btn-white">
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Social%20Brand%20Kit&amp;tier=Full%20Kit" class="btn btn-white">
             <span class="kit-btn-label"><svg class="kit-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Purchase Full Kit</span>
             <svg class="kit-btn-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
           </a>
@@ -1740,7 +1771,7 @@
       <div class="tier-glider reveal-fade" data-service="Meta &amp; Instagram Ads" style="max-width:520px;width:100%;transition-delay:0.2s">
         <div class="tier-kicker-row">
           <p class="tier-kicker">Choose your tier</p>
-          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;service=Paid%20Social" class="tier-contact-btn">Contact VardWeb</a>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;service=Paid%20Social" class="tier-contact-btn">Contact VardWeb</a>
         </div>
         <div class="tier-slider-wrap">
           <input type="range" class="tier-range" min="0" max="4" step="1" value="0" autocomplete="off" aria-label="Choose your Meta and Instagram Ads tier" />
@@ -1861,8 +1892,8 @@
         <h2>READY TO TURN<span class="smm-cta-h2-line2">FOLLOWERS INTO FANATICS?</span></h2>
         <p>Likes and shares don't pay the bills, but conversions do. We design high-converting social campaigns and templates that capture premium leads and maximize your returns.</p>
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <a href="contact.html?type=Social%20Media%20%26%20SMM" class="btn smm-pill-btn smm-cta-pill-btn smm-pill-btn-gradient">Book Discovery Call <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-          <a href="contact.html" class="btn smm-pill-btn smm-cta-pill-btn smm-pill-btn-outline">Contact Us</a>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6" class="btn smm-pill-btn smm-cta-pill-btn smm-pill-btn-gradient">Book Discovery Call <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a href="contact.html?type=Social%20Media%20%26%20SMM&amp;typeColor=%23F472B6&amp;learnMore=1" class="btn smm-pill-btn smm-cta-pill-btn smm-pill-btn-outline">Contact Us</a>
         </div>
       </div>
     </div>
@@ -1908,7 +1939,7 @@
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
-        <a href="contact.html" class="footer-link">E-Commerce</a>
+        <a href="ecommerce.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
@@ -1927,6 +1958,33 @@
         <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
       </div>
     </div>
+    <div class="trust-badge-row reveal-fade">
+      <a href="about.html" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+        </span>
+        <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </span>
+        <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--cyan);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14100a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+      </a>
+      <a href="accessibility.html" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#14100a" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+      </a>
+    </div>
+
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
       <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>

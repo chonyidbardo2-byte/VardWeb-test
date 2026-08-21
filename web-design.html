@@ -132,9 +132,12 @@
     .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
     .nav-dropdown:hover .chevron,
     .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
     .dropdown-menu {
       position: absolute;
-      top: 100%; left: 50%;
+      top: calc(100% + 6px); left: 50%;
       transform: translateX(-50%) translateY(-6px);
       background: rgba(15,18,25,0.96);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -361,6 +364,32 @@
     .footer-link:hover { color: var(--cyan); }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--cyan); }
+    .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .trust-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      width: 130px;
+      padding: 7px 16px 7px 7px;
+      white-space: nowrap;
+      background: var(--text-1);
+      border: 1px solid rgba(20,16,10,0.22);
+      border-radius: 13px;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(20,16,10,0.2), 0 10px 24px -12px rgba(20,16,10,0.55);
+      transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      -webkit-font-smoothing: antialiased;
+    }
+    .trust-badge:hover { transform: translateY(-3px) translateZ(0); box-shadow: 0 2px 4px rgba(20,16,10,0.22), 0 16px 32px -12px rgba(20,16,10,0.55); }
+    .trust-badge:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .trust-badge:active { transform: translateY(-1px) translateZ(0); }
+    .trust-badge-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trust-badge-text { display: flex; flex-direction: column; line-height: 1.28; }
+    .trust-badge-text span:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    .trust-badge-text span:last-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    @media (max-width: 768px) { .trust-badge-row { justify-content: center; } }
+    @media (max-width: 560px) { .trust-badge-row { gap: 10px; } .trust-badge { padding: 6px 13px 6px 6px; } }
     .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
     .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
     .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
@@ -1306,7 +1335,7 @@
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
           <a href="web-design.html" class="dropdown-item active" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+          <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
@@ -1364,7 +1393,7 @@
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
     <a href="services.html"   class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub active">Web Design</a>
-    <a href="contact.html"    class="mob-link mob-sub">E-Commerce</a>
+    <a href="ecommerce.html"    class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
@@ -3057,7 +3086,7 @@
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link active">Web Design</a>
-        <a href="contact.html" class="footer-link">E-Commerce</a>
+        <a href="ecommerce.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
@@ -3076,6 +3105,33 @@
         <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
       </div>
     </div>
+    <div class="trust-badge-row">
+      <a href="about.html" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+        </span>
+        <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </span>
+        <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--cyan);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14100a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+      </a>
+      <a href="accessibility.html" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#14100a" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+      </a>
+    </div>
+
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
       <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>

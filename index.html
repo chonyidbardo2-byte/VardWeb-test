@@ -128,9 +128,12 @@
     .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
     .nav-dropdown:hover .chevron,
     .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
     .dropdown-menu {
       position: absolute;
-      top: 100%; left: 50%;
+      top: calc(100% + 6px); left: 50%;
       transform: translateX(-50%) translateY(-6px);
       background: rgba(15,18,25,0.96);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -1132,6 +1135,38 @@
       background: rgba(0,229,255,0.05);
     }
 
+    /* ── Footer trust badges (glass-pill variant) ── */
+    .footer-trust-badge {
+      padding: 8px 18px 8px 8px;
+      border-radius: 9999px;
+      display: inline-flex; align-items: center; gap: 9px;
+      text-decoration: none;
+      color: rgba(200,212,232,0.5);
+      width: 148px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.22,1,0.36,1), color 0.2s ease;
+      transform: translateZ(0);
+      isolation: isolate;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform, backdrop-filter;
+    }
+    .footer-trust-badge:hover {
+      color: #C8D4E8;
+      transform: translateY(-2px) translateZ(0);
+      background: linear-gradient(145deg, var(--pill-bg-1) 0%, var(--pill-bg-2) 100%);
+      border-color: var(--pill-border);
+      box-shadow: 0 10px 30px -10px var(--pill-shadow),
+        inset 0 1px 1px var(--pill-highlight),
+        inset 0 -1px 2px var(--pill-inset-shadow);
+    }
+    .footer-trust-badge:active { transform: translateY(0) translateZ(0); }
+    .footer-trust-badge:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; }
+    .footer-trust-badge-icon { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .footer-trust-badge-text { display: flex; flex-direction: column; line-height: 1.25; color: inherit; }
+    .footer-trust-badge-text span { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11.5px; font-weight: 600; letter-spacing: -0.005em; color: inherit; }
+    @media (max-width: 768px) { .footer-pill-row-trust { justify-content: center; } .footer-trust-badge { width: auto; } }
+
     .footer-giant-bg-text {
       font-size: 26vw;
       line-height: 0.75;
@@ -1351,7 +1386,7 @@
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
           <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+          <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
@@ -1411,7 +1446,7 @@
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
     <a href="services.html" class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
-    <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
+    <a href="ecommerce.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
@@ -1450,9 +1485,8 @@
       Now booking Q3 2026 projects
     </div>
 
-    <h1 style="font-family:'JetBrains Mono',monospace;font-size:clamp(2.2rem,6vw,4.6rem);font-weight:700;letter-spacing:-0.03em;line-height:1.08;color:var(--text-1);margin-bottom:22px;">
-      Built to perform,<br>
-      designed to<br>
+    <h1 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(2.2rem,6vw,4.6rem);font-weight:700;letter-spacing:0.02em;line-height:1.08;color:var(--text-1);margin-bottom:22px;">
+      Powerful. Precise.<br>
       <span id="hero-rotate" class="hero-rotate"><span class="word">Convert</span></span>
     </h1>
 
@@ -4250,7 +4284,7 @@
             <div class="footer-pill-home-panel" id="footer-services-panel" role="menu">
               <a href="services.html"   class="footer-pill-home-sub" role="menuitem">All Services</a>
               <a href="web-design.html" class="footer-pill-home-sub" role="menuitem">Web Design</a>
-              <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">E-Commerce</a>
+              <a href="ecommerce.html"    class="footer-pill-home-sub" role="menuitem">E-Commerce</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">Landing Pages</a>
               <a href="contact.html"    class="footer-pill-home-sub" role="menuitem">App Development</a>
               <a href="sem-seo.html"    class="footer-pill-home-sub" role="menuitem">SEM &amp; SEO</a>
@@ -4277,6 +4311,34 @@
             </div>
           </div>
           </div><!-- /footer-pill-mobile-row row 2 -->
+        </div>
+
+        <!-- Trust badges -->
+        <div class="footer-pill-row footer-pill-row-trust" style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:4px;">
+          <a href="about.html" class="footer-glass-pill footer-trust-badge">
+            <span class="footer-trust-badge-icon">
+              <img src="brand_assets/icons/MadeInCanada.webp" width="28" height="28" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+            </span>
+            <span class="footer-trust-badge-text"><span>Made in</span><span>Canada</span></span>
+          </a>
+          <a href="privacy.html#gdpr-pipeda" class="footer-glass-pill footer-trust-badge">
+            <span class="footer-trust-badge-icon">
+              <img src="brand_assets/icons/GDPRcompliance.webp" width="28" height="28" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+            </span>
+            <span class="footer-trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+          </a>
+          <a href="privacy.html#gdpr-pipeda" class="footer-glass-pill footer-trust-badge">
+            <span class="footer-trust-badge-icon" style="background:var(--cyan);">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#070910" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <span class="footer-trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+          </a>
+          <a href="accessibility.html" class="footer-glass-pill footer-trust-badge">
+            <span class="footer-trust-badge-icon" style="background:var(--gold);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#070910" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+            </span>
+            <span class="footer-trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+          </a>
         </div>
       </div>
     </div>
@@ -4516,7 +4578,7 @@
   if (!wrap) return;
   var wordEl = wrap.querySelector('.word');
 
-  var words = ['Convert', 'Scale', 'Rank', 'Engage', 'Grow'];
+  var words = ['CONVERTING', 'SCALING', 'RANKING', 'ENGAGING', 'GROWING', 'OPTIMIZING', 'DESIGNING', 'DEVELOPING', 'MARKETING', 'ADVERTISING'];
   var idx = 0;
   var CHAR_STAGGER_MS = 18;
   var TRANSITION_MS   = 400;
