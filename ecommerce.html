@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Commerce — VardWeb</title>
+  <meta name="description" content="Custom e-commerce platforms built and maintained by VardWeb — a flat monthly rate, no per-sale cut, no app-store shopping list, and no tier ceiling to outgrow." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.3);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+
+      /* E-Commerce accent — matches the card on services.html */
+      --ecom-red:      #EF4444;
+      --ecom-red-deep: #DC2626;
+      --ecom-red-pale: #FCA5A5;
+      --ecom-orange:   #F97316;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(239,68,68,0.22); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(239,68,68,0.4); }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ── Nav (shared site chrome) ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; position: relative; padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+    .nav-link.nav-dropdown-trigger.active { color: var(--ecom-red); }
+    .nav-link.nav-dropdown-trigger.active::after { background: var(--ecom-red-deep); }
+
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
+    .dropdown-menu {
+      position: absolute; top: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+    .dropdown-item.active { color: var(--ecom-red); }
+
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    /* Buttons (shared site chrome) */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(239,68,68,0.55); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+    .btn-outline-brand {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      color: #fff;
+    }
+    .btn-outline-brand:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--ecom-red-deep);
+      transform: translateY(-2px);
+    }
+    .btn-arrow { display: inline-block; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .btn:hover .btn-arrow { transform: translateX(4px); }
+
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--ecom-red);
+      margin-bottom: 16px;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(239,68,68,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+    .ecom-heading-grad {
+      background: linear-gradient(120deg, var(--ecom-red-pale) 0%, var(--ecom-red) 45%, var(--ecom-red-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    section { padding: 96px 28px; position: relative; }
+    .section-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .section-head { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+    .section-head h2 { font-size: clamp(26px,3.4vw,38px); font-weight: 700; color: var(--text-1); margin-bottom: 14px; }
+    .section-head p:not(.sec-tag) { font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
+
+    /* ── Scroll-fade reveal ── */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Hero (full-bleed band, not a boxed card) ── */
+    .ecom-hero-frame { padding: 0; }
+    #ecom-hero {
+      position: relative; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 188px 28px 152px;
+      text-align: center;
+      width: 100%;
+      background:
+        radial-gradient(ellipse 85% 65% at 100% 100%, rgba(15,18,25,0.3) 0%, rgba(10,12,18,0.12) 45%, transparent 72%),
+        radial-gradient(ellipse 55% 45% at 50% 22%, #1c0d0d 0%, var(--base) 70%);
+    }
+    #ecom-hero::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 260px;
+      opacity: 0.05;
+      mix-blend-mode: overlay;
+    }
+    #ecom-hero-blobs { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    #ecom-hero-blobs div { position: absolute; border-radius: 50%; }
+    #ecom-hero-blobs div:nth-child(1) { width: 420px; height: 420px; right: -10%; bottom: -20%; background: rgba(220,38,38,0.20); filter: blur(75px); }
+    #ecom-hero-blobs div:nth-child(2) { width: 280px; height: 280px; left: -4%;  bottom: -10%; background: rgba(239,68,68,0.14); filter: blur(65px); }
+    .ecom-hero-content { position: relative; z-index: 2; max-width: 780px; margin: 0 auto; }
+
+    .ecom-hero-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(239,68,68,0.07);
+      border: 1.5px solid rgba(239,68,68,0.3);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
+      color: rgba(238,240,248,0.9); letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+    .ecom-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ecom-red); box-shadow: 0 0 8px var(--ecom-red); flex-shrink: 0; }
+
+    .ecom-hero-kicker {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .ecom-kicker-slash { color: var(--text-2); margin-right: 2px; }
+    .ecom-kw {
+      display: inline-block;
+      animation: ecom-kicker-wave 2.2s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--ecom-red-pale) 0%, #ffffff 50%, var(--ecom-red-deep) 100%);
+      background-size: 700% 100%;
+      background-position: calc(var(--i) / 9 * 100%) 0;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    @keyframes ecom-kicker-wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ecom-kw { animation: none; }
+    }
+
+    .ecom-hero-heading { line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 22px; }
+    .ecom-hero-heading .l1 { display: block; color: rgba(238,240,248,0.88); font-weight: 600; font-size: clamp(30px,4.6vw,52px); }
+    .ecom-hero-heading .l2 { display: block; font-weight: 700; font-size: clamp(30px,4.6vw,52px); }
+
+    .ecom-hero-sub { font-size: 16.5px; line-height: 1.75; color: var(--text-2); max-width: 620px; margin: 0 auto 40px; }
+
+    .ecom-hero-actions { display: flex; justify-content: center; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .ecom-hero-btn {
+      padding: 14px 30px; border-radius: 8px; font-size: 13px;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    .ecom-hero-btn:hover { transform: translateY(-1px) translateZ(0); }
+    .ecom-hero-btn:focus-visible { outline: 2px solid rgba(239,68,68,0.55); outline-offset: 2px; }
+    .ecom-hero-btn-outline { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: #ffffff; }
+    .ecom-hero-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(239,68,68,0.55); }
+    .ecom-hero-btn-gradient {
+      border: none; color: #1c0a0a;
+      background: linear-gradient(120deg, var(--ecom-red) 0%, var(--ecom-red-deep) 100%);
+      box-shadow: 0 8px 20px -6px rgba(239,68,68,0.5), 0 10px 28px -8px rgba(220,38,38,0.3);
+    }
+    .ecom-hero-btn-gradient:hover {
+      background: linear-gradient(120deg, #ff8080 0%, #ef4444 100%);
+      box-shadow: 0 10px 28px -6px rgba(239,68,68,0.55), 0 12px 34px -8px rgba(220,38,38,0.45);
+    }
+    .ecom-hero-services-menu { position: relative; display: inline-flex; }
+    .ecom-hero-services-trigger { display: inline-flex; align-items: center; gap: 7px; }
+    .ecom-hero-services-trigger .chevron { transition: transform 0.2s ease; }
+    .ecom-hero-services-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .ecom-hero-services-panel { position: fixed; left: 0; transform: translateY(6px); }
+    .ecom-hero-services-panel.drop-down { transform: translateY(-6px); }
+    .ecom-hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+    /* ── Hero mockup (browser-chrome placeholder, pattern shared with index.html/our-work.html, retinted red/gold) ── */
+    .ecom-hero-mock-wrap { margin: 48px auto 0; max-width: 900px; width: 100%; position: relative; z-index: 2; }
+    /* Rotating conic-gradient ring, same technique as .addon-card below (reuses its
+       shared @property --border-angle / @keyframes addon-border-spin). */
+    .browser-mock {
+      position: relative;
+      border-radius: 16px;
+      padding: 3px;
+      background: conic-gradient(from var(--border-angle), #FCA5A5, var(--ecom-red), var(--ecom-red-deep), #FCA5A5);
+      animation: addon-border-spin 7s linear infinite;
+      box-shadow: 0 20px 50px -15px rgba(0,0,0,0.55), 0 0 25px -12px rgba(249,115,22,0.2);
+    }
+    @media (prefers-reduced-motion: reduce) { .browser-mock { animation: none; } }
+    .browser-mock-inner {
+      position: relative; z-index: 1;
+      background: var(--raised);
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    .browser-bar {
+      height: 40px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex; align-items: center;
+      padding: 0 16px; gap: 14px;
+    }
+    .browser-dots { display: flex; gap: 6px; }
+    .browser-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .browser-url-bar {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 11px;
+      color: rgba(200,212,232,0.4);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .browser-body { overflow: hidden; }
+    .browser-mock img { display: block; width: 100%; height: auto; }
+
+    /* ── Comet/particle decorative layer — top-left origin, ~45° fall ── */
+    #ecom-hero-comets { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+    .comet {
+      position: absolute;
+      width: 2px; height: 90px;
+      background: linear-gradient(180deg, transparent 0%, var(--gold) 55%, var(--ecom-orange) 100%);
+      border-radius: 2px;
+      opacity: 0;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    /* Delays/durations deliberately spread & non-aligned so the four comets don't
+       cluster together in flight, and their repeat cycles drift apart over time.
+       Durations tuned so each comet reaches contact somewhere in ~2.5-4s. */
+    .comet-1 { top: -2%; left: 2%;  animation-name: comet-fall-1; animation-duration: 3.5s;  animation-delay: 0s; }
+    .comet-2 { top: -6%; left: 8%;  animation-name: comet-fall-2; animation-duration: 4.5s; animation-delay: 1s; }
+    .comet-3 { top: 2%;  left: -1%; animation-name: comet-fall-3; animation-duration: 4s;   animation-delay: 2s; }
+    .comet-4 { top: -4%; left: 5%;  animation-name: comet-fall-4; animation-duration: 5s; animation-delay: 3s; }
+    /* Fall direction = (-sinθ, cosθ) once rotated; θ≈-45deg splits translateY evenly into
+       right+down motion. Opacity holds bright until near-impact, then cuts sharply (no fizzle). */
+    @keyframes comet-fall-1 { 0%{opacity:0;transform:rotate(-44deg) translateY(0);} 8%{opacity:.95;} 80%{opacity:.92;} 86%{opacity:0;} 100%{opacity:0;transform:rotate(-44deg) translateY(1176px);} }
+    @keyframes comet-fall-2 { 0%{opacity:0;transform:rotate(-50deg) translateY(0);} 8%{opacity:.9;}  80%{opacity:.85;} 86%{opacity:0;} 100%{opacity:0;transform:rotate(-50deg) translateY(1421px);} }
+    @keyframes comet-fall-3 { 0%{opacity:0;transform:rotate(-40deg) translateY(0);} 8%{opacity:.95;} 80%{opacity:.9;}  86%{opacity:0;} 100%{opacity:0;transform:rotate(-40deg) translateY(1014px);} }
+    @keyframes comet-fall-4 { 0%{opacity:0;transform:rotate(-47deg) translateY(0);} 8%{opacity:.85;} 80%{opacity:.8;}  86%{opacity:0;} 100%{opacity:0;transform:rotate(-47deg) translateY(1290px);} }
+
+    /* Four independent bursts, one per comet. Position is set live by JS (see
+       comet-collision script near the markup) the instant that comet's leading
+       edge actually touches the mockup box — no more pre-baked % coordinates,
+       which needed correcting twice because they silently drift out of sync. */
+    /* Style variants — rotation + a combined spread/size scale, applied as a
+       rigid wrapping transform around the JS-computed impact point (so the
+       anchor stays exact regardless of variant). Color is intentionally the
+       same gold/orange for every burst. */
+    .comet-burst {
+      position: absolute; width: 160px; height: 160px; left: 0; top: 0;
+      --burst-rot: 0deg; --burst-scale: 1;
+      transform: translate(-50%, -50%) rotate(var(--burst-rot)) scale(var(--burst-scale));
+    }
+    .comet-burst.style-wide { --burst-rot: -18deg; --burst-scale: 1.35; }
+    .comet-burst.style-tight { --burst-rot: 22deg; --burst-scale: 0.7; }
+
+    /* Ported from the reference Explosion component: a central blurred glow bar
+       (the "highlight") plus small circular dots scattering outward/upward, away
+       from the box's top edge the comet just struck — same anatomy as beams
+       hitting a floor and debris flying up away from it. */
+    .burst-glow {
+      position: absolute; top: 50%; left: 50%;
+      width: 46px; height: 6px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--ecom-orange), var(--gold), transparent);
+      border-radius: 999px;
+      filter: blur(3px);
+      opacity: 0;
+      transform: translate(-50%,-50%) scaleX(0.3);
+    }
+    .comet-burst.is-hit .burst-glow {
+      animation: burst-glow-fire 1.2s cubic-bezier(0.15,0.7,0.3,1) forwards;
+    }
+    @keyframes burst-glow-fire {
+      0%   { opacity: 0; transform: translate(-50%,-50%) scaleX(0.3); }
+      10%  { opacity: 1; transform: translate(-50%,-50%) scaleX(1.15); animation-timing-function: cubic-bezier(0.4,0,1,1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scaleX(1.5); }
+    }
+
+    .burst-piece {
+      position: absolute; top: 50%; left: 50%;
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, var(--gold), var(--ecom-orange));
+      opacity: 0;
+    }
+    /* JS adds .is-hit at the exact contact frame; removed again on the glow bar's
+       animationend so the same group can retrigger next time its comet loops around. */
+    .comet-burst.is-hit .burst-piece {
+      animation: burst-piece-fire 1.2s cubic-bezier(0.15,0.7,0.3,1) forwards;
+    }
+    @keyframes burst-piece-fire {
+      0%   { opacity: 0; transform: translate(-50%,-50%) translate(0,0) scale(0.6); }
+      10%  { opacity: 1; transform: translate(-50%,-50%) translate(calc(var(--tx) * 0.3), calc(var(--ty) * 0.3)) scale(1); animation-timing-function: cubic-bezier(0.4,0,1,1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) translate(var(--tx), var(--ty)) scale(0.4); }
+    }
+
+    /* Scatter directions: tx symmetric ±42px, ty always negative (upward), mirroring
+       the reference's directionX:(-40,40) / directionY:(-50,-10) random ranges. */
+    .burst-piece:nth-child(2)  { --tx:6px;   --ty:-52px; width:4px; height:4px; }
+    .burst-piece:nth-child(3)  { --tx:-14px; --ty:-38px; width:3px; height:3px; }
+    .burst-piece:nth-child(4)  { --tx:24px;  --ty:-44px; width:5px; height:5px; }
+    .burst-piece:nth-child(5)  { --tx:-32px; --ty:-22px; width:4px; height:4px; }
+    .burst-piece:nth-child(6)  { --tx:38px;  --ty:-16px; width:3px; height:3px; }
+    .burst-piece:nth-child(7)  { --tx:-8px;  --ty:-58px; width:4px; height:4px; }
+    .burst-piece:nth-child(8)  { --tx:16px;  --ty:-30px; width:3px; height:3px; }
+    .burst-piece:nth-child(9)  { --tx:-24px; --ty:-48px; width:5px; height:5px; }
+    .burst-piece:nth-child(10) { --tx:42px;  --ty:-28px; width:3px; height:3px; }
+    .burst-piece:nth-child(11) { --tx:-40px; --ty:-14px; width:4px; height:4px; }
+    .burst-piece:nth-child(12) { --tx:2px;   --ty:-18px; width:3px; height:3px; }
+    .burst-piece:nth-child(13) { --tx:-18px; --ty:-12px; width:4px; height:4px; }
+    .burst-piece:nth-child(14) { --tx:30px;  --ty:-38px; width:5px; height:5px; }
+    .burst-piece:nth-child(15) { --tx:-30px; --ty:-56px; width:3px; height:3px; }
+    .burst-piece:nth-child(16) { --tx:12px;  --ty:-42px; width:4px; height:4px; }
+    .burst-piece:nth-child(17) { --tx:-42px; --ty:-32px; width:3px; height:3px; }
+    .burst-piece:nth-child(18) { --tx:20px;  --ty:-12px; width:4px; height:4px; }
+    .burst-piece:nth-child(19) { --tx:-6px;  --ty:-24px; width:5px; height:5px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .comet, .burst-glow, .burst-piece { animation: none !important; opacity: 0 !important; }
+    }
+
+    /* ── "Deployments made easy" — exact-layout replica of the reference bento,
+       recolored to the page's red/gold theme. 2 unequal columns × 2 rows; row 1
+       (One click deploy / Intuitive workflow) is shorter, row 2 runs taller since
+       its cards carry larger visuals — matches the reference's proportions. ── */
+    .deploy-bento { display: grid; grid-template-columns: 1.42fr 1fr; gap: 20px; }
+    .deploy-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .deploy-card:hover { border-color: rgba(239,68,68,0.22); transform: translateY(-3px); }
+    .deploy-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 6px; }
+    .deploy-card p { font-size: 13.5px; line-height: 1.6; color: var(--text-2); max-width: 360px; }
+    .deploy-card-deploy    { grid-column: 1; grid-row: 1; padding: 24px; justify-content: space-between; gap: 40px; min-height: 340px; }
+    .deploy-card-deploy .deploy-card-text { padding: 0; }
+    .deploy-card-workflow  { grid-column: 2; grid-row: 1; }
+    .deploy-card-edge      { grid-column: 1; grid-row: 2; }
+    .deploy-card-copy      { grid-column: 2; grid-row: 2; }
+    /* Cards 2-4: text padded at top, visual bleeds flush to the card's own edges below. */
+    .deploy-card-text { padding: 22px 22px 18px; }
+    .deploy-card-workflow .deploy-card-visual,
+    .deploy-card-copy .deploy-card-visual { margin-top: auto; }
+    .deploy-card-edge .deploy-card-visual { margin-top: auto; }
+    .deploy-card-visual img { display: block; width: 100%; height: auto; }
+    .deploy-card-workflow { min-height: 340px; }
+    .deploy-card-edge, .deploy-card-copy { min-height: 400px; }
+    .deploy-mini-row { display: flex; gap: 10px; }
+    .deploy-mini-box {
+      flex: 1; aspect-ratio: 1; border-radius: 12px;
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .deploy-mini-box img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 860px) {
+      .deploy-bento { grid-template-columns: 1fr; }
+      .deploy-card-deploy, .deploy-card-workflow, .deploy-card-edge, .deploy-card-copy { grid-column: 1; min-height: 0; }
+      .deploy-card-deploy   { grid-row: 1; }
+      .deploy-card-workflow { grid-row: 2; }
+      .deploy-card-edge     { grid-row: 3; }
+      .deploy-card-copy     { grid-row: 4; }
+    }
+
+    /* ── Porting-pitch grid — horizontal merged cards, 2 per row ── */
+    .pitch-intro { max-width: 720px; margin: 0 auto 40px; text-align: center; font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
+    .pitch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    @media (max-width: 760px) { .pitch-grid { grid-template-columns: 1fr; } }
+    .pitch-card {
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 22px 26px;
+      transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .pitch-card:hover { border-color: rgba(239,68,68,0.22); transform: translateY(-3px); }
+    .pitch-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; color: rgba(239,68,68,0.55); margin-bottom: 14px;
+    }
+    .pitch-body { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; }
+    @media (max-width: 560px) { .pitch-body { grid-template-columns: 1fr; gap: 12px; } .pitch-arrow { transform: rotate(90deg); justify-self: center; } }
+    .pitch-side { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .pitch-text { font-size: 13.5px; line-height: 1.6; }
+    .pitch-elsewhere .pitch-label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(200,212,232,0.3); }
+    .pitch-vardweb .pitch-label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ecom-red); }
+    .pitch-elsewhere .pitch-text { color: rgba(200,212,232,0.5); }
+    .pitch-vardweb .pitch-text { color: var(--text-1); font-weight: 500; }
+    .pitch-arrow { flex-shrink: 0; color: rgba(239,68,68,0.55); }
+
+    /* ── Feature manifest grid — manifest-card style ported from the research
+       artifact (eyebrow category label + checklist), re-themed to red ── */
+    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .feat-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+      padding: 24px 26px 26px;
+      transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .feat-card:hover { border-color: rgba(239,68,68,0.25); transform: translateY(-3px); }
+    .feat-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .feat-card-icon {
+      width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
+      background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feat-card-icon img { width: 24px; height: 24px; object-fit: contain; }
+    .feat-cat {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase; color: var(--ecom-red);
+      display: block; margin-bottom: 3px;
+    }
+    .feat-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--text-1); }
+    .feat-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .feat-list li {
+      position: relative; padding-left: 20px;
+      font-size: 13px; color: var(--text-2); line-height: 1.55;
+    }
+    .feat-list li::before {
+      content: ''; position: absolute; left: 0; top: 5px;
+      width: 8px; height: 5px;
+      border-left: 1.5px solid var(--ecom-red); border-bottom: 1.5px solid var(--ecom-red);
+      transform: rotate(-45deg);
+    }
+    .feat-badges { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+    .feat-badge { height: 20px; display: flex; align-items: center; opacity: 0.82; filter: grayscale(0.15); }
+    .feat-badge img { height: 100%; width: auto; object-fit: contain; }
+
+    /* ── Pricing card grid (ported from web-design.html's Pricing section
+       pattern), adapted for quote-only pricing and our own 5 fixed tier colors ── */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .pricing-card {
+      position: relative; display: flex; flex-direction: column;
+      background: var(--raised);
+      border: 1px solid var(--tier-border, rgba(239,68,68,0.2));
+      border-radius: 20px; padding: 26px; overflow: hidden; isolation: isolate;
+      transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .pricing-card::before {
+      content: ''; position: absolute; inset: 0; z-index: -1;
+      background: radial-gradient(ellipse 70% 55% at 0% 0%, var(--tier-glow, rgba(239,68,68,0.08)) 0%, transparent 70%);
+    }
+    .pricing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 50px -18px rgba(0,0,0,0.55), 0 0 30px var(--tier-shadow, rgba(239,68,68,0.15));
+      border-color: var(--tier-color, var(--ecom-red));
+    }
+    .pricing-badge { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px 5px 9px; border-radius: 999px; border: 1px solid var(--tier-border, rgba(255,255,255,0.1)); background: var(--tier-bg, rgba(255,255,255,0.04)); margin-bottom: 18px; align-self: flex-start; }
+    .pricing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--tier-color, var(--ecom-red)); box-shadow: 0 0 6px var(--tier-color, var(--ecom-red)); }
+    .pricing-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tier-color, var(--ecom-red)); }
+    .pricing-stat { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; color: var(--tier-color, var(--ecom-red)); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 4px; }
+    .pricing-quote { font-size: 12.5px; font-weight: 600; color: rgba(200,212,232,0.4); margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .pricing-features { list-style: none; padding: 0; margin: 0 0 22px; flex: 1; }
+    .pricing-features li { display: flex; align-items: flex-start; gap: 9px; font-size: 12.5px; line-height: 1.5; color: rgba(200,212,232,0.72); padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .pricing-features li:last-child { border-bottom: none; }
+    .pricing-feat-icon { width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px; color: var(--tier-color, var(--ecom-red)); }
+    .pricing-cta {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 12px 20px; margin-top: auto;
+      border-radius: 10px; text-decoration: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
+      background: linear-gradient(135deg, var(--tier-btn-bg1, rgba(239,68,68,0.14)), var(--tier-btn-bg2, rgba(239,68,68,0.07)));
+      border: 1px solid var(--tier-border, rgba(239,68,68,0.3));
+      color: var(--tier-color, var(--ecom-red));
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .pricing-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px -8px rgba(0,0,0,0.4), 0 0 18px var(--tier-shadow, rgba(239,68,68,0.2));
+      background: linear-gradient(135deg, var(--tier-btn-hover1, rgba(239,68,68,0.22)), var(--tier-btn-hover2, rgba(239,68,68,0.12)));
+    }
+    .pricing-cta:focus-visible { outline: 2px solid var(--tier-color, var(--ecom-red)); outline-offset: 2px; }
+
+    .tier-payment-note {
+      max-width: 640px; margin: 26px auto 0; text-align: center;
+      font-size: 13px; line-height: 1.7; color: var(--text-2);
+    }
+    .tier-payment-note b { color: var(--text-1); }
+
+    /* ── Add-ons (shared generic component) ── */
+    @property --border-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    #ecom-addons .section-inner { max-width: 1000px; }
+    .addon-card-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .addon-card {
+      --addon-c1: #FCA5A5; --addon-c2: var(--ecom-red); --addon-c3: var(--ecom-red-deep);
+      border-radius: 18px; padding: 2.5px;
+      background: conic-gradient(from var(--border-angle), var(--addon-c1), var(--addon-c2), var(--addon-c3), var(--addon-c1));
+      animation: addon-border-spin 7s linear infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes addon-border-spin { to { --border-angle: 360deg; } }
+    @media (prefers-reduced-motion: reduce) { .addon-card { animation: none; } }
+    @media (hover: hover) { .addon-card:hover { transform: translateY(-4px); } }
+    .addon-card-content {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #060606, #000000);
+      border-radius: 15.5px; height: 100%; overflow: hidden;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 16px 34px -14px rgba(0,0,0,0.55), 0 0 22px color-mix(in srgb, var(--addon-c2) 12%, transparent);
+    }
+    .addon-card-icon { position: absolute; right: var(--icon-right, 6%); top: var(--icon-top, 50%); transform: var(--icon-transform, translateY(-50%)) rotate(var(--icon-rotate, 0deg)); z-index: -1; pointer-events: none; }
+    .addon-card-icon img { width: var(--icon-w, 140px); height: var(--icon-h, 140px); object-fit: contain; display: block; }
+    @media (max-width: 374px) {
+      .addon-card-icon { right: var(--icon-right-mobile, var(--icon-right, 6%)); top: var(--icon-top-mobile, var(--icon-top, 50%)); transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-50%))) rotate(var(--icon-rotate-mobile, var(--icon-rotate, 0deg))); }
+      .addon-card-icon img { width: var(--icon-w-mobile, var(--icon-w, 140px)); height: var(--icon-h-mobile, var(--icon-h, 140px)); }
+    }
+    @media (min-width: 375px) and (max-width: 424px) {
+      .addon-card-icon { right: var(--icon-right-mobile-375, var(--icon-right-mobile, var(--icon-right, 6%))); top: var(--icon-top-mobile-375, var(--icon-top-mobile, var(--icon-top, 50%))); transform: var(--icon-transform-mobile-375, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-mobile-375, var(--icon-rotate-mobile, var(--icon-rotate, 0deg)))); }
+      .addon-card-icon img { width: var(--icon-w-mobile-375, var(--icon-w-mobile, var(--icon-w, 140px))); height: var(--icon-h-mobile-375, var(--icon-h-mobile, var(--icon-h, 140px))); }
+    }
+    @media (min-width: 425px) and (max-width: 560px) {
+      .addon-card-icon { right: var(--icon-right-mobile-425, var(--icon-right-mobile, var(--icon-right, 6%))); top: var(--icon-top-mobile-425, var(--icon-top-mobile, var(--icon-top, 50%))); transform: var(--icon-transform-mobile-425, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-mobile-425, var(--icon-rotate-mobile, var(--icon-rotate, 0deg)))); }
+      .addon-card-icon img { width: var(--icon-w-mobile-425, var(--icon-w-mobile, var(--icon-w, 140px))); height: var(--icon-h-mobile-425, var(--icon-h-mobile, var(--icon-h, 140px))); }
+    }
+    .addon-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 8px; }
+    .addon-card-desc { font-family: 'Inter', sans-serif; font-size: 14.5px; color: var(--text-2); line-height: 1.7; }
+    .addon-card-cta {
+      flex-shrink: 0; margin-top: auto; border: none; color: #fff;
+      background: linear-gradient(120deg, var(--ecom-red) 0%, var(--ecom-red-deep) 100%);
+      box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--ecom-red) 50%, transparent), 0 10px 28px -8px color-mix(in srgb, var(--ecom-red-deep) 30%, transparent);
+      transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform;
+    }
+    .addon-card-cta:hover {
+      box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--ecom-red) 55%, transparent), 0 12px 34px -8px color-mix(in srgb, var(--ecom-red-deep) 45%, transparent);
+      transform: translateY(-2px) translateZ(0);
+    }
+    @media (max-width: 560px) { .addon-card-cta { align-self: stretch; justify-content: center; } }
+
+    /* ── FAQ ── */
+    .ecom-faq-inner { max-width: 1000px; margin: 0 auto; }
+    .ecom-faq-list { display: flex; flex-direction: column; gap: 10px; }
+    .ecom-faq-item { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; transition: border-color 0.25s ease, box-shadow 0.25s ease; }
+    .ecom-faq-item:hover { border-color: rgba(239,68,68,0.22); }
+    .ecom-faq-item.open { border-color: rgba(239,68,68,0.3); box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 20px rgba(239,68,68,0.04); }
+    .ecom-faq-trigger { width: 100%; display: flex; align-items: center; gap: 16px; background: none; border: none; cursor: pointer; text-align: left; padding: 22px 26px; font-family: 'Inter', sans-serif; transition: background 0.2s ease; }
+    .ecom-faq-trigger:hover { background: rgba(239,68,68,0.03); }
+    .ecom-faq-item.open .ecom-faq-trigger { background: rgba(239,68,68,0.05); }
+    .ecom-faq-trigger-icon { flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.14); display: flex; align-items: center; justify-content: center; transition: background 0.2s ease, border-color 0.2s ease; }
+    .ecom-faq-item.open .ecom-faq-trigger-icon { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); }
+    .ecom-faq-question { flex: 1; font-size: 15px; font-weight: 600; color: var(--text-1); font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; }
+    .ecom-faq-toggle { width: 28px; height: 28px; border-radius: 8px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.14); flex-shrink: 0; position: relative; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease, border-color 0.2s ease; }
+    .ecom-faq-item.open .ecom-faq-toggle { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); }
+    .ecom-faq-plus, .ecom-faq-minus { position: absolute; transition: opacity 0.2s ease, transform 0.2s ease; }
+    .ecom-faq-plus { opacity: 1; transform: rotate(0deg); }
+    .ecom-faq-minus { opacity: 0; transform: rotate(-90deg); }
+    .ecom-faq-item.open .ecom-faq-plus { opacity: 0; transform: rotate(90deg); }
+    .ecom-faq-item.open .ecom-faq-minus { opacity: 1; transform: rotate(0deg); }
+    .ecom-faq-content { max-height: 0; overflow: hidden; transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1); }
+    .ecom-faq-content-inner { padding: 0 26px 22px 44px; font-size: 14.5px; color: var(--text-2); line-height: 1.85; position: relative; }
+    .ecom-faq-content-inner::before { content: ''; position: absolute; top: 0; left: 26px; width: 2px; height: calc(100% - 22px); background: linear-gradient(to bottom, var(--ecom-red), transparent); opacity: 0; border-radius: 2px; transition: opacity 0.3s ease; }
+    .ecom-faq-item.open .ecom-faq-content-inner::before { opacity: 0.38; }
+    .ecom-faq-trigger:focus-visible { outline: 2px solid rgba(239,68,68,0.5); outline-offset: -2px; }
+    @media (max-width: 600px) {
+      .ecom-faq-trigger { padding: 18px 20px; gap: 12px; }
+      .ecom-faq-content-inner { padding: 0 20px 20px 20px; }
+      .ecom-faq-content-inner::before { display: none; }
+    }
+
+    /* ── CTA ── */
+    .ecom-cta { padding: 90px 28px 110px; }
+    .ecom-cta-card {
+      max-width: 1200px; margin: 0 auto; position: relative; overflow: hidden;
+      border-radius: 48px; min-height: 500px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px; text-align: center;
+      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      border: 1px solid rgba(239,68,68,0.14);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(239,68,68,0.08);
+    }
+    .ecom-cta-content { position: relative; z-index: 1; max-width: 900px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+    .ecom-cta-heading { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; font-size: clamp(30px, 5.2vw, 60px); color: var(--text-1); margin: 18px 0 16px; }
+    @media (max-width: 340px) { .ecom-cta-heading { font-size: 26px; } }
+    .ecom-cta-break { display: none; }
+    @media (min-width: 641px) { .ecom-cta-break { display: block; } }
+    @media (max-width: 640px) { .ecom-cta-card { padding: 48px 22px; min-height: 440px; border-radius: 32px; } }
+    .ecom-cta-sub { font-size: 15px; color: var(--text-2); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
+    .ecom-cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .ecom-cta-actions .btn { padding: 15px 34px; font-size: 13.5px; transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
+    .ecom-cta-actions .btn:hover { transform: translateY(-2px) translateZ(0); }
+    .ecom-cta-actions .btn:focus-visible { outline: 2px solid rgba(239,68,68,0.6); outline-offset: 2px; }
+    .ecom-cta-actions .addon-card-cta { padding: 17px 36px; }
+
+    /* ── Footer (shared site chrome) ── */
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
+    .footer-social-row { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-link.active { color: var(--ecom-red); }
+    .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .trust-badge { display: inline-flex; align-items: center; gap: 10px; width: 130px; padding: 7px 16px 7px 7px; white-space: nowrap; background: var(--text-1); border: 1px solid rgba(20,16,10,0.22); border-radius: 13px; text-decoration: none; box-shadow: 0 1px 2px rgba(20,16,10,0.2), 0 10px 24px -12px rgba(20,16,10,0.55); transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s cubic-bezier(0.22,1,0.36,1); transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; will-change: transform; -webkit-font-smoothing: antialiased; }
+    .trust-badge:hover { transform: translateY(-3px) translateZ(0); box-shadow: 0 2px 4px rgba(20,16,10,0.22), 0 16px 32px -12px rgba(20,16,10,0.55); }
+    .trust-badge:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .trust-badge:active { transform: translateY(-1px) translateZ(0); }
+    .trust-badge-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trust-badge-text { display: flex; flex-direction: column; line-height: 1.28; }
+    .trust-badge-text span:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    .trust-badge-text span:last-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    @media (max-width: 768px) { .trust-badge-row { justify-content: center; } }
+    @media (max-width: 560px) { .trust-badge-row { gap: 10px; } .trust-badge { padding: 6px 13px 6px 6px; } }
+    .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    @keyframes footer-heartbeat { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); } 15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); } 30% { transform: scale(1); } }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    @media (prefers-reduced-motion: reduce) { .animate-footer-heartbeat { animation: none; } }
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } .footer-bottom-bar { flex-direction: column; align-items: flex-start; } }
+
+    /* ── Mobile Nav (shared site chrome) ── */
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+    .nav-account-btn { background: none; border: none; padding: 0; gap: 8px; color: rgba(238,240,248,0.85); font-weight: 600; transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
+    .nav-account-btn:focus-visible { outline: 2px solid var(--ecom-red); outline-offset: 4px; border-radius: 4px; }
+
+    @media (max-width: 1024px) {
+      .nav-inner { position: relative; }
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ecom-red); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--ecom-red); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      section { padding: 64px 22px; }
+      .ecom-hero-frame { padding: 0; }
+      #ecom-hero { padding: 140px 22px 104px; }
+    }
+
+    @media (max-width: 480px) {
+      .btn { white-space: nowrap; font-size: 12px; padding: 9px 15px; justify-content: center; }
+      .ecom-cta-actions { flex-direction: column; align-items: stretch; }
+      .ecom-cta-actions .btn, .ecom-cta-actions .addon-card-cta { padding: 13px 20px; }
+      .ecom-hero-actions { flex-direction: column; align-items: stretch; }
+      .ecom-hero-services-menu { width: 100%; }
+      .ecom-hero-services-trigger { width: 100%; }
+      /* Shallower, mostly-vertical fall on narrow viewports — the desktop ~40-50°
+         angle carries comets sideways past the (much narrower) mockup box before
+         they've fallen far enough to reach it. Fall distance/position unchanged
+         (same top-left origin as desktop), only the rotation angle (constant at
+         0%/100%) and the opacity fade window differ, since the shallow angle
+         reaches the box's vertical position earlier in the animation's own
+         timeline (~50-60% here vs ~77-79% on desktop) — durations below are also
+         tuned separately per breakpoint for the same reason. */
+      .comet-1 { animation-duration: 4.8s; }
+      .comet-2 { animation-duration: 6.9s; }
+      .comet-3 { animation-duration: 5.1s; }
+      .comet-4 { animation-duration: 7.3s; }
+      @keyframes comet-fall-1 { 0%{opacity:0;transform:rotate(-13deg) translateY(0);} 8%{opacity:.95;} 59%{opacity:.92;} 65%{opacity:0;} 100%{opacity:0;transform:rotate(-13deg) translateY(1176px);} }
+      @keyframes comet-fall-2 { 0%{opacity:0;transform:rotate(-17deg) translateY(0);} 8%{opacity:.9;}  53%{opacity:.85;} 59%{opacity:0;} 100%{opacity:0;transform:rotate(-17deg) translateY(1421px);} }
+      @keyframes comet-fall-3 { 0%{opacity:0;transform:rotate(-12deg) translateY(0);} 8%{opacity:.95;} 63%{opacity:.9;}  69%{opacity:0;} 100%{opacity:0;transform:rotate(-12deg) translateY(1014px);} }
+      @keyframes comet-fall-4 { 0%{opacity:0;transform:rotate(-16deg) translateY(0);} 8%{opacity:.85;} 56%{opacity:.8;}  62%{opacity:0;} 100%{opacity:0;transform:rotate(-16deg) translateY(1290px);} }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" aria-label="VardWeb Home">
+        <div class="logo-nav-wrap">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </div>
+      </a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
+            Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" id="dd-home-menu" role="menu">
+            <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
+            <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
+            <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
+            <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+            <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+            <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+            <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
+          </div>
+        </div>
+        <a href="faq.html"      class="nav-link">FAQ</a>
+        <a href="blog.html"     class="nav-link">Blog</a>
+        <a href="our-work.html" class="nav-link">Our Work</a>
+        <a href="about.html"    class="nav-link">About</a>
+        <div class="nav-dropdown">
+          <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+            Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" id="dd-services-menu" role="menu">
+            <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
+            <a href="ecommerce.html"  class="dropdown-item active" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
+            <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+            <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+            <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
+            <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
+            <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
+          </div>
+        </div>
+        <a href="contact.html"  class="nav-link">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
+          <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
+          Account
+        </a>
+        <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu">
+      <div class="mob-section-label">Navigate</div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+        Home
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-home-panel"><div>
+      <a href="index.html"          class="mob-link mob-sub">Landing</a>
+      <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
+      <a href="index.html#services" class="mob-link mob-sub">Services</a>
+      <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+      <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+      <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+        Company
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-company-panel"><div>
+      <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+      <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+      <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+      <a href="about.html"    class="mob-link mob-sub">About Us</a>
+      <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
+        Services
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-services-panel"><div>
+      <a href="services.html" class="mob-link mob-sub">All Services</a>
+      <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
+      <a href="ecommerce.html" class="mob-link mob-sub active">E-Commerce</a>
+      <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+      <a href="contact.html"  class="mob-link mob-sub">App Development</a>
+      <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
+      <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
+      <a href="hosting-services.html" class="mob-link mob-sub">Domain &amp; Hosting</a>
+      <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
+      <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
+      <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+        Legal
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+      <a href="privacy.html"        class="mob-link mob-sub">Privacy Policy</a>
+      <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+      <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
+      <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+      <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+      </div></div>
+      <div class="mob-divider"></div>
+      <a href="/crm/login.html" class="mob-link mob-cta-ghost">Account →</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <div class="ecom-hero-frame">
+      <section id="ecom-hero">
+        <div id="ecom-hero-blobs" aria-hidden="true">
+          <div></div><div></div>
+        </div>
+        <div id="ecom-hero-comets" aria-hidden="true">
+          <span class="comet comet-1"></span>
+          <span class="comet comet-2"></span>
+          <span class="comet comet-3"></span>
+          <span class="comet comet-4"></span>
+          <span class="comet-burst comet-burst-1"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-2 style-wide"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-3 style-tight"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-4"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span>
+        </div>
+        <div class="ecom-hero-content">
+          <div class="ecom-hero-pill reveal-fade">
+            <span class="ecom-hero-pill-dot"></span>
+            Custom-Built, Not Off the Shelf
+          </div>
+          <p class="ecom-hero-kicker reveal-fade" style="transition-delay:0.02s">
+            <span class="ecom-kicker-slash">//</span>
+            <span class="ecom-kw" style="--i:0; animation-delay:0s">E</span><span class="ecom-kw" style="--i:1; animation-delay:0.07s">-</span><span class="ecom-kw" style="--i:2; animation-delay:0.14s">C</span><span class="ecom-kw" style="--i:3; animation-delay:0.21s">o</span><span class="ecom-kw" style="--i:4; animation-delay:0.28s">m</span><span class="ecom-kw" style="--i:5; animation-delay:0.35s">m</span><span class="ecom-kw" style="--i:6; animation-delay:0.42s">e</span><span class="ecom-kw" style="--i:7; animation-delay:0.49s">r</span><span class="ecom-kw" style="--i:8; animation-delay:0.56s">c</span><span class="ecom-kw" style="--i:9; animation-delay:0.63s">e</span>
+          </p>
+          <h1 class="ecom-hero-heading reveal-fade" style="transition-delay:0.05s">
+            <span class="l1">Your Store. Built for You,</span>
+            <span class="l2 ecom-heading-grad">Not Rented to You.</span>
+          </h1>
+          <p class="ecom-hero-sub reveal-fade" style="transition-delay:0.1s">Every e-commerce platform we build is written for one business — yours. No per-sale cut, no app-store shopping list, no template ceiling to outgrow. We build it, we run it, you own everything it generates.</p>
+          <div class="ecom-hero-actions reveal-fade" style="transition-delay:0.15s">
+            <div class="ecom-hero-services-menu">
+              <button type="button" class="btn ecom-hero-btn ecom-hero-btn-outline ecom-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="ecom-hero-services-panel">
+                View Services
+                <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="dropdown-menu ecom-hero-services-panel" id="ecom-hero-services-panel" role="menu">
+                <a href="#ecom-deploy" class="dropdown-item" role="menuitem">How It Works</a>
+                <a href="#ecom-pitch" class="dropdown-item" role="menuitem">Not Off the Shelf</a>
+                <a href="#ecom-features" class="dropdown-item" role="menuitem">What's Included</a>
+                <a href="#ecom-addons" class="dropdown-item" role="menuitem">Beyond the Tiers</a>
+                <a href="#ecom-tiers" class="dropdown-item" role="menuitem">Choose Your Tier</a>
+                <a href="#ecom-faq" class="dropdown-item" role="menuitem">FAQ</a>
+              </div>
+            </div>
+            <a href="#ecom-tiers" class="btn ecom-hero-btn ecom-hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <div class="ecom-hero-mock-wrap reveal-fade" style="transition-delay:0.2s">
+          <div class="browser-mock">
+            <div class="browser-mock-inner">
+              <div class="browser-bar">
+                <div class="browser-dots">
+                  <div class="browser-dot" style="background:#FF5F56;"></div>
+                  <div class="browser-dot" style="background:#FFBD2E;"></div>
+                  <div class="browser-dot" style="background:#27C93F;"></div>
+                </div>
+                <div class="browser-url-bar">yourstore.com</div>
+              </div>
+              <div class="browser-body">
+                <img src="brand_assets/vardedveins.com_Desktop.webp" alt="Storefront preview (placeholder)" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ DEPLOYMENTS-STYLE FORMAT (layout port — copy pending) ============ -->
+    <section id="ecom-deploy" style="border-top:1px solid rgba(255,255,255,0.06);">
+      <div class="section-inner">
+        <div class="section-head reveal-fade">
+          <p class="sec-tag">// Features</p>
+          <h2>Deployments made easy</h2>
+          <p>Deploy with ease, leave complexities to us.</p>
+        </div>
+        <div class="deploy-bento">
+          <div class="deploy-card deploy-card-deploy reveal-fade">
+            <div class="deploy-mini-row">
+              <div class="deploy-mini-box"><img src="https://placehold.co/160x160/161b27/EF4444?text=git" alt=""></div>
+              <div class="deploy-mini-box"><img src="https://placehold.co/160x160/161b27/EF4444?text=GitHub" alt=""></div>
+              <div class="deploy-mini-box"><img src="https://placehold.co/160x160/161b27/EF4444?text=AWS" alt=""></div>
+            </div>
+            <div class="deploy-card-text">
+              <h3>Simple Migration</h3>
+              <p>Move your existing website to our platform with minimal downtime and effort.</p>
+            </div>
+          </div>
+          <div class="deploy-card deploy-card-workflow reveal-fade" style="transition-delay:0.06s">
+            <div class="deploy-card-text">
+              <h3>Platform Support</h3>
+              <p>We support all major platforms, ensuring seamless integration with your existing data.</p>
+            </div>
+            <div class="deploy-card-visual"><img src="https://placehold.co/560x460/0f1219/8a93a8?text=Dashboard+Preview" alt=""></div>
+          </div>
+          <div class="deploy-card deploy-card-edge reveal-fade" style="transition-delay:0.12s">
+            <div class="deploy-card-text">
+              <h3>Hosting over the Edge</h3>
+              <p>By utilizing our global network, we host your website on the world's largest and most reliable infrastructure.</p>
+            </div>
+            <div class="deploy-card-visual"><img src="https://placehold.co/700x420/0f1219/8a93a8?text=Edge+Network" alt=""></div>
+          </div>
+          <div class="deploy-card deploy-card-copy reveal-fade" style="transition-delay:0.18s">
+            <div class="deploy-card-text">
+              <h3>Example Template</h3>
+              <p>A pre-designed layout to showcase how your website can look with our platform.</p>
+            </div>
+            <div class="deploy-card-visual"><img src="https://placehold.co/560x460/0f1219/8a93a8?text=Dashboard+Preview" alt=""></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PORTING PITCH ============ -->
+    <section id="ecom-pitch" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);">
+      <div class="section-inner">
+        <div class="section-head reveal-fade">
+          <p class="sec-tag">// Not Off the Shelf</p>
+          <h2>Same Storefront Everyone Else Is Running? <span style="display:block;">Not This Time.</span></h2>
+        </div>
+        <p class="pitch-intro reveal-fade" style="transition-delay:0.05s">Shopify, WooCommerce, and BigCommerce were built to rent the same platform to millions of stores. We build one platform for one store: yours.</p>
+        <div class="pitch-grid">
+          <div class="pitch-card reveal-fade" style="transition-delay:0s">
+            <p class="pitch-num">01</p>
+            <div class="pitch-body">
+              <div class="pitch-side pitch-elsewhere">
+                <span class="pitch-label">Elsewhere</span>
+                <span class="pitch-text">A cut of every sale, forever — the more you sell, the more they take.</span>
+              </div>
+              <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              <div class="pitch-side pitch-vardweb">
+                <span class="pitch-label">With VardWeb</span>
+                <span class="pitch-text">One flat monthly rate. No cut taken out of your sales, ever.</span>
+              </div>
+            </div>
+          </div>
+          <div class="pitch-card reveal-fade" style="transition-delay:0.06s">
+            <p class="pitch-num">02</p>
+            <div class="pitch-body">
+              <div class="pitch-side pitch-elsewhere">
+                <span class="pitch-label">Elsewhere</span>
+                <span class="pitch-text">Basic features locked behind a paid app marketplace — reviews, upsells, subscriptions all cost extra.</span>
+              </div>
+              <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              <div class="pitch-side pitch-vardweb">
+                <span class="pitch-label">With VardWeb</span>
+                <span class="pitch-text">Built in from day one, scaled to your plan. Nothing to shop for separately.</span>
+              </div>
+            </div>
+          </div>
+          <div class="pitch-card reveal-fade" style="transition-delay:0.12s">
+            <p class="pitch-num">03</p>
+            <div class="pitch-body">
+              <div class="pitch-side pitch-elsewhere">
+                <span class="pitch-label">Elsewhere</span>
+                <span class="pitch-text">Checkout and theme rules built for the platform, not your business — you adapt to the template.</span>
+              </div>
+              <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              <div class="pitch-side pitch-vardweb">
+                <span class="pitch-label">With VardWeb</span>
+                <span class="pitch-text">Built around how your business actually works, not squeezed into a template.</span>
+              </div>
+            </div>
+          </div>
+          <div class="pitch-card reveal-fade" style="transition-delay:0.18s">
+            <p class="pitch-num">04</p>
+            <div class="pitch-body">
+              <div class="pitch-side pitch-elsewhere">
+                <span class="pitch-label">Elsewhere</span>
+                <span class="pitch-text">Your customer data and order history live on someone else's platform.</span>
+              </div>
+              <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              <div class="pitch-side pitch-vardweb">
+                <span class="pitch-label">With VardWeb</span>
+                <span class="pitch-text">The domain is yours. Every customer record and order your business generates is yours, and exportable, always.</span>
+              </div>
+            </div>
+          </div>
+          <div class="pitch-card reveal-fade" style="transition-delay:0.24s">
+            <p class="pitch-num">05</p>
+            <div class="pitch-body">
+              <div class="pitch-side pitch-elsewhere">
+                <span class="pitch-label">Elsewhere</span>
+                <span class="pitch-text">Skip the fees by self-hosting — and inherit the hosting, security, and upkeep yourself.</span>
+              </div>
+              <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              <div class="pitch-side pitch-vardweb">
+                <span class="pitch-label">With VardWeb</span>
+                <span class="pitch-text">We build it and keep it running. Updates, monitoring, and support included in the monthly rate.</span>
+              </div>
+            </div>
+          </div>
+          <div class="pitch-card reveal-fade" style="transition-delay:0.3s">
+            <p class="pitch-num">06</p>
+            <div class="pitch-body">
+              <div class="pitch-side pitch-elsewhere">
+                <span class="pitch-label">Elsewhere</span>
+                <span class="pitch-text">Outgrow your plan tier and face a full re-platform to keep scaling.</span>
+              </div>
+              <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+              <div class="pitch-side pitch-vardweb">
+                <span class="pitch-label">With VardWeb</span>
+                <span class="pitch-text">The platform evolves with your business — included in the plan, not a re-platforming project.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ============ FEATURE MANIFEST ============ -->
+    <section id="ecom-features">
+      <div class="section-inner">
+        <div class="section-head reveal-fade">
+          <p class="sec-tag">// What's Included</p>
+          <h2>One Platform. Everything a Real Store Needs.</h2>
+          <p>Every tier below gets the full feature set. What scales is capacity, not capability.</p>
+        </div>
+        <div class="feat-grid">
+          <div class="feat-card reveal-fade" style="transition-delay:0s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><img src="brand_assets/icons/idx-product-catalogs.webp" alt="" loading="lazy" /></div>
+              <div><span class="feat-cat">Storefront</span><h3>Merchandising</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Product catalog with variants — size, color, bundles</li>
+              <li>Faceted search &amp; filtering by price, tag, category</li>
+              <li>Customer reviews &amp; UGC</li>
+            </ul>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.05s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+              <div><span class="feat-cat">Conversion</span><h3>Cart &amp; Checkout</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Guest checkout, no forced account creation</li>
+              <li>One-page checkout flow</li>
+              <li>Abandoned-cart recovery via email &amp; SMS</li>
+            </ul>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.1s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+              <div><span class="feat-cat">Money</span><h3>Payments</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Cards, Apple Pay &amp; Google Pay</li>
+              <li>PayPal, Shop Pay, Amazon Pay &amp; Venmo</li>
+              <li>Buy-now-pay-later, multi-currency ready</li>
+            </ul>
+            <div class="feat-badges">
+              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-stripe.svg" alt="" loading="lazy" /></span>
+              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-paypal.webp" alt="" loading="lazy" /></span>
+            </div>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.15s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>
+              <div><span class="feat-cat">Operations</span><h3>Inventory &amp; Catalog Ops</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Real-time stock sync across every channel</li>
+              <li>Low-stock &amp; back-in-stock alerts</li>
+              <li>SKU / variant-level management</li>
+            </ul>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.2s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+              <div><span class="feat-cat">Reach</span><h3>Sales Channel Reach</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Storefront + Shop app listing</li>
+              <li>Instagram &amp; TikTok shop sync</li>
+              <li>Google Shopping feed + marketplaces</li>
+            </ul>
+            <div class="feat-badges">
+              <span class="feat-badge"><img src="brand_assets/icons/GShoppingA-isometric-icon-transparent.webp" alt="" loading="lazy" /></span>
+              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-etsy.webp" alt="" loading="lazy" /></span>
+              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-ebay.webp" alt="" loading="lazy" /></span>
+            </div>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.25s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+              <div><span class="feat-cat">Retention</span><h3>Marketing Automation</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Welcome flows &amp; cart recovery</li>
+              <li>Win-back campaigns</li>
+              <li>Loyalty &amp; rewards points</li>
+            </ul>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.3s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+              <div><span class="feat-cat">Back office</span><h3>Admin / Back-Office</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Order management dashboard</li>
+              <li>Staff roles &amp; role-based permissions</li>
+              <li>Returns / RMA workflow</li>
+            </ul>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.35s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div><span class="feat-cat">Trust</span><h3>Security &amp; Compliance</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>SSL by default, PCI-compliant payments</li>
+              <li>Fraud detection on checkout</li>
+              <li>GDPR/CCPA-aware data tooling</li>
+            </ul>
+          </div>
+          <div class="feat-card reveal-fade" style="transition-delay:0.4s">
+            <div class="feat-card-top">
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+              <div><span class="feat-cat">Insight</span><h3>Analytics &amp; Reporting</h3></div>
+            </div>
+            <ul class="feat-list">
+              <li>Sales &amp; conversion-funnel dashboards</li>
+              <li>Customer lifetime-value tracking</li>
+              <li>Product-level performance reporting</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ============ ADD-ONS ============ -->
+    <section id="ecom-addons" style="background:var(--surface);">
+      <div class="section-inner">
+        <div class="reveal-fade" style="margin-bottom:24px;">
+          <p class="sec-tag">// Beyond the Tiers</p>
+          <h2 style="font-size:clamp(26px,3.4vw,38px);font-weight:700;color:var(--text-1);margin-bottom:14px;">Add-ons</h2>
+        </div>
+        <div class="addon-card-grid">
+          <div class="addon-card reveal-fade" style="transition-delay:0s">
+            <div class="addon-card-content">
+              <div class="addon-card-icon" style="--icon-right:-5%; --icon-top:65%; --icon-transform:translateY(-35%); --icon-w:230px; --icon-h:230px; --icon-rotate:2deg; --icon-right-mobile:-15%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:190px; --icon-h-mobile:190px; --icon-rotate-mobile:3deg;"><img src="brand_assets/icons/E-Commerce-Online-Retail-isometric-icon.webp" alt="" loading="lazy" /></div>
+              <div>
+                <h4 class="addon-card-title">Store Migration · One-time</h4>
+                <p class="addon-card-desc">Already selling on Shopify, WooCommerce, or BigCommerce? We migrate your full catalog, order history, and customer data into your new platform.<br>No re-entry, no data loss.</p>
+              </div>
+              <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=Store%20Migration&amp;serviceColor=%23EF4444&amp;serviceDesc=Migrate%20an%20existing%20Shopify%2FWooCommerce%2FBigCommerce%20store%20into%20a%20custom%20VardWeb%20platform." class="btn addon-card-cta">Request a migration quote</a>
+            </div>
+          </div>
+          <div class="addon-card reveal-fade" style="transition-delay:0.06s">
+            <div class="addon-card-content">
+              <div class="addon-card-icon" style="--icon-right:-7%; --icon-top:65%; --icon-transform:translateY(-41%); --icon-w:220px; --icon-h:220px; --icon-rotate:3deg; --icon-right-mobile:-18%; --icon-top-mobile:52%; --icon-transform-mobile:translateY(31%); --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-rotate-mobile:3deg;"><img src="brand_assets/icons/idx-roadmap-rocket.webp" alt="" loading="lazy" /></div>
+              <div>
+                <h4 class="addon-card-title">Expedited Launch</h4>
+                <p class="addon-card-desc">Need to be live before a specific date — a launch event, a seasonal window, a funding deadline?<br>We can compress the build timeline for an added rush fee.</p>
+              </div>
+              <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=Expedited%20Launch&amp;serviceColor=%23EF4444&amp;serviceDesc=Compress%20the%20build%20timeline%20for%20an%20added%20rush%20fee." class="btn addon-card-cta">Ask about a rush build</a>
+            </div>
+          </div>
+          <div class="addon-card reveal-fade" style="transition-delay:0.12s">
+            <div class="addon-card-content">
+              <div class="addon-card-icon" style="--icon-right:-4%; --icon-top:65%; --icon-transform:translateY(-38%); --icon-w:230px; --icon-h:230px; --icon-rotate:3deg; --icon-right-mobile:-13%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:200px; --icon-h-mobile:200px; --icon-rotate-mobile:3deg;"><img src="brand_assets/icons/idx-integrations.webp" alt="" loading="lazy" /></div>
+              <div>
+                <h4 class="addon-card-title">Custom Integrations</h4>
+                <p class="addon-card-desc">ERP, accounting software, a proprietary fulfillment system, a legacy CRM — if your business runs on something specific, we build the connection into your storefront.</p>
+              </div>
+              <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=Custom%20Integration&amp;serviceColor=%23EF4444&amp;serviceDesc=Connect%20a%20third-party%20ERP%2C%20accounting%2C%20fulfillment%2C%20or%20CRM%20system%20to%20the%20storefront." class="btn addon-card-cta">Discuss an integration →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ============ PRICING CARD GRID ============ -->
+    <section id="ecom-tiers">
+      <div class="section-inner">
+        <div class="section-head reveal-fade">
+          <p class="sec-tag">// Choose Your Tier</p>
+          <h2>Every Tier Gets the Full Platform. Just Different Room to Grow.</h2>
+          <p>No feature paywalls between tiers — only capacity changes. Pick the size that fits your business today; every plan is built to grow into the next one.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <div class="pricing-card reveal-fade" style="transition-delay:0s; --tier-color:#00E5FF; --tier-border:rgba(0,229,255,0.28); --tier-glow:rgba(0,229,255,0.08); --tier-shadow:rgba(0,229,255,0.18); --tier-bg:rgba(0,229,255,0.05); --tier-btn-bg1:rgba(0,229,255,0.14); --tier-btn-bg2:rgba(0,229,255,0.07); --tier-btn-hover1:rgba(0,229,255,0.22); --tier-btn-hover2:rgba(0,229,255,0.12);">
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Jack</span></div>
+            <p class="pricing-stat">Up to 50 products</p>
+            <p class="pricing-quote">Custom quote — no published pricing</p>
+            <ul class="pricing-features">
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 variants per product</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Guest + one-page checkout, up to 2 recovery touchpoints</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>1–2 staff seats</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Storefront + Shop app + Google Shopping + Instagram/TikTok shop</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 2 marketing flows designed for you</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>12-hour support response</li>
+            </ul>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Jack&amp;tierColor=%2300E5FF" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+          </div>
+
+          <div class="pricing-card reveal-fade" style="transition-delay:0.06s; --tier-color:#A855F7; --tier-border:rgba(168,85,247,0.28); --tier-glow:rgba(168,85,247,0.08); --tier-shadow:rgba(168,85,247,0.18); --tier-bg:rgba(168,85,247,0.05); --tier-btn-bg1:rgba(168,85,247,0.14); --tier-btn-bg2:rgba(168,85,247,0.07); --tier-btn-hover1:rgba(168,85,247,0.22); --tier-btn-hover2:rgba(168,85,247,0.12);">
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Queen</span></div>
+            <p class="pricing-stat">Up to 250 products</p>
+            <p class="pricing-quote">Custom quote — no published pricing</p>
+            <ul class="pricing-features">
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 10 variants per product</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 cart-recovery touchpoints</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 staff seats</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>+1 marketplace (Amazon or Etsy)</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 marketing flows</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>8-hour support response</li>
+            </ul>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Queen&amp;tierColor=%23A855F7" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+          </div>
+
+          <div class="pricing-card reveal-fade" style="transition-delay:0.12s; --tier-color:#FFD700; --tier-border:rgba(255,215,0,0.28); --tier-glow:rgba(255,215,0,0.08); --tier-shadow:rgba(255,215,0,0.18); --tier-bg:rgba(255,215,0,0.05); --tier-btn-bg1:rgba(255,215,0,0.14); --tier-btn-bg2:rgba(255,215,0,0.07); --tier-btn-hover1:rgba(255,215,0,0.22); --tier-btn-hover2:rgba(255,215,0,0.12);">
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">King</span></div>
+            <p class="pricing-stat">Up to 500 products</p>
+            <p class="pricing-quote">Custom quote — no published pricing</p>
+            <ul class="pricing-features">
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 25 variants per product</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 10 cart-recovery touchpoints</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 15 staff seats</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>+2 marketplaces</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 10 marketing flows</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>4-hour support response</li>
+            </ul>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=King&amp;tierColor=%23FFD700" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+          </div>
+
+          <div class="pricing-card reveal-fade" style="transition-delay:0.18s; --tier-color:#FF3B3B; --tier-border:rgba(255,59,59,0.28); --tier-glow:rgba(255,59,59,0.08); --tier-shadow:rgba(255,59,59,0.18); --tier-bg:rgba(255,59,59,0.05); --tier-btn-bg1:rgba(255,59,59,0.14); --tier-btn-bg2:rgba(255,59,59,0.07); --tier-btn-hover1:rgba(255,59,59,0.22); --tier-btn-hover2:rgba(255,59,59,0.12);">
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Ace</span></div>
+            <p class="pricing-stat">Up to 1,000 products</p>
+            <p class="pricing-quote">Custom quote — no published pricing</p>
+            <ul class="pricing-features">
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 50 variants per product</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 20 touchpoints, fully automated cross-channel</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited staff seats with role-based permissions</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited marketplaces + custom feed integrations</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 20 marketing flows</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Priority same-day support, dedicated channel</li>
+            </ul>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Ace&amp;tierColor=%23FF3B3B" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+          </div>
+
+          <div class="pricing-card reveal-fade" style="transition-delay:0.24s; --tier-color:#f97316; --tier-border:rgba(249,115,22,0.28); --tier-glow:rgba(249,115,22,0.08); --tier-shadow:rgba(249,115,22,0.18); --tier-bg:rgba(249,115,22,0.05); --tier-btn-bg1:rgba(249,115,22,0.14); --tier-btn-bg2:rgba(249,115,22,0.07); --tier-btn-hover1:rgba(249,115,22,0.22); --tier-btn-hover2:rgba(249,115,22,0.12);">
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Custom</span></div>
+            <p class="pricing-stat">Bespoke, built to scale</p>
+            <p class="pricing-quote">Custom quote — no published pricing</p>
+            <ul class="pricing-features">
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke catalog size &amp; variants</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke cart-recovery flows</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Negotiated multi-currency &amp; B2B/wholesale invoicing</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke marketplace &amp; integration footprint</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke SLA</li>
+            </ul>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Custom&amp;tierColor=%23f97316" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+          </div>
+        </div>
+        <p class="tier-payment-note reveal-fade">Every tier accepts the same full payment stack: <b>cards, Apple/Google Pay, PayPal, Shop Pay, BNPL, Amazon Pay &amp; Venmo</b>. Custom-tier stores can add negotiated multi-currency processing and B2B/wholesale invoicing terms.</p>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="ecom-faq" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="ecom-faq-inner">
+        <p class="sec-tag reveal-fade">// frequently asked</p>
+        <h2 class="reveal-fade" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px; transition-delay:0.05s">
+          E-Commerce Questions, <span class="ecom-heading-grad">Answered</span>
+        </h2>
+        <div class="ecom-faq-list">
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <span class="ecom-faq-question">Do I own the store, or does VardWeb?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">You own your domain and everything your store generates — every customer record, every order, every dollar of data. VardWeb owns and maintains the underlying code, which is what your flat monthly rate covers: the build, the hosting, the updates, and the support. You're never locked out of your own business data, even though the platform itself is ours to run.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.05s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+              <span class="ecom-faq-question">How long does a build take?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Timeline depends on catalog size and tier — a Jack-tier store with a smaller catalog moves faster than an Ace-tier build with marketplace integrations and automated marketing flows. We'll give you a firm timeline after a short discovery call. Need to launch by a specific date? Ask about our Expedited Launch add-on above.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.1s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+              <span class="ecom-faq-question">I already sell on Shopify / WooCommerce / BigCommerce — can you move my store over?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Yes. Store Migration is a one-time add-on where we bring your full catalog, order history, and customer data into your new VardWeb platform — nothing re-entered by hand, nothing lost in the switch. See the Add-ons above for details.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.15s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+              <span class="ecom-faq-question">What happens if I outgrow my tier's limits?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">You upgrade. Every tier runs on the same platform, so moving from Queen to King, for example, isn't a re-platform or a rebuild — it's a capacity increase. That's the entire point of building it ourselves instead of putting you on a shelf platform: there's no ceiling that forces you to start over.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.2s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg></div>
+              <span class="ecom-faq-question">Can I change tiers later?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Any time. Reach out and we'll adjust your plan to the tier that fits where your business is now — up or down.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.25s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+              <span class="ecom-faq-question">Does this include design, or just the platform?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Both. The platform (catalog, checkout, payments, inventory, marketing automation, admin, and reporting) and the storefront design that sits on top of it are built together as one custom project — not a theme applied to a template.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.3s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+              <span class="ecom-faq-question">What payment methods can my store accept?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">The same full stack at every tier: cards, Apple Pay, Google Pay, PayPal, Shop Pay, buy-now-pay-later, Amazon Pay, and Venmo. Custom-tier stores can add negotiated multi-currency processing and B2B/wholesale invoicing terms.</div></div>
+          </div>
+          <div class="ecom-faq-item reveal-fade" style="transition-delay:0.35s">
+            <button class="ecom-faq-trigger" aria-expanded="false">
+              <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <span class="ecom-faq-question">How is pricing determined?</span>
+              <div class="ecom-faq-toggle" aria-hidden="true">
+                <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">There's no published price list, because there's no template to price against — every build is scoped to your catalog, tier, and requirements. Pick the tier that matches your business above, then request a quote and we'll price it from there. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--ecom-red);">See more general FAQs →</a></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CTA ============ -->
+    <section class="ecom-cta">
+      <div class="ecom-cta-card">
+        <canvas class="ecom-cta-shader" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
+        <div class="ecom-cta-content reveal-fade">
+          <div class="ecom-hero-pill" style="margin-bottom:0;">
+            <span class="ecom-hero-pill-dot"></span>
+            Ready When You Are
+          </div>
+          <h2 class="ecom-cta-heading">
+            Stop Renting a Storefront.<br class="ecom-cta-break"> <span class="ecom-heading-grad">Start Owning One.</span>
+          </h2>
+          <p class="ecom-cta-sub">No per-sale cut, no app-store shopping list, no ceiling to outgrow. Tell us about your business and we'll scope a platform built for it.</p>
+          <div class="ecom-cta-actions">
+            <a href="#ecom-tiers" class="btn addon-card-cta">Get Started <span class="btn-arrow" aria-hidden="true">→</span></a>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;learnMore=1" class="btn btn-outline-brand">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <div class="logo-nav-wrap" style="display:inline-flex;">
+            <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+          </div>
+          <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
+          <div class="footer-social-row">
+            <a href="#" class="social-btn" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="#" class="social-btn" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+            <a href="#" class="social-btn" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-head">Home</p>
+          <a href="index.html#hero"     class="footer-link">Landing</a>
+          <a href="index.html#why-us"   class="footer-link">Why Us?</a>
+          <a href="index.html#services" class="footer-link">Services</a>
+          <a href="index.html#advanced" class="footer-link">Advanced</a>
+          <a href="index.html#investment" class="footer-link">Investment</a>
+          <a href="index.html#results"  class="footer-link">Results</a>
+          <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Company</p>
+          <a href="faq.html"      class="footer-link">FAQ</a>
+          <a href="blog.html"     class="footer-link">Blog</a>
+          <a href="our-work.html" class="footer-link">Our Work</a>
+          <a href="about.html"    class="footer-link">About Us</a>
+          <a href="contact.html"  class="footer-link">Contact</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Services</p>
+          <a href="services.html" class="footer-link">All Services</a>
+          <a href="web-design.html" class="footer-link">Web Design</a>
+          <a href="ecommerce.html" class="footer-link active">E-Commerce</a>
+          <a href="contact.html" class="footer-link">Landing Pages</a>
+          <a href="contact.html" class="footer-link">App Development</a>
+          <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="footer-link">Email Marketing</a>
+          <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
+          <a href="content-creation.html" class="footer-link">Content Creation &amp; CM</a>
+          <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+          <a href="contact.html" class="footer-link">Custom Request</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Legal</p>
+          <a href="privacy.html"         class="footer-link">Privacy Policy</a>
+          <a href="terms.html"           class="footer-link">Terms of Service</a>
+          <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
+          <a href="accessibility.html"   class="footer-link">Accessibility</a>
+          <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
+        </div>
+      </div>
+    <div class="trust-badge-row reveal-fade">
+      <a href="about.html" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+        </span>
+        <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </span>
+        <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--cyan);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14100a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+      </a>
+      <a href="accessibility.html" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#14100a" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+      </a>
+    </div>
+
+      <div class="footer-divider"></div>
+      <div class="footer-bottom-bar">
+        <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+        <div class="footer-credit">
+          <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+          <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
+          <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+          <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+
+  <script>
+    (function () {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) entry.target.classList.add('is-visible');
+        });
+      }, { threshold: 0.2 });
+      document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+    })();
+  </script>
+
+  <!-- ── Comet/box collision detection — live geometry, not baked-in coordinates.
+       Each frame, checks every comet's actual bounding rect against the mockup
+       box's rect; the instant they intersect, the burst is positioned at that
+       comet's real leading corner and fired. Self-correcting by construction, so
+       it can't drift out of sync the way hand-measured % anchors did. ── -->
+  <script>
+    (function () {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var box = document.querySelector('.ecom-hero-mock-wrap');
+      var container = document.getElementById('ecom-hero-comets');
+      if (!box || !container) return;
+
+      var pairs = [1, 2, 3, 4].map(function (n) {
+        return {
+          comet: container.querySelector('.comet-' + n),
+          burst: container.querySelector('.comet-burst-' + n),
+          hit: false
+        };
+      }).filter(function (p) { return p.comet && p.burst; });
+      if (!pairs.length) return;
+
+      pairs.forEach(function (p) {
+        p.comet.addEventListener('animationiteration', function () { p.hit = false; });
+        var glow = p.burst.querySelector('.burst-glow');
+        if (glow) glow.addEventListener('animationend', function () { p.burst.classList.remove('is-hit'); });
+      });
+
+      function tick() {
+        var boxRect = box.getBoundingClientRect();
+        var containerRect = container.getBoundingClientRect();
+        pairs.forEach(function (p) {
+          if (p.hit) return;
+          var r = p.comet.getBoundingClientRect();
+          var touching = r.right >= boxRect.left && r.left <= boxRect.right &&
+                          r.bottom >= boxRect.top && r.top <= boxRect.bottom;
+          if (touching) {
+            p.burst.style.left = (r.right - containerRect.left) + 'px';
+            p.burst.style.top = (r.bottom - containerRect.top) + 'px';
+            p.burst.classList.add('is-hit');
+            p.hit = true;
+          }
+        });
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    })();
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Desktop dropdown a11y (focus/hover)
+      document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+        var trigger = dd.querySelector('.nav-dropdown-trigger');
+        if (!trigger) return;
+        dd.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+        dd.addEventListener('focusout', function (e) {
+          if (!dd.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false');
+        });
+        dd.addEventListener('mouseleave', function () {
+          if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // Hero "Explore the Page" popover — reparents to <body> so position:fixed isn't
+      // clipped by the hero's overflow:hidden, flips up/down based on viewport space.
+      document.querySelectorAll('.ecom-hero-services-menu').forEach(function (wrap) {
+        var svcTrigger = wrap.querySelector('.ecom-hero-services-trigger');
+        var svcPanel = wrap.querySelector('.ecom-hero-services-panel');
+        document.body.appendChild(svcPanel);
+        var closeSvc = function () { svcTrigger.setAttribute('aria-expanded', 'false'); svcPanel.classList.remove('open'); };
+        var openSvc = function () {
+          var rect = svcTrigger.getBoundingClientRect();
+          var panelHeight = svcPanel.offsetHeight;
+          var openDown = rect.top - panelHeight - 10 < 16;
+          if (openDown) {
+            svcPanel.style.top = (rect.bottom + 10) + 'px';
+            svcPanel.style.bottom = 'auto';
+            svcPanel.classList.add('drop-down');
+          } else {
+            svcPanel.style.bottom = (window.innerHeight - rect.top + 10) + 'px';
+            svcPanel.style.top = 'auto';
+            svcPanel.classList.remove('drop-down');
+          }
+          svcPanel.style.left = rect.left + 'px';
+          svcTrigger.setAttribute('aria-expanded', 'true');
+          svcPanel.classList.add('open');
+        };
+        svcTrigger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          svcTrigger.getAttribute('aria-expanded') === 'true' ? closeSvc() : openSvc();
+        });
+        svcPanel.querySelectorAll('.dropdown-item').forEach(function (item) {
+          item.addEventListener('click', closeSvc);
+        });
+        document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
+        window.addEventListener('scroll', closeSvc, true);
+        window.addEventListener('resize', closeSvc);
+      });
+
+      // FAQ accordion
+      document.querySelectorAll('.ecom-faq-item').forEach(function (item, i) {
+        var btn = item.querySelector('.ecom-faq-trigger');
+        var content = item.querySelector('.ecom-faq-content');
+        var panelId = 'ecom-faq-panel-' + (i + 1);
+        content.id = panelId;
+        btn.setAttribute('aria-controls', panelId);
+      });
+      document.querySelectorAll('.ecom-faq-trigger').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = btn.closest('.ecom-faq-item');
+          var content = item.querySelector('.ecom-faq-content');
+          var isOpen = item.classList.contains('open');
+          if (isOpen) {
+            content.style.maxHeight = '0';
+            item.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+          } else {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            item.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    });
+  </script>
+
+  <!-- ── CTA shader background — ambient WebGL noise/glow wash behind the closing
+       CTA, in the page's red e-commerce theme. Same technique as .host-cta-shader
+       on hosting-services.html (simplex noise → color blend → vignette → grain),
+       recolored to --ecom-red / --ecom-red-deep / --ecom-red-pale. ── -->
+  <script>
+    (function () {
+      var canvas = document.querySelector('.ecom-cta-shader');
+      if (!canvas) return;
+
+      var gl = canvas.getContext('webgl', { antialias: true });
+      if (!gl) return;
+
+      var vertexSrc = [
+        'attribute vec2 position;',
+        'varying vec2 vUv;',
+        'void main() {',
+        '  vUv = position * 0.5 + 0.5;',
+        '  gl_Position = vec4(position, 0.0, 1.0);',
+        '}'
+      ].join('\n');
+
+      var fragmentSrc = [
+        'precision highp float;',
+        'varying vec2 vUv;',
+        'uniform vec2  u_resolution;',
+        'uniform float u_time;',
+        'uniform float u_grain;',
+        'uniform vec3  u_colors[3];',
+        'uniform vec3  u_bg;',
+        'vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+        'vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+        'vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }',
+        'float snoise(vec2 v) {',
+        '  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);',
+        '  vec2 i  = floor(v + dot(v, C.yy));',
+        '  vec2 x0 = v - i + dot(i, C.xx);',
+        '  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);',
+        '  vec4 x12 = x0.xyxy + C.xxzz;',
+        '  x12.xy -= i1;',
+        '  i = mod289(i);',
+        '  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));',
+        '  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);',
+        '  m = m*m; m = m*m;',
+        '  vec3 x = 2.0 * fract(p * C.www) - 1.0;',
+        '  vec3 h = abs(x) - 0.5;',
+        '  vec3 ox = floor(x + 0.5);',
+        '  vec3 a0 = x - ox;',
+        '  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);',
+        '  vec3 g;',
+        '  g.x  = a0.x  * x0.x  + h.x  * x0.y;',
+        '  g.yz = a0.yz * x12.xz + h.yz * x12.yw;',
+        '  return 130.0 * dot(m, g);',
+        '}',
+        'void main() {',
+        '  vec2 uv = vUv;',
+        '  float ratio = u_resolution.x / u_resolution.y;',
+        '  vec2 p = (uv - 0.5) * vec2(ratio, 1.0);',
+        '  float t = u_time * 0.15;',
+        '  float n1 = snoise(p * 0.9 + vec2(t * 0.6, -t * 0.4));',
+        '  float n2 = snoise(p * 1.3 + vec2(-t * 0.5, t * 0.35) + n1 * 0.3);',
+        '  float n3 = snoise(p * 1.8 + vec2(t * 0.3, -t * 0.5) + n2 * 0.25);',
+        '  vec3 col = u_bg;',
+        '  col = mix(col, u_colors[0], smoothstep(-0.15, 0.55, n1) * 0.55);',
+        '  col = mix(col, u_colors[1], smoothstep(-0.05, 0.6, n2) * 0.5);',
+        '  col = mix(col, u_colors[2], smoothstep(0.0, 0.7, n1 * n2 + n3 * 0.3) * 0.2);',
+        '  float dist = length(p) * 1.4;',
+        '  float glow = smoothstep(0.85, 0.0, dist) * 0.14;',
+        '  col += u_colors[1] * glow;',
+        '  float vignette = 1.0 - smoothstep(0.35, 1.25, dist);',
+        '  col = mix(col * 0.15, col, vignette);',
+        '  float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453 + u_time);',
+        '  col += (grain - 0.5) * u_grain * 0.06;',
+        '  gl_FragColor = vec4(col, 1.0);',
+        '}'
+      ].join('\n');
+
+      function createShader(type, src) {
+        var s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+
+      var program = gl.createProgram();
+      gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexSrc));
+      gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentSrc));
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      var buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+      var posLoc = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+      var locs = {
+        res:    gl.getUniformLocation(program, 'u_resolution'),
+        time:   gl.getUniformLocation(program, 'u_time'),
+        grain:  gl.getUniformLocation(program, 'u_grain'),
+        colors: gl.getUniformLocation(program, 'u_colors'),
+        bg:     gl.getUniformLocation(program, 'u_bg')
+      };
+
+      function hexToRgb(hex) {
+        var h = hex.replace('#', '');
+        return [
+          parseInt(h.slice(0, 2), 16) / 255,
+          parseInt(h.slice(2, 4), 16) / 255,
+          parseInt(h.slice(4, 6), 16) / 255
+        ];
+      }
+
+      var BG = hexToRgb('#12080a');
+      var COLORS = new Float32Array(
+        ['#EF4444', '#DC2626', '#FCA5A5'].reduce(function (acc, hex) {
+          return acc.concat(hexToRgb(hex));
+        }, [])
+      );
+      var GRAIN = 0.6;
+      var SPEED = 0.25;
+
+      function resize() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, canvas.clientWidth * dpr);
+        canvas.height = Math.max(1, canvas.clientHeight * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+
+      var ro = new ResizeObserver(resize);
+      ro.observe(canvas);
+      resize();
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function draw(t) {
+        gl.uniform2f(locs.res, canvas.width, canvas.height);
+        gl.uniform1f(locs.time, t);
+        gl.uniform1f(locs.grain, GRAIN);
+        gl.uniform3fv(locs.colors, COLORS);
+        gl.uniform3f(locs.bg, BG[0], BG[1], BG[2]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+
+      if (reduceMotion) {
+        draw(0);
+      } else {
+        (function render(ts) {
+          draw(ts * 0.001 * SPEED);
+          requestAnimationFrame(render);
+        })(0);
+      }
+    })();
+  </script>
+</body>
+</html>

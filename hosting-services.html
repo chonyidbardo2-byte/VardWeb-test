@@ -92,14 +92,19 @@
     .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
     .nav-link.active { color: var(--cyan); }
     .nav-link.active::after { width: 100%; }
+    .nav-link.nav-dropdown-trigger.active { color: var(--host-green); }
+    .nav-link.nav-dropdown-trigger.active::after { background: var(--host-green-deep); }
 
     .nav-dropdown { position: relative; display: flex; align-items: center; }
     .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
     .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
     .nav-dropdown:hover .chevron,
     .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
     .dropdown-menu {
-      position: absolute; top: 100%; left: 50%;
+      position: absolute; top: calc(100% + 6px); left: 50%;
       transform: translateX(-50%) translateY(-6px);
       background: rgba(15,18,25,0.96);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -222,6 +227,14 @@
     #host-hero-glow div { position: absolute; border-radius: 50%; }
     .host-hero-content { position: relative; z-index: 2; max-width: 840px; margin: 0 auto; }
 
+    /* ── Scroll-fade reveal ── */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.is-visible { opacity: 1; transform: translateY(0); }
+
     .host-hero-pill {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 18px; border-radius: 999px;
@@ -233,6 +246,30 @@
       margin-bottom: 26px;
     }
     .host-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--host-green); box-shadow: 0 0 8px var(--host-green); flex-shrink: 0; }
+
+    .host-hero-kicker {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .host-kicker-slash { color: var(--text-2); margin-right: 2px; }
+    .host-kw {
+      display: inline-block;
+      animation: host-kicker-wave 2.2s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--host-green-pale) 0%, #ffffff 50%, var(--host-green-deep) 100%);
+      background-size: 700% 100%;
+      background-position: calc(var(--i) / 13 * 100%) 0;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    @keyframes host-kicker-wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .host-kw { animation: none; }
+    }
 
     .host-hero-heading { line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 20px; }
     .host-hero-heading .l1 { display: block; color: rgba(238,240,248,0.88); font-weight: 600; font-size: clamp(24px,3.4vw,38px); }
@@ -835,6 +872,32 @@
     .footer-link:hover { color: var(--cyan); }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--host-green); }
+    .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .trust-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      width: 130px;
+      padding: 7px 16px 7px 7px;
+      white-space: nowrap;
+      background: var(--text-1);
+      border: 1px solid rgba(20,16,10,0.22);
+      border-radius: 13px;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(20,16,10,0.2), 0 10px 24px -12px rgba(20,16,10,0.55);
+      transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      -webkit-font-smoothing: antialiased;
+    }
+    .trust-badge:hover { transform: translateY(-3px) translateZ(0); box-shadow: 0 2px 4px rgba(20,16,10,0.22), 0 16px 32px -12px rgba(20,16,10,0.55); }
+    .trust-badge:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .trust-badge:active { transform: translateY(-1px) translateZ(0); }
+    .trust-badge-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trust-badge-text { display: flex; flex-direction: column; line-height: 1.28; }
+    .trust-badge-text span:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    .trust-badge-text span:last-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    @media (max-width: 768px) { .trust-badge-row { justify-content: center; } }
+    @media (max-width: 560px) { .trust-badge-row { gap: 10px; } .trust-badge { padding: 6px 13px 6px 6px; } }
     .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
     .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
     .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
@@ -969,7 +1032,7 @@
           </a>
           <div class="dropdown-menu" id="dd-services-menu" role="menu">
             <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
-            <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+            <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
             <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
@@ -1029,7 +1092,7 @@
       <div class="mob-accordion-panel" id="mob-services-panel"><div>
       <a href="services.html" class="mob-link mob-sub">All Services</a>
       <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
-      <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
+      <a href="ecommerce.html"  class="mob-link mob-sub">E-Commerce</a>
       <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
       <a href="contact.html"  class="mob-link mob-sub">App Development</a>
       <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
@@ -1071,6 +1134,13 @@
           <span class="host-hero-pill-dot"></span>
           Find & Buy Available Domains
         </div>
+
+        <p class="host-hero-kicker">
+          <span class="host-kicker-slash">//</span>
+          <span class="host-kw" style="--i:0; animation-delay:0s">D</span><span class="host-kw" style="--i:1; animation-delay:0.07s">o</span><span class="host-kw" style="--i:2; animation-delay:0.14s">m</span><span class="host-kw" style="--i:3; animation-delay:0.21s">a</span><span class="host-kw" style="--i:4; animation-delay:0.28s">i</span><span class="host-kw" style="--i:5; animation-delay:0.35s">n</span>
+          <span class="host-kw" style="--i:6; animation-delay:0.42s">&amp;</span>
+          <span class="host-kw" style="--i:7; animation-delay:0.49s">H</span><span class="host-kw" style="--i:8; animation-delay:0.56s">o</span><span class="host-kw" style="--i:9; animation-delay:0.63s">s</span><span class="host-kw" style="--i:10; animation-delay:0.7s">t</span><span class="host-kw" style="--i:11; animation-delay:0.77s">i</span><span class="host-kw" style="--i:12; animation-delay:0.84s">n</span><span class="host-kw" style="--i:13; animation-delay:0.91s">g</span>
+        </p>
 
         <h1 class="host-hero-heading">
           <span class="l1">Get a .com with <span class="host-heading-grad">no markup 1st year</span></span>
@@ -1115,7 +1185,7 @@
 
         <div id="host-search-results" class="host-search-results" hidden aria-live="polite"></div>
 
-        <p class="host-hero-concierge">Prefer us to just handle it? <a href="contact.html?type=Domain%20%26%20Hosting&learnMore=1">Talk to a human instead →</a></p>
+        <p class="host-hero-concierge">Prefer us to just handle it? <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&learnMore=1">Talk to a human instead →</a></p>
     </section>
     </div>
 
@@ -1170,7 +1240,7 @@
 
     <!-- ============ INCLUDED FREE BANNER ============ -->
     <section id="host-included">
-      <div class="host-included-inner">
+      <div class="host-included-inner reveal-fade">
         <div class="host-included-text">
           <h3>Already building with us? Domain setup is free.</h3>
           <p>Domain hosting &amp; delegation is bundled into every VardWeb site-build package, at no extra cost. <a href="web-design.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See what's included in each tier →</a></p>
@@ -1187,12 +1257,12 @@
     <!-- ============ PROCESS ============ -->
     <section id="host-process">
       <div class="section-inner">
-        <div class="section-head">
+        <div class="section-head reveal-fade">
           <p class="sec-tag" style="display:flex;justify-content:center;">// New vs. Existing</p>
           <h2>Clean Slates vs.<br><span class="host-heading-grad">Established Infrastructure</span></h2>
           <p>Either way, VardWeb handles the errand. You stay the registrant, always.</p>
         </div>
-        <div class="host-process-grid">
+        <div class="host-process-grid reveal-fade">
           <div class="host-process-card">
             <span class="host-process-tag">NEW DOMAIN</span>
             <h3>Starting from scratch</h3>
@@ -1216,7 +1286,7 @@
     <!-- ============ MANAGED HOSTING ============ -->
     <section id="host-managed" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
       <div class="section-inner">
-        <div class="host-managed-grid">
+        <div class="host-managed-grid reveal-fade">
           <div>
             <p class="sec-tag">// managed hosting</p>
             <h2 style="font-size:clamp(24px,3vw,32px);color:var(--text-1);margin-bottom:18px;">Your site stays online.<br><span class="host-heading-grad">We make sure of it.</span></h2>
@@ -1248,12 +1318,12 @@
     <!-- ============ CONCIERGE (V1 + V2 parallel paths) ============ -->
     <section id="host-concierge">
       <div class="section-inner">
-        <div class="section-head">
+        <div class="section-head reveal-fade">
           <p class="sec-tag" style="display:flex;justify-content:center;">// two paths</p>
           <h2>Search It Yourself vs.<br><span class="host-heading-grad">Let Us Find It</span></h2>
           <p>Purchase a domain, or let us find it for you. Domain Hosting & Delegation available for all clients on Bronze, Silver, Gold or Custom plans.</p>
         </div>
-        <div class="host-path-grid">
+        <div class="host-path-grid reveal-fade">
           <div class="host-path-card">
             <div class="host-path-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
             <h3>Search it yourself</h3>
@@ -1267,8 +1337,8 @@
             <h3>Let's find it together</h3>
             <p>Not sure what you want, or juggling a rebrand? Talk it through with us directly by email, or book a short call.</p>
             <div class="host-path-actions">
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;bookCall=1&amp;bookCallColor=%2334D399" class="btn addon-card-cta">Book a Call</a>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;learnMore=1&amp;learnMoreColor=%2334D399" class="btn btn-outline-brand">Send a Message</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;bookCall=1&amp;bookCallColor=%2334D399" class="btn addon-card-cta">Book a Call</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;learnMore=1" class="btn btn-outline-brand">Send a Message</a>
             </div>
           </div>
         </div>
@@ -1280,12 +1350,12 @@
     <!-- ============ PRICING MODEL ============ -->
     <section id="host-pricing">
       <div class="section-inner">
-        <div class="section-head">
+        <div class="section-head reveal-fade">
           <p class="sec-tag" style="display:flex;justify-content:center;">// pricing model</p>
           <h2>The Renewal<br><span class="host-heading-grad">Bait-and-Switch</span></h2>
           <p>Go ahead, buy that C$0.01 domain from our competitors. Just try not to cry next year when they quietly bill you $34.99 to renew it. We skip the pricing traps, charging a transparent, boring, flat 10% over wholesale from year two until forever.</p>
         </div>
-        <div class="host-price-flow">
+        <div class="host-price-flow reveal-fade">
           <div class="host-price-card">
             <span class="k">Year 1 — Registration</span>
             <div class="host-price-row">
@@ -1323,12 +1393,12 @@
     <!-- ============ COMPARE ============ -->
     <section id="host-compare" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
       <div class="section-inner">
-        <div class="section-head">
+        <div class="section-head reveal-fade">
           <p class="sec-tag" style="display:flex;justify-content:center;">// Comparisons</p>
           <h2>We Run on Transparency.<br><span class="host-heading-grad">They Run on Amnesia.</span></h2>
           <p>Markup is measured against ~$9.15–10.44/yr wholesale. Cloudflare's own published at-cost .com price, the best public reference point for what a domain actually costs.</p>
         </div>
-        <div class="compare-table-wrap">
+        <div class="compare-table-wrap reveal-fade">
           <table class="compare-table">
             <thead>
               <tr>
@@ -1398,39 +1468,39 @@
     <!-- ============ ADD-ONS ============ -->
     <section id="host-addons">
       <div class="section-inner">
-        <div style="margin-bottom:24px;">
+        <div class="reveal-fade" style="margin-bottom:24px;">
           <p class="sec-tag">// Maximize</p>
           <h2 style="font-size:clamp(26px,3.4vw,38px);font-weight:700;color:var(--text-1);margin-bottom:14px;">Add-ons</h2>
         </div>
         <div class="addon-card-grid">
-          <div class="addon-card">
+          <div class="addon-card reveal-fade" style="transition-delay:0s">
             <div class="addon-card-content">
               <div class="addon-card-icon" style="--icon-right:-5%; --icon-top:65%; --icon-transform:translateY(-35%); --icon-w:250px; --icon-h:250px; --icon-rotate:2deg; --icon-right-mobile:-15%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:200px; --icon-h-mobile:200px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-12.7%; --icon-top-mobile-375:53.4%; --icon-transform-mobile-375:translateY(9.7%); --icon-w-mobile-375:211px; --icon-h-mobile-375:211px; --icon-rotate-mobile-375:2.8deg; --icon-right-mobile-425:-10.6%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-8%); --icon-w-mobile-425:222px; --icon-h-mobile-425:222px; --icon-rotate-mobile-425:2.6deg;"><img src="brand_assets/icons/DedicatedIPs-isometric-icon-transparent.webp" alt="" loading="lazy" /></div>
               <div>
                 <h4 class="addon-card-title">Dedicated IP · From C$39 / mo</h4>
                 <p class="addon-card-desc">A static IP address for services that need one. Payment gateways, legacy integrations, or compliance requirements.<br>Shared and non-shared pool proxies available.</p>
               </div>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;service=Dedicated%20IP&amp;serviceColor=%2334D399&amp;serviceDesc=A%20static%20IP%20for%20payment%20gateways%2C%20legacy%20integrations%2C%20or%20compliance%20needs%2C%20from%20C%2439%2Fmo." class="btn addon-card-cta">Request a quote</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;service=Dedicated%20IP&amp;serviceColor=%2334D399&amp;serviceDesc=A%20static%20IP%20for%20payment%20gateways%2C%20legacy%20integrations%2C%20or%20compliance%20needs%2C%20from%20C%2439%2Fmo." class="btn addon-card-cta">Request a quote</a>
             </div>
           </div>
-          <div class="addon-card">
+          <div class="addon-card reveal-fade" style="transition-delay:0.06s">
             <div class="addon-card-content">
               <div class="addon-card-icon" style="--icon-w:220px; --icon-h:220px; --icon-rotate:3deg; --icon-right:-7%; --icon-top:65%; --icon-transform:translateY(-41%); --icon-right-mobile:-18%; --icon-top-mobile:52%; --icon-transform-mobile:translateY(31%); --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-15.5%; --icon-top-mobile-375:55%; --icon-transform-mobile-375:translateY(14.5%); --icon-w-mobile-375:180px; --icon-h-mobile-375:180px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-13.2%; --icon-top-mobile-425:57.7%; --icon-transform-mobile-425:translateY(-0.5%); --icon-w-mobile-425:190px; --icon-h-mobile-425:190px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/PDS-isometric-icon.webp" alt="" loading="lazy" /></div>
               <div>
                 <h4 class="addon-card-title">Premium domain sourcing · 15% success fee</h4>
                 <p class="addon-card-desc">Looking for a short, brandable, or already-claimed domain? We'll track it down and handle the acquisition on your behalf.<br>No upfront cost. You only pay if we land the domain.</p>
               </div>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;service=Premium%20Domain%20Sourcing&amp;serviceColor=%2334D399&amp;serviceDesc=We'll%20track%20down%20your%20ideal%20domain%20and%20handle%20the%20acquisition%2C%20no%20upfront%20cost%2C%2015%25%20fee%20only%20if%20we%20land%20it." class="btn addon-card-cta">Start my search</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;service=Premium%20Domain%20Sourcing&amp;serviceColor=%2334D399&amp;serviceDesc=We'll%20track%20down%20your%20ideal%20domain%20and%20handle%20the%20acquisition%2C%20no%20upfront%20cost%2C%2015%25%20fee%20only%20if%20we%20land%20it." class="btn addon-card-cta">Start my search</a>
             </div>
           </div>
-          <div class="addon-card">
+          <div class="addon-card reveal-fade" style="transition-delay:0.12s">
             <div class="addon-card-content">
               <div class="addon-card-icon" style="--icon-right:-4%; --icon-top:65%; --icon-transform:translateY(-38%); --icon-w:250px; --icon-h:250px; --icon-rotate:3deg; --icon-right-mobile:-13%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:220px; --icon-h-mobile:220px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-10.9%; --icon-top-mobile-375:53.4%; --icon-transform-mobile-375:translateY(3%); --icon-w-mobile-375:227px; --icon-h-mobile-375:227px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-9.1%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-6%); --icon-w-mobile-425:233px; --icon-h-mobile-425:233px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/ESDDNS-isometric-icon.webp" alt="" loading="lazy" /></div>
               <div>
                 <h4 class="addon-card-title">Extra subdomains &amp; DNS records · Included for clients</h4>
                 <p class="addon-card-desc">Staging environments, custom mail routing, or multi-app setups. Additional DNS configuration beyond the default.<br>Immediate propagation and granular records management.</p>
               </div>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;service=Extra%20Subdomains%20%26%20DNS%20Records&amp;serviceColor=%2334D399&amp;serviceDesc=Staging%20environments%2C%20custom%20mail%20routing%2C%20or%20multi-app%20DNS%20setups%2C%20included%20at%20no%20extra%20cost%20for%20clients." class="btn addon-card-cta">Make a request →</a>
+              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;service=Extra%20Subdomains%20%26%20DNS%20Records&amp;serviceColor=%2334D399&amp;serviceDesc=Staging%20environments%2C%20custom%20mail%20routing%2C%20or%20multi-app%20DNS%20setups%2C%20included%20at%20no%20extra%20cost%20for%20clients." class="btn addon-card-cta">Make a request →</a>
             </div>
           </div>
         </div>
@@ -1440,12 +1510,12 @@
     <!-- ============ FAQ ============ -->
     <section id="host-faq" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
       <div class="host-faq-inner">
-        <p class="sec-tag">// frequently asked</p>
-        <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px;">
+        <p class="sec-tag reveal-fade">// frequently asked</p>
+        <h2 class="reveal-fade" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px; transition-delay:0.05s">
           Domain Questions, <span class="host-heading-grad">Answered</span>
         </h2>
         <div class="host-faq-list">
-          <div class="host-faq-item">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0s">
             <button class="host-faq-trigger" aria-expanded="false">
               <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
               <span class="host-faq-question">Will I actually own my domain?</span>
@@ -1456,7 +1526,7 @@
             </button>
             <div class="host-faq-content"><div class="host-faq-content-inner">Yes, always. The registrant contact is set to your name or business at the moment of registration. VardWeb executes the purchase and handles billing, but we are never the legal owner of your domain, even briefly.</div></div>
           </div>
-          <div class="host-faq-item">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.05s">
             <button class="host-faq-trigger" aria-expanded="false">
               <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div>
               <span class="host-faq-question">What does the 10% renewal fee actually cover?</span>
@@ -1467,7 +1537,7 @@
             </button>
             <div class="host-faq-content"><div class="host-faq-content-inner">It's the only margin we take on a domain, and only from year two onward. It covers the ongoing management, renewal handling, and support that comes with keeping your domain and/or DNS running correctly. Well under what most registrars mark up on renewal (see the comparison above).</div></div>
           </div>
-          <div class="host-faq-item">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.1s">
             <button class="host-faq-trigger" aria-expanded="false">
               <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
               <span class="host-faq-question">Can I transfer a domain I already own?</span>
@@ -1478,7 +1548,7 @@
             </button>
             <div class="host-faq-content"><div class="host-faq-content-inner">Yes — as long as it's at least 60 days past its last registration or transfer (an ICANN-wide rule, not ours). Unlock it at your current registrar, grab the auth code, and send it our way. See the transfer-in steps above for the full process.</div></div>
           </div>
-          <div class="host-faq-item">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.15s">
             <button class="host-faq-trigger" aria-expanded="false">
               <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg></div>
               <span class="host-faq-question">What actually protects my domain once it's live?</span>
@@ -1489,7 +1559,7 @@
             </button>
             <div class="host-faq-content"><div class="host-faq-content-inner">Every domain we manage runs on Cloudflare's network, with WHOIS privacy, DNSSEC, SSL, and DDoS protection bundled in by default. Never sold back to you as an add-on. See the comparison table above for how that holds up on price against other registrars.</div></div>
           </div>
-          <div class="host-faq-item">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.2s">
             <button class="host-faq-trigger" aria-expanded="false">
               <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
               <span class="host-faq-question">What if I already have hosting elsewhere?</span>
@@ -1500,7 +1570,7 @@
             </button>
             <div class="host-faq-content"><div class="host-faq-content-inner">No problem. We can work with what you have, or make the case for moving to our network if it's a better fit. Either way, nothing changes without your say-so.</div></div>
           </div>
-          <div class="host-faq-item">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.25s">
             <button class="host-faq-trigger" aria-expanded="false">
               <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
               <span class="host-faq-question">How does the premium domain sourcing fee work?</span>
@@ -1519,7 +1589,7 @@
     <section class="host-cta">
       <div class="host-cta-card">
         <canvas class="host-cta-shader" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
-        <div class="host-cta-content">
+        <div class="host-cta-content reveal-fade">
           <div class="host-hero-pill" style="margin-bottom:0;">
             <span class="host-hero-pill-dot"></span>
             Your domain is waiting
@@ -1530,7 +1600,7 @@
           <p class="host-cta-sub">Search above, or talk it through with us directly. Either way, you own it, and we don't make a cent until you renew.</p>
           <div class="host-cta-actions">
             <a href="#" class="btn addon-card-cta">Search a Domain <span class="btn-arrow" aria-hidden="true">→</span></a>
-            <a href="contact.html?type=Domain%20%26%20Hosting&amp;learnMore=1&amp;learnMoreColor=%2334D399" class="btn btn-outline-brand">Contact Us</a>
+            <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;learnMore=1" class="btn btn-outline-brand">Contact Us</a>
           </div>
         </div>
       </div>
@@ -1575,7 +1645,7 @@
           <p class="footer-col-head">Services</p>
           <a href="services.html" class="footer-link">All Services</a>
           <a href="web-design.html" class="footer-link">Web Design</a>
-          <a href="contact.html" class="footer-link">E-Commerce</a>
+          <a href="ecommerce.html" class="footer-link">E-Commerce</a>
           <a href="contact.html" class="footer-link">Landing Pages</a>
           <a href="contact.html" class="footer-link">App Development</a>
           <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
@@ -1594,6 +1664,33 @@
           <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
         </div>
       </div>
+    <div class="trust-badge-row reveal-fade">
+      <a href="about.html" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+        </span>
+        <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </span>
+        <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--cyan);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14100a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+      </a>
+      <a href="accessibility.html" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#14100a" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+      </a>
+    </div>
+
       <div class="footer-divider"></div>
       <div class="footer-bottom-bar">
         <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
@@ -1606,6 +1703,17 @@
       </div>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) entry.target.classList.add('is-visible');
+        });
+      }, { threshold: 0.2 });
+      document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+    })();
+  </script>
 
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
@@ -1859,7 +1967,7 @@
       function renderResultsError(message) {
         resultsEl.hidden = false;
         resultsEl.innerHTML = '<div class="host-result-error">' + escapeHtml(message) +
-          ' — you can also <a href="contact.html?type=' + encodeURIComponent('Domain & Hosting') + '&learnMore=1" style="color:inherit;text-decoration:underline;">talk to us directly</a>.</div>';
+          ' — you can also <a href="contact.html?type=' + encodeURIComponent('Domain & Hosting') + '&typeColor=%2334D399&learnMore=1" style="color:inherit;text-decoration:underline;">talk to us directly</a>.</div>';
       }
       function renderResults(results) {
         resultsEl.hidden = false;
