@@ -99,14 +99,19 @@
     .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
     .nav-link.active { color: var(--cyan); }
     .nav-link.active::after { width: 100%; }
+    .nav-link.nav-dropdown-trigger.active { color: var(--em-blue); }
+    .nav-link.nav-dropdown-trigger.active::after { background: var(--em-blue-deep); }
 
     .nav-dropdown { position: relative; display: flex; align-items: center; }
     .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
     .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
     .nav-dropdown:hover .chevron,
     .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
     .dropdown-menu {
-      position: absolute; top: 100%; left: 50%;
+      position: absolute; top: calc(100% + 6px); left: 50%;
       transform: translateX(-50%) translateY(-6px);
       background: rgba(15,18,25,0.96);
       backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -207,6 +212,14 @@
     .em-hero-content.hero-in > *:nth-child(3) { transition-delay: 0.35s; }
     .em-hero-content.hero-in > *:nth-child(4) { transition-delay: 0.5s; }
     .em-hero-content.hero-in > * { opacity: 1; transform: translateY(0); }
+
+    /* ── Scroll-fade reveal ── */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.is-visible { opacity: 1; transform: translateY(0); }
 
     .em-hero-pill {
       display: inline-flex; align-items: center; gap: 8px;
@@ -837,6 +850,32 @@
     .footer-link:hover { color: var(--cyan); }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--cyan); }
+    .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .trust-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      width: 130px;
+      padding: 7px 16px 7px 7px;
+      white-space: nowrap;
+      background: var(--text-1);
+      border: 1px solid rgba(20,16,10,0.22);
+      border-radius: 13px;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(20,16,10,0.2), 0 10px 24px -12px rgba(20,16,10,0.55);
+      transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      -webkit-font-smoothing: antialiased;
+    }
+    .trust-badge:hover { transform: translateY(-3px) translateZ(0); box-shadow: 0 2px 4px rgba(20,16,10,0.22), 0 16px 32px -12px rgba(20,16,10,0.55); }
+    .trust-badge:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .trust-badge:active { transform: translateY(-1px) translateZ(0); }
+    .trust-badge-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trust-badge-text { display: flex; flex-direction: column; line-height: 1.28; }
+    .trust-badge-text span:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    .trust-badge-text span:last-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    @media (max-width: 768px) { .trust-badge-row { justify-content: center; } }
+    @media (max-width: 560px) { .trust-badge-row { gap: 10px; } .trust-badge { padding: 6px 13px 6px 6px; } }
     .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
     .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
     .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
@@ -1004,7 +1043,7 @@
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
           <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">E-Commerce</a>
+          <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
@@ -1060,7 +1099,7 @@
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
     <a href="services.html" class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
-    <a href="contact.html"  class="mob-link mob-sub">E-Commerce</a>
+    <a href="ecommerce.html"  class="mob-link mob-sub">E-Commerce</a>
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
@@ -1145,7 +1184,7 @@
 <!-- ── EMAIL PRICING ── -->
 <section class="email-pricing" id="email-pricing">
   <div class="email-pricing-inner">
-    <div class="email-pricing-head">
+    <div class="email-pricing-head reveal-fade">
       <p class="sec-tag">// scale your sending</p>
       <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);">
         Inbox Ready, <span class="em-heading-grad">Scale Set</span>
@@ -1169,7 +1208,7 @@
         </div>
       </div>
 
-      <div class="pricing-card-grid">
+      <div class="pricing-card-grid reveal-fade">
         <div class="pricing-card is-active" data-card="free" style="--tier-color:#CD7F32; --tier-glow:rgba(205,127,50,0.16); --tier-bg:rgba(205,127,50,0.08);">
           <p class="pricing-card-name">Bronze</p>
           <span class="pricing-card-badge">Recommended</span>
@@ -1261,7 +1300,7 @@
         </div>
       </div>
 
-      <div class="pricing-card-grid">
+      <div class="pricing-card-grid reveal-fade">
         <div class="pricing-card is-active" data-card="free" style="--tier-color:#CD7F32; --tier-glow:rgba(205,127,50,0.16); --tier-bg:rgba(205,127,50,0.08);">
           <p class="pricing-card-name">Bronze</p>
           <span class="pricing-card-badge">Recommended</span>
@@ -1348,8 +1387,8 @@
 <section class="email-addons" id="email-addons">
   <div class="email-addons-inner">
     <div class="addon-group" id="email-payg">
-      <h3 class="addon-group-heading">Pay-as-you-go</h3>
-      <div class="addon-card-grid">
+      <h3 class="addon-group-heading reveal-fade">Pay-as-you-go</h3>
+      <div class="addon-card-grid reveal-fade">
         <div class="addon-card" data-addon="emails">
           <div class="addon-card-content">
             <div class="addon-card-icon" style="--icon-right:29%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:180px; --icon-h:180px; --icon-rotate:17deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(14%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
@@ -1359,7 +1398,7 @@
               <h4 class="addon-card-title">Emails</h4>
               <p class="addon-card-desc">Continue sending and receiving emails beyond your quota. VardWeb automatically charges your plan's overage rate for each additional bucket of 1,000 emails. Available to Silver, Gold and Custom subscriptions.</p>
             </div>
-            <a href="contact.html?type=Email%20Marketing&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
           </div>
         </div>
         <div class="addon-card" data-addon="automations">
@@ -1371,15 +1410,15 @@
               <h4 class="addon-card-title">Automations · C$0.0035 / per run</h4>
               <p class="addon-card-desc">Start with 10,000 Automation Runs for free, and scale as you need. VardWeb automatically charges for each run beyond the free limit. Available to Silver, Gold and Custom subscriptions.</p>
             </div>
-            <a href="contact.html?type=Email%20Marketing&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
           </div>
         </div>
       </div>
     </div>
 
     <div class="addon-group" id="email-addons-list">
-      <h3 class="addon-group-heading">Add-ons</h3>
-      <div class="addon-card-grid">
+      <h3 class="addon-group-heading reveal-fade">Add-ons</h3>
+      <div class="addon-card-grid reveal-fade">
         <div class="addon-card" data-addon="dedicated-ips">
           <div class="addon-card-content">
             <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:9deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(18%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
@@ -1389,7 +1428,7 @@
               <h4 class="addon-card-title">Dedicated IPs · C$65 / mo</h4>
               <p class="addon-card-desc">Available to customers exceeding 3,000 emails sent per day on the Custom plan. We take great care to maintain good-standing shared IP's, but for some high-volume senders, you can't leave anything up to chance. We will warmup, monitor, and autoscale it based on your utilization so you can focus on one thing, sending.</p>
             </div>
-            <a href="contact.html?type=Email%20Marketing&amp;bookCall=1" class="btn addon-card-cta">Request Dedicated IPs</a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta">Request Dedicated IPs</a>
           </div>
         </div>
       </div>
@@ -1401,7 +1440,7 @@
 
 <!-- ── EMAIL COMPARE ── -->
 <section class="email-compare" id="email-compare">
-  <div class="email-compare-inner">
+  <div class="email-compare-inner reveal-fade" style="transition-delay:0s">
     <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;">
       Sending &amp; receiving
     </h3>
@@ -1429,7 +1468,7 @@
     </div>
   </div>
 
-  <div class="email-compare-inner">
+  <div class="email-compare-inner reveal-fade" style="transition-delay:0.05s">
     <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;">
       Deliverability &amp; reliability
     </h3>
@@ -1462,7 +1501,7 @@
     </div>
   </div>
 
-  <div class="email-compare-inner">
+  <div class="email-compare-inner reveal-fade" style="transition-delay:0.1s">
     <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;">
       Security &amp; privacy
     </h3>
@@ -1489,7 +1528,7 @@
     </div>
   </div>
 
-  <div class="email-compare-inner">
+  <div class="email-compare-inner reveal-fade" style="transition-delay:0.15s">
     <h3 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;">
       Customer support
     </h3>
@@ -1517,12 +1556,12 @@
 <!-- ── EMAIL FAQ ── -->
 <section class="em-faq" id="email-faq">
   <div class="em-faq-inner">
-    <p class="sec-tag">// frequently asked</p>
-    <h2 style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px;">
+    <p class="sec-tag reveal-fade">// frequently asked</p>
+    <h2 class="reveal-fade" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px; transition-delay:0.05s">
       Sending Questions, <span class="em-heading-grad">Answered</span>
     </h2>
-    
-    <div class="em-faq-item">
+
+    <div class="em-faq-item reveal-fade" style="transition-delay:0s">
       <button class="em-faq-trigger" aria-expanded="false">
         <div class="em-faq-trigger-icon">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -1542,7 +1581,7 @@
       </div>
     </div>
 
-    <div class="em-faq-item">
+    <div class="em-faq-item reveal-fade" style="transition-delay:0.06s">
       <button class="em-faq-trigger" aria-expanded="false">
         <div class="em-faq-trigger-icon">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
@@ -1564,7 +1603,7 @@
       </div>
     </div>
 
-    <div class="em-faq-item">
+    <div class="em-faq-item reveal-fade" style="transition-delay:0.12s">
       <button class="em-faq-trigger" aria-expanded="false">
         <div class="em-faq-trigger-icon">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>
@@ -1583,7 +1622,7 @@
       </div>
     </div>
 
-    <div class="em-faq-item">
+    <div class="em-faq-item reveal-fade" style="transition-delay:0.18s">
       <button class="em-faq-trigger" aria-expanded="false">
         <div class="em-faq-trigger-icon">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -1602,7 +1641,7 @@
       </div>
     </div>
 
-    <div class="em-faq-item">
+    <div class="em-faq-item reveal-fade" style="transition-delay:0.24s">
       <button class="em-faq-trigger" aria-expanded="false">
         <div class="em-faq-trigger-icon">
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--em-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
@@ -1629,7 +1668,7 @@
     <div class="em-cta-card" id="email-cta-card">
       <div class="em-cta-bg" id="email-cta-bg"></div>
 
-      <div class="em-cta-content">
+      <div class="em-cta-content reveal-fade">
         <div class="em-hero-pill">
           <span class="em-hero-pill-dot"></span>
           Let's Fill Your Inbox
@@ -1649,7 +1688,7 @@
             Get Started
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
-          <a href="contact.html?type=Email%20Marketing&amp;learnMore=1" class="btn em-cta-btn em-hero-btn-outline">Contact Us</a>
+          <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;learnMore=1" class="btn em-cta-btn em-hero-btn-outline">Contact Us</a>
         </div>
       </div>
     </div>
@@ -1695,7 +1734,7 @@
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
-        <a href="contact.html" class="footer-link">E-Commerce</a>
+        <a href="ecommerce.html" class="footer-link">E-Commerce</a>
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
@@ -1714,6 +1753,33 @@
         <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
       </div>
     </div>
+    <div class="trust-badge-row reveal-fade">
+      <a href="about.html" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+        </span>
+        <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </span>
+        <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--cyan);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14100a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+      </a>
+      <a href="accessibility.html" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#14100a" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+      </a>
+    </div>
+
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
       <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
@@ -1726,6 +1792,17 @@
     </div>
   </div>
 </footer>
+
+<script>
+  (function () {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+  })();
+</script>
 
 <script>
   /* Hero entrance reveal (staggers each direct child via .hero-in) */
