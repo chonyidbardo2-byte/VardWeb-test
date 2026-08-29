@@ -30,7 +30,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    html { scrollbar-gutter: stable; }
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--base); }
@@ -381,6 +381,73 @@
     @keyframes comet-fall-3 { 0%{opacity:0;transform:rotate(-40deg) translateY(0);} 8%{opacity:.95;} 80%{opacity:.9;}  86%{opacity:0;} 100%{opacity:0;transform:rotate(-40deg) translateY(1014px);} }
     @keyframes comet-fall-4 { 0%{opacity:0;transform:rotate(-47deg) translateY(0);} 8%{opacity:.85;} 80%{opacity:.8;}  86%{opacity:0;} 100%{opacity:0;transform:rotate(-47deg) translateY(1290px);} }
 
+    /* Miss comets — same top-left origin family as 1-4, but a shallower angle +
+       longer travel so each clears the box horizontally before it has fallen far
+       enough to reach the box's vertical range, then exits off the right edge
+       still in flight (opacity held near-full through to the very end, no early
+       impact-style cutoff). Never registered with the collision script, so even
+       if geometry drifts on an odd viewport they simply can't fire a burst. */
+    .comet-5 { top: -3%;  left: 18%; animation-name: comet-fall-5; animation-duration: 4.6s; animation-delay: 3.8s; }
+    .comet-6 { top: -12%; left: 4%;  animation-name: comet-fall-6; animation-duration: 5.8s; animation-delay: 7.6s; }
+    .comet-7 { top: -1%;  left: 14%; animation-name: comet-fall-7; animation-duration: 5.2s; animation-delay: 11.4s; }
+    @keyframes comet-fall-5 { 0%{opacity:0;transform:rotate(-62deg) translateY(0);} 8%{opacity:.9;}  92%{opacity:.85;} 100%{opacity:0;transform:rotate(-62deg) translateY(1650px);} }
+    @keyframes comet-fall-6 { 0%{opacity:0;transform:rotate(-58deg) translateY(0);} 8%{opacity:.85;} 92%{opacity:.8;}  100%{opacity:0;transform:rotate(-58deg) translateY(1780px);} }
+    @keyframes comet-fall-7 { 0%{opacity:0;transform:rotate(-66deg) translateY(0);} 8%{opacity:.9;}  92%{opacity:.85;} 100%{opacity:0;transform:rotate(-66deg) translateY(1580px);} }
+
+    /* Side-hit comets — same ~45deg diagonal family as 1-4 (comet-8 reuses
+       comet-3's exact -40deg, comet-9 reuses comet-1's exact -44deg), but
+       launched from much LOWER on the page instead of the top. Whether a
+       comet's real first-overlap lands on the box's TOP or LEFT edge depends
+       on which threshold — reaching box.top in y, or box.left in x — binds
+       LAST. At a shallow ~45deg angle from a top-of-page origin (like 1-4),
+       the box is horizontally close but vertically far, so x binds almost
+       immediately and y binds last — hence hitting the top. Starting instead
+       from ~30-45% down the page shrinks the remaining vertical distance to
+       box.top enough that y now binds FIRST, flipping which edge takes the
+       real contact to the LEFT edge — same family angle, just a lower launch
+       point. Durations unchanged from before (matching comet-3/comet-1
+       exactly). Desktop/tablet only (hidden at the 480px breakpoint below —
+       mobile's box spans nearly the full width, leaving no room for a side
+       approach to read clearly). */
+    /* Origin moved off-screen on the LEFT (negative %) instead of moving top
+       toward 0 — top still needs to stay deep enough down the page for the
+       left-edge-hit geometry above to hold, but nothing requires THAT axis
+       to be the one that's off-screen. A negative left clips the comet via
+       the container's overflow:hidden the same way 1-4's negative top does,
+       so it flies INTO frame instead of fading into existence mid-page. As a
+       bonus, pushing origin_x further left also increases (box.left-origin_x)
+       — the exact quantity that needs to be large relative to (box.top-
+       origin_y) for the left-edge-hit condition — so this needs LESS vertical
+       margin than last round's design, not more. */
+    /* top is ALSO a calc(Xpx - Yvw) here, not a plain % — contact_y (where
+       along the box's left edge the real hit lands) is driven by origin_x's
+       physical distance to box.left, which itself grows with viewport width
+       (box.left scales with width, being a centered fixed-max-width box) —
+       so a fixed-% top drifts into the box's LOWER half at wider viewports
+       even though it read fine at the reference width (confirmed via real
+       measurement: comet-8/9 both landed lower-half at 1600px despite a
+       plain % top that looked correct at 1440px). Solving top as a linear
+       function of viewport width keeps the real contact_y point CONSTANT
+       across widths — which, as a side effect, also keeps the left-edge-hit
+       safety margin constant (both land solidly in the upper half at every
+       width, not just one). */
+    .comet-8  { top: calc(1205px - 69.12vw); left: -8%;  animation-name: comet-fall-8;  animation-duration: 3.5s; animation-delay: 13.36s; }
+    .comet-9  { top: calc(1338.6px - 62.13vw); left: -10%; animation-name: comet-fall-9;  animation-duration: 4.5s; animation-delay: 8.12s; }
+    /* translateY solved for ~300px/s (mid-range of 1-4's own ~253-336px/s
+       spread) at each comet's duration, instead of for a target contact
+       fraction — matches the family's brisk, slightly-varied pace instead of
+       crawling. Real contact now lands earlier in the cycle (~57%/~44% of
+       duration) well inside the opacity hold window, comfortably before any
+       fade-out. Still a calc(Xvw - Ypx) expression, not a fixed px distance —
+       box.left scales with viewport width (≈0.5·vw − 452px) while these
+       comets' %-based left origin doesn't scale the same way, so a fixed
+       distance silently falls short at wider viewports (confirmed via real
+       measurement last round — the "comet already gone when it explodes"
+       bug). The calc keeps both the target speed AND the contact fraction
+       consistent across viewport widths. */
+    @keyframes comet-fall-8  { 0%{opacity:0;transform:rotate(-40deg) translateY(0);} 8%{opacity:.95;} 65%{opacity:.9;} 78%{opacity:0;} 100%{opacity:0;transform:rotate(-40deg) translateY(calc(159.3vw - 1242.5px));} }
+    @keyframes comet-fall-9  { 0%{opacity:0;transform:rotate(-44deg) translateY(0);} 8%{opacity:.9;}  65%{opacity:.85;} 78%{opacity:0;} 100%{opacity:0;transform:rotate(-44deg) translateY(calc(197.2vw - 1486.9px));} }
+
     /* Four independent bursts, one per comet. Position is set live by JS (see
        comet-collision script near the markup) the instant that comet's leading
        edge actually touches the mockup box — no more pre-baked % coordinates,
@@ -396,6 +463,11 @@
     }
     .comet-burst.style-wide { --burst-rot: -18deg; --burst-scale: 1.35; }
     .comet-burst.style-tight { --burst-rot: 22deg; --burst-scale: 0.7; }
+    /* Side-hit variant: rotates the whole group -90deg, which turns the other
+       variants' "scatter away from the top edge" (upward) bias into "scatter
+       away from the left edge" (leftward) automatically, reusing all 18 existing
+       .burst-piece offsets unchanged. */
+    .comet-burst.style-side { --burst-rot: -90deg; }
 
     /* Ported from the reference Explosion component: a central blurred glow bar
        (the "highlight") plus small circular dots scattering outward/upward, away
@@ -408,15 +480,30 @@
       border-radius: 999px;
       filter: blur(3px);
       opacity: 0;
-      transform: translate(-50%,-50%) scaleX(0.3);
+      /* Counter-rotates against the parent .comet-burst's --burst-rot (set by the
+         style-wide/style-tight variants) so the highlight always lies flat along
+         the box's top edge, regardless of variant — only the dot scatter rotates. */
+      transform: translate(-50%,-50%) rotate(calc(var(--burst-rot) * -1)) scaleX(0.3);
     }
     .comet-burst.is-hit .burst-glow {
       animation: burst-glow-fire 1.2s cubic-bezier(0.15,0.7,0.3,1) forwards;
     }
     @keyframes burst-glow-fire {
-      0%   { opacity: 0; transform: translate(-50%,-50%) scaleX(0.3); }
-      10%  { opacity: 1; transform: translate(-50%,-50%) scaleX(1.15); animation-timing-function: cubic-bezier(0.4,0,1,1); }
-      100% { opacity: 0; transform: translate(-50%,-50%) scaleX(1.5); }
+      0%   { opacity: 0; transform: translate(-50%,-50%) rotate(calc(var(--burst-rot) * -1)) scaleX(0.3); }
+      10%  { opacity: 1; transform: translate(-50%,-50%) rotate(calc(var(--burst-rot) * -1)) scaleX(1.15); animation-timing-function: cubic-bezier(0.4,0,1,1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) rotate(calc(var(--burst-rot) * -1)) scaleX(1.5); }
+    }
+    /* style-side skips the counter-rotation every other variant uses (which
+       would otherwise re-flatten the bar back to horizontal) — letting it
+       inherit the group's -90deg rotation turns the normally-horizontal bar
+       vertical, flush against the box's left edge. */
+    .comet-burst.style-side.is-hit .burst-glow {
+      animation: burst-glow-fire-vertical 1.2s cubic-bezier(0.15,0.7,0.3,1) forwards;
+    }
+    @keyframes burst-glow-fire-vertical {
+      0%   { opacity: 0; transform: translate(-50%,-50%) scaleY(0.3); }
+      10%  { opacity: 1; transform: translate(-50%,-50%) scaleY(1.15); animation-timing-function: cubic-bezier(0.4,0,1,1); }
+      100% { opacity: 0; transform: translate(-50%,-50%) scaleY(1.5); }
     }
 
     .burst-piece {
@@ -466,43 +553,227 @@
        recolored to the page's red/gold theme. 2 unequal columns × 2 rows; row 1
        (One click deploy / Intuitive workflow) is shorter, row 2 runs taller since
        its cards carry larger visuals — matches the reference's proportions. ── */
-    .deploy-bento { display: grid; grid-template-columns: 1.42fr 1fr; gap: 20px; }
+    .deploy-bento { display: flex; flex-direction: column; gap: 20px; }
+    /* Each row is its own independent 2-column grid so row 2's ratio can be
+       reversed from row 1's while every card keeps its left/right position. */
+    .deploy-bento-row { display: grid; grid-template-columns: 1.42fr 1fr; gap: 20px; }
+    .deploy-bento-row-reverse { grid-template-columns: 1fr 1.42fr; }
     .deploy-card {
       background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
       display: flex; flex-direction: column; overflow: hidden;
-      transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .deploy-card:hover { border-color: rgba(239,68,68,0.22); transform: translateY(-3px); }
     .deploy-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 6px; }
     .deploy-card p { font-size: 13.5px; line-height: 1.6; color: var(--text-2); max-width: 360px; }
-    .deploy-card-deploy    { grid-column: 1; grid-row: 1; padding: 24px; justify-content: space-between; gap: 40px; min-height: 340px; }
+    .deploy-card-deploy    { padding: 24px; justify-content: flex-start; min-height: 340px; }
     .deploy-card-deploy .deploy-card-text { padding: 0; }
-    .deploy-card-workflow  { grid-column: 2; grid-row: 1; }
-    .deploy-card-edge      { grid-column: 1; grid-row: 2; }
-    .deploy-card-copy      { grid-column: 2; grid-row: 2; }
+    /* Auto top/bottom margins split the card's leftover vertical space evenly
+       above and below the mini-row, so the gap to the card's top edge matches
+       the gap down to the h3 below (instead of the row sitting flush at top,
+       which is what plain space-between did with only 2 flex children). */
+    .deploy-card-deploy .deploy-mini-row { margin-top: auto; margin-bottom: auto; }
     /* Cards 2-4: text padded at top, visual bleeds flush to the card's own edges below. */
     .deploy-card-text { padding: 22px 22px 18px; }
-    .deploy-card-workflow .deploy-card-visual,
+    /* Fixed (not auto) so the card rises close to .deploy-card-text instead of
+       being pushed to the bottom of the flex column with a large empty gap
+       above it — must stay above .pfc-bump's -52px bleed (round 5) so the
+       bump doesn't collide with the text above. Desktop only; the mobile
+       override below (max-width:860px) is untouched. */
+    .deploy-card-workflow .deploy-card-visual { margin-top: 64px; }
     .deploy-card-copy .deploy-card-visual { margin-top: auto; }
     .deploy-card-edge .deploy-card-visual { margin-top: auto; }
-    .deploy-card-visual img { display: block; width: 100%; height: auto; }
-    .deploy-card-workflow { min-height: 340px; }
+    .deploy-card-visual > img { display: block; width: 100%; height: auto; }
+    /* Sharp top-right/bottom-left, rounded top-left/bottom-right — mirrors the
+       inner .pfc-slide card shape (scoped to this one bento cell only, not the
+       shared .deploy-card base rule that Simple Migration/Hosting/Example
+       Template also use). */
+    .deploy-card-workflow { min-height: 430px; border-radius: 28px 0 44px 0; }
     .deploy-card-edge, .deploy-card-copy { min-height: 400px; }
-    .deploy-mini-row { display: flex; gap: 10px; }
+    /* Globe bleeds past the visual box's own bottom-right corner; the card's
+       overflow:hidden + border-radius (and this box's own overflow:hidden)
+       clip it into a seamless partial-sphere-in-the-corner look. */
+    .deploy-card-globe { position: relative; overflow: hidden; height: 340px; }
+    .deploy-card-globe canvas {
+      position: absolute; top: 0; right: -25px;
+      width: 420px; height: 420px; cursor: grab;
+      opacity: 0; transition: opacity 1s ease;
+    }
+    .deploy-card-globe canvas:active { cursor: grabbing; }
+    /* Ping markers — positioned via JS each frame (translate transform),
+       computed from the same phi/theta rotating the globe itself, so they
+       track rotation/drag/occlusion in lockstep with the rendered dots. */
+    .globe-ping {
+      position: absolute; top: 0; left: 0; width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .globe-ping-ring {
+      position: absolute; inset: 0;
+      border: 2px solid var(--ecom-red); border-radius: 50%; opacity: 0;
+      animation: globe-ping-expand 2s ease-out infinite;
+    }
+    .globe-ping-ring:nth-child(2) { animation-delay: 0.6s; }
+    .globe-ping-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--ecom-red);
+      box-shadow: 0 0 0 3px var(--surface), 0 0 8px rgba(239,68,68,0.6);
+    }
+    @keyframes globe-ping-expand {
+      0% { transform: scale(0.35); opacity: 0.85; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .globe-ping-ring { animation: none; opacity: 0; }
+    }
+    /* Storefront preview bleeds past the visual box's own right/bottom edge,
+       clipped by the card's overflow:hidden + border-radius — same "oversized
+       element bled off the corner" technique as .deploy-card-globe above. */
+    .deploy-card-preview { position: relative; overflow: hidden; height: 300px; }
+    .deploy-card-preview .browser-mock {
+      position: absolute; left: 22px; right: -34px; top: 0;
+      width: auto; padding: 0;
+      border-radius: 10px 0 0 0;
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 24px 46px -16px rgba(0,0,0,0.6);
+      animation: none;
+    }
+    .deploy-card-preview .browser-mock-inner { border-radius: 9px 0 0 0; }
+    .deploy-card-preview .browser-bar { height: 26px; padding: 0 10px; gap: 8px; }
+    .deploy-card-preview .browser-dot { width: 6px; height: 6px; }
+    .deploy-card-preview .browser-url-bar { font-size: 9px; padding: 3px 8px; }
+    .deploy-mini-row {
+      container-type: inline-size;
+      overflow: hidden;
+      --gap: 10px;
+      --tile: calc((100cqw - 2 * var(--gap)) / 3);
+      cursor: grab;
+      touch-action: pan-y;
+      /* Hover buffer — without this, overflow:hidden (needed to window-clip
+         the horizontally-scrolling strip) also slices off .deploy-mini-box's
+         hover/active lift + shadow, since they'd otherwise sit flush against
+         this clip edge. Sized from the hover box-shadow below (0 10px 24px
+         -6px): DO NOT reduce without re-checking that shadow stays uncut.
+         This genuinely grows the row — a negative margin on the track to
+         "cancel" it back out would put the tiles flush against the clip
+         edge again, undoing the fix. The row's own margin-top/bottom:auto
+         (below) already absorbs the extra height by shrinking the
+         surrounding gap, so overall card layout barely moves. */
+      padding: 14px 0 28px;
+    }
+    .deploy-mini-row.is-dragging { cursor: grabbing; }
+    .deploy-mini-row,
+    .deploy-mini-row * {
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    /* Scroll position driven entirely by JS (translateX each frame) so it can
+       be paused mid-frame for dragging — see the script near the platform-
+       support carousel. Same architecture as index.html's .industry-marquee. */
+    .deploy-mini-track {
+      display: flex;
+      gap: var(--gap);
+      width: max-content;
+    }
     .deploy-mini-box {
-      flex: 1; aspect-ratio: 1; border-radius: 12px;
-      background: var(--raised); border: 1px solid rgba(255,255,255,0.07);
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
+      flex: 0 0 var(--tile); width: var(--tile); aspect-ratio: 1; border-radius: 12px;
+      background: #F3F4F8; box-shadow: 0 4px 14px -4px rgba(0,0,0,0.35);
+      display: flex; align-items: center; justify-content: center; padding: 14px; overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
     }
-    .deploy-mini-box img { width: 100%; height: 100%; object-fit: cover; }
+    .deploy-mini-box img { width: 100%; height: 100%; object-fit: contain; display: block; flex-shrink: 0; }
+    @media (hover: hover) {
+      .deploy-mini-box:hover { transform: translateY(-4px) translateZ(0); box-shadow: 0 10px 24px -6px rgba(0,0,0,0.45); }
+    }
+    .deploy-mini-box:active { transform: translateY(-1px) translateZ(0); }
+    /* Touch devices never get the :hover lift above, so their only feedback
+       would otherwise be this light press — give them the same lift+shadow
+       hover gives a mouse instead. Placed after the base :active rule so it
+       wins by source order (equal specificity) under hover:none. */
+    @media (hover: none) {
+      .deploy-mini-box:active { transform: translateY(-4px) translateZ(0); box-shadow: 0 10px 24px -6px rgba(0,0,0,0.45); }
+    }
     @media (max-width: 860px) {
-      .deploy-bento { grid-template-columns: 1fr; }
-      .deploy-card-deploy, .deploy-card-workflow, .deploy-card-edge, .deploy-card-copy { grid-column: 1; min-height: 0; }
-      .deploy-card-deploy   { grid-row: 1; }
-      .deploy-card-workflow { grid-row: 2; }
-      .deploy-card-edge     { grid-row: 3; }
-      .deploy-card-copy     { grid-row: 4; }
+      .deploy-bento-row { grid-template-columns: 1fr; }
+      .deploy-card-deploy, .deploy-card-workflow, .deploy-card-edge, .deploy-card-copy { min-height: 0; }
+      /* Without a tall min-height forcing extra flex space, margin-top:auto on
+         .deploy-card-visual collapses to 0 here, leaving no clearance for the
+         .pfc-bump's upward bleed — it would overlap the intro text above it. */
+      .deploy-card-workflow .deploy-card-visual { margin-top: 44px; }
+      /* Same collapse hits .deploy-mini-row's auto/auto margins (no free space
+         to split once min-height:0 removes the desktop's forced extra height),
+         so swap to a fixed margin matching the card's own 24px padding —
+         keeps the top gap and the gap down to the h3 equal on mobile too. */
+      .deploy-card-deploy .deploy-mini-row { margin-top: 0; margin-bottom: 24px; }
+      /* Fit 2 tiles across instead of desktop's 3 — the shared formula makes
+         tiles too cramped on a phone-width card (~90px at 390px viewport). */
+      .deploy-mini-row { --tile: calc((100cqw - 2 * var(--gap)) / 2); }
+      /* Desktop deliberately bleeds the mock past the card's right/bottom edge
+         at a fixed height:300px crop — .browser-mock stays position:absolute
+         (unchanged, inherited from the base rule) on mobile too, so the same
+         bleed-and-clip technique applies. Only the crop height changes, since
+         300px was tuned for desktop's wider column; at mobile's narrower width
+         the unclipped content is only ~254px tall, so 300px left blank space
+         instead of a bleed. This value crops mobile at roughly the same
+         visible-fraction as desktop's 300px crop. */
+      .deploy-card-preview { height: 165px; }
     }
+
+    /* ── Platform Support carousel — one platform card at a time inside the
+       deploy-card-workflow visual slot, paged with prev/next arrows beside the
+       heading on each slide. All slides are stacked in the same grid cell
+       (grid-area:1/1) so the track auto-sizes to the tallest slide and the
+       card never resizes as you page. Card silhouette (sharp top-right/
+       bottom-left, rounded top-left/bottom-right, circular icon bump bleeding
+       past the top-left corner) replicates temporary screenshots/platformsupport.PNG.
+       #1E1E1E matches the flat background baked into the client-provided
+       brand_assets/icons/*-icon.webp tiles, so the bump + slide + tile all
+       read as one seamless surface regardless of each tile's own shape. ── */
+    .pfc { position: relative; display: flex; flex-direction: column; padding: 0 14px 14px; }
+    .pfc-viewport { position: relative; display: grid; grid-template-columns: minmax(0,1fr); }
+    .pfc-slide {
+      grid-area: 1 / 1;
+      position: relative;
+      display: flex; flex-direction: column; align-items: flex-start;
+      background: #1E1E1E;
+      border-radius: 28px 0 36px 0;
+      padding: 56px 20px 36px;
+      overflow: visible;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .pfc-slide.is-active { opacity: 1; pointer-events: auto; }
+    @media (prefers-reduced-motion: reduce) { .pfc-slide { transition: none; } }
+    .pfc-bump {
+      position: absolute; top: -52px; left: 24px; z-index: 2;
+      width: 104px; height: 104px; border-radius: 50%;
+      background: #1E1E1E;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pfc-bump img { width: 60px; height: 60px; object-fit: contain; display: block; }
+    .pfc-header {
+      position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .pfc-name {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 700;
+      letter-spacing: -0.01em; color: var(--text-1);
+    }
+    .pfc-desc { position: relative; z-index: 1; font-size: 13.5px; line-height: 1.6; color: var(--text-2); max-width: 100%; }
+    .pfc-controls { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .pfc-btn {
+      width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.14);
+      color: var(--text-2);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .pfc-btn svg { width: 13px; height: 13px; }
+    .pfc-btn:hover { border-color: rgba(239,68,68,0.4); color: #fff; box-shadow: 0 8px 20px -8px rgba(239,68,68,0.4), 0 4px 12px -4px rgba(0,0,0,0.4); transform: translateY(-1px); }
+    .pfc-btn:active { transform: translateY(0) scale(0.94); }
+    .pfc-btn:focus-visible { outline: 2px solid rgba(239,68,68,0.55); outline-offset: 2px; }
+    .pfc-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-2); letter-spacing: 0.04em; min-width: 42px; text-align: center; }
 
     /* ── Porting-pitch grid — horizontal merged cards, 2 per row ── */
     .pitch-intro { max-width: 720px; margin: 0 auto 40px; text-align: center; font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
@@ -530,10 +801,14 @@
 
     /* ── Feature manifest grid — manifest-card style ported from the research
        artifact (eyebrow category label + checklist), re-themed to red ── */
-    .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+    .feat-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (max-width: 640px) { .feat-grid { max-width: 88%; margin: 0 auto; } }
+    @media (min-width: 641px) and (max-width: 1024px) { .feat-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1025px) { .feat-grid { grid-template-columns: repeat(3, 1fr); max-width: 900px; margin: 0 auto; } }
     .feat-card {
       background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
       padding: 24px 26px 26px;
+      display: flex; flex-direction: column;
       transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
     }
     .feat-card:hover { border-color: rgba(239,68,68,0.25); transform: translateY(-3px); }
@@ -555,19 +830,18 @@
       position: relative; padding-left: 20px;
       font-size: 13px; color: var(--text-2); line-height: 1.55;
     }
+    .feat-list li strong { color: var(--text-1); font-weight: 600; }
     .feat-list li::before {
       content: ''; position: absolute; left: 0; top: 5px;
       width: 8px; height: 5px;
       border-left: 1.5px solid var(--ecom-red); border-bottom: 1.5px solid var(--ecom-red);
       transform: rotate(-45deg);
     }
-    .feat-badges { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
-    .feat-badge { height: 20px; display: flex; align-items: center; opacity: 0.82; filter: grayscale(0.15); }
-    .feat-badge img { height: 100%; width: auto; object-fit: contain; }
 
     /* ── Pricing card grid (ported from web-design.html's Pricing section
        pattern), adapted for quote-only pricing and our own 5 fixed tier colors ── */
-    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; } }
     .pricing-card {
       position: relative; display: flex; flex-direction: column;
       background: var(--raised);
@@ -609,6 +883,261 @@
       background: linear-gradient(135deg, var(--tier-btn-hover1, rgba(239,68,68,0.22)), var(--tier-btn-hover2, rgba(239,68,68,0.12)));
     }
     .pricing-cta:focus-visible { outline: 2px solid var(--tier-color, var(--ecom-red)); outline-offset: 2px; }
+
+    /* ── Ported from web-design.html's Investment cards: corner image, headline,
+       flat-rate/price block, billing toggle, and Available Add-ons box ── */
+    .pricing-img-wrap {
+      position: absolute; right: 21px; top: 0;
+      width: 150px; height: 150px;
+      pointer-events: none; z-index: 2;
+    }
+    .pricing-img {
+      position: absolute;
+      right: 0; top: 0;
+      width: 150px;
+      pointer-events: none;
+      opacity: 0.72;
+      mix-blend-mode: luminosity;
+      filter: saturate(1.1) brightness(0.9);
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+      transform: rotate(-8deg) scale(1);
+      transform-origin: top right;
+    }
+    .pricing-card:hover .pricing-img {
+      opacity: 0.92;
+      transform: rotate(-3deg) scale(1.04);
+    }
+    @media (max-width: 640px) {
+      .pricing-img-wrap { width: 140px; height: 140px; }
+      .pricing-img { width: 140px; }
+    }
+
+    .pricing-card h3 {
+      font-size: 22px; font-weight: 800;
+      color: var(--text-1);
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+    .pricing-from {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(200,212,232,0.35);
+      margin-bottom: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pricing-flat {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: rgba(200,212,232,0.35);
+      margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pricing-flat-amt {
+      color: var(--tier-color, var(--ecom-red));
+      font-weight: 700;
+    }
+    .cheaper-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.18);
+      border: 1px solid #166534;
+      color: #4ade80;
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      position: relative;
+      margin-top: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+      white-space: nowrap;
+      justify-content: center;
+    }
+    .cheaper-pill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        transparent 25%,
+        rgba(255,255,255,0.55) 50%,
+        transparent 75%
+      );
+      transform: translateX(-160%) skewX(-15deg);
+      animation: pill-glare 5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+    @keyframes pill-glare {
+      0%   { transform: translateX(-160%) skewX(-15deg); }
+      27%  { transform: translateX(160%) skewX(-15deg); }
+      100% { transform: translateX(160%) skewX(-15deg); }
+    }
+    .pricing-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 38px; font-weight: 800;
+      color: var(--tier-color, var(--ecom-red));
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+      display: flex; align-items: baseline; gap: 6px;
+    }
+    .price-suffix {
+      font-size: 14px; font-weight: 600;
+      color: rgba(200,212,232,0.38);
+      letter-spacing: 0;
+      transition: opacity 0.15s ease;
+    }
+    .pricing-pages {
+      font-size: 12px; color: rgba(200,212,232,0.4);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 18px;
+    }
+    .pricing-desc {
+      font-size: 14px; line-height: 1.72;
+      color: var(--text-2);
+      margin-bottom: 22px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* ── Billing toggle ── */
+    .billing-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      padding: 9px 28px; border-radius: 7px;
+      border: none; cursor: pointer;
+      color: rgba(200,212,232,0.42);
+      background: transparent;
+      transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    }
+    .billing-btn.active {
+      color: var(--text-1);
+      background: rgba(0,229,255,0.08);
+      box-shadow: 0 0 0 1px rgba(0,229,255,0.22);
+    }
+    .billing-btn:hover:not(.active) { color: rgba(200,212,232,0.75); }
+    .billing-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; border-radius: 7px; }
+
+    /* ── Slot machine price animation ── */
+    .price-slot {
+      display: inline-block;
+      overflow: hidden;
+      vertical-align: bottom;
+    }
+    .price-slot-track {
+      display: flex;
+      flex-direction: column;
+      will-change: transform;
+    }
+    .price-slot-track.animating {
+      transition: transform 0.26s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .price-slot-val {
+      display: block;
+      white-space: nowrap;
+      line-height: 1;
+    }
+
+    /* ── Add-ons box (ported verbatim from web-design.html) ── */
+    .pricing-addons {
+      border-radius: 14px;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.15));
+      background: linear-gradient(135deg, var(--tier-btn-bg1, rgba(239,68,68,0.12)), var(--tier-btn-bg2, rgba(239,68,68,0.05)));
+      padding: 14px 16px 8px;
+      margin-bottom: 24px;
+    }
+    .pricing-addons-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px; font-weight: 800;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--tier-color, var(--ecom-red));
+      margin: 0 0 10px;
+    }
+    .pricing-addons-list { list-style: none; padding: 0; margin: 0; }
+    .pricing-addons-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; line-height: 1.55;
+      color: rgba(200,212,232,0.68);
+      padding: 8px 0;
+      border-top: 1px solid var(--tier-border, rgba(255,255,255,0.08));
+    }
+    .pricing-addons-list li:first-child { border-top: none; }
+    .addon-toggle {
+      width: 22px; height: 22px; flex-shrink: 0; margin-top: -1px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.25));
+      background: rgba(255,255,255,0.03);
+      color: var(--tier-color, var(--ecom-red));
+      cursor: pointer; padding: 0;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    }
+    .addon-toggle:hover { background: var(--tier-btn-hover2, rgba(255,255,255,0.08)); transform: translateY(-1px); }
+    .addon-toggle:focus-visible { outline: 2px solid var(--tier-color, var(--ecom-red)); outline-offset: 2px; }
+    .addon-toggle:active { transform: translateY(0); }
+    .addon-icon-plus, .addon-icon-check { width: 13px; height: 13px; }
+    .addon-toggle .addon-icon-check { display: none; }
+    .addon-toggle.selected {
+      border-color: #166534;
+      background: rgba(22,163,74,0.16);
+      color: #4ade80;
+    }
+    .addon-toggle.selected .addon-icon-plus { display: none; }
+    .addon-toggle.selected .addon-icon-check { display: block; }
+    @media (max-width: 860px) { .pricing-addons { margin-bottom: 16px; } }
+
+    /* ── SEM add-on accordion (service + tier picker) ── */
+    .addon-sem-summary {
+      display: block; font-size: 11.5px; font-weight: 600;
+      color: var(--tier-color, var(--ecom-red)); margin-top: 2px;
+    }
+    .pricing-addons-list li.addon-sem-panel-row {
+      padding: 0; border-top: none;
+    }
+    .addon-sem-panel {
+      display: grid; grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s cubic-bezier(0.22,1,0.36,1);
+      width: 100%;
+    }
+    .addon-sem-panel > div { overflow: hidden; }
+    .addon-sem-panel.open { grid-template-rows: 1fr; }
+    .sem-panel-inner { padding: 4px 0 10px 32px; }
+    .sem-panel-heading {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--tier-color, var(--ecom-red));
+      margin: 10px 0 6px;
+    }
+    .sem-panel-heading:first-child { margin-top: 0; }
+    .sem-chip-row-group { margin-top: 10px; }
+    .sem-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sem-chip {
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px; font-weight: 600;
+      color: rgba(200,212,232,0.68);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    }
+    .sem-chip:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.28); }
+    .sem-chip:focus-visible { outline: 2px solid var(--tier-color, var(--ecom-red)); outline-offset: 2px; }
+    .sem-chip[data-tier].active {
+      color: var(--tier-color, var(--ecom-red));
+      border-color: var(--tier-color, var(--ecom-red));
+      background: color-mix(in srgb, var(--tier-color, var(--ecom-red)) 14%, transparent);
+      box-shadow: 0 0 10px color-mix(in srgb, var(--tier-color, var(--ecom-red)) 35%, transparent);
+    }
+    .sem-chip[data-service].active {
+      color: #4ade80;
+      border-color: #4ade80;
+      background: rgba(22,163,74,0.16);
+    }
 
     .tier-payment-note {
       max-width: 640px; margin: 26px auto 0; text-align: center;
@@ -770,7 +1299,7 @@
       .nav-links { display: none; }
       .nav-right .btn { display: none; }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; right: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
@@ -807,9 +1336,10 @@
       .btn { white-space: nowrap; font-size: 12px; padding: 9px 15px; justify-content: center; }
       .ecom-cta-actions { flex-direction: column; align-items: stretch; }
       .ecom-cta-actions .btn, .ecom-cta-actions .addon-card-cta { padding: 13px 20px; }
-      .ecom-hero-actions { flex-direction: column; align-items: stretch; }
-      .ecom-hero-services-menu { width: 100%; }
-      .ecom-hero-services-trigger { width: 100%; }
+      .ecom-hero-actions { flex-direction: column; align-items: center; }
+      .ecom-hero-services-menu { width: 100%; max-width: 260px; }
+      .ecom-hero-services-trigger { width: 100%; justify-content: center; }
+      .ecom-hero-actions .ecom-hero-btn-gradient { width: 100%; max-width: 260px; justify-content: center; }
       /* Shallower, mostly-vertical fall on narrow viewports — the desktop ~40-50°
          angle carries comets sideways past the (much narrower) mockup box before
          they've fallen far enough to reach it. Fall distance/position unchanged
@@ -826,6 +1356,27 @@
       @keyframes comet-fall-2 { 0%{opacity:0;transform:rotate(-17deg) translateY(0);} 8%{opacity:.9;}  53%{opacity:.85;} 59%{opacity:0;} 100%{opacity:0;transform:rotate(-17deg) translateY(1421px);} }
       @keyframes comet-fall-3 { 0%{opacity:0;transform:rotate(-12deg) translateY(0);} 8%{opacity:.95;} 63%{opacity:.9;}  69%{opacity:0;} 100%{opacity:0;transform:rotate(-12deg) translateY(1014px);} }
       @keyframes comet-fall-4 { 0%{opacity:0;transform:rotate(-16deg) translateY(0);} 8%{opacity:.85;} 56%{opacity:.8;}  62%{opacity:0;} 100%{opacity:0;transform:rotate(-16deg) translateY(1290px);} }
+
+      /* Miss comets stay steep/horizontal (unlike the hit-comets above, which
+         were flattened to near-vertical specifically to avoid overshooting the
+         narrow mobile box) — mobile's box spans nearly the full width, so a
+         short, fairly horizontal path clears above it and exits off-screen
+         right well before descending anywhere near the box's depth. */
+      /* left overridden back down for comet-5 (desktop uses a wider 18% to keep
+         clear of comet-6's path) and pushed further out for comet-7 (more
+         separation from comet-6) — mobile's box geometry means the two
+         breakpoints need different spacing to avoid the same paths overlapping. */
+      .comet-5 { left: 10%; animation-duration: 3s;   animation-delay: 3.9s; }
+      .comet-6 { animation-duration: 3.6s; animation-delay: 7.85s; }
+      .comet-7 { left: 24%; animation-duration: 2.7s; animation-delay: 12s; }
+      @keyframes comet-fall-5 { 0%{opacity:0;transform:rotate(-58deg) translateY(0);} 8%{opacity:.9;}  92%{opacity:.85;} 100%{opacity:0;transform:rotate(-58deg) translateY(460px);} }
+      @keyframes comet-fall-6 { 0%{opacity:0;transform:rotate(-54deg) translateY(0);} 8%{opacity:.85;} 92%{opacity:.8;}  100%{opacity:0;transform:rotate(-54deg) translateY(560px);} }
+      @keyframes comet-fall-7 { 0%{opacity:0;transform:rotate(-62deg) translateY(0);} 8%{opacity:.9;}  92%{opacity:.85;} 100%{opacity:0;transform:rotate(-62deg) translateY(430px);} }
+
+      /* Side-hit comets are desktop/tablet only — mobile's box leaves no real
+         gap on its left to approach through, so a side strike can't read
+         clearly here. */
+      .comet-8, .comet-9, .comet-burst-8, .comet-burst-9 { display: none; }
     }
   </style>
 </head>
@@ -959,7 +1510,12 @@
           <span class="comet comet-2"></span>
           <span class="comet comet-3"></span>
           <span class="comet comet-4"></span>
-          <span class="comet-burst comet-burst-1"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-2 style-wide"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-3 style-tight"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-4"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span>
+          <span class="comet comet-5"></span>
+          <span class="comet comet-6"></span>
+          <span class="comet comet-7"></span>
+          <span class="comet comet-8"></span>
+          <span class="comet comet-9"></span>
+          <span class="comet-burst comet-burst-1"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-2 style-wide"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-3 style-tight"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-4"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-8 style-side"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span><span class="comet-burst comet-burst-9 style-side"><span class="burst-glow"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span><span class="burst-piece"></span></span>
         </div>
         <div class="ecom-hero-content">
           <div class="ecom-hero-pill reveal-fade">
@@ -971,10 +1527,10 @@
             <span class="ecom-kw" style="--i:0; animation-delay:0s">E</span><span class="ecom-kw" style="--i:1; animation-delay:0.07s">-</span><span class="ecom-kw" style="--i:2; animation-delay:0.14s">C</span><span class="ecom-kw" style="--i:3; animation-delay:0.21s">o</span><span class="ecom-kw" style="--i:4; animation-delay:0.28s">m</span><span class="ecom-kw" style="--i:5; animation-delay:0.35s">m</span><span class="ecom-kw" style="--i:6; animation-delay:0.42s">e</span><span class="ecom-kw" style="--i:7; animation-delay:0.49s">r</span><span class="ecom-kw" style="--i:8; animation-delay:0.56s">c</span><span class="ecom-kw" style="--i:9; animation-delay:0.63s">e</span>
           </p>
           <h1 class="ecom-hero-heading reveal-fade" style="transition-delay:0.05s">
-            <span class="l1">Your Store. Built for You,</span>
-            <span class="l2 ecom-heading-grad">Not Rented to You.</span>
+            <span class="l1">Stop Blending In.</span>
+            <span class="l2 ecom-heading-grad">Start Dominating</span>
           </h1>
-          <p class="ecom-hero-sub reveal-fade" style="transition-delay:0.1s">Every e-commerce platform we build is written for one business — yours. No per-sale cut, no app-store shopping list, no template ceiling to outgrow. We build it, we run it, you own everything it generates.</p>
+          <p class="ecom-hero-sub reveal-fade" style="transition-delay:0.1s">A slow website is a dead website. We strip away the bloat to deliver ruthless, ultra-fast user experiences that lock in sales before your customers can hesitate.</p>
           <div class="ecom-hero-actions reveal-fade" style="transition-delay:0.15s">
             <div class="ecom-hero-services-menu">
               <button type="button" class="btn ecom-hero-btn ecom-hero-btn-outline ecom-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="ecom-hero-services-panel">
@@ -1013,20 +1569,47 @@
       </section>
     </div>
 
-    <!-- ============ DEPLOYMENTS-STYLE FORMAT (layout port — copy pending) ============ -->
+    <!-- ============ DEPLOYMENTS-STYLE FORMAT ============ -->
     <section id="ecom-deploy" style="border-top:1px solid rgba(255,255,255,0.06);">
       <div class="section-inner">
         <div class="section-head reveal-fade">
-          <p class="sec-tag">// Features</p>
-          <h2>Deployments made easy</h2>
+          <p class="sec-tag">// Featured</p>
+          <h2>Deployments,<span class="ecom-heading-grad" style="display:block;">Made Easy.</span></h2>
           <p>Deploy with ease, leave complexities to us.</p>
         </div>
         <div class="deploy-bento">
+        <div class="deploy-bento-row">
           <div class="deploy-card deploy-card-deploy reveal-fade">
-            <div class="deploy-mini-row">
-              <div class="deploy-mini-box"><img src="https://placehold.co/160x160/161b27/EF4444?text=git" alt=""></div>
-              <div class="deploy-mini-box"><img src="https://placehold.co/160x160/161b27/EF4444?text=GitHub" alt=""></div>
-              <div class="deploy-mini-box"><img src="https://placehold.co/160x160/161b27/EF4444?text=AWS" alt=""></div>
+            <p class="sr-only">Platforms we migrate from: WordPress, Shopify, WooCommerce, Squarespace, BigCommerce, Wix, Magento, OpenCart, React, Vue, Angular, Laravel, PHP.</p>
+            <div class="deploy-mini-row" aria-hidden="true">
+              <div class="deploy-mini-track">
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WordPress-Logo.webp" alt="" style="transform:scale(1.15);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Shopify-Logo.webp" alt="" style="transform:scale(1.8);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WooCommerce-Logo.webp" alt=""></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Squarespace-Logo.webp" alt="" style="transform:scale(1.3);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/BigCommerce-Logo.webp" alt=""></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Wix-Logo.webp" alt="" style="transform:scale(0.78);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Magento-Logo.webp" alt=""></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Opencart-Logo.webp" alt="" style="transform:scale(1.8) translateY(10%);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/React-Logo.webp" alt="" style="transform:scale(0.78);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Vue-Logo.webp" alt="" style="transform:scale(0.95);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Angular-Logo.webp" alt="" style="transform:scale(1.8);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Laravel-Logo.webp" alt="" style="transform:scale(2.0);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/PHP-Logo.webp" alt="" style="transform:scale(1.4);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WordPress-Logo.webp" alt="" style="transform:scale(1.15);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Shopify-Logo.webp" alt="" style="transform:scale(1.8);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WooCommerce-Logo.webp" alt=""></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Squarespace-Logo.webp" alt="" style="transform:scale(1.3);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/BigCommerce-Logo.webp" alt=""></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Wix-Logo.webp" alt="" style="transform:scale(0.78);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Magento-Logo.webp" alt=""></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Opencart-Logo.webp" alt="" style="transform:scale(1.8) translateY(10%);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/React-Logo.webp" alt="" style="transform:scale(0.78);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Vue-Logo.webp" alt="" style="transform:scale(0.95);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Angular-Logo.webp" alt="" style="transform:scale(1.8);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Laravel-Logo.webp" alt="" style="transform:scale(2.0);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/PHP-Logo.webp" alt="" style="transform:scale(1.4);"></div>
+              </div>
             </div>
             <div class="deploy-card-text">
               <h3>Simple Migration</h3>
@@ -1038,22 +1621,257 @@
               <h3>Platform Support</h3>
               <p>We support all major platforms, ensuring seamless integration with your existing data.</p>
             </div>
-            <div class="deploy-card-visual"><img src="https://placehold.co/560x460/0f1219/8a93a8?text=Dashboard+Preview" alt=""></div>
+            <div class="deploy-card-visual">
+              <div class="pfc" role="group" aria-roledescription="carousel" aria-label="Supported platforms">
+                <div class="pfc-viewport">
+                  <div class="pfc-slide is-active" aria-hidden="false">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/WordPress-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">WordPress</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="0">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="0">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We migrate your posts, pages, and media library with zero data loss and support for every major theme structure. Have a current XML export and admin access ready for the smoothest handoff.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Shopify-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Shopify</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We rebuild your storefront from the ground up, porting products, collections, and customers via Shopify's own export tools. Hold off canceling paid apps until your new site's DNS has fully propagated.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/WooCommerce-icon.webp" alt="" style="transform:scale(1.18);"></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">WooCommerce</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">Your full product catalog, orders, and customer records port over cleanly, no data left behind. Export your product CSV and hold off on new orders during the swap for a clean cutover.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Squarespace-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Squarespace</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">Since Squarespace keeps no database export, we hand-rebuild your pages and content library from a full site audit. A recent export of your product and blog data speeds the process along.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/BigCommerce-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">BigCommerce</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We pull your catalog, customers, and order history through BigCommerce's REST APIs and CSV exports, no manual re-entry needed. A store-level API key with read access gets the sync started.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Wix-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Wix</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">Like Squarespace, Wix is a closed platform — we recreate your design and content pixel-for-pixel from a full crawl. Gather your media library and copy ahead of time so nothing gets lost.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Magento-icon.webp" alt="" style="transform:scale(1.18);"></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Magento</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We migrate Magento's catalog, customer, and order data through its native export tools, preserving every SKU and attribute. A staging login lets us test the full port before your live cutover.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Opencart-icon.webp" alt="" style="transform:scale(1.18);"></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">OpenCart</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">Your catalog, categories, and order history port directly from OpenCart's database export. Disable extensions you no longer use beforehand to keep the migration lean and fast.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/React-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">React</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We inherit your existing component structure and API layer, modernizing only what needs it. Repo access and your environment variables are all we need to get started.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Vue-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Vue</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We build directly on top of your existing Vue codebase, keeping component logic intact where it holds up. A clean repo handoff with documented endpoints is all we need to begin.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Angular-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Angular</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">Already on Angular? We extend or refactor your existing app instead of starting from zero. Share your repo and CI/CD setup so we can plug in without breaking your deploy pipeline.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Laravel-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">Laravel</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">We build on your existing models and migrations rather than rebuilding from scratch. A full repo and a redacted .env template are all we need for a smooth handoff.</p>
+                  </div>
+                  <div class="pfc-slide" aria-hidden="true">
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/PHP-icon.webp" alt=""></div>
+                    <div class="pfc-header">
+                      <h4 class="pfc-name">PHP</h4>
+                      <div class="pfc-controls">
+                        <button type="button" class="pfc-btn pfc-btn-prev" aria-label="Previous platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <span class="pfc-counter"><span class="pfc-counter-current">01</span> / 13</span>
+                        <button type="button" class="pfc-btn pfc-btn-next" aria-label="Next platform" tabindex="-1">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="pfc-desc">Running on custom PHP already? We port your codebase directly, refactoring legacy logic only where it counts. A full source and database dump gets you the smoothest possible handoff.</p>
+                  </div>
+                </div>
+                <p class="sr-only" aria-live="polite" id="pfc-live"></p>
+              </div>
+            </div>
           </div>
+        </div>
+        <div class="deploy-bento-row deploy-bento-row-reverse">
           <div class="deploy-card deploy-card-edge reveal-fade" style="transition-delay:0.12s">
             <div class="deploy-card-text">
               <h3>Hosting over the Edge</h3>
               <p>By utilizing our global network, we host your website on the world's largest and most reliable infrastructure.</p>
             </div>
-            <div class="deploy-card-visual"><img src="https://placehold.co/700x420/0f1219/8a93a8?text=Edge+Network" alt=""></div>
+            <div class="deploy-card-visual deploy-card-globe">
+              <canvas id="edge-globe" role="img" aria-label="Rotating globe visualizing our global edge network"></canvas>
+            </div>
           </div>
           <div class="deploy-card deploy-card-copy reveal-fade" style="transition-delay:0.18s">
             <div class="deploy-card-text">
               <h3>Example Template</h3>
               <p>A pre-designed layout to showcase how your website can look with our platform.</p>
             </div>
-            <div class="deploy-card-visual"><img src="https://placehold.co/560x460/0f1219/8a93a8?text=Dashboard+Preview" alt=""></div>
+            <div class="deploy-card-visual deploy-card-preview">
+              <div class="browser-mock">
+                <div class="browser-mock-inner">
+                  <div class="browser-bar">
+                    <div class="browser-dots">
+                      <div class="browser-dot" style="background:#FF5F56;"></div>
+                      <div class="browser-dot" style="background:#FFBD2E;"></div>
+                      <div class="browser-dot" style="background:#27C93F;"></div>
+                    </div>
+                    <div class="browser-url-bar">vardedveins.com</div>
+                  </div>
+                  <div class="browser-body">
+                    <img src="brand_assets/vardedveins.com_Desktop.webp" alt="VardedVeins storefront preview" loading="lazy">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
         </div>
       </div>
     </section>
@@ -1063,7 +1881,7 @@
       <div class="section-inner">
         <div class="section-head reveal-fade">
           <p class="sec-tag">// Not Off the Shelf</p>
-          <h2>Same Storefront Everyone Else Is Running? <span style="display:block;">Not This Time.</span></h2>
+          <h2>Template Storefront?<span class="ecom-heading-grad" style="display:block;">Not This Time.</span></h2>
         </div>
         <p class="pitch-intro reveal-fade" style="transition-delay:0.05s">Shopify, WooCommerce, and BigCommerce were built to rent the same platform to millions of stores. We build one platform for one store: yours.</p>
         <div class="pitch-grid">
@@ -1072,12 +1890,12 @@
             <div class="pitch-body">
               <div class="pitch-side pitch-elsewhere">
                 <span class="pitch-label">Elsewhere</span>
-                <span class="pitch-text">A cut of every sale, forever — the more you sell, the more they take.</span>
+                <span class="pitch-text">A cut of every sale, forever. The more you sell, the more they take. Every transaction is a profit loss for you.</span>
               </div>
               <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
               <div class="pitch-side pitch-vardweb">
                 <span class="pitch-label">With VardWeb</span>
-                <span class="pitch-text">One flat monthly rate. No cut taken out of your sales, ever.</span>
+                <span class="pitch-text">One flat monthly rate means your profits stay exactly where they belong: in your bank account.</span>
               </div>
             </div>
           </div>
@@ -1086,12 +1904,12 @@
             <div class="pitch-body">
               <div class="pitch-side pitch-elsewhere">
                 <span class="pitch-label">Elsewhere</span>
-                <span class="pitch-text">Basic features locked behind a paid app marketplace — reviews, upsells, subscriptions all cost extra.</span>
+                <span class="pitch-text">Basic features locked behind a paid app marketplace. Reviews, upsells, subscriptions all cost extra.</span>
               </div>
               <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
               <div class="pitch-side pitch-vardweb">
                 <span class="pitch-label">With VardWeb</span>
-                <span class="pitch-text">Built in from day one, scaled to your plan. Nothing to shop for separately.</span>
+                <span class="pitch-text">Built in from day one, scaled to your plan. Nothing to shop for separately. Revision or add-ons at request.</span>
               </div>
             </div>
           </div>
@@ -1100,12 +1918,12 @@
             <div class="pitch-body">
               <div class="pitch-side pitch-elsewhere">
                 <span class="pitch-label">Elsewhere</span>
-                <span class="pitch-text">Checkout and theme rules built for the platform, not your business — you adapt to the template.</span>
+                <span class="pitch-text">Checkout and theme rules built for the platform, not your business. You adapt to the template.</span>
               </div>
               <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
               <div class="pitch-side pitch-vardweb">
                 <span class="pitch-label">With VardWeb</span>
-                <span class="pitch-text">Built around how your business actually works, not squeezed into a template.</span>
+                <span class="pitch-text">Built around how your business actually works, not squeezed into a template. Unique functionality.</span>
               </div>
             </div>
           </div>
@@ -1114,12 +1932,12 @@
             <div class="pitch-body">
               <div class="pitch-side pitch-elsewhere">
                 <span class="pitch-label">Elsewhere</span>
-                <span class="pitch-text">Your customer data and order history live on someone else's platform.</span>
+                <span class="pitch-text">Your customer history and order data are your most valuable assets. Living on someone else’s platform.</span>
               </div>
               <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
               <div class="pitch-side pitch-vardweb">
                 <span class="pitch-label">With VardWeb</span>
-                <span class="pitch-text">The domain is yours. Every customer record and order your business generates is yours, and exportable, always.</span>
+                <span class="pitch-text">The domain is yours. Every customer record and order your business generates is yours, and exportable.</span>
               </div>
             </div>
           </div>
@@ -1128,7 +1946,7 @@
             <div class="pitch-body">
               <div class="pitch-side pitch-elsewhere">
                 <span class="pitch-label">Elsewhere</span>
-                <span class="pitch-text">Skip the fees by self-hosting — and inherit the hosting, security, and upkeep yourself.</span>
+                <span class="pitch-text">You're at the mercy of their terms and conditions. Change in policies affect your business without warning.</span>
               </div>
               <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
               <div class="pitch-side pitch-vardweb">
@@ -1142,12 +1960,12 @@
             <div class="pitch-body">
               <div class="pitch-side pitch-elsewhere">
                 <span class="pitch-label">Elsewhere</span>
-                <span class="pitch-text">Outgrow your plan tier and face a full re-platform to keep scaling.</span>
+                <span class="pitch-text">Exceed your current plan and be forced into a full-scale re-platform. Stop building on old infrastructure.</span>
               </div>
               <span class="pitch-arrow" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
               <div class="pitch-side pitch-vardweb">
                 <span class="pitch-label">With VardWeb</span>
-                <span class="pitch-text">The platform evolves with your business — included in the plan, not a re-platforming project.</span>
+                <span class="pitch-text">The platform evolves with your business. Included in the plan, not a re-platforming project.</span>
               </div>
             </div>
           </div>
@@ -1162,19 +1980,21 @@
       <div class="section-inner">
         <div class="section-head reveal-fade">
           <p class="sec-tag">// What's Included</p>
-          <h2>One Platform. Everything a Real Store Needs.</h2>
+          <h2>One Platform. <span class="ecom-heading-grad" style="display:block;">Versatile Arsenal.</span></h2>
           <p>Every tier below gets the full feature set. What scales is capacity, not capability.</p>
         </div>
         <div class="feat-grid">
           <div class="feat-card reveal-fade" style="transition-delay:0s">
             <div class="feat-card-top">
-              <div class="feat-card-icon"><img src="brand_assets/icons/idx-product-catalogs.webp" alt="" loading="lazy" /></div>
+              <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
               <div><span class="feat-cat">Storefront</span><h3>Merchandising</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Product catalog with variants — size, color, bundles</li>
-              <li>Faceted search &amp; filtering by price, tag, category</li>
-              <li>Customer reviews &amp; UGC</li>
+              <li><strong>Catalog with variants</strong><br>Size, color, bundles</li>
+              <li><strong>Faceted search &amp; filters</strong><br>By price, tag, category</li>
+              <li><strong>Collections &amp; grids</strong><br>Curated by hand, not tags</li>
+              <li><strong>Reviews &amp; UGC</strong><br>Star ratings &amp; photos</li>
+              <li><strong>Cross-sell &amp; bundles</strong><br>At the product level</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.05s">
@@ -1183,9 +2003,11 @@
               <div><span class="feat-cat">Conversion</span><h3>Cart &amp; Checkout</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Guest checkout, no forced account creation</li>
-              <li>One-page checkout flow</li>
-              <li>Abandoned-cart recovery via email &amp; SMS</li>
+              <li><strong>Guest checkout</strong><br>No forced account creation</li>
+              <li><strong>One-page checkout</strong><br>Seamless flow</li>
+              <li><strong>Abandoned-cart recovery</strong><br>Recovers 5–15% of lost carts by email</li>
+              <li><strong>Saved payment methods</strong><br>For return buyers</li>
+              <li><strong>Persistent cart</strong><br>Across sessions and devices</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.1s">
@@ -1194,24 +2016,23 @@
               <div><span class="feat-cat">Money</span><h3>Payments</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Cards, Apple Pay &amp; Google Pay</li>
-              <li>PayPal, Shop Pay, Amazon Pay &amp; Venmo</li>
-              <li>Buy-now-pay-later, multi-currency ready</li>
+              <li><strong>Card payments</strong><br>The baseline, non-negotiable</li>
+              <li><strong>Apple Pay &amp; Google Pay</strong><br>One-tap mobile checkout</li>
+              <li><strong>PayPal, Amazon Pay &amp; Venmo</strong><br>As familiar fallbacks</li>
+              <li><strong>Buy-Now-Pay-Later</strong><br>Klarna/Afterpay, expected in fashion &amp; home goods</li>
+              <li><strong>Multi-currency display</strong><br>For cross-border buyers</li>
             </ul>
-            <div class="feat-badges">
-              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-stripe.svg" alt="" loading="lazy" /></span>
-              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-paypal.webp" alt="" loading="lazy" /></span>
-            </div>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.15s">
             <div class="feat-card-top">
               <div class="feat-card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg></div>
-              <div><span class="feat-cat">Operations</span><h3>Inventory &amp; Catalog Ops</h3></div>
+              <div><span class="feat-cat">Operations</span><h3>Inventory &amp; Catalog</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Real-time stock sync across every channel</li>
-              <li>Low-stock &amp; back-in-stock alerts</li>
-              <li>SKU / variant-level management</li>
+              <li><strong>Real-time stock sync</strong><br>Across every sales channel</li>
+              <li><strong>Low-stock alerts</strong><br>Plus back-in-stock notifications</li>
+              <li><strong>SKU / variant management</strong><br>Tracked at the item level</li>
+              <li><strong>Supplier &amp; PO tracking</strong><br>End-to-end, in one place</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.2s">
@@ -1220,15 +2041,12 @@
               <div><span class="feat-cat">Reach</span><h3>Sales Channel Reach</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Storefront + Shop app listing</li>
-              <li>Instagram &amp; TikTok shop sync</li>
-              <li>Google Shopping feed + marketplaces</li>
+              <li><strong>Shop app listing</strong><br>Where most buyers already shop</li>
+              <li><strong>Instagram &amp; TikTok sync</strong><br>Sell directly in the app</li>
+              <li><strong>Google Shopping feed</strong><br>Auto-synced product data</li>
+              <li><strong>Marketplace listings</strong><br>Amazon, Etsy, Ebay, etc</li>
+              <li><strong>One catalog</strong><br>No manual duplication across channels</li>
             </ul>
-            <div class="feat-badges">
-              <span class="feat-badge"><img src="brand_assets/icons/GShoppingA-isometric-icon-transparent.webp" alt="" loading="lazy" /></span>
-              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-etsy.webp" alt="" loading="lazy" /></span>
-              <span class="feat-badge"><img src="brand_assets/icons/smm-logo-ebay.webp" alt="" loading="lazy" /></span>
-            </div>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.25s">
             <div class="feat-card-top">
@@ -1236,9 +2054,10 @@
               <div><span class="feat-cat">Retention</span><h3>Marketing Automation</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Welcome flows &amp; cart recovery</li>
-              <li>Win-back campaigns</li>
-              <li>Loyalty &amp; rewards points</li>
+              <li><strong>Customer accounts</strong><br>With order history</li>
+              <li><strong>Lifecycle email/SMS</strong><br>Welcome, abandoned cart, win-back</li>
+              <li><strong>Discount codes &amp; promos</strong><br>Auto-applied at checkout</li>
+              <li><strong>Loyalty / rewards points</strong><br>Earned and redeemed on repeat orders</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.3s">
@@ -1247,9 +2066,10 @@
               <div><span class="feat-cat">Back office</span><h3>Admin / Back-Office</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Order management dashboard</li>
-              <li>Staff roles &amp; role-based permissions</li>
-              <li>Returns / RMA workflow</li>
+              <li><strong>Order management</strong><br>Full dashboard, every order</li>
+              <li><strong>Staff roles &amp; permissions</strong><br>Limit access by role</li>
+              <li><strong>Returns / RMA workflow</strong><br>Refunds and restocking</li>
+              <li><strong>Exportable reporting</strong><br>CSV, accounting sync</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.35s">
@@ -1258,9 +2078,10 @@
               <div><span class="feat-cat">Trust</span><h3>Security &amp; Compliance</h3></div>
             </div>
             <ul class="feat-list">
-              <li>SSL by default, PCI-compliant payments</li>
-              <li>Fraud detection on checkout</li>
-              <li>GDPR/CCPA-aware data tooling</li>
+              <li><strong>SSL by default</strong><br>PCI-compliant payment handling</li>
+              <li><strong>Fraud detection</strong><br>On checkout</li>
+              <li><strong>GDPR/CCPA-aware tooling</strong><br>Cookie consent &amp; data handling</li>
+              <li><strong>Automated backups</strong><br>Easily restorable</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.4s">
@@ -1269,9 +2090,10 @@
               <div><span class="feat-cat">Insight</span><h3>Analytics &amp; Reporting</h3></div>
             </div>
             <ul class="feat-list">
-              <li>Sales &amp; conversion-funnel dashboards</li>
-              <li>Customer lifetime-value tracking</li>
-              <li>Product-level performance reporting</li>
+              <li><strong>Sales &amp; funnel dashboards</strong><br>See where customers drop off</li>
+              <li><strong>Lifetime-value tracking</strong><br>Know your best customers</li>
+              <li><strong>Product-level reporting</strong><br>See what's actually selling</li>
+              <li><strong>Custom reporting</strong><br>Alter the view you need</li>
             </ul>
           </div>
         </div>
@@ -1328,84 +2150,504 @@
     <section id="ecom-tiers">
       <div class="section-inner">
         <div class="section-head reveal-fade">
-          <p class="sec-tag">// Choose Your Tier</p>
-          <h2>Every Tier Gets the Full Platform. Just Different Room to Grow.</h2>
-          <p>No feature paywalls between tiers — only capacity changes. Pick the size that fits your business today; every plan is built to grow into the next one.</p>
+          <p class="sec-tag">// Investment</p>
+          <h2>Choose your <span class="ecom-heading-grad">tier</span></h2>
+          <p>From your first product listing to a full omnichannel operation — every plan is custom-coded, never templated. Prices are starting points; final scope is confirmed at discovery.</p>
+        </div>
+
+        <!-- Monthly / Yearly toggle -->
+        <div id="billing-toggle" style="display:flex;justify-content:center;margin-bottom:44px;position:relative;">
+          <div style="display:inline-flex;background:var(--raised);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:4px;gap:4px;">
+            <button id="toggle-monthly" class="billing-btn active" aria-pressed="true">Monthly</button>
+            <button id="toggle-yearly"  class="billing-btn"       aria-pressed="false">Yearly</button>
+          </div>
         </div>
 
         <div class="pricing-grid">
-          <div class="pricing-card reveal-fade" style="transition-delay:0s; --tier-color:#00E5FF; --tier-border:rgba(0,229,255,0.28); --tier-glow:rgba(0,229,255,0.08); --tier-shadow:rgba(0,229,255,0.18); --tier-bg:rgba(0,229,255,0.05); --tier-btn-bg1:rgba(0,229,255,0.14); --tier-btn-bg2:rgba(0,229,255,0.07); --tier-btn-hover1:rgba(0,229,255,0.22); --tier-btn-hover2:rgba(0,229,255,0.12);">
-            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Jack</span></div>
-            <p class="pricing-stat">Up to 50 products</p>
-            <p class="pricing-quote">Custom quote — no published pricing</p>
+          <!-- ── BRONZE ── -->
+          <div class="pricing-card reveal-fade" data-tier="bronze" style="transition-delay:0s; --tier-color:#CD7F32; --tier-border:rgba(205,127,50,0.28); --tier-glow:rgba(205,127,50,0.08); --tier-shadow:rgba(205,127,50,0.12); --tier-bg:rgba(205,127,50,0.05); --tier-btn-bg1:rgba(205,127,50,0.14); --tier-btn-bg2:rgba(205,127,50,0.07); --tier-btn-hover1:rgba(205,127,50,0.22); --tier-btn-hover2:rgba(205,127,50,0.12); --li-pad-y:9px;">
+            <div class="pricing-img-wrap">
+              <img class="pricing-img" src="brand_assets/icons/wd-pricing-bronze.webp" alt="" aria-hidden="true" loading="lazy"/>
+            </div>
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Bronze</span></div>
+            <h3>Essential</h3>
+            <p class="pricing-from">STARTING FROM</p>
+            <p class="pricing-flat">FLAT RATE <span class="pricing-flat-amt">C$1,000</span> <span class="cheaper-pill">70% Cheaper</span></p>
+            <div class="pricing-price" data-monthly="C$200" data-yearly="C$2,400">
+              <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$200</span></span></span>
+              <span class="price-suffix">/mo + tax</span>
+            </div>
+            <p class="pricing-pages">Up to 100 products · ~1-2 week delivery</p>
+            <p class="pricing-desc">Perfect if you're ready to sell online and need a clean, fast store without unnecessary complexity. Covers the technical stack most agencies charge extra for, and ships with everything a modern storefront needs on day one.</p>
             <ul class="pricing-features">
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 variants per product</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Guest + one-page checkout, up to 2 recovery touchpoints</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>1–2 staff seats</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Storefront + Shop app + Google Shopping + Instagram/TikTok shop</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 2 marketing flows designed for you</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>12-hour support response</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Brand new online store, built from scratch</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Mobile-first responsive design</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants (size, color, bundles) — up to 100 products</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Guest + one-page checkout with abandoned-cart recovery emails</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Card payments, Apple Pay &amp; Google Pay, PayPal</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Real-time stock sync &amp; low-stock alerts</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Storefront + Shop app + Google Shopping + Instagram/TikTok Shop</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Customer accounts with order history &amp; discount codes</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Order management dashboard, up to 2 staff seats</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>SSL/PCI-compliant checkout &amp; automated backups</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Sales &amp; funnel reporting dashboard</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Emergency technical fixes within 12 hours; general support requests within 24 hours</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Includes 1 Revision Request a Month; limited to under 1 hour of execution time each request</li>
             </ul>
-            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Jack&amp;tierColor=%2300E5FF" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+            <div class="pricing-addons">
+              <p class="pricing-addons-label">Available Add-ons</p>
+              <ul class="pricing-addons-list">
+                <li>
+                  <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-bronze" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+                </li>
+                <li class="addon-sem-panel-row">
+                  <div class="addon-sem-panel" id="sem-panel-bronze">
+                    <div>
+                      <div class="sem-panel-inner">
+                        <p class="sem-panel-heading">Choose a service</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                          <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                          <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                          <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                          <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                          <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                          <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                        </div>
+                        <p class="sem-panel-heading">Choose a tier</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                          <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                          <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                          <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                          <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-bronze" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span>SMM (Social Media Marketing)<span class="addon-sem-summary" hidden></span></span>
+                </li>
+                <li class="addon-sem-panel-row">
+                  <div class="addon-sem-panel" id="smm-panel-bronze">
+                    <div>
+                      <div class="sem-panel-inner">
+                        <p class="sem-panel-heading">Choose a service</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-service="Live Social Feed Widget">Live Social Feed Widget</button>
+                          <button type="button" class="sem-chip" data-service="Social Brand Kit">Social Brand Kit</button>
+                          <button type="button" class="sem-chip" data-service="Meta &amp; Instagram Ads">Meta &amp; Instagram Ads</button>
+                        </div>
+                        <div class="sem-chip-row-group" data-for-service="Social Brand Kit" data-tier-suffix="" hidden>
+                          <p class="sem-panel-heading">Choose a kit</p>
+                          <div class="sem-chip-row">
+                            <button type="button" class="sem-chip" data-tier="essentials" style="--tier-color:#F472B6">Essentials</button>
+                            <button type="button" class="sem-chip" data-tier="full-kit" style="--tier-color:#FFD700">Full Kit</button>
+                          </div>
+                        </div>
+                        <div class="sem-chip-row-group" data-for-service="Meta &amp; Instagram Ads" hidden>
+                          <p class="sem-panel-heading">Choose a tier</p>
+                          <div class="sem-chip-row">
+                            <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                            <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                            <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                            <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                            <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-bronze" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span>CM (Content Marketing)<span class="addon-sem-summary" hidden></span></span>
+                </li>
+                <li class="addon-sem-panel-row">
+                  <div class="addon-sem-panel" id="cm-panel-bronze">
+                    <div>
+                      <div class="sem-panel-inner">
+                        <p class="sem-panel-heading">Choose a service</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-service="Single Post">Single Post</button>
+                          <button type="button" class="sem-chip" data-service="Single Pillar">Single Pillar</button>
+                          <button type="button" class="sem-chip" data-service="Post Retainer">Post Retainer</button>
+                          <button type="button" class="sem-chip" data-service="Pillar Retainer">Pillar Retainer</button>
+                        </div>
+                        <div class="sem-chip-row-group" data-for-service="Post Retainer" hidden>
+                          <p class="sem-panel-heading">Choose a tier</p>
+                          <div class="sem-chip-row">
+                            <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                            <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                            <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                            <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                            <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                          </div>
+                        </div>
+                        <div class="sem-chip-row-group" data-for-service="Pillar Retainer" hidden>
+                          <p class="sem-panel-heading">Choose a tier</p>
+                          <div class="sem-chip-row">
+                            <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                            <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                            <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                            <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                            <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  Google Play Application
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  App Store Application
+                </li>
+              </ul>
+            </div>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tierColor=%23CD7F32" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
           </div>
 
-          <div class="pricing-card reveal-fade" style="transition-delay:0.06s; --tier-color:#A855F7; --tier-border:rgba(168,85,247,0.28); --tier-glow:rgba(168,85,247,0.08); --tier-shadow:rgba(168,85,247,0.18); --tier-bg:rgba(168,85,247,0.05); --tier-btn-bg1:rgba(168,85,247,0.14); --tier-btn-bg2:rgba(168,85,247,0.07); --tier-btn-hover1:rgba(168,85,247,0.22); --tier-btn-hover2:rgba(168,85,247,0.12);">
-            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Queen</span></div>
-            <p class="pricing-stat">Up to 250 products</p>
-            <p class="pricing-quote">Custom quote — no published pricing</p>
+          <!-- ── SILVER ── -->
+          <div class="pricing-card reveal-fade" data-tier="silver" style="transition-delay:0.08s; --tier-color:#C2D0E8; --tier-border:rgba(194,208,232,0.40); --tier-glow:rgba(194,208,232,0.12); --tier-shadow:rgba(194,208,232,0.22); --tier-bg:rgba(194,208,232,0.08); --tier-btn-bg1:rgba(194,208,232,0.16); --tier-btn-bg2:rgba(194,208,232,0.09); --tier-btn-hover1:rgba(194,208,232,0.28); --tier-btn-hover2:rgba(194,208,232,0.15); --li-pad-y:8px;">
+            <div class="pricing-img-wrap">
+              <img class="pricing-img" src="brand_assets/icons/wd-pricing-silver.webp" alt="" aria-hidden="true" loading="lazy"/>
+            </div>
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Silver</span></div>
+            <h3>Advanced</h3>
+            <p class="pricing-from">STARTING FROM</p>
+            <p class="pricing-flat">FLAT RATE <span class="pricing-flat-amt">C$2,000</span> <span class="cheaper-pill">54% Cheaper</span></p>
+            <div class="pricing-price" data-monthly="C$250" data-yearly="C$3,000">
+              <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$250</span></span></span>
+              <span class="price-suffix">/mo + tax</span>
+            </div>
+            <p class="pricing-pages">Up to 500 products · ~1-3 week delivery</p>
+            <p class="pricing-desc">For stores ready to scale past a single channel — deeper automation, a marketplace listing, and the operational tooling to keep growth from becoming chaos.</p>
             <ul class="pricing-features">
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 10 variants per product</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 cart-recovery touchpoints</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 staff seats</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>+1 marketplace (Amazon or Etsy)</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 5 marketing flows</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>8-hour support response</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Brand new online store, built from scratch</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Mobile-first responsive design</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants — up to 500 products</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Guest + one-page checkout, multi-touch cart recovery (email + SMS)</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Full payment stack: cards, Apple/Google Pay, PayPal, Amazon Pay, Buy-Now-Pay-Later</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Real-time stock sync, low-stock alerts + back-in-stock notifications</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Storefront + Shop app + Google Shopping + Instagram/TikTok + 1 marketplace (Amazon or Etsy)</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Lifecycle email/SMS automations (welcome, cart recovery, win-back)</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Order management dashboard, staff roles &amp; permissions, up to 5 staff seats</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Returns/RMA workflow</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Emergency technical fixes within 8 hours</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Includes 2 Revision Requests a Month</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Exportable reporting (CSV, accounting sync)</li>
             </ul>
-            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Queen&amp;tierColor=%23A855F7" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+            <div class="pricing-addons">
+              <p class="pricing-addons-label">Available Add-ons</p>
+              <ul class="pricing-addons-list">
+                <li>
+                  <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-silver" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+                </li>
+                <li class="addon-sem-panel-row">
+                  <div class="addon-sem-panel" id="sem-panel-silver">
+                    <div>
+                      <div class="sem-panel-inner">
+                        <p class="sem-panel-heading">Choose a service</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                          <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                          <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                          <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                          <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                          <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                          <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                        </div>
+                        <p class="sem-panel-heading">Choose a tier</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                          <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                          <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                          <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  SMM (Social Media Marketing)
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  CM (Content Marketing)
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  Google Play Application
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  App Store Application
+                </li>
+              </ul>
+            </div>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tierColor=%23C2D0E8" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
           </div>
 
-          <div class="pricing-card reveal-fade" style="transition-delay:0.12s; --tier-color:#FFD700; --tier-border:rgba(255,215,0,0.28); --tier-glow:rgba(255,215,0,0.08); --tier-shadow:rgba(255,215,0,0.18); --tier-bg:rgba(255,215,0,0.05); --tier-btn-bg1:rgba(255,215,0,0.14); --tier-btn-bg2:rgba(255,215,0,0.07); --tier-btn-hover1:rgba(255,215,0,0.22); --tier-btn-hover2:rgba(255,215,0,0.12);">
-            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">King</span></div>
-            <p class="pricing-stat">Up to 500 products</p>
-            <p class="pricing-quote">Custom quote — no published pricing</p>
+          <!-- ── GOLD ── -->
+          <div class="pricing-card reveal-fade" data-tier="gold" style="transition-delay:0.16s; --tier-color:#FFD700; --tier-border:rgba(255,215,0,0.28); --tier-glow:rgba(255,215,0,0.07); --tier-shadow:rgba(255,215,0,0.14); --tier-bg:rgba(255,215,0,0.04); --tier-btn-bg1:rgba(255,215,0,0.12); --tier-btn-bg2:rgba(255,215,0,0.06); --tier-btn-hover1:rgba(255,215,0,0.2); --tier-btn-hover2:rgba(255,215,0,0.1); --li-pad-y:15px;">
+            <div class="pricing-img-wrap">
+              <img class="pricing-img" src="brand_assets/icons/wd-pricing-gold.webp" alt="" aria-hidden="true" loading="lazy"/>
+            </div>
+            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Gold</span></div>
+            <h3>Ultimate</h3>
+            <p class="pricing-from">STARTING FROM</p>
+            <p class="pricing-flat">FLAT RATE <span class="pricing-flat-amt">C$3,000</span> <span class="cheaper-pill">33% Cheaper</span></p>
+            <div class="pricing-price" data-monthly="C$300" data-yearly="C$3,600">
+              <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$300</span></span></span>
+              <span class="price-suffix">/mo + tax</span>
+            </div>
+            <p class="pricing-pages">Up to 2,000 products · ~1-4 week delivery</p>
+            <p class="pricing-desc">Full-scale, multi-channel commerce — automated cross-channel recovery, unlimited integrations, and the compliance/reporting depth a growing operation needs.</p>
             <ul class="pricing-features">
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 25 variants per product</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 10 cart-recovery touchpoints</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 15 staff seats</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>+2 marketplaces</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 10 marketing flows</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>4-hour support response</li>
-            </ul>
-            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=King&amp;tierColor=%23FFD700" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
-          </div>
-
-          <div class="pricing-card reveal-fade" style="transition-delay:0.18s; --tier-color:#FF3B3B; --tier-border:rgba(255,59,59,0.28); --tier-glow:rgba(255,59,59,0.08); --tier-shadow:rgba(255,59,59,0.18); --tier-bg:rgba(255,59,59,0.05); --tier-btn-bg1:rgba(255,59,59,0.14); --tier-btn-bg2:rgba(255,59,59,0.07); --tier-btn-hover1:rgba(255,59,59,0.22); --tier-btn-hover2:rgba(255,59,59,0.12);">
-            <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Ace</span></div>
-            <p class="pricing-stat">Up to 1,000 products</p>
-            <p class="pricing-quote">Custom quote — no published pricing</p>
-            <ul class="pricing-features">
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 50 variants per product</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 20 touchpoints, fully automated cross-channel</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Brand new online store, built from scratch</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Mobile-first responsive design</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants — up to 2,000 products</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Fully automated cross-channel cart recovery, up to 20 touchpoints</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Full payment stack + multi-currency display</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Real-time stock sync across channels + supplier &amp; PO tracking</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited marketplace &amp; sales-channel integrations</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 20 marketing automation flows, loyalty/rewards program</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited staff seats with role-based permissions</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited marketplaces + custom feed integrations</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Up to 20 marketing flows</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Priority same-day support, dedicated channel</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Fraud detection &amp; GDPR/CCPA-aware compliance tooling</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Emergency technical fixes within 4 hours</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Includes 3 Revision Requests a Month</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Priority support, dedicated channel</li>
             </ul>
-            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Ace&amp;tierColor=%23FF3B3B" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+            <div class="pricing-addons">
+              <p class="pricing-addons-label">Available Add-ons</p>
+              <ul class="pricing-addons-list">
+                <li>
+                  <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-gold" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+                </li>
+                <li class="addon-sem-panel-row">
+                  <div class="addon-sem-panel" id="sem-panel-gold">
+                    <div>
+                      <div class="sem-panel-inner">
+                        <p class="sem-panel-heading">Choose a service</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                          <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                          <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                          <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                          <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                          <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                          <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                        </div>
+                        <p class="sem-panel-heading">Choose a tier</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                          <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                          <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                          <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  SMM (Social Media Marketing)
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  CM (Content Marketing)
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  Google Play Application
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  App Store Application
+                </li>
+              </ul>
+            </div>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tierColor=%23FFD700" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
           </div>
 
-          <div class="pricing-card reveal-fade" style="transition-delay:0.24s; --tier-color:#f97316; --tier-border:rgba(249,115,22,0.28); --tier-glow:rgba(249,115,22,0.08); --tier-shadow:rgba(249,115,22,0.18); --tier-bg:rgba(249,115,22,0.05); --tier-btn-bg1:rgba(249,115,22,0.14); --tier-btn-bg2:rgba(249,115,22,0.07); --tier-btn-hover1:rgba(249,115,22,0.22); --tier-btn-hover2:rgba(249,115,22,0.12);">
+          <!-- ── CUSTOM ── -->
+          <div class="pricing-card reveal-fade" data-tier="custom" style="transition-delay:0.24s; --tier-color:#A855F7; --tier-border:rgba(168,85,247,0.28); --tier-glow:rgba(168,85,247,0.07); --tier-shadow:rgba(168,85,247,0.14); --tier-bg:rgba(168,85,247,0.04); --tier-btn-bg1:rgba(168,85,247,0.12); --tier-btn-bg2:rgba(168,85,247,0.06); --tier-btn-hover1:rgba(168,85,247,0.2); --tier-btn-hover2:rgba(168,85,247,0.1);">
+            <div class="pricing-img-wrap">
+              <img class="pricing-img" src="brand_assets/icons/wd-pricing-custom.webp" alt="" aria-hidden="true" loading="lazy"/>
+            </div>
             <div class="pricing-badge"><span class="pricing-dot"></span><span class="pricing-name">Custom</span></div>
-            <p class="pricing-stat">Bespoke, built to scale</p>
-            <p class="pricing-quote">Custom quote — no published pricing</p>
+            <h3>Custom</h3>
+            <p class="pricing-from">CONTACT FOR PRICING</p>
+            <p class="pricing-flat">SCOPE: <span class="pricing-flat-amt">Bespoke</span></p>
+            <div class="pricing-price" data-monthly="Bespoke" data-yearly="Bespoke">
+              <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">Bespoke</span></span></span>
+            </div>
+            <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
+            <p class="pricing-desc">For catalogs, operations, or compliance requirements that don't fit a fixed tier — engineered around your exact business, not a template.</p>
             <ul class="pricing-features">
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke catalog size &amp; variants</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke cart-recovery flows</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Negotiated multi-currency &amp; B2B/wholesale invoicing</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke marketplace &amp; integration footprint</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke SLA</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke online store, engineered from scratch around your exact catalog and operations</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited products &amp; variants, bespoke catalog architecture built for your scale</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke cart-recovery flows across every channel you sell on</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Full payment stack plus negotiated multi-currency processing &amp; B2B/wholesale invoicing terms</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke inventory &amp; supplier integrations, built around your existing operations</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke marketplace &amp; sales-channel footprint, including custom feed integrations</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke marketing automation footprint, sized to your customer lifecycle</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited staff seats with fully bespoke role-based permissions</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke security, compliance &amp; reporting requirements met to spec</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Dedicated support channel with a bespoke SLA</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited Revision Requests, scoped to the engagement</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Priority, same-day technical response</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>A dedicated account lead for the life of the engagement</li>
             </ul>
-            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tier=Custom&amp;tierColor=%23f97316" class="pricing-cta">Get a Custom Quote <span aria-hidden="true">→</span></a>
+            <div class="pricing-addons">
+              <p class="pricing-addons-label">Available Add-ons</p>
+              <ul class="pricing-addons-list">
+                <li>
+                  <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-custom" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+                </li>
+                <li class="addon-sem-panel-row">
+                  <div class="addon-sem-panel" id="sem-panel-custom">
+                    <div>
+                      <div class="sem-panel-inner">
+                        <p class="sem-panel-heading">Choose a service</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
+                          <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
+                          <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
+                          <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
+                          <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
+                          <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
+                          <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
+                        </div>
+                        <p class="sem-panel-heading">Choose a tier</p>
+                        <div class="sem-chip-row">
+                          <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                          <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                          <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                          <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  SMM (Social Media Marketing)
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  CM (Content Marketing)
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  Google Play Application
+                </li>
+                <li>
+                  <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
+                    <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                  </button>
+                  App Store Application
+                </li>
+              </ul>
+            </div>
+            <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=E-Commerce%20Platform&amp;tierColor=%23A855F7" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
           </div>
         </div>
         <p class="tier-payment-note reveal-fade">Every tier accepts the same full payment stack: <b>cards, Apple/Google Pay, PayPal, Shop Pay, BNPL, Amazon Pay &amp; Venmo</b>. Custom-tier stores can add negotiated multi-currency processing and B2B/wholesale invoicing terms.</p>
@@ -1639,10 +2881,127 @@
     (function () {
       var obs = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) entry.target.classList.add('is-visible');
+          if (entry.isIntersecting) {
+            var el = entry.target;
+            el.classList.add('is-visible');
+            el.addEventListener('transitionend', function handler(e) {
+              if (e.target === el) {
+                el.style.transitionDelay = '';
+                el.removeEventListener('transitionend', handler);
+              }
+            });
+          }
         });
       }, { threshold: 0.2 });
       document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+    })();
+  </script>
+
+  <!-- ── Platform Support carousel — pages through one platform card at a time.
+       Each slide carries its own copy of the prev/next buttons + counter
+       (beside its heading), so every slide's controls drive the same shared
+       index. Inactive slides' buttons get tabindex=-1 so keyboard users can't
+       tab into duplicate controls that are invisible/inert. ── -->
+  <script>
+    (function () {
+      var slides = document.querySelectorAll('.pfc .pfc-slide');
+      var live = document.getElementById('pfc-live');
+      if (!slides.length) return;
+      var current = 0;
+
+      function show(index) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach(function (s, i) {
+          var active = i === current;
+          s.classList.toggle('is-active', active);
+          s.setAttribute('aria-hidden', active ? 'false' : 'true');
+          s.querySelectorAll('.pfc-btn').forEach(function (btn) {
+            btn.tabIndex = active ? 0 : -1;
+          });
+          var counter = s.querySelector('.pfc-counter-current');
+          if (counter) counter.textContent = String(current + 1).padStart(2, '0');
+        });
+        if (live) live.textContent = slides[current].querySelector('.pfc-name').textContent + ', platform ' + (current + 1) + ' of ' + slides.length;
+      }
+      document.querySelectorAll('.pfc .pfc-btn-prev').forEach(function (btn) {
+        btn.addEventListener('click', function () { show(current - 1); });
+      });
+      document.querySelectorAll('.pfc .pfc-btn-next').forEach(function (btn) {
+        btn.addEventListener('click', function () { show(current + 1); });
+      });
+    })();
+  </script>
+
+  <!-- ── Deploy mini-track: auto-scroll + drag. Same architecture as
+       index.html's .industry-marquee (rAF-driven translateX, paused while
+       dragging or mouse-hovering a tile, wrapped modulo the duplicated-set
+       width). Dragging gives touch users direct manual control, so there's
+       no separate tap-to-pause step here. ── -->
+  <script>
+    (function () {
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      document.querySelectorAll('.deploy-mini-row').forEach(function (row) {
+        var track = row.querySelector('.deploy-mini-track');
+        if (!track) return;
+
+        var halfWidth = track.scrollWidth / 2;
+        var offset = 0;
+        var isDragging = false;
+        var isHovering = false;
+        var startX = 0;
+        var startOffset = 0;
+        var lastT = null;
+
+        function wrapOffset() {
+          if (halfWidth <= 0) return;
+          while (offset <= -halfWidth) offset += halfWidth;
+          while (offset > 0) offset -= halfWidth;
+        }
+        function render() {
+          track.style.transform = 'translateX(' + offset + 'px)';
+        }
+        function tick(t) {
+          if (lastT === null) lastT = t;
+          var dt = (t - lastT) / 1000;
+          lastT = t;
+          if (!reduceMotion && !isDragging && !isHovering) {
+            offset -= (halfWidth / 32) * dt;
+            wrapOffset();
+            render();
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        track.querySelectorAll('.deploy-mini-box').forEach(function (box) {
+          box.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') isHovering = true; });
+          box.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') isHovering = false; });
+        });
+
+        row.addEventListener('pointerdown', function (e) {
+          isDragging = true;
+          startX = e.clientX;
+          startOffset = offset;
+          row.classList.add('is-dragging');
+          row.setPointerCapture(e.pointerId);
+        });
+        row.addEventListener('pointermove', function (e) {
+          if (!isDragging) return;
+          offset = startOffset + (e.clientX - startX);
+          wrapOffset();
+          render();
+        });
+        function endDrag(e) {
+          if (!isDragging) return;
+          isDragging = false;
+          row.classList.remove('is-dragging');
+          try { row.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
+        row.addEventListener('pointerup', endDrag);
+        row.addEventListener('pointercancel', endDrag);
+
+        window.addEventListener('resize', function () { halfWidth = track.scrollWidth / 2; });
+      });
     })();
   </script>
 
@@ -1658,7 +3017,7 @@
       var container = document.getElementById('ecom-hero-comets');
       if (!box || !container) return;
 
-      var pairs = [1, 2, 3, 4].map(function (n) {
+      var pairs = [1, 2, 3, 4, 8, 9].map(function (n) {
         return {
           comet: container.querySelector('.comet-' + n),
           burst: container.querySelector('.comet-burst-' + n),
@@ -1927,6 +3286,505 @@
         })(0);
       }
     })();
+  </script>
+
+  <!-- ── "Hosting over the Edge" globe — cobe canvas globe, red-themed markers,
+       auto-spins and is draggable. Loaded as an ES module from a CDN since this
+       project has no build step / npm install. ── -->
+  <script type="module">
+    import createGlobe from "https://esm.sh/cobe@0.6.3";
+
+    (function () {
+      var canvas = document.getElementById('edge-globe');
+      if (!canvas) return;
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var SPEED = 0.003;
+
+      var pointerStart = null;
+      var dragOffset = { phi: 0, theta: 0 };
+      var settledPhi = 0;
+      var settledTheta = 0;
+      var dragging = false;
+
+      canvas.addEventListener('pointerdown', function (e) {
+        pointerStart = { x: e.clientX, y: e.clientY };
+        dragging = true;
+      });
+
+      window.addEventListener('pointermove', function (e) {
+        if (!pointerStart) return;
+        dragOffset.phi = (e.clientX - pointerStart.x) / 300;
+        dragOffset.theta = (e.clientY - pointerStart.y) / 1000;
+      }, { passive: true });
+
+      window.addEventListener('pointerup', function () {
+        if (pointerStart) {
+          settledPhi += dragOffset.phi;
+          settledTheta += dragOffset.theta;
+          dragOffset = { phi: 0, theta: 0 };
+        }
+        pointerStart = null;
+        dragging = false;
+      }, { passive: true });
+
+      var phi = 0;
+      var globe = null;
+
+      var markers = [
+        { id: 'london', location: [51.51, -0.13], size: 0.06 },
+        { id: 'nyc', location: [40.71, -74.01], size: 0.06 },
+        { id: 'tokyo', location: [35.68, 139.65], size: 0.06 },
+        { id: 'sydney', location: [-33.87, 151.21], size: 0.06 },
+      ];
+
+      // Static unit-sphere position per marker, from cobe's own lat/lng
+      // conversion (decoded from its source): everything else (rotation by
+      // phi/theta) happens per frame in onRender below.
+      markers.forEach(function (m) {
+        var latRad = m.location[0] * Math.PI / 180;
+        var lngRad = m.location[1] * Math.PI / 180 - Math.PI;
+        var t = Math.cos(latRad);
+        m._x0 = -t * Math.cos(lngRad);
+        m._y0 = Math.sin(latRad);
+        m._z0 = t * Math.sin(lngRad);
+        m._el = null;
+      });
+
+      function addPingMarkers(wrap) {
+        markers.forEach(function (m) {
+          var ping = document.createElement('div');
+          ping.className = 'globe-ping';
+          ping.innerHTML =
+            '<span class="globe-ping-ring"></span>' +
+            '<span class="globe-ping-ring"></span>' +
+            '<span class="globe-ping-dot"></span>';
+          wrap.appendChild(ping);
+          m._el = ping;
+        });
+      }
+
+      // Rotates each marker's static (x0,y0,z0) by the same phi/theta used to
+      // render the globe this frame (cobe's J(theta, phi) rotation matrix),
+      // then projects to canvas screen space. z' > 0 means front-facing.
+      function updatePings(canvasSize, canvasLeft, canvasTop, rPhi, rTheta) {
+        var ca = Math.cos(rTheta), sa = Math.sin(rTheta);
+        var cb = Math.cos(rPhi), sb = Math.sin(rPhi);
+        var cx = canvasLeft + canvasSize / 2, cy = canvasTop + canvasSize / 2;
+        var radius = canvasSize / 2 * 0.8;
+
+        markers.forEach(function (m) {
+          if (!m._el) return;
+          var x0 = m._x0, y0 = m._y0, z0 = m._z0;
+          var x = cb * x0 + sb * z0;
+          var y = sb * sa * x0 + ca * y0 - cb * sa * z0;
+          var z = -sb * ca * x0 + sa * y0 + cb * ca * z0;
+
+          var px = cx + x * radius;
+          var py = cy - y * radius;
+          m._el.style.transform = 'translate(' + px + 'px, ' + py + 'px) translate(-50%, -50%)';
+          m._el.style.opacity = z > 0.05 ? '1' : '0';
+        });
+      }
+
+      function init() {
+        var width = canvas.offsetWidth;
+        if (width === 0 || globe) return;
+
+        var canvasLeft = canvas.offsetLeft;
+        var canvasTop = canvas.offsetTop;
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        globe = createGlobe(canvas, {
+          devicePixelRatio: dpr,
+          width: width * dpr,
+          height: width * dpr,
+          phi: 0,
+          theta: 0.24,
+          dark: 1,
+          diffuse: 1.1,
+          mapSamples: 16000,
+          mapBrightness: 9,
+          baseColor: [0.32, 0.34, 0.4],
+          markerColor: [0.937, 0.267, 0.267],
+          glowColor: [0.2, 0.05, 0.05],
+          markerElevation: 0,
+          markers: markers,
+          opacity: 0.95,
+          onRender: function (state) {
+            if (!reduceMotion && !dragging) phi += SPEED;
+            var rPhi = phi + settledPhi + dragOffset.phi;
+            var rTheta = 0.24 + settledTheta + dragOffset.theta;
+            state.phi = rPhi;
+            state.theta = rTheta;
+            updatePings(width, canvasLeft, canvasTop, rPhi, rTheta);
+          },
+        });
+
+        addPingMarkers(canvas.parentElement);
+
+        requestAnimationFrame(function () { canvas.style.opacity = '1'; });
+      }
+
+      if (canvas.offsetWidth > 0) {
+        init();
+      } else {
+        var ro = new ResizeObserver(function (entries) {
+          if (entries[0] && entries[0].contentRect.width > 0) {
+            ro.disconnect();
+            init();
+          }
+        });
+        ro.observe(canvas);
+      }
+    })();
+  </script>
+
+  <!-- ══════════════════════════════════════
+       PRICING: ported from web-design.html's Investment section
+  ══════════════════════════════════════ -->
+  <script>
+  /* ── Billing toggle: slot machine prices + confetti ── */
+  (function () {
+    var mode = 'monthly';
+    var btnM = document.getElementById('toggle-monthly');
+    var btnY = document.getElementById('toggle-yearly');
+    if (!btnM || !btnY) return;
+
+    /* ── Confetti ── */
+    function fireConfetti(originEl) {
+      var r = originEl.getBoundingClientRect();
+      var ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+      var cv = document.createElement('canvas');
+      cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9998;';
+      cv.width = window.innerWidth; cv.height = window.innerHeight;
+      document.body.appendChild(cv);
+      var ctx = cv.getContext('2d');
+      var COLORS = ['#00E5FF','#FF2D78','#FFD700','#ffffff'];
+      var P = Array.from({length: 28}, function () {
+        var a = Math.random() * Math.PI * 2;
+        var s = 3 + Math.random() * 5;
+        return { x: ox, y: oy, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 3,
+                 w: 5 + Math.random() * 6, h: 5 + Math.random() * 6,
+                 c: COLORS[Math.random() * COLORS.length | 0],
+                 life: 1, decay: 0.013 + Math.random() * 0.008,
+                 round: Math.random() > 0.5, rot: Math.random() * Math.PI * 2, rv: (Math.random() - 0.5) * 0.2 };
+      });
+      (function draw() {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        var alive = false;
+        P.forEach(function (p) {
+          if (p.life <= 0) return; alive = true;
+          p.vy += 0.18; p.x += p.vx; p.y += p.vy; p.rot += p.rv; p.life -= p.decay;
+          ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.c;
+          ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+          if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); }
+          else { ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); }
+          ctx.restore();
+        });
+        alive ? requestAnimationFrame(draw) : cv.remove();
+      })();
+    }
+
+    /* ── Slot machine roll ── */
+    function rollPrice(priceEl, newVal, onComplete) {
+      var slot = priceEl.querySelector('.price-slot');
+      if (!slot) return;
+      var track = slot.querySelector('.price-slot-track');
+      if (!track) return;
+
+      /* Cancel any in-flight animation — its finish() becomes a no-op */
+      if (track._anim) track._anim.done = true;
+
+      /* Snap track to a single clean element: keep only the last .price-slot-val
+         (the most recently targeted value), remove any stale extras */
+      var allVals = Array.prototype.slice.call(track.querySelectorAll('.price-slot-val'));
+      var currentVal = allVals[allVals.length - 1] || null;
+      for (var i = 0; i < allVals.length - 1; i++) {
+        if (allVals[i].parentNode === track) track.removeChild(allVals[i]);
+      }
+      track.classList.remove('animating');
+      track.style.transition = 'none';
+      track.style.transform = '';
+      track.getBoundingClientRect(); /* commit snap */
+      track.style.transition = '';   /* remove inline override */
+
+      if (!currentVal) return;
+
+      var itemH = currentVal.offsetHeight || 44;
+      slot.style.height = itemH + 'px';
+
+      /* Append new value below */
+      var nextEl = document.createElement('span');
+      nextEl.className = 'price-slot-val';
+      nextEl.textContent = newVal;
+      track.appendChild(nextEl);
+
+      /* Force layout then animate */
+      track.getBoundingClientRect();
+      track.classList.add('animating');
+      track.style.transform = 'translateY(-' + itemH + 'px)';
+
+      var anim = { done: false };
+      track._anim = anim;
+
+      function finish() {
+        if (anim.done) return;
+        anim.done = true;
+        if (track._anim === anim) track._anim = null;
+        track.classList.remove('animating');
+        track.style.transform = '';
+        if (currentVal && currentVal.parentNode === track) track.removeChild(currentVal);
+        if (onComplete) onComplete();
+      }
+
+      track.addEventListener('transitionend', finish, { once: true });
+      setTimeout(finish, 400);
+    }
+
+    function switchMode(newMode) {
+      if (newMode === mode) return;
+      mode = newMode;
+
+      /* Update buttons */
+      btnM.classList.toggle('active', mode === 'monthly');
+      btnY.classList.toggle('active', mode === 'yearly');
+      btnM.setAttribute('aria-pressed', String(mode === 'monthly'));
+      btnY.setAttribute('aria-pressed', String(mode === 'yearly'));
+
+      /* Roll all prices */
+      document.querySelectorAll('.pricing-price[data-monthly]').forEach(function (el) {
+        var val = mode === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
+        var suf = el.querySelector('.price-suffix');
+        var sufEl = (suf && el.dataset.monthly !== 'Bespoke') ? suf : null;
+
+        /* Hide suffix immediately and update its text */
+        if (sufEl) {
+          var newSufText = mode === 'monthly' ? '/mo + tax' : '/yr + tax';
+          sufEl.style.transition = 'none';
+          sufEl.style.opacity = '0';
+          sufEl.textContent = newSufText;
+          void sufEl.offsetWidth;
+        }
+
+        /* Roll price; reveal suffix after slot animation so its position is correct */
+        rollPrice(el, val, sufEl ? function () {
+          sufEl.style.transition = '';
+          sufEl.style.opacity = '1';
+        } : null);
+      });
+
+      /* Confetti */
+      fireConfetti(document.getElementById('billing-toggle'));
+    }
+
+    btnM.addEventListener('click', function () { switchMode('monthly'); });
+    btnY.addEventListener('click', function () { switchMode('yearly'); });
+  })();
+  </script>
+
+  <script>
+  /* ── Add-on toggles: build the "Let's Talk" URL from selected tier + add-ons.
+     Preserves each card's existing base query params (type/typeColor/service/
+     tierColor already baked into the CTA href) and only appends/updates
+     tier= and addons= dynamically. ── */
+  (function () {
+    document.querySelectorAll('.pricing-card').forEach(function (card) {
+      var cta = card.querySelector('.pricing-cta');
+      var buttons = card.querySelectorAll('.addon-toggle');
+      if (!cta) return;
+      var tierName = (card.querySelector('.pricing-name') || {}).textContent || '';
+      var hrefParts = cta.getAttribute('href').split('?');
+      var basePath = hrefParts[0];
+      var baseParams = new URLSearchParams(hrefParts[1] || '');
+
+      function updateHref() {
+        var params = new URLSearchParams(baseParams);
+        if (tierName.trim()) params.set('tier', tierName.trim());
+        var selected = [];
+        buttons.forEach(function (b) {
+          if (b.classList.contains('selected')) selected.push(b.getAttribute('data-addon-label'));
+        });
+        if (selected.length) params.set('addons', selected.join('|'));
+        else params.delete('addons');
+        cta.href = basePath + '?' + params.toString();
+      }
+
+      buttons.forEach(function (b) {
+        if (b.hasAttribute('aria-controls')) return;
+        b.addEventListener('click', function () {
+          b.classList.toggle('selected');
+          b.setAttribute('aria-pressed', b.classList.contains('selected') ? 'true' : 'false');
+          updateHref();
+        });
+      });
+
+      card._updateAddonsHref = updateHref;
+      updateHref();
+    });
+  })();
+  </script>
+
+  <script>
+  /* ── SEM add-on accordion: pick 1 of 7 services + 1 of 4 (or 5, with Custom
+     on Bronze) tiers before the add-on counts as selected. Generic over any
+     .addon-sem-trigger, keyed by aria-controls, so a future card's panel
+     works by copying the markup. ── */
+  (function () {
+    var TIER_LABELS = { jack: 'Jack', queen: 'Queen', king: 'King', ace: 'Ace', custom: 'Custom' };
+
+    document.querySelectorAll('.addon-sem-trigger').forEach(function (trigger) {
+      var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+      if (!panel) return;
+      var card = trigger.closest('.pricing-card');
+      var summary = trigger.parentElement.querySelector('.addon-sem-summary');
+      var serviceChips = panel.querySelectorAll('.sem-chip[data-service]');
+      var tierChips = panel.querySelectorAll('.sem-chip[data-tier]');
+      var baseLabel = 'SEM (Search Engine Marketing)';
+
+      trigger.addEventListener('click', function () {
+        var open = !panel.classList.contains('open');
+        panel.classList.toggle('open', open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      function selectChip(chips, chip) {
+        var wasActive = chip.classList.contains('active');
+        chips.forEach(function (c) { c.classList.remove('active'); });
+        if (!wasActive) chip.classList.add('active');
+      }
+
+      function refresh() {
+        var activeService = panel.querySelector('.sem-chip[data-service].active');
+        var activeTier = panel.querySelector('.sem-chip[data-tier].active');
+
+        if (activeService && activeTier) {
+          var tierName = TIER_LABELS[activeTier.getAttribute('data-tier')];
+          trigger.classList.add('selected');
+          trigger.setAttribute('aria-pressed', 'true');
+          trigger.setAttribute('data-addon-label', baseLabel + ' — ' + activeService.getAttribute('data-service') + ' — ' + tierName + ' Tier');
+          if (summary) {
+            summary.hidden = false;
+            summary.textContent = activeService.getAttribute('data-service') + ' · ' + tierName;
+          }
+        } else {
+          trigger.classList.remove('selected');
+          trigger.setAttribute('aria-pressed', 'false');
+          trigger.removeAttribute('data-addon-label');
+          if (summary) {
+            summary.hidden = true;
+            summary.textContent = '';
+          }
+        }
+
+        if (card && card._updateAddonsHref) card._updateAddonsHref();
+      }
+
+      serviceChips.forEach(function (chip) {
+        chip.addEventListener('click', function () { selectChip(serviceChips, chip); refresh(); });
+      });
+      tierChips.forEach(function (chip) {
+        chip.addEventListener('click', function () { selectChip(tierChips, chip); refresh(); });
+      });
+    });
+  })();
+  </script>
+
+  <script>
+  /* ── Variable add-on accordion (SMM/CM): pick a service, then — only if that
+     service has a matching .sem-chip-row-group — a tier within it, before the
+     add-on counts as selected. Generic over any [data-addon-variable] trigger,
+     keyed by aria-controls, so a future card's panel works by copying markup. ── */
+  (function () {
+    var TIER_LABELS = {
+      jack: 'Jack', queen: 'Queen', king: 'King', ace: 'Ace', custom: 'Custom',
+      essentials: 'Essentials', 'full-kit': 'Full Kit',
+      sprouting: 'Sprouting', growth: 'Growth', flowering: 'Flowering', ripening: 'Ripening'
+    };
+
+    document.querySelectorAll('[data-addon-variable]').forEach(function (trigger) {
+      var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+      if (!panel) return;
+      var card = trigger.closest('.pricing-card');
+      var summary = trigger.parentElement.querySelector('.addon-sem-summary');
+      var serviceChips = panel.querySelectorAll('.sem-chip[data-service]');
+      var tierGroups = panel.querySelectorAll('.sem-chip-row-group');
+      var baseLabel = trigger.getAttribute('data-addon-base-label') || '';
+
+      trigger.addEventListener('click', function () {
+        var open = !panel.classList.contains('open');
+        panel.classList.toggle('open', open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+
+      function selectChip(chips, chip) {
+        var wasActive = chip.classList.contains('active');
+        chips.forEach(function (c) { c.classList.remove('active'); });
+        if (!wasActive) chip.classList.add('active');
+      }
+
+      function syncTierGroup(activeService) {
+        var serviceName = activeService ? activeService.getAttribute('data-service') : null;
+        var match = null;
+        tierGroups.forEach(function (g) {
+          var isMatch = serviceName !== null && g.getAttribute('data-for-service') === serviceName;
+          g.hidden = !isMatch;
+          if (!isMatch) g.querySelectorAll('.sem-chip[data-tier]').forEach(function (c) { c.classList.remove('active'); });
+          else match = g;
+        });
+        return match;
+      }
+
+      function refresh() {
+        var activeService = panel.querySelector('.sem-chip[data-service].active');
+        var group = syncTierGroup(activeService);
+        var activeTier = group ? group.querySelector('.sem-chip[data-tier].active') : null;
+        var complete = activeService && (!group || activeTier);
+
+        if (complete) {
+          var serviceName = activeService.getAttribute('data-service');
+          var label = baseLabel + ' — ' + serviceName;
+          var summaryText = serviceName;
+          if (activeTier) {
+            var tierKey = activeTier.getAttribute('data-tier');
+            var tierName = TIER_LABELS[tierKey] || activeTier.textContent;
+            var suffix = group.getAttribute('data-tier-suffix');
+            if (suffix === null) suffix = 'Tier';
+            label += ' — ' + tierName + (suffix ? ' ' + suffix : '');
+            summaryText += ' · ' + tierName;
+          }
+          trigger.classList.add('selected');
+          trigger.setAttribute('aria-pressed', 'true');
+          trigger.setAttribute('data-addon-label', label);
+          if (summary) {
+            summary.hidden = false;
+            summary.textContent = summaryText;
+          }
+        } else {
+          trigger.classList.remove('selected');
+          trigger.setAttribute('aria-pressed', 'false');
+          trigger.removeAttribute('data-addon-label');
+          if (summary) {
+            summary.hidden = true;
+            summary.textContent = '';
+          }
+        }
+
+        if (card && card._updateAddonsHref) card._updateAddonsHref();
+      }
+
+      serviceChips.forEach(function (chip) {
+        chip.addEventListener('click', function () { selectChip(serviceChips, chip); refresh(); });
+      });
+      panel.querySelectorAll('.sem-chip[data-tier]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var group = chip.closest('.sem-chip-row-group');
+          if (!group) return;
+          selectChip(group.querySelectorAll('.sem-chip[data-tier]'), chip);
+          refresh();
+        });
+      });
+    });
+  })();
   </script>
 </body>
 </html>

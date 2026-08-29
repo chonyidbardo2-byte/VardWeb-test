@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Domain & Hosting — VardWeb</title>
-  <meta name="description" content="Search and register your domain at true cost, managed through Cloudflare. Free domain setup and transfer for every VardWeb site-build client — no markup at signup, a flat disclosed 10% at renewal." />
+  <title>Domain Search Results — VardWeb</title>
+  <meta name="description" content="Check real-time availability and pricing for your domain name, plus related endings and bundle deals — no markup at signup, a flat disclosed 10% at renewal." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
@@ -276,17 +276,13 @@
 
     .host-hero-sub { font-size: 16.5px; line-height: 1.75; color: var(--text-2); white-space: nowrap; margin: 0 auto 44px; }
 
-    .host-search-zone { position: relative; }
     .host-search-bar {
       display: flex; align-items: stretch; gap: 0;
       background: #fff; border-radius: 18px;
       padding: 10px; max-width: 820px; margin: 0 auto;
       box-shadow: 0 20px 60px -14px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.3);
-      position: relative; z-index: 251;
-      outline: 1.5px solid transparent; outline-offset: 1px;
-      transition: outline-color 0.2s ease;
+      position: relative; z-index: 4;
     }
-    .host-search-bar.is-suggest-open { outline-color: var(--host-green); }
     .host-search-input-wrap { flex: 1; padding: 0 18px; min-width: 0; overflow: hidden; }
     .host-search-input-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .host-search-input-wrap svg { flex-shrink: 0; width: 20px; height: 20px; color: rgba(20,24,34,0.4); }
@@ -344,88 +340,6 @@
       box-shadow: 0 0 16px rgba(52,211,153,0.45);
     }
     .tld-pill.tld-extra[hidden] { display: none; }
-
-    /* ── Live typeahead suggestions ── */
-    #host-search-blur {
-      /* position:fixed (not absolute) so it isn't clipped by #host-hero's
-         overflow:hidden — a fixed element's containing block is the viewport
-         unless an ancestor uses transform/filter, neither of which #host-hero
-         has, so this covers the whole page, not just the hero box. */
-      position: fixed; inset: 0; z-index: 250;
-      background: rgba(7,9,16,0.5);
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-    #host-search-blur.is-active { opacity: 1; pointer-events: auto; }
-
-    .host-suggest-panel {
-      /* position:fixed for the same reason as #host-search-blur — a fixed
-         element's containing block is the viewport, not #host-hero, so it
-         isn't clipped by the hero's overflow:hidden. left/top/width are set
-         inline by JS (positionSuggestPanel) since fixed-position percentages
-         resolve against the viewport, not .host-search-zone. */
-      position: fixed; z-index: 251;
-      max-width: 820px; max-height: calc(100vh - 24px); overflow-y: auto;
-      background: #fff; border-radius: 18px;
-      box-shadow: 0 24px 64px -18px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.3);
-      display: grid; grid-template-columns: 1.05fr 1fr 1fr; gap: 0 8px;
-      text-align: left;
-    }
-    .host-suggest-panel[hidden] { display: none; }
-
-    .host-suggest-list { display: flex; flex-direction: column; padding: 10px; }
-    .host-suggest-row {
-      display: block; width: 100%; text-align: left;
-      background: none; border: none; cursor: pointer;
-      font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 600;
-      color: #14161f; padding: 13px 16px; border-radius: 10px;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-    .host-suggest-row .base { color: #14161f; }
-    .host-suggest-row .tld { color: rgba(20,24,34,0.42); }
-    .host-suggest-row:hover, .host-suggest-row:focus-visible { background: rgba(52,211,153,0.1); }
-    .host-suggest-row:hover .tld, .host-suggest-row:focus-visible .tld { color: var(--host-green-deep); }
-    .host-suggest-row:focus-visible { outline: 2px solid var(--host-green-deep); outline-offset: -2px; }
-
-    .host-suggest-info {
-      padding: 28px 18px; margin: 8px 0; display: flex; flex-direction: column; justify-content: center; gap: 14px;
-      background: rgba(20,24,34,0.05); border-radius: 16px;
-    }
-    .host-suggest-info:last-child { margin-right: 8px; }
-    .host-suggest-info-head { display: flex; align-items: center; gap: 12px; }
-    .host-suggest-info-icon {
-      flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; color: #fff;
-      background: #14161f;
-    }
-    .host-suggest-info-icon.ai { background: linear-gradient(135deg, var(--host-green) 0%, var(--host-green-deep) 100%); }
-    .host-suggest-info-head h4 { font-size: 14.5px; font-weight: 700; color: #14161f; letter-spacing: -0.01em; }
-    .host-suggest-info p { font-size: 12.5px; line-height: 1.6; color: rgba(20,24,34,0.55); }
-    .host-suggest-info-example {
-      font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; line-height: 1.4;
-      background: #fff; border-radius: 10px; padding: 16px 14px;
-      height: 84px; display: flex; align-items: center; overflow: hidden;
-    }
-    .host-suggest-example-inner { width: 100%; padding-right: 3px; }
-    .host-suggest-info-example:has(.host-suggest-example-base) { white-space: nowrap; font-size: 20px; }
-    .host-suggest-example-base { color: #14161f; font-weight: 700; }
-    .host-suggest-example-text { color: #14161f; }
-    .host-suggest-example-tld { color: rgba(20,24,34,0.42); }
-    .host-suggest-cursor {
-      display: inline-block; width: 2px; height: 1.5em;
-      background: currentColor; color: rgba(20,24,34,0.42);
-      vertical-align: text-bottom; margin-left: 1px;
-      animation: host-suggest-blink 1s step-start infinite;
-    }
-    .host-suggest-cursor.is-static { animation: none; opacity: 1; }
-    @keyframes host-suggest-blink { 50% { opacity: 0; } }
-
-    @media (max-width: 700px) {
-      .host-suggest-panel { grid-template-columns: 1fr; }
-      .host-suggest-info { border-left: none !important; border-top: 1px solid rgba(20,24,34,0.08); }
-      .host-suggest-list { border-right: none; border-bottom: 1px solid rgba(20,24,34,0.08); }
-    }
 
     .host-hero-fine { font-size: 12.5px; color: rgba(238,240,248,0.5); margin-top: 22px; max-width: 460px; margin-left: auto; margin-right: auto; }
 
@@ -490,6 +404,88 @@
       .host-result-card { flex-wrap: wrap; }
       .host-result-domain { flex-basis: 100%; }
     }
+
+    /* ── Domain results: verdict boxes ── */
+    #domain-verdict { padding-top: 64px; }
+    .dv-heading { text-align: center; font-size: clamp(22px,3vw,32px); font-weight: 700; color: var(--text-1); margin-bottom: 32px; letter-spacing: -0.02em; }
+    .dv-heading .accent { color: var(--host-green); }
+    .dv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    .dv-grid.is-single { grid-template-columns: 1fr; max-width: 640px; margin: 0 auto; }
+    @media (max-width: 760px) { .dv-grid { grid-template-columns: 1fr; } }
+
+    .dv-box { text-align: left; position: relative; }
+    .dv-box-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .dv-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
+    .dv-badge--available { color: var(--host-green); background: rgba(52,211,153,0.14); }
+    .dv-badge--taken { color: rgba(200,212,232,0.55); background: rgba(255,255,255,0.07); }
+    .dv-badge--premium { color: var(--gold); background: rgba(255,215,0,0.13); }
+    .dv-badge--bundle { color: var(--cyan); background: rgba(0,229,255,0.13); }
+    .dv-fav { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: rgba(200,212,232,0.55); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .dv-fav:hover { border-color: rgba(255,45,120,0.4); color: #FF2D78; }
+    .dv-fav.is-active { color: #FF2D78; border-color: rgba(255,45,120,0.4); transform: scale(1.08); }
+    .dv-fav:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .dv-domain { font-family: 'JetBrains Mono', monospace; font-size: clamp(22px,2.6vw,28px); font-weight: 700; color: var(--text-1); margin-bottom: 16px; overflow-wrap: anywhere; }
+    .dv-domain .tld { color: var(--text-2); }
+    .dv-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .dv-price-was { font-size: 14px; color: rgba(200,212,232,0.35); text-decoration: line-through; }
+    .dv-price-now { font-size: 26px; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; }
+    .dv-price-note { font-size: 12.5px; color: var(--text-2); margin-bottom: 20px; }
+    .dv-cta { width: 100%; justify-content: center; background: var(--host-green); color: #06251b; border-radius: 11px; padding: 13px; font-size: 14px; font-weight: 700; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; }
+    .dv-cta:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.45); }
+    .dv-cta:disabled { background: rgba(255,255,255,0.07); color: rgba(200,212,232,0.4); cursor: default; }
+    .dv-cta.is-added { background: var(--raised); color: var(--host-green); border: 1px solid rgba(52,211,153,0.4); }
+    .dv-note { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-top: 6px; }
+
+    .dv-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .dv-chip-row .tld-pill { font-size: 12px; padding: 7px 14px; }
+
+    .dv-why { border-top: 1px solid rgba(255,255,255,0.08); margin-top: 22px; padding-top: 18px; }
+    .dv-why-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+    .dv-why-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .dv-why-list li { display: flex; gap: 9px; font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+    .dv-why-list li svg { flex-shrink: 0; margin-top: 2px; color: var(--host-green); }
+
+    .dv-loading { max-width: 1020px; margin: 0 auto; }
+
+    /* ── Explore endings ── */
+    .dx-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .dx-found { font-size: 13.5px; color: var(--text-2); }
+    .dx-found b { color: var(--text-1); }
+    .dx-title { font-size: 19px; font-weight: 700; color: var(--text-1); }
+    .dx-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    @media (max-width: 860px) { .dx-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .dx-grid { grid-template-columns: 1fr; } }
+    .dx-card { background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s ease; }
+    .dx-card:hover { transform: translateY(-3px); border-color: rgba(52,211,153,0.25); }
+    .dx-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .dx-card-badge { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; color: rgba(200,212,232,0.55); background: rgba(255,255,255,0.06); }
+    .dx-card-badge.is-available { color: var(--host-green); background: rgba(52,211,153,0.14); }
+    .dx-card-badge.is-premium { color: var(--gold); background: rgba(255,215,0,0.13); }
+    .dx-fav { width: 24px; height: 24px; border-radius: 50%; border: none; background: none; color: rgba(200,212,232,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s ease; }
+    .dx-fav:hover { color: #FF2D78; }
+    .dx-card-tld { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; color: var(--text-1); }
+    .dx-card-price { font-size: 13px; color: var(--text-1); font-weight: 600; display: flex; align-items: baseline; gap: 6px; }
+    .dx-card-price .was { font-size: 11px; color: rgba(200,212,232,0.35); text-decoration: line-through; font-weight: 400; }
+    .dx-card-cta { align-self: flex-start; width: 34px; height: 34px; border-radius: 9px; background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25); color: var(--host-green); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease; }
+    .dx-card-cta:hover:not(:disabled) { transform: translateY(-1px); background: rgba(52,211,153,0.2); }
+    .dx-card-cta:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── Everything included strip ── */
+    .de-strip { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px 28px; }
+    .de-title { font-size: 14px; font-weight: 700; color: var(--text-1); white-space: nowrap; }
+    .de-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .de-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-2); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; padding: 7px 14px; white-space: nowrap; }
+
+    /* ── Trusted-by strip ── */
+    .dt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    @media (max-width: 860px) { .dt-grid { grid-template-columns: 1fr; } }
+    .dt-card { background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+    .dt-quote { font-size: 14.5px; line-height: 1.75; color: var(--text-1); flex: 1; }
+    .dt-who { display: flex; align-items: center; gap: 12px; }
+    .dt-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12.5px; flex-shrink: 0; }
+    .dt-name { font-size: 13.5px; font-weight: 600; color: var(--text-1); }
+    .dt-role { font-size: 12px; color: var(--text-2); }
 
     /* ── Cart drawer ── */
     #cart-backdrop {
@@ -1216,26 +1212,7 @@
         <div style="top:10%;right:2%;width:380px;height:340px;background:radial-gradient(ellipse,rgba(255,215,0,0.05) 0%,transparent 70%);"></div>
       </div>
 
-      <div class="host-hero-content">
-        <div class="host-hero-pill">
-          <span class="host-hero-pill-dot"></span>
-          Find & Buy Available Domains
-        </div>
-
-        <p class="host-hero-kicker">
-          <span class="host-kicker-slash">//</span>
-          <span class="host-kw" style="--i:0; animation-delay:0s">D</span><span class="host-kw" style="--i:1; animation-delay:0.07s">o</span><span class="host-kw" style="--i:2; animation-delay:0.14s">m</span><span class="host-kw" style="--i:3; animation-delay:0.21s">a</span><span class="host-kw" style="--i:4; animation-delay:0.28s">i</span><span class="host-kw" style="--i:5; animation-delay:0.35s">n</span>
-          <span class="host-kw" style="--i:6; animation-delay:0.42s">&amp;</span>
-          <span class="host-kw" style="--i:7; animation-delay:0.49s">H</span><span class="host-kw" style="--i:8; animation-delay:0.56s">o</span><span class="host-kw" style="--i:9; animation-delay:0.63s">s</span><span class="host-kw" style="--i:10; animation-delay:0.7s">t</span><span class="host-kw" style="--i:11; animation-delay:0.77s">i</span><span class="host-kw" style="--i:12; animation-delay:0.84s">n</span><span class="host-kw" style="--i:13; animation-delay:0.91s">g</span>
-        </p>
-
-        <h1 class="host-hero-heading">
-          <span class="l1">Get a .com with <span class="host-heading-grad">no markup 1st year</span></span>
-        </h1>
-
-        <p class="host-hero-sub">Includes DNS, WHOIS privacy, DMARC, registrar lock and more, forever**</p>
-
-        <div class="host-search-zone">
+      <div class="host-hero-content" style="max-width:900px;">
         <form id="domain-search-form" class="host-search-bar" role="search" aria-label="Domain search">
           <label for="domain-input" class="sr-only">Domain name</label>
           <div class="host-search-input-wrap">
@@ -1254,32 +1231,6 @@
           </button>
         </form>
 
-        <div id="host-search-blur" aria-hidden="true"></div>
-
-        <div id="domain-suggest" class="host-suggest-panel" hidden role="listbox" aria-label="Suggested domains">
-          <div class="host-suggest-list" id="domain-suggest-list"></div>
-          <div class="host-suggest-info">
-            <div class="host-suggest-info-head">
-              <span class="host-suggest-info-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-              <h4>Basic Search</h4>
-            </div>
-            <p>Got the perfect domain name in mind? Type it above and we'll check every ending that matches.</p>
-            <div class="host-suggest-info-example"><span class="host-suggest-example-inner"><span class="host-suggest-example-base" id="suggest-example-basic-base"></span
-              ><span class="host-suggest-cursor" id="suggest-cursor-basic" aria-hidden="true"></span
-              ><span class="host-suggest-example-tld" id="suggest-example-basic-tld"></span></span></div>
-          </div>
-          <div class="host-suggest-info">
-            <div class="host-suggest-info-head">
-              <span class="host-suggest-info-icon ai"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 5.6L19.4 9.4 13.8 11.2 12 17l-1.8-5.8L4.6 9.4l5.6-1.8L12 2z"/></svg></span>
-              <h4>AI Search</h4>
-            </div>
-            <p>No thoughts yet? No problem. Give us details about your idea and we'll suggest great names.</p>
-            <div class="host-suggest-info-example"><span class="host-suggest-example-inner"><span class="host-suggest-example-text" id="suggest-example-ai"></span
-              ><span class="host-suggest-cursor" id="suggest-cursor-ai" aria-hidden="true"></span></span></div>
-          </div>
-        </div>
-        </div>
-
         <div class="host-tld-row" role="group" aria-label="Choose a domain extension">
           <button type="button" class="tld-pill" data-tld=".ca">.ca</button>
           <button type="button" class="tld-pill active" data-tld=".com">.com</button>
@@ -1294,12 +1245,7 @@
           <button type="button" class="tld-pill tld-extra" data-tld=".xyz" hidden>.xyz</button>
           <button type="button" class="tld-pill" id="tld-more-btn" aria-expanded="false">+ View More</button>
         </div>
-
-        <p class="host-hero-note">No markup at signup — and even at renewal, it's a flat, disclosed 10%.</p>
-
-        <div id="host-search-results" class="host-search-results" hidden aria-live="polite"></div>
-
-        <p class="host-hero-concierge">Prefer us to just handle it? <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&learnMore=1">Talk to a human instead →</a></p>
+      </div>
     </section>
     </div>
 
@@ -1352,269 +1298,82 @@
       </div>
     </div>
 
-    <!-- ============ INCLUDED FREE BANNER ============ -->
-    <section id="host-included">
-      <div class="host-included-inner reveal-fade">
-        <div class="host-included-text">
-          <h3>Already building with us? Domain setup is free.</h3>
-          <p>Domain hosting &amp; delegation is bundled into every VardWeb site-build package, at no extra cost. <a href="web-design.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See what's included in each tier →</a></p>
+    <!-- ============ VERDICT ============ -->
+    <section id="domain-verdict">
+      <div class="section-inner" style="max-width:1020px;">
+        <h2 id="dv-heading" class="dv-heading reveal-fade">Looking up your domain…</h2>
+        <div id="dv-loading" class="dv-loading"><div class="host-result-skeleton"></div></div>
+        <div id="dv-boxes" class="dv-grid" hidden></div>
+      </div>
+    </section>
+
+    <!-- ============ EXPLORE ENDINGS ============ -->
+    <section id="domain-explore" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="section-inner" style="max-width:1020px;">
+        <div class="dx-head">
+          <p id="dx-found-text" class="dx-found"></p>
+          <h3 class="dx-title">Explore <span id="dx-base-label"></span> Endings</h3>
         </div>
-        <div class="host-tier-chips">
-          <span class="host-tier-chip" style="--c:#CD7F32;">Bronze</span>
-          <span class="host-tier-chip" style="--c:#C2D0E8;">Silver</span>
-          <span class="host-tier-chip" style="--c:#FFD700;">Gold</span>
-          <span class="host-tier-chip" style="--c:#A855F7;">Custom</span>
+        <div id="dx-grid" class="dx-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============ EVERYTHING INCLUDED ============ -->
+    <section id="domain-everything">
+      <div class="section-inner" style="max-width:1020px;">
+        <div class="de-strip reveal-fade">
+          <p class="de-title">Everything You Need, Included Free</p>
+          <div class="de-chips">
+            <span class="de-chip">WHOIS Privacy</span>
+            <span class="de-chip">Cloudflare DNS</span>
+            <span class="de-chip">DMARC Setup</span>
+            <span class="de-chip">Registrar Lock</span>
+            <span class="de-chip">DDoS Protection</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ PROCESS ============ -->
-    <section id="host-process">
-      <div class="section-inner">
+    <!-- ============ FULL ENDINGS GRID ============ -->
+    <section id="domain-grid-section" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="section-inner" style="max-width:820px;">
+        <div class="section-head reveal-fade" style="margin-bottom:32px;">
+          <p class="sec-tag">// All Extensions</p>
+          <h2>Every ending we could find for <span id="grid-base-label"></span></h2>
+        </div>
+        <div id="domain-grid-loading" class="host-result-skeleton"></div>
+        <div id="domain-grid-results" class="host-search-results" style="margin-top:0;" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ TRUSTED BY ============ -->
+    <section id="domain-trusted">
+      <div class="section-inner" style="max-width:1020px;">
         <div class="section-head reveal-fade">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// New vs. Existing</p>
-          <h2>Clean Slates vs.<br><span class="host-heading-grad">Established Infrastructure</span></h2>
-          <p>Either way, VardWeb handles the errand. You stay the registrant, always.</p>
+          <p class="sec-tag">// Trusted By VardWeb Clients</p>
+          <h2>Real businesses, real domains</h2>
+          <p>Don't just take our word for it — here's what clients say after building on their own domain with us.</p>
         </div>
-        <div class="host-process-grid reveal-fade">
-          <div class="host-process-card">
-            <span class="host-process-tag">NEW DOMAIN</span>
-            <h3>Starting from scratch</h3>
-            <div class="host-step"><div class="host-step-n">1</div><p><b>Check availability</b> during onboarding, alongside your brand-name discovery.</p></div>
-            <div class="host-step"><div class="host-step-n">2</div><p><b>Register it in your name</b> — you're the registrant contact and legal owner from day one.</p></div>
-            <div class="host-step"><div class="host-step-n">3</div><p><b>Nameservers point to Cloudflare</b> — DNS, CDN, SSL and DDoS protection live within minutes.</p></div>
-            <div class="host-step"><div class="host-step-n">4</div><p><b>You get access</b> — added to the account or handed login details, same as your site management.</p></div>
-          </div>
-          <div class="host-process-card">
-            <span class="host-process-tag" style="color:var(--cyan);">EXISTING DOMAIN</span>
-            <h3>Transferring one in</h3>
-            <div class="host-step"><div class="host-step-n">1</div><p><b>Unlock it</b> at your current registrar and grab the EPP auth code.</p></div>
-            <div class="host-step"><div class="host-step-n">2</div><p><b>Confirm eligibility</b> — ICANN requires 60 days since the last registration or transfer.</p></div>
-            <div class="host-step"><div class="host-step-n">3</div><p><b>We initiate the transfer</b> — your current registrar has up to 5 days to approve, or it completes automatically.</p></div>
-            <div class="host-step"><div class="host-step-n">4</div><p><b>Nameservers move to Cloudflare</b> and your registrant details are confirmed as yours.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ MANAGED HOSTING ============ -->
-    <section id="host-managed" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
-      <div class="section-inner">
-        <div class="host-managed-grid reveal-fade">
-          <div>
-            <p class="sec-tag">// managed hosting</p>
-            <h2 style="font-size:clamp(24px,3vw,32px);color:var(--text-1);margin-bottom:18px;">Your site stays online.<br><span class="host-heading-grad">We make sure of it.</span></h2>
-            <div class="host-managed-list">
-              <div class="host-managed-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <div><h4>Uptime backed by Cloudflare's network</h4><p>We configure and manage Cloudflare's infrastructure on your behalf. Backed by an average uptime of 99.9% to 99.99% annually.</p></div>
-              </div>
-              <div class="host-managed-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                <div><h4>SSL, CDN &amp; DDoS protection included</h4><p>Built into every domain we manage, not sold as an upsell or add-on. Every domain gets the same baseline protection.</p></div>
-              </div>
-              <div class="host-managed-item">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                <div><h4>Auto-scaling, no downtime on spikes</h4><p>Traffic surges are handled by Cloudflare's edge network. Neutralizing traffic spikes, and ensuring a fast, uninterrupted user experience.</p></div>
-              </div>
+        <div class="dt-grid">
+          <div class="dt-card reveal-fade">
+            <p class="dt-quote">"Our eBay store still drives most of our volume, but bigger buyers wanted a real website before wiring a deposit for a bulk order. Having one now closes that conversation in a single email."</p>
+            <div class="dt-who">
+              <div class="dt-avatar" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;">MR</div>
+              <div><div class="dt-name">Marcus R.</div><div class="dt-role">eBay Store Owner</div></div>
             </div>
           </div>
-          <div class="host-managed-panel">
-            <div class="host-managed-panel-inner">
-              <p class="host-managed-quote">"Transparency shouldn't be rare in web design. We deploy your site onto the world's most <span>resilient</span> network at total cost for your first year, followed by a permanent, flat 10% markup. Unbeatable infrastructure, zero hidden fees."</p>
-              <p style="font-size:13px;color:var(--text-2);">Honest by design — see the full breakdown in our <a href="terms.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">Terms of Service §07</a>.</p>
+          <div class="dt-card reveal-fade" style="transition-delay:0.05s">
+            <p class="dt-quote">"Amazon is still where most people find us first, but our own site is where they check we're a real company before reordering wholesale. It's paid for itself in fewer 'is this legit' emails alone."</p>
+            <div class="dt-who">
+              <div class="dt-avatar" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;">PS</div>
+              <div><div class="dt-name">Priya S.</div><div class="dt-role">Amazon Marketplace Seller</div></div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ CONCIERGE (V1 + V2 parallel paths) ============ -->
-    <section id="host-concierge">
-      <div class="section-inner">
-        <div class="section-head reveal-fade">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// two paths</p>
-          <h2>Search It Yourself vs.<br><span class="host-heading-grad">Let Us Find It</span></h2>
-          <p>Purchase a domain, or let us find it for you. Domain Hosting & Delegation available for all clients on Bronze, Silver, Gold or Custom plans.</p>
-        </div>
-        <div class="host-path-grid reveal-fade">
-          <div class="host-path-card">
-            <div class="host-path-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-            <h3>Search it yourself</h3>
-            <p>Type your brand name above, choose your preferred domain extension, and secure it immediately.</p>
-            <div class="host-path-actions">
-              <a href="#" class="btn addon-card-cta">Back to search ↑</a>
-            </div>
-          </div>
-          <div class="host-path-card">
-            <div class="host-path-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-            <h3>Let's find it together</h3>
-            <p>Not sure what you want, or juggling a rebrand? Talk it through with us directly by email, or book a short call.</p>
-            <div class="host-path-actions">
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;bookCall=1&amp;bookCallColor=%2334D399" class="btn addon-card-cta">Book a Call</a>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;learnMore=1" class="btn btn-outline-brand">Send a Message</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- ============ PRICING MODEL ============ -->
-    <section id="host-pricing">
-      <div class="section-inner">
-        <div class="section-head reveal-fade">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// pricing model</p>
-          <h2>The Renewal<br><span class="host-heading-grad">Bait-and-Switch</span></h2>
-          <p>Go ahead, buy that C$0.01 domain from our competitors. Just try not to cry next year when they quietly bill you $34.99 to renew it. We skip the pricing traps, charging a transparent, boring, flat 10% over wholesale from year two until forever.</p>
-        </div>
-        <div class="host-price-flow reveal-fade">
-          <div class="host-price-card">
-            <span class="k">Year 1 — Registration</span>
-            <div class="host-price-row">
-              <span class="host-price-row-label host-price-row-label--brand">With VardWeb</span>
-              <div class="v grad"><span aria-hidden="true">~C$</span><span data-count>9.15</span></div>
-            </div>
-            <div class="host-price-divider"></div>
-            <div class="host-price-row">
-              <span class="host-price-row-label host-price-row-label--muted">Without</span>
-              <div class="v is-muted"><span aria-hidden="true">~C$</span><span data-count>9.99</span></div>
-            </div>
-            <p class="d">Network Solutions opens at C$9.99 — close enough to wholesale to look reasonable. That's exactly the point: year two is where the real number shows up.</p>
-          </div>
-          <div class="host-price-arrow" aria-hidden="true">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="13" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </div>
-          <div class="host-price-card is-y2">
-            <span class="k">Year 2+ — Renewal</span>
-            <div class="host-price-row">
-              <span class="host-price-row-label host-price-row-label--brand">With VardWeb</span>
-              <div class="v grad" data-count>+10%</div>
-            </div>
-            <div class="host-price-divider"></div>
-            <div class="host-price-row">
-              <span class="host-price-row-label host-price-row-label--muted">Without</span>
-              <div class="v is-muted" data-count>+241%</div>
-            </div>
-            <p class="d">Network Solutions marks renewals up to 241% over wholesale. VardWeb caps it at a flat 10%, every year, forever.</p>
-          </div>
-        </div>
-        <p class="host-price-note"><b>Billed separately, always.</b> Domain charges never fold into your site-package invoice. A one-off charge at registration, then an automated renewal charge each year, priced fresh from live wholesale cost so the 10% stays honest as registry pricing changes.</p>
-      </div>
-    </section>
-
-    <!-- ============ COMPARE ============ -->
-    <section id="host-compare" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
-      <div class="section-inner">
-        <div class="section-head reveal-fade">
-          <p class="sec-tag" style="display:flex;justify-content:center;">// Comparisons</p>
-          <h2>We Run on Transparency.<br><span class="host-heading-grad">They Run on Amnesia.</span></h2>
-          <p>Markup is measured against ~$9.15–10.44/yr wholesale. Cloudflare's own published at-cost .com price, the best public reference point for what a domain actually costs.</p>
-        </div>
-        <div class="compare-table-wrap reveal-fade">
-          <table class="compare-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Year 1</th>
-                <th>Year 2</th>
-                <th>Markup</th>
-                <th>The Catch</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="is-vardweb">
-                <th scope="row">VardWeb</th>
-                <td class="ck">At cost — 0%</td>
-                <td class="ck">+10% flat</td>
-                <td class="ck">Lowest of the group</td>
-                <td class="ck">Predictable, honest pricing that treats users like adults.</td>
-              </tr>
-              <tr>
-                <th scope="row" style="--tier-color:#A3E635; color:var(--tier-color);">Hostinger</th>
-                <td>$2.99</td>
-                <td>$10.99</td>
-                <td style="color:#A3E635;font-weight:700;">~7%</td>
-                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Low markup only because they use domains to force expensive hosting bundles.">Hosting bundle trap</span></td>
-              </tr>
-              <tr>
-                <th scope="row" style="--tier-color:#FACC15; color:var(--tier-color);">Namecheap</th>
-                <td>$6.79</td>
-                <td>$18.48</td>
-                <td style="color:#FACC15;font-weight:700;">~80%</td>
-                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Billed as the affordable alternative, but still pockets a massive premium.">Still a premium</span></td>
-              </tr>
-              <tr>
-                <th scope="row" style="--tier-color:#FB923C; color:var(--tier-color);">Domain.com</th>
-                <td>$9.99</td>
-                <td>$19.99</td>
-                <td style="color:#FB923C;font-weight:700;">~95%</td>
-                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Standard pricing that hides the fact they charge extra for data privacy.">Hidden privacy fee</span></td>
-              </tr>
-              <tr>
-                <th scope="row" style="--tier-color:#F97316; color:var(--tier-color);">Squarespace</th>
-                <td>$20.00</td>
-                <td>$20.00</td>
-                <td style="color:#F97316;font-weight:700;">~95%</td>
-                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="No intro discount, just a flat, bloated premium to support their ecosystem.">Flat bloated premium</span></td>
-              </tr>
-              <tr>
-                <th scope="row" style="--tier-color:#EF4444; color:var(--tier-color);">GoDaddy</th>
-                <td>$0.99</td>
-                <td>$21.99</td>
-                <td style="color:#EF4444;font-weight:700;">~114%</td>
-                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="The ultimate bait-and-switch; they bleed wallets dry in year two.">Bait-and-switch</span></td>
-              </tr>
-              <tr>
-                <th scope="row" style="--tier-color:#B91C1C; color:var(--tier-color);">Network Solutions</th>
-                <td>$9.99</td>
-                <td>$34.99</td>
-                <td style="color:#B91C1C;font-weight:700;">~241%</td>
-                <td><span class="tt-label tt-trigger" tabindex="0" role="button" aria-expanded="false" data-tooltip="Pure corporate extortion relying strictly on historical legacy.">Legacy extortion</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ ADD-ONS ============ -->
-    <section id="host-addons">
-      <div class="section-inner">
-        <div class="reveal-fade" style="margin-bottom:24px;">
-          <p class="sec-tag">// Maximize</p>
-          <h2 style="font-size:clamp(26px,3.4vw,38px);font-weight:700;color:var(--text-1);margin-bottom:14px;">Add-ons</h2>
-        </div>
-        <div class="addon-card-grid">
-          <div class="addon-card reveal-fade" style="transition-delay:0s">
-            <div class="addon-card-content">
-              <div class="addon-card-icon" style="--icon-right:-5%; --icon-top:65%; --icon-transform:translateY(-35%); --icon-w:250px; --icon-h:250px; --icon-rotate:2deg; --icon-right-mobile:-15%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:200px; --icon-h-mobile:200px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-12.7%; --icon-top-mobile-375:53.4%; --icon-transform-mobile-375:translateY(9.7%); --icon-w-mobile-375:211px; --icon-h-mobile-375:211px; --icon-rotate-mobile-375:2.8deg; --icon-right-mobile-425:-10.6%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-8%); --icon-w-mobile-425:222px; --icon-h-mobile-425:222px; --icon-rotate-mobile-425:2.6deg;"><img src="brand_assets/icons/DedicatedIPs-isometric-icon-transparent.webp" alt="" loading="lazy" /></div>
-              <div>
-                <h4 class="addon-card-title">Dedicated IP · From C$39 / mo</h4>
-                <p class="addon-card-desc">A static IP address for services that need one. Payment gateways, legacy integrations, or compliance requirements.<br>Shared and non-shared pool proxies available.</p>
-              </div>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;service=Dedicated%20IP&amp;serviceColor=%2334D399&amp;serviceDesc=A%20static%20IP%20for%20payment%20gateways%2C%20legacy%20integrations%2C%20or%20compliance%20needs%2C%20from%20C%2439%2Fmo." class="btn addon-card-cta">Request a quote</a>
-            </div>
-          </div>
-          <div class="addon-card reveal-fade" style="transition-delay:0.06s">
-            <div class="addon-card-content">
-              <div class="addon-card-icon" style="--icon-w:220px; --icon-h:220px; --icon-rotate:3deg; --icon-right:-7%; --icon-top:65%; --icon-transform:translateY(-41%); --icon-right-mobile:-18%; --icon-top-mobile:52%; --icon-transform-mobile:translateY(31%); --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-15.5%; --icon-top-mobile-375:55%; --icon-transform-mobile-375:translateY(14.5%); --icon-w-mobile-375:180px; --icon-h-mobile-375:180px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-13.2%; --icon-top-mobile-425:57.7%; --icon-transform-mobile-425:translateY(-0.5%); --icon-w-mobile-425:190px; --icon-h-mobile-425:190px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/PDS-isometric-icon.webp" alt="" loading="lazy" /></div>
-              <div>
-                <h4 class="addon-card-title">Premium domain sourcing · 15% success fee</h4>
-                <p class="addon-card-desc">Looking for a short, brandable, or already-claimed domain? We'll track it down and handle the acquisition on your behalf.<br>No upfront cost. You only pay if we land the domain.</p>
-              </div>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;service=Premium%20Domain%20Sourcing&amp;serviceColor=%2334D399&amp;serviceDesc=We'll%20track%20down%20your%20ideal%20domain%20and%20handle%20the%20acquisition%2C%20no%20upfront%20cost%2C%2015%25%20fee%20only%20if%20we%20land%20it." class="btn addon-card-cta">Start my search</a>
-            </div>
-          </div>
-          <div class="addon-card reveal-fade" style="transition-delay:0.12s">
-            <div class="addon-card-content">
-              <div class="addon-card-icon" style="--icon-right:-4%; --icon-top:65%; --icon-transform:translateY(-38%); --icon-w:250px; --icon-h:250px; --icon-rotate:3deg; --icon-right-mobile:-13%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:220px; --icon-h-mobile:220px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-10.9%; --icon-top-mobile-375:53.4%; --icon-transform-mobile-375:translateY(3%); --icon-w-mobile-375:227px; --icon-h-mobile-375:227px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-9.1%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-6%); --icon-w-mobile-425:233px; --icon-h-mobile-425:233px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/ESDDNS-isometric-icon.webp" alt="" loading="lazy" /></div>
-              <div>
-                <h4 class="addon-card-title">Extra subdomains &amp; DNS records · Included for clients</h4>
-                <p class="addon-card-desc">Staging environments, custom mail routing, or multi-app setups. Additional DNS configuration beyond the default.<br>Immediate propagation and granular records management.</p>
-              </div>
-              <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;service=Extra%20Subdomains%20%26%20DNS%20Records&amp;serviceColor=%2334D399&amp;serviceDesc=Staging%20environments%2C%20custom%20mail%20routing%2C%20or%20multi-app%20DNS%20setups%2C%20included%20at%20no%20extra%20cost%20for%20clients." class="btn addon-card-cta">Make a request →</a>
+          <div class="dt-card reveal-fade" style="transition-delay:0.1s">
+            <p class="dt-quote">"Most of my leads still start with a LinkedIn message, but people look at the website before they'll get on a call. Having something that actually looks like a consultancy changed how those calls go."</p>
+            <div class="dt-who">
+              <div class="dt-avatar" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;">DW</div>
+              <div><div class="dt-name">Daniel W.</div><div class="dt-role">LinkedIn Consultant</div></div>
             </div>
           </div>
         </div>
@@ -1694,27 +1453,6 @@
               </div>
             </button>
             <div class="host-faq-content"><div class="host-faq-content-inner">If the domain you want is short, brandable, or already claimed by someone else, we'll track down the owner and handle the acquisition on your behalf. No upfront cost. We only charge a 15% success fee if we actually land it for you, on top of whatever the acquisition itself costs. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See more general FAQs →</a></div></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ CTA ============ -->
-    <section class="host-cta">
-      <div class="host-cta-card">
-        <canvas class="host-cta-shader" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;" aria-hidden="true"></canvas>
-        <div class="host-cta-content reveal-fade">
-          <div class="host-hero-pill" style="margin-bottom:0;">
-            <span class="host-hero-pill-dot"></span>
-            Your domain is waiting
-          </div>
-          <h2 class="host-cta-heading">
-            Search for your<br class="host-cta-break"> <span class="host-heading-grad">domain name now.</span>
-          </h2>
-          <p class="host-cta-sub">Search above, or talk it through with us directly. Either way, you own it, and we don't make a cent until you renew.</p>
-          <div class="host-cta-actions">
-            <a href="#" class="btn addon-card-cta">Search a Domain <span class="btn-arrow" aria-hidden="true">→</span></a>
-            <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&amp;learnMore=1" class="btn btn-outline-brand">Contact Us</a>
           </div>
         </div>
       </div>
@@ -1894,127 +1632,6 @@
         domainInput.addEventListener('blur', function () { searchInputWrap.classList.remove('is-focused'); });
       }
 
-      // ── Live typeahead suggestions (shown once 3+ chars are typed) ────
-      var SUGGEST_TLDS = ['.io', '.app', '.dev', '.xyz', '.co', '.shop'];
-      var suggestPanel = document.getElementById('domain-suggest');
-      var suggestList = document.getElementById('domain-suggest-list');
-      var suggestBlur = document.getElementById('host-search-blur');
-      var domainSearchForm = document.getElementById('domain-search-form');
-
-      function suggestBase(value) {
-        return (value || '').trim().replace(/\s+/g, '').replace(/\.[a-z]*$/i, '');
-      }
-      function positionSuggestPanel() {
-        var rect = domainSearchForm.getBoundingClientRect();
-        suggestPanel.style.left = rect.left + 'px';
-        suggestPanel.style.top = (rect.bottom + 8) + 'px';
-        suggestPanel.style.width = rect.width + 'px';
-      }
-
-      // ── Example-chip typewriter (Basic Search / AI Search cards) ──────
-      var EXAMPLE_BASE = 'mybusiness';
-      var EXAMPLE_TLDS = ['.org', '.net', '.io', '.com'];
-      var AI_EXAMPLE_TEXT = 'A local shop delivering goods.';
-      var exampleBasicBaseEl = document.getElementById('suggest-example-basic-base');
-      var exampleBasicTldEl = document.getElementById('suggest-example-basic-tld');
-      var exampleAiEl = document.getElementById('suggest-example-ai');
-      var basicCursorEl = document.getElementById('suggest-cursor-basic');
-      var aiCursorEl = document.getElementById('suggest-cursor-ai');
-      var exampleTimers = [];
-      function clearExampleTimers() {
-        exampleTimers.forEach(function (id) { clearTimeout(id); });
-        exampleTimers = [];
-      }
-      function typeText(el, text, delayMs, onDone) {
-        el.textContent = '';
-        var i = 0;
-        function step() {
-          i++;
-          el.textContent = text.slice(0, i);
-          if (i < text.length) exampleTimers.push(setTimeout(step, delayMs));
-          else if (onDone) onDone();
-        }
-        exampleTimers.push(setTimeout(step, delayMs));
-      }
-      function startExampleAnimations() {
-        clearExampleTimers();
-        if (basicCursorEl) basicCursorEl.classList.remove('is-static');
-        if (aiCursorEl) aiCursorEl.classList.remove('is-static');
-        if (exampleBasicBaseEl && exampleBasicTldEl) {
-          exampleBasicTldEl.textContent = '';
-          typeText(exampleBasicBaseEl, EXAMPLE_BASE, 98, function () {
-            var idx = 0;
-            function cycle() {
-              exampleBasicTldEl.textContent = EXAMPLE_TLDS[idx];
-              if (idx < EXAMPLE_TLDS.length - 1) {
-                idx++;
-                exampleTimers.push(setTimeout(cycle, 1100));
-              } else if (basicCursorEl) {
-                basicCursorEl.classList.add('is-static');
-              }
-            }
-            cycle();
-          });
-        }
-        if (exampleAiEl) {
-          typeText(exampleAiEl, AI_EXAMPLE_TEXT, 63, function () {
-            if (aiCursorEl) aiCursorEl.classList.add('is-static');
-          });
-        }
-      }
-
-      function showSuggestions(base) {
-        var wasHidden = suggestPanel.hidden;
-        var safeBase = escapeHtml(base);
-        suggestList.innerHTML = SUGGEST_TLDS.map(function (tld) {
-          return '<button type="button" class="host-suggest-row" data-base="' + safeBase +
-            '" data-tld="' + tld + '"><span class="base">' + safeBase + '</span><span class="tld">' + tld + '</span></button>';
-        }).join('');
-        positionSuggestPanel();
-        suggestPanel.hidden = false;
-        suggestBlur.classList.add('is-active');
-        domainSearchForm.classList.add('is-suggest-open');
-        if (wasHidden) startExampleAnimations();
-      }
-      function hideSuggestions() {
-        suggestPanel.hidden = true;
-        suggestBlur.classList.remove('is-active');
-        domainSearchForm.classList.remove('is-suggest-open');
-        clearExampleTimers();
-      }
-      if (domainInput && suggestPanel && suggestList && suggestBlur) {
-        domainInput.addEventListener('input', function () {
-          var base = suggestBase(domainInput.value);
-          if (base.length >= 3) showSuggestions(base);
-          else hideSuggestions();
-        });
-        domainInput.addEventListener('focus', function () {
-          var base = suggestBase(domainInput.value);
-          if (base.length >= 3) showSuggestions(base);
-        });
-        window.addEventListener('resize', function () {
-          if (!suggestPanel.hidden) positionSuggestPanel();
-        });
-        // A fixed-position panel can't track the search bar while the page
-        // scrolls, so close it rather than let it visually detach.
-        window.addEventListener('scroll', function () {
-          if (!suggestPanel.hidden) hideSuggestions();
-        }, { passive: true });
-        suggestList.addEventListener('click', function (e) {
-          var row = e.target.closest('.host-suggest-row');
-          if (!row) return;
-          window.location.href = 'domain-search.html?q=' + encodeURIComponent(row.dataset.base) +
-            '&tld=' + encodeURIComponent(row.dataset.tld);
-        });
-        suggestBlur.addEventListener('click', hideSuggestions);
-        document.addEventListener('keydown', function (e) {
-          if (e.key === 'Escape') hideSuggestions();
-        });
-        document.addEventListener('click', function (e) {
-          if (!suggestPanel.hidden && !suggestPanel.contains(e.target) && e.target !== domainInput) hideSuggestions();
-        });
-      }
-
       function escapeHtml(str) {
         return String(str).replace(/[&<>"']/g, function (c) {
           return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -2192,43 +1809,7 @@
         });
       }
 
-      // ── Live availability search ─────────────────────────────────────
-      var resultsEl = document.getElementById('host-search-results');
-
-      function renderResultsLoading() {
-        resultsEl.hidden = false;
-        resultsEl.innerHTML = '<div class="host-result-skeleton"></div>';
-      }
-      function renderResultsError(message) {
-        resultsEl.hidden = false;
-        resultsEl.innerHTML = '<div class="host-result-error">' + escapeHtml(message) +
-          ' — you can also <a href="contact.html?type=' + encodeURIComponent('Domain & Hosting') + '&typeColor=%2334D399&learnMore=1" style="color:inherit;text-decoration:underline;">talk to us directly</a>.</div>';
-      }
-      function renderResults(results) {
-        resultsEl.hidden = false;
-        if (!results.length) {
-          resultsEl.innerHTML = '<div class="host-result-error">No results came back — try a different name.</div>';
-          return;
-        }
-        resultsEl.innerHTML = results.map(function (r) {
-          var domainFull = r.domain + r.tld;
-          var available = Boolean(r.available);
-          return '<div class="host-result-card" data-available="' + available + '">' +
-            '<span class="host-result-domain">' + escapeHtml(domainFull) + '</span>' +
-            '<span class="host-result-status">' + (available ? 'Available' : 'Taken') + '</span>' +
-            '<span class="host-result-price">' + (available ? formatPrice(r.price) : '') + '</span>' +
-            '<button type="button" class="host-result-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" data-available="' + available + '" ' + (available ? '' : 'disabled') + '>' +
-            (available ? 'Add to Cart' : 'Taken') + '</button>' +
-            '</div>';
-        }).join('');
-        resultsEl.querySelectorAll('.host-result-cta[data-available="true"]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            addToCart({ domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price) });
-          });
-        });
-        renderCart();
-      }
-
+      // ── Results page: re-submit navigates with a fresh q/tld ──────────
       var searchForm = document.getElementById('domain-search-form');
       if (searchForm) {
         searchForm.addEventListener('submit', function (e) {
@@ -2237,21 +1818,327 @@
           var base = (input.value || '').trim().replace(/\s+/g, '').replace(/\.[a-z]+$/i, '');
           if (!base) { input.focus(); return; }
           var tld = (tldBadgeText && tldBadgeText.textContent) || '.com';
-
-          renderResultsLoading();
-
-          fetch(_sbCfg.url + '/functions/v1/check-domain-availability', {
-            method: 'POST',
-            headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ domains: [{ name: base, tld: tld }] }),
-          })
-            .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
-            .then(function (r) {
-              if (!r.ok || r.json.error) { renderResultsError(r.json.error || 'Domain lookup failed'); return; }
-              renderResults(r.json.results || []);
-            })
-            .catch(function () { renderResultsError('Could not reach the domain lookup service'); });
+          window.location.href = 'domain-search.html?q=' + encodeURIComponent(base) + '&tld=' + encodeURIComponent(tld);
         });
+      }
+
+      // ── Batched availability checks (MAX_DOMAINS_PER_REQUEST = 20 server-side) ──
+      // Some TLDs (.ai in particular) are slow enough at the registry level that
+      // batching them with others can stall the whole batch's response for a long
+      // time. A hard client-side timeout keeps the page responsive either way —
+      // a timed-out batch just renders as if those endings came back empty.
+      function withTimeout(promise, ms) {
+        return new Promise(function (resolve) {
+          var settled = false;
+          var timer = setTimeout(function () { if (!settled) { settled = true; resolve([]); } }, ms);
+          promise.then(function (v) { if (!settled) { settled = true; clearTimeout(timer); resolve(v); } });
+        });
+      }
+      function checkDomainsBatch(list) {
+        if (!list.length) return Promise.resolve([]);
+        var req = fetch(_sbCfg.url + '/functions/v1/check-domain-availability', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domains: list }),
+        })
+          .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+          .then(function (r) { return (r.ok && !r.json.error) ? (r.json.results || []) : []; })
+          .catch(function () { return []; });
+        return withTimeout(req, 8000);
+      }
+      // .ai in particular is slow enough at the registry that it can stall an
+      // entire shared batch — isolate it (and any future slow TLD) into its own
+      // single-item request so a timeout there never costs its batch-mates.
+      var SLOW_TLDS = ['.ai'];
+      // check-domain-availability's own stated cap is 20/request, but empirically
+      // Openprovider's /domains/check hangs outright (no error, just times out)
+      // once a single call asks for 8+ domains — 5 leaves real headroom under
+      // the observed 7-domain breaking point.
+      var SAFE_BATCH_SIZE = 5;
+      // Small batches run in a limited pool (not full Promise.all, not fully
+      // sequential) — a few in flight at once keeps the wait reasonable without
+      // reproducing the concurrent-auth-race 502s a full burst triggers.
+      function runPooled(items, worker, concurrency) {
+        return new Promise(function (resolve) {
+          if (!items.length) { resolve([]); return; }
+          var results = new Array(items.length);
+          var next = 0, active = 0, done = 0;
+          function pump() {
+            if (done === items.length) { resolve(results); return; }
+            while (active < concurrency && next < items.length) {
+              (function (idx) {
+                active++; next++;
+                worker(items[idx]).then(function (r) { results[idx] = r; active--; done++; pump(); });
+              })(next);
+            }
+          }
+          pump();
+        });
+      }
+      // onBatchDone, if given, fires with each batch's results as it lands —
+      // checking dozens of domains against a live registry a handful at a time
+      // takes real seconds, so the grid renders progressively instead of
+      // sitting on a skeleton until the very last (slowest) batch returns.
+      function checkDomains(list, onBatchDone) {
+        var normal = list.filter(function (d) { return SLOW_TLDS.indexOf(d.tld) === -1; });
+        var slow = list.filter(function (d) { return SLOW_TLDS.indexOf(d.tld) !== -1; });
+        var batches = [];
+        for (var i = 0; i < normal.length; i += SAFE_BATCH_SIZE) batches.push(normal.slice(i, i + SAFE_BATCH_SIZE));
+        slow.forEach(function (d) { batches.push([d]); });
+        function runBatch(batch) {
+          return checkDomainsBatch(batch).then(function (results) {
+            // An empty result for a non-empty request is unambiguous failure
+            // (a real answer always has one entry per domain asked, even for
+            // taken ones) — worth one retry since most failures here are
+            // transient (a slow TLD, a brief 502), not permanent.
+            return (!results.length && batch.length) ? checkDomainsBatch(batch) : results;
+          }).then(function (results) {
+            if (onBatchDone) onBatchDone(results);
+            return results;
+          });
+        }
+        return runPooled(batches, runBatch, 3).then(function (arrs) { return [].concat.apply([], arrs); });
+      }
+
+      function heartIcon() {
+        return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2.5C10.5 5 12 4 14 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg>';
+      }
+      function checkIcon() {
+        return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      }
+      function cartIcon() {
+        return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+      }
+
+      // Real, derivable qualities only — no fabricated "searched N times" style stats.
+      function pickDomainFacts(base, tldStr, result) {
+        var facts = [];
+        facts.push(base.length <= 10
+          ? '"' + base + '" is ' + base.length + ' characters — short names are easier to type, say, and remember.'
+          : '"' + base + '" is ' + base.length + ' characters long.');
+        if (!/[-0-9]/.test(base)) facts.push('No hyphens or numbers, so it reads cleanly out loud and in a URL bar.');
+        var tldNotes = {
+          '.com': 'The most recognized ending on the web — a safe default for most brands.',
+          '.io': 'Popular with tech and software products.',
+          '.co': 'A short, brandable alternative to .com.',
+          '.app': 'Signals a mobile or web app at a glance.',
+          '.dev': 'A clear fit for developer tools and technical products.',
+          '.shop': 'Tells visitors it’s a storefront before they even click.',
+          '.ai': 'Strongly associated with AI-focused products right now.',
+          '.xyz': 'Flexible and inexpensive — works for almost any project.',
+        };
+        if (tldNotes[tldStr]) facts.push(tldNotes[tldStr]);
+        if (result && result.available && !result.premium) facts.push('Available right now — exact-match names like this don’t stay open long.');
+        return facts.slice(0, 3);
+      }
+
+      var qp = new URLSearchParams(window.location.search);
+      var qBase = (qp.get('q') || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+      var qTld = qp.get('tld') || '.com';
+      if (!/^\.[a-z]{2,10}$/i.test(qTld)) qTld = '.com';
+
+      var domainInputEl = document.getElementById('domain-input');
+      if (qBase && domainInputEl) domainInputEl.value = qBase;
+      setTld(qTld);
+      if (extraPills && Array.prototype.some.call(extraPills, function (p) { return p.dataset.tld === qTld; }) && moreBtn) {
+        moreBtn.click();
+      }
+
+      var dvHeading = document.getElementById('dv-heading');
+      var dvLoading = document.getElementById('dv-loading');
+      var dvBoxes = document.getElementById('dv-boxes');
+      var gridLoadingEl = document.getElementById('domain-grid-loading');
+      var gridResultsEl = document.getElementById('domain-grid-results');
+
+      var BUNDLE_TLDS = ['.net', '.xyz', '.store', '.online', '.info'];
+      var EXPLORE_TLDS = ['.net', '.org', '.ai', '.io'];
+      // Kept deliberately short — each entry is its own registry round-trip, and
+      // Openprovider's /domains/check hangs outright past ~7 domains per call
+      // (see SAFE_BATCH_SIZE), so a long list here means real, felt load time.
+      var GRID_TLDS = ['.com', '.net', '.org', '.io', '.co', '.ai', '.app', '.dev', '.xyz', '.shop',
+        '.store', '.online', '.info', '.biz', '.live', '.site', '.tech', '.studio', '.design', '.cloud',
+        '.email', '.build', '.club', '.pro', '.work'];
+      var VARIANT_PREFIXES = ['get', 'my'];
+      var VARIANT_SUFFIXES = ['hq', 'app', 'hub'];
+      var VARIANT_TLDS = ['.com', '.co'];
+
+      function renderVerdict(primary, bundleAvailable) {
+        dvLoading.hidden = true;
+        dvBoxes.hidden = false;
+        var domainFull = qBase + qTld;
+        var facts = pickDomainFacts(qBase, qTld, primary);
+        var whyHtml = '<div class="dv-why"><p class="dv-why-title">Why it\'s great</p><ul class="dv-why-list">' +
+          facts.map(function (f) { return '<li>' + checkIcon() + '<span>' + escapeHtml(f) + '</span></li>'; }).join('') +
+          '</ul></div>';
+        var favBtn = '<button type="button" class="dv-fav" aria-label="Save this domain">' + heartIcon() + '</button>';
+
+        if (primary.available && primary.premium) {
+          dvHeading.textContent = 'This is a premium listing — ' + domainFull;
+          dvBoxes.className = 'dv-grid is-single';
+          dvBoxes.innerHTML =
+            '<div class="dv-box host-price-card">' +
+              '<div class="dv-box-top"><span class="dv-badge dv-badge--premium">Premium Domain</span>' + favBtn + '</div>' +
+              '<div class="dv-domain">' + escapeHtml(qBase) + '<span class="tld">' + escapeHtml(qTld) + '</span></div>' +
+              '<div class="dv-price-row"><span class="dv-price-now">' + formatPrice(primary.price) + '</span></div>' +
+              '<p class="dv-price-note">This domain is privately held — pricing reflects a premium acquisition, not standard registration.</p>' +
+              '<button type="button" class="btn dv-cta" id="dv-primary-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(qTld) + '" data-price="' + (primary.price || 0) + '">Make It Yours</button>' +
+              whyHtml +
+            '</div>';
+        } else {
+          var isAvailable = Boolean(primary.available);
+          dvHeading.innerHTML = isAvailable
+            ? 'Great news — <span class="accent">' + escapeHtml(domainFull) + '</span> is available'
+            : escapeHtml(domainFull) + ' is already taken';
+          dvBoxes.className = 'dv-grid';
+          var leftBox =
+            '<div class="dv-box host-price-card">' +
+              '<div class="dv-box-top"><span class="dv-badge ' + (isAvailable ? 'dv-badge--available' : 'dv-badge--taken') + '">' + (isAvailable ? 'Great Name' : 'Domain Taken') + '</span>' + favBtn + '</div>' +
+              '<div class="dv-domain">' + escapeHtml(qBase) + '<span class="tld">' + escapeHtml(qTld) + '</span></div>' +
+              (isAvailable
+                ? '<div class="dv-price-row"><span class="dv-price-now">' + formatPrice(primary.price) + '</span></div><p class="dv-price-note">for first year</p>' +
+                  '<button type="button" class="btn dv-cta" id="dv-primary-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(qTld) + '" data-price="' + (primary.price || 0) + '">Make It Yours</button>'
+                : '<p class="dv-note">Someone already owns this one. Try a different ending below, or grab it as part of a bundle.</p>' +
+                  '<button type="button" class="btn dv-cta" disabled>Taken</button>') +
+              whyHtml +
+            '</div>';
+
+          var rightBox = '';
+          if (bundleAvailable.length) {
+            var chipHtml = bundleAvailable.map(function (r) {
+              return '<span class="tld-pill active">' + escapeHtml(r.tld) + '</span>';
+            }).join('');
+            var bundleTotal = bundleAvailable.reduce(function (s, r) { return s + (typeof r.price === 'number' ? r.price : 0); }, 0);
+            rightBox =
+              '<div class="dv-box host-price-card">' +
+                '<div class="dv-box-top"><span class="dv-badge dv-badge--bundle">Bundle &amp; Save</span></div>' +
+                '<div class="dv-domain">' + escapeHtml(qBase) + '</div>' +
+                '<div class="dv-chip-row">' + chipHtml + '</div>' +
+                '<div class="dv-price-row"><span class="dv-price-now">' + formatPrice(bundleTotal) + '</span></div>' +
+                '<p class="dv-price-note">for ' + bundleAvailable.length + ' other ending' + (bundleAvailable.length > 1 ? 's' : '') + ', first year</p>' +
+                '<button type="button" class="btn dv-cta" id="dv-bundle-cta">Add Bundle to Cart</button>' +
+              '</div>';
+          }
+          dvBoxes.innerHTML = leftBox + rightBox;
+        }
+
+        var primaryCta = dvBoxes.querySelector('#dv-primary-cta');
+        if (primaryCta) {
+          primaryCta.addEventListener('click', function () {
+            addToCart({ domain: primaryCta.dataset.domain, tld: primaryCta.dataset.tld, price: Number(primaryCta.dataset.price) });
+            primaryCta.textContent = 'Added ✓';
+            primaryCta.classList.add('is-added');
+            primaryCta.disabled = true;
+          });
+        }
+        var bundleCta = dvBoxes.querySelector('#dv-bundle-cta');
+        if (bundleCta) {
+          bundleCta.addEventListener('click', function () {
+            bundleAvailable.forEach(function (r) { addToCart({ domain: qBase + r.tld, tld: r.tld, price: r.price }); });
+            bundleCta.textContent = 'Added ✓';
+            bundleCta.classList.add('is-added');
+            bundleCta.disabled = true;
+          });
+        }
+        renderCart();
+      }
+
+      function renderExplore(results) {
+        document.getElementById('dx-base-label').textContent = qBase;
+        var grid = document.getElementById('dx-grid');
+        grid.innerHTML = results.map(function (r) {
+          var badge = (r.premium && r.available) ? 'Premium' : (r.available ? 'Available' : 'Domain Taken');
+          var badgeClass = (r.premium && r.available) ? 'is-premium' : (r.available ? 'is-available' : '');
+          var domainFull = r.domain + r.tld;
+          return '<div class="dx-card">' +
+            '<div class="dx-card-top"><span class="dx-card-badge ' + badgeClass + '">' + badge + '</span>' +
+              '<button type="button" class="dx-fav" aria-label="Save">' + heartIcon() + '</button></div>' +
+            '<div class="dx-card-tld">' + escapeHtml(r.tld) + '</div>' +
+            '<div class="dx-card-price">' + (r.available ? formatPrice(r.price) : '—') + '</div>' +
+            '<button type="button" class="dx-card-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" ' + (r.available ? '' : 'disabled') + ' aria-label="Add ' + escapeHtml(domainFull) + ' to cart">' + cartIcon() + '</button>' +
+          '</div>';
+        }).join('');
+        grid.querySelectorAll('.dx-card-cta:not(:disabled)').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            addToCart({ domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price) });
+            btn.disabled = true;
+          });
+        });
+      }
+
+      function renderGrid(results) {
+        // Called once per batch as results stream in, so an empty array here
+        // just means "nothing landed yet" — not "nothing exists". The genuine
+        // empty-state message is handled separately once every batch is in.
+        gridLoadingEl.hidden = true;
+        if (!results.length) return;
+        gridResultsEl.innerHTML = results.map(function (r) {
+          var domainFull = r.domain + r.tld;
+          var available = Boolean(r.available);
+          var statusLabel = (r.premium && available) ? 'Premium' : (available ? 'Available' : 'Taken');
+          return '<div class="host-result-card" data-available="' + available + '">' +
+            '<span class="host-result-domain">' + escapeHtml(domainFull) + '</span>' +
+            '<span class="host-result-status">' + statusLabel + '</span>' +
+            '<span class="host-result-price">' + (available ? formatPrice(r.price) : '') + '</span>' +
+            '<button type="button" class="host-result-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" data-available="' + available + '" ' + (available ? '' : 'disabled') + '>' +
+            (available ? 'Add to Cart' : 'Taken') + '</button>' +
+            '</div>';
+        }).join('');
+        gridResultsEl.querySelectorAll('.host-result-cta[data-available="true"]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            addToCart({ domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price) });
+          });
+        });
+        renderCart();
+      }
+
+      if (qBase) {
+        var bundleCandidates = BUNDLE_TLDS.filter(function (t) { return t !== qTld; });
+        var exploreCandidates = EXPLORE_TLDS.filter(function (t) { return t !== qTld; });
+        // BUNDLE_TLDS and EXPLORE_TLDS overlap (both include .net) — dedupe into
+        // one request per unique TLD, then look results up by tld string rather
+        // than by position, since duplicate domain+tld pairs in one request can
+        // make the server's index-based response mapping unreliable.
+        var extraTlds = [];
+        bundleCandidates.concat(exploreCandidates).forEach(function (t) {
+          if (extraTlds.indexOf(t) === -1) extraTlds.push(t);
+        });
+        var primaryPlusExtras = [{ name: qBase, tld: qTld }].concat(extraTlds.map(function (t) { return { name: qBase, tld: t }; }));
+
+        checkDomains(primaryPlusExtras).then(function (results) {
+          var byTld = {};
+          results.forEach(function (r) { byTld[r.tld] = r; });
+          var primary = byTld[qTld] || { available: false, price: null, premium: false, domain: qBase, tld: qTld };
+          var bundleResults = bundleCandidates.map(function (t) { return byTld[t]; }).filter(function (r) { return r && r.available; });
+          var exploreResults = exploreCandidates.map(function (t) { return byTld[t]; }).filter(Boolean);
+          renderVerdict(primary, bundleResults);
+          renderExplore(exploreResults);
+        });
+
+        var matchList = GRID_TLDS.filter(function (t) { return t !== qTld; }).map(function (t) { return { name: qBase, tld: t }; });
+        var variantList = [];
+        VARIANT_PREFIXES.forEach(function (p) { VARIANT_TLDS.forEach(function (t) { variantList.push({ name: p + qBase, tld: t }); }); });
+        VARIANT_SUFFIXES.forEach(function (s) { VARIANT_TLDS.forEach(function (t) { variantList.push({ name: qBase + s, tld: t }); }); });
+        var totalChecked = matchList.length + variantList.length + 1;
+        document.getElementById('dx-found-text').innerHTML = 'Checked <b>' + totalChecked + '</b> endings for "' + escapeHtml(qBase) + '"';
+
+        var gridAccum = [];
+        function renderGridAccum() {
+          var score = function (r) { return (r.premium && r.available) ? 1 : (r.available ? 0 : 2); };
+          var sorted = gridAccum.slice().sort(function (a, b) { return score(a) - score(b); }).slice(0, 100);
+          renderGrid(sorted);
+        }
+        checkDomains(matchList.concat(variantList), function (batchResults) {
+          gridAccum = gridAccum.concat(batchResults);
+          renderGridAccum();
+        }).then(function () {
+          gridLoadingEl.hidden = true;
+          if (!gridAccum.length) {
+            gridResultsEl.innerHTML = '<div class="host-result-error">No results came back — try a different name.</div>';
+          }
+        });
+      } else {
+        dvHeading.textContent = 'Type a domain name above to get started.';
+        dvLoading.hidden = true;
       }
 
       // FAQ accordion
