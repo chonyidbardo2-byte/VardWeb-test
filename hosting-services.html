@@ -29,7 +29,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; scrollbar-gutter: stable; }
+    html { scrollbar-gutter: stable; }
 
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: var(--base); }
@@ -276,12 +276,17 @@
 
     .host-hero-sub { font-size: 16.5px; line-height: 1.75; color: var(--text-2); white-space: nowrap; margin: 0 auto 44px; }
 
+    .host-search-zone { position: relative; }
     .host-search-bar {
       display: flex; align-items: stretch; gap: 0;
       background: #fff; border-radius: 18px;
       padding: 10px; max-width: 820px; margin: 0 auto;
       box-shadow: 0 20px 60px -14px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.3);
+      position: relative; z-index: 251;
+      outline: 1.5px solid transparent; outline-offset: 1px;
+      transition: outline-color 0.2s ease;
     }
+    .host-search-bar.is-suggest-open { outline-color: var(--host-green); }
     .host-search-input-wrap { flex: 1; padding: 0 18px; min-width: 0; overflow: hidden; }
     .host-search-input-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .host-search-input-wrap svg { flex-shrink: 0; width: 20px; height: 20px; color: rgba(20,24,34,0.4); }
@@ -339,6 +344,88 @@
       box-shadow: 0 0 16px rgba(52,211,153,0.45);
     }
     .tld-pill.tld-extra[hidden] { display: none; }
+
+    /* ── Live typeahead suggestions ── */
+    #host-search-blur {
+      /* position:fixed (not absolute) so it isn't clipped by #host-hero's
+         overflow:hidden — a fixed element's containing block is the viewport
+         unless an ancestor uses transform/filter, neither of which #host-hero
+         has, so this covers the whole page, not just the hero box. */
+      position: fixed; inset: 0; z-index: 250;
+      background: rgba(7,9,16,0.5);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    #host-search-blur.is-active { opacity: 1; pointer-events: auto; }
+
+    .host-suggest-panel {
+      /* position:fixed for the same reason as #host-search-blur — a fixed
+         element's containing block is the viewport, not #host-hero, so it
+         isn't clipped by the hero's overflow:hidden. left/top/width are set
+         inline by JS (positionSuggestPanel) since fixed-position percentages
+         resolve against the viewport, not .host-search-zone. */
+      position: fixed; z-index: 251;
+      max-width: 820px; max-height: calc(100vh - 24px); overflow-y: auto;
+      background: #fff; border-radius: 18px;
+      box-shadow: 0 24px 64px -18px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.3);
+      display: grid; grid-template-columns: 1.05fr 1fr 1fr; gap: 0 8px;
+      text-align: left;
+    }
+    .host-suggest-panel[hidden] { display: none; }
+
+    .host-suggest-list { display: flex; flex-direction: column; padding: 10px; }
+    .host-suggest-row {
+      display: block; width: 100%; text-align: left;
+      background: none; border: none; cursor: pointer;
+      font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 600;
+      color: #14161f; padding: 13px 16px; border-radius: 10px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .host-suggest-row .base { color: #14161f; }
+    .host-suggest-row .tld { color: rgba(20,24,34,0.42); }
+    .host-suggest-row:hover, .host-suggest-row:focus-visible { background: rgba(52,211,153,0.1); }
+    .host-suggest-row:hover .tld, .host-suggest-row:focus-visible .tld { color: var(--host-green-deep); }
+    .host-suggest-row:focus-visible { outline: 2px solid var(--host-green-deep); outline-offset: -2px; }
+
+    .host-suggest-info {
+      padding: 28px 18px; margin: 8px 0; display: flex; flex-direction: column; justify-content: center; gap: 14px;
+      background: rgba(20,24,34,0.05); border-radius: 16px;
+    }
+    .host-suggest-info:last-child { margin-right: 8px; }
+    .host-suggest-info-head { display: flex; align-items: center; gap: 12px; }
+    .host-suggest-info-icon {
+      flex-shrink: 0; width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; color: #fff;
+      background: #14161f;
+    }
+    .host-suggest-info-icon.ai { background: linear-gradient(135deg, var(--host-green) 0%, var(--host-green-deep) 100%); }
+    .host-suggest-info-head h4 { font-size: 14.5px; font-weight: 700; color: #14161f; letter-spacing: -0.01em; }
+    .host-suggest-info p { font-size: 12.5px; line-height: 1.6; color: rgba(20,24,34,0.55); }
+    .host-suggest-info-example {
+      font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 600; line-height: 1.4;
+      background: #fff; border-radius: 10px; padding: 16px 14px;
+      height: 84px; display: flex; align-items: center; overflow: hidden;
+    }
+    .host-suggest-example-inner { width: 100%; padding-right: 3px; }
+    .host-suggest-info-example:has(.host-suggest-example-base) { white-space: nowrap; font-size: 20px; }
+    .host-suggest-example-base { color: #14161f; font-weight: 700; }
+    .host-suggest-example-text { color: #14161f; }
+    .host-suggest-example-tld { color: rgba(20,24,34,0.42); }
+    .host-suggest-cursor {
+      display: inline-block; width: 2px; height: 1.5em;
+      background: currentColor; color: rgba(20,24,34,0.42);
+      vertical-align: text-bottom; margin-left: 1px;
+      animation: host-suggest-blink 1s step-start infinite;
+    }
+    .host-suggest-cursor.is-static { animation: none; opacity: 1; }
+    @keyframes host-suggest-blink { 50% { opacity: 0; } }
+
+    @media (max-width: 700px) {
+      .host-suggest-panel { grid-template-columns: 1fr; }
+      .host-suggest-info { border-left: none !important; border-top: 1px solid rgba(20,24,34,0.08); }
+      .host-suggest-list { border-right: none; border-bottom: 1px solid rgba(20,24,34,0.08); }
+    }
 
     .host-hero-fine { font-size: 12.5px; color: rgba(238,240,248,0.5); margin-top: 22px; max-width: 460px; margin-left: auto; margin-right: auto; }
 
@@ -1146,8 +1233,9 @@
           <span class="l1">Get a .com with <span class="host-heading-grad">no markup 1st year</span></span>
         </h1>
 
-        <p class="host-hero-sub">Includes WHOIS privacy, DNS, SSL, CDN & DDos protection, forever**</p>
+        <p class="host-hero-sub">Includes DNS, WHOIS privacy, DMARC, registrar lock and more, forever**</p>
 
+        <div class="host-search-zone">
         <form id="domain-search-form" class="host-search-bar" role="search" aria-label="Domain search">
           <label for="domain-input" class="sr-only">Domain name</label>
           <div class="host-search-input-wrap">
@@ -1165,6 +1253,32 @@
             <span class="host-search-btn-label">Search Domains</span>
           </button>
         </form>
+
+        <div id="host-search-blur" aria-hidden="true"></div>
+
+        <div id="domain-suggest" class="host-suggest-panel" hidden role="listbox" aria-label="Suggested domains">
+          <div class="host-suggest-list" id="domain-suggest-list"></div>
+          <div class="host-suggest-info">
+            <div class="host-suggest-info-head">
+              <span class="host-suggest-info-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+              <h4>Basic Search</h4>
+            </div>
+            <p>Got the perfect domain name in mind? Type it above and we'll check every ending that matches.</p>
+            <div class="host-suggest-info-example"><span class="host-suggest-example-inner"><span class="host-suggest-example-base" id="suggest-example-basic-base"></span
+              ><span class="host-suggest-cursor" id="suggest-cursor-basic" aria-hidden="true"></span
+              ><span class="host-suggest-example-tld" id="suggest-example-basic-tld"></span></span></div>
+          </div>
+          <div class="host-suggest-info">
+            <div class="host-suggest-info-head">
+              <span class="host-suggest-info-icon ai"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.8 5.6L19.4 9.4 13.8 11.2 12 17l-1.8-5.8L4.6 9.4l5.6-1.8L12 2z"/></svg></span>
+              <h4>AI Search</h4>
+            </div>
+            <p>No thoughts yet? No problem. Give us details about your idea and we'll suggest great names.</p>
+            <div class="host-suggest-info-example"><span class="host-suggest-example-inner"><span class="host-suggest-example-text" id="suggest-example-ai"></span
+              ><span class="host-suggest-cursor" id="suggest-cursor-ai" aria-hidden="true"></span></span></div>
+          </div>
+        </div>
+        </div>
 
         <div class="host-tld-row" role="group" aria-label="Choose a domain extension">
           <button type="button" class="tld-pill" data-tld=".ca">.ca</button>
@@ -1778,6 +1892,127 @@
       if (domainInput && searchInputWrap) {
         domainInput.addEventListener('focus', function () { searchInputWrap.classList.add('is-focused'); });
         domainInput.addEventListener('blur', function () { searchInputWrap.classList.remove('is-focused'); });
+      }
+
+      // ── Live typeahead suggestions (shown once 3+ chars are typed) ────
+      var SUGGEST_TLDS = ['.io', '.app', '.dev', '.xyz', '.co', '.shop'];
+      var suggestPanel = document.getElementById('domain-suggest');
+      var suggestList = document.getElementById('domain-suggest-list');
+      var suggestBlur = document.getElementById('host-search-blur');
+      var domainSearchForm = document.getElementById('domain-search-form');
+
+      function suggestBase(value) {
+        return (value || '').trim().replace(/\s+/g, '').replace(/\.[a-z]*$/i, '');
+      }
+      function positionSuggestPanel() {
+        var rect = domainSearchForm.getBoundingClientRect();
+        suggestPanel.style.left = rect.left + 'px';
+        suggestPanel.style.top = (rect.bottom + 8) + 'px';
+        suggestPanel.style.width = rect.width + 'px';
+      }
+
+      // ── Example-chip typewriter (Basic Search / AI Search cards) ──────
+      var EXAMPLE_BASE = 'mybusiness';
+      var EXAMPLE_TLDS = ['.org', '.net', '.io', '.com'];
+      var AI_EXAMPLE_TEXT = 'A local shop delivering goods.';
+      var exampleBasicBaseEl = document.getElementById('suggest-example-basic-base');
+      var exampleBasicTldEl = document.getElementById('suggest-example-basic-tld');
+      var exampleAiEl = document.getElementById('suggest-example-ai');
+      var basicCursorEl = document.getElementById('suggest-cursor-basic');
+      var aiCursorEl = document.getElementById('suggest-cursor-ai');
+      var exampleTimers = [];
+      function clearExampleTimers() {
+        exampleTimers.forEach(function (id) { clearTimeout(id); });
+        exampleTimers = [];
+      }
+      function typeText(el, text, delayMs, onDone) {
+        el.textContent = '';
+        var i = 0;
+        function step() {
+          i++;
+          el.textContent = text.slice(0, i);
+          if (i < text.length) exampleTimers.push(setTimeout(step, delayMs));
+          else if (onDone) onDone();
+        }
+        exampleTimers.push(setTimeout(step, delayMs));
+      }
+      function startExampleAnimations() {
+        clearExampleTimers();
+        if (basicCursorEl) basicCursorEl.classList.remove('is-static');
+        if (aiCursorEl) aiCursorEl.classList.remove('is-static');
+        if (exampleBasicBaseEl && exampleBasicTldEl) {
+          exampleBasicTldEl.textContent = '';
+          typeText(exampleBasicBaseEl, EXAMPLE_BASE, 98, function () {
+            var idx = 0;
+            function cycle() {
+              exampleBasicTldEl.textContent = EXAMPLE_TLDS[idx];
+              if (idx < EXAMPLE_TLDS.length - 1) {
+                idx++;
+                exampleTimers.push(setTimeout(cycle, 1100));
+              } else if (basicCursorEl) {
+                basicCursorEl.classList.add('is-static');
+              }
+            }
+            cycle();
+          });
+        }
+        if (exampleAiEl) {
+          typeText(exampleAiEl, AI_EXAMPLE_TEXT, 63, function () {
+            if (aiCursorEl) aiCursorEl.classList.add('is-static');
+          });
+        }
+      }
+
+      function showSuggestions(base) {
+        var wasHidden = suggestPanel.hidden;
+        var safeBase = escapeHtml(base);
+        suggestList.innerHTML = SUGGEST_TLDS.map(function (tld) {
+          return '<button type="button" class="host-suggest-row" data-base="' + safeBase +
+            '" data-tld="' + tld + '"><span class="base">' + safeBase + '</span><span class="tld">' + tld + '</span></button>';
+        }).join('');
+        positionSuggestPanel();
+        suggestPanel.hidden = false;
+        suggestBlur.classList.add('is-active');
+        domainSearchForm.classList.add('is-suggest-open');
+        if (wasHidden) startExampleAnimations();
+      }
+      function hideSuggestions() {
+        suggestPanel.hidden = true;
+        suggestBlur.classList.remove('is-active');
+        domainSearchForm.classList.remove('is-suggest-open');
+        clearExampleTimers();
+      }
+      if (domainInput && suggestPanel && suggestList && suggestBlur) {
+        domainInput.addEventListener('input', function () {
+          var base = suggestBase(domainInput.value);
+          if (base.length >= 3) showSuggestions(base);
+          else hideSuggestions();
+        });
+        domainInput.addEventListener('focus', function () {
+          var base = suggestBase(domainInput.value);
+          if (base.length >= 3) showSuggestions(base);
+        });
+        window.addEventListener('resize', function () {
+          if (!suggestPanel.hidden) positionSuggestPanel();
+        });
+        // A fixed-position panel can't track the search bar while the page
+        // scrolls, so close it rather than let it visually detach.
+        window.addEventListener('scroll', function () {
+          if (!suggestPanel.hidden) hideSuggestions();
+        }, { passive: true });
+        suggestList.addEventListener('click', function (e) {
+          var row = e.target.closest('.host-suggest-row');
+          if (!row) return;
+          window.location.href = 'domain-search.html?q=' + encodeURIComponent(row.dataset.base) +
+            '&tld=' + encodeURIComponent(row.dataset.tld);
+        });
+        suggestBlur.addEventListener('click', hideSuggestions);
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') hideSuggestions();
+        });
+        document.addEventListener('click', function (e) {
+          if (!suggestPanel.hidden && !suggestPanel.contains(e.target) && e.target !== domainInput) hideSuggestions();
+        });
       }
 
       function escapeHtml(str) {

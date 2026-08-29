@@ -56,3 +56,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
+
+// ── In-page anchor smooth scroll ──
+// scroll-behavior:smooth on <html> used to drive this, but applying it globally
+// also smooths native wheel/trackpad scrolling, which can glitch and jump when
+// the user reverses direction quickly (e.g. scrolling up right after a refresh
+// restores a mid-page position). Scoping smoothing to anchor clicks only avoids
+// that, and accounts for the fixed nav covering the target's top edge.
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    var id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    a.addEventListener('click', function (e) {
+      var target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      var navHeight = (document.querySelector('.nav') || {}).offsetHeight || 0;
+      var top = target.getBoundingClientRect().top + window.pageYOffset - navHeight - 16;
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
+    });
+  });
+});

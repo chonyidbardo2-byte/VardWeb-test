@@ -1,0 +1,2444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Domain Search Results — VardWeb</title>
+  <meta name="description" content="Check real-time availability and pricing for your domain name, plus related endings and bundle deals — no markup at signup, a flat disclosed 10% at renewal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.3);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+
+      /* Domain & Hosting accent — matches the card on services.html */
+      --host-green:      #34D399;
+      --host-green-deep: #059669;
+      --host-green-pale: #A7F3D0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.22); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52,211,153,0.4); }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ── Nav (shared site chrome) ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; position: relative; padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--cyan);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--cyan); }
+    .nav-link.active::after { width: 100%; }
+    .nav-link.nav-dropdown-trigger.active { color: var(--host-green); }
+    .nav-link.nav-dropdown-trigger.active::after { background: var(--host-green-deep); }
+
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
+    .dropdown-menu {
+      position: absolute; top: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0,229,255,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,229,255,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(0,229,255,0.06)); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(0,229,255,0.35); outline-offset: -2px; border-radius: 8px; }
+    .dropdown-item.active { color: var(--host-green); }
+
+    .logo-nav-wrap {
+      display: inline-flex;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 4px 10px;
+    }
+
+    /* Buttons (shared site chrome) */
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(52,211,153,0.55); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12));
+      box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.14);
+      color: rgba(200,212,232,0.72);
+    }
+    .btn-ghost:hover {
+      border-color: rgba(255,255,255,0.3);
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transform: translateY(-2px);
+    }
+    .btn-outline-brand {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      color: #fff;
+    }
+    .btn-outline-brand:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--host-green-deep);
+      transform: translateY(-2px);
+    }
+    .btn-arrow { display: inline-block; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .btn:hover .btn-arrow { transform: translateX(4px); }
+
+    .sec-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--host-green);
+      margin-bottom: 16px;
+    }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.18), transparent);
+      margin: 0 auto; max-width: 1200px;
+    }
+    .host-heading-grad {
+      background: linear-gradient(120deg, var(--host-green-pale) 0%, var(--host-green) 45%, var(--host-green-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+
+    section { padding: 96px 28px; position: relative; }
+    .section-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .section-head { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+    .section-head h2 { font-size: clamp(26px,3.4vw,38px); font-weight: 700; color: var(--text-1); margin-bottom: 14px; }
+    .section-head p:not(.sec-tag) { font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
+
+    /* ── Hero ── */
+    .host-hero-frame { padding: 100px 24px 64px; }
+    #host-hero {
+      position: relative; overflow: hidden;
+      border-radius: 28px;
+      display: flex; align-items: center; justify-content: center;
+      padding: 72px 28px;
+      text-align: center;
+      max-width: 1400px; margin: 0 auto;
+      background: radial-gradient(ellipse 70% 70% at 50% 30%, #0c1f18 0%, var(--base) 70%);
+      border: 1px solid rgba(52,211,153,0.14);
+      box-shadow: 0 40px 90px -30px rgba(0,0,0,0.6);
+    }
+    #host-hero-glow { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    #host-hero-glow div { position: absolute; border-radius: 50%; }
+    .host-hero-content { position: relative; z-index: 2; max-width: 840px; margin: 0 auto; }
+
+    /* ── Scroll-fade reveal ── */
+    .reveal-fade {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-fade.is-visible { opacity: 1; transform: translateY(0); }
+
+    .host-hero-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(52,211,153,0.07);
+      border: 1.5px solid rgba(52,211,153,0.3);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
+      color: rgba(238,240,248,0.9); letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 26px;
+    }
+    .host-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--host-green); box-shadow: 0 0 8px var(--host-green); flex-shrink: 0; }
+
+    .host-hero-kicker {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .host-kicker-slash { color: var(--text-2); margin-right: 2px; }
+    .host-kw {
+      display: inline-block;
+      animation: host-kicker-wave 2.2s ease-in-out infinite;
+      background: linear-gradient(90deg, var(--host-green-pale) 0%, #ffffff 50%, var(--host-green-deep) 100%);
+      background-size: 700% 100%;
+      background-position: calc(var(--i) / 13 * 100%) 0;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    @keyframes host-kicker-wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .host-kw { animation: none; }
+    }
+
+    .host-hero-heading { line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 20px; }
+    .host-hero-heading .l1 { display: block; color: rgba(238,240,248,0.88); font-weight: 600; font-size: clamp(24px,3.4vw,38px); }
+
+    .host-hero-sub { font-size: 16.5px; line-height: 1.75; color: var(--text-2); white-space: nowrap; margin: 0 auto 44px; }
+
+    .host-search-bar {
+      display: flex; align-items: stretch; gap: 0;
+      background: #fff; border-radius: 18px;
+      padding: 10px; max-width: 820px; margin: 0 auto;
+      box-shadow: 0 20px 60px -14px rgba(0,0,0,0.55), 0 4px 18px rgba(0,0,0,0.3);
+      position: relative; z-index: 4;
+    }
+    .host-search-input-wrap { flex: 1; padding: 0 18px; min-width: 0; overflow: hidden; }
+    .host-search-input-row { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .host-search-input-wrap svg { flex-shrink: 0; width: 20px; height: 20px; color: rgba(20,24,34,0.4); }
+    @media (min-width: 1025px) {
+      .host-search-input-row { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+      .host-search-input-wrap svg { transition: opacity 0.25s ease; }
+      .host-search-input-wrap.is-focused .host-search-input-row { transform: translateX(-32px); }
+      .host-search-input-wrap.is-focused svg { opacity: 0; }
+    }
+    #domain-input {
+      border: none; outline: none; background: transparent;
+      font-family: 'Inter', sans-serif; font-size: 19px; font-weight: 500;
+      color: #14161f; width: 100%; min-width: 0; padding: 15px 0;
+    }
+    #domain-input::placeholder { color: rgba(20,24,34,0.4); }
+    .host-tld-badge {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 14px 10px 18px; margin: 6px 6px 6px 0;
+      font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700;
+      color: #14161f; white-space: nowrap; flex-shrink: 0;
+      background: rgba(20,24,34,0.06); border-radius: 10px;
+    }
+    .host-tld-badge[hidden] { display: none; }
+    .host-tld-badge-clear {
+      display: flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(20,24,34,0.1); color: rgba(20,24,34,0.55);
+      border: none; cursor: pointer; flex-shrink: 0; font-size: 13px; line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .host-tld-badge-clear:hover { background: rgba(20,24,34,0.18); color: rgba(20,24,34,0.8); }
+    .host-tld-badge-clear:focus-visible { outline: 2px solid var(--host-green-deep); outline-offset: 2px; }
+    .host-search-btn {
+      background: #0c1017; color: #fff; border-radius: 12px;
+      padding: 0 32px; font-size: 15px; font-weight: 700; flex-shrink: 0;
+    }
+    .host-search-btn:hover { background: #1a2130; box-shadow: 0 8px 22px -6px rgba(52,211,153,0.35); transform: translateY(-1px); }
+    .host-search-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; }
+
+    .host-tld-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+    .tld-pill {
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600;
+      color: rgba(255,255,255,0.82);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 999px; padding: 9px 18px;
+      cursor: pointer; transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    }
+    .tld-pill:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.3); }
+    .tld-pill:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+    .tld-pill.active {
+      color: #06251b;
+      background: var(--host-green);
+      border-color: var(--host-green);
+      box-shadow: 0 0 16px rgba(52,211,153,0.45);
+    }
+    .tld-pill.tld-extra[hidden] { display: none; }
+
+    .host-hero-fine { font-size: 12.5px; color: rgba(238,240,248,0.5); margin-top: 22px; max-width: 460px; margin-left: auto; margin-right: auto; }
+
+    .host-hero-note { font-size: 13px; color: var(--text-2); }
+    .host-tld-row + .host-hero-note { margin-top: 18px; }
+
+    .host-hero-concierge { font-size: 12.5px; color: var(--text-2); margin-top: 14px; }
+    .host-hero-concierge a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); transition: color 0.2s ease, border-color 0.2s ease; }
+    .host-hero-concierge a:hover { color: var(--host-green-pale); border-color: var(--host-green-pale); }
+    .host-hero-concierge a:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Search results ── */
+    .host-search-results { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; max-width: 820px; margin-left: auto; margin-right: auto; text-align: left; }
+    .host-search-results[hidden] { display: none; }
+
+    .host-result-skeleton {
+      height: 68px; border-radius: 14px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%;
+      animation: hostSkeletonSweep 1.4s ease-in-out infinite;
+    }
+    @keyframes hostSkeletonSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .host-result-error {
+      padding: 16px 20px; border-radius: 14px;
+      background: rgba(255,45,120,0.07); border: 1px solid rgba(255,45,120,0.28);
+      color: rgba(255,180,205,0.92); font-size: 13.5px; line-height: 1.6;
+    }
+
+    .host-result-card {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 20px; border-radius: 14px;
+      background: var(--raised);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 12px 32px -18px rgba(0,0,0,0.6);
+      transform: translateZ(0); backface-visibility: hidden;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s ease;
+    }
+    .host-result-card[data-available="true"] { border-color: rgba(52,211,153,0.3); }
+    .host-result-card[data-available="true"]:hover { transform: translateY(-2px) translateZ(0); }
+    .host-result-card[data-available="false"] { opacity: 0.55; }
+
+    .host-result-domain { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15.5px; color: var(--text-1); flex: 1; min-width: 0; overflow-wrap: anywhere; }
+    .host-result-status { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; flex-shrink: 0; }
+    .host-result-card[data-available="true"] .host-result-status { color: var(--host-green); background: rgba(52,211,153,0.12); }
+    .host-result-card[data-available="false"] .host-result-status { color: rgba(200,212,232,0.5); background: rgba(255,255,255,0.06); }
+    .host-result-price { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--text-2); flex-shrink: 0; min-width: 68px; text-align: right; }
+
+    .host-result-cta {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
+      color: #06251b; background: var(--host-green); border: none; border-radius: 9px;
+      padding: 9px 16px; cursor: pointer; flex-shrink: 0;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .host-result-cta:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px -6px rgba(52,211,153,0.45); }
+    .host-result-cta:active:not(:disabled) { transform: translateY(0); }
+    .host-result-cta:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .host-result-cta:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); cursor: default; }
+    .host-result-cta.added { background: var(--raised); color: var(--host-green); border: 1px solid rgba(52,211,153,0.4); }
+
+    @media (max-width: 640px) {
+      .host-result-card { flex-wrap: wrap; }
+      .host-result-domain { flex-basis: 100%; }
+    }
+
+    /* ── Domain results: verdict boxes ── */
+    #domain-verdict { padding-top: 64px; }
+    .dv-heading { text-align: center; font-size: clamp(22px,3vw,32px); font-weight: 700; color: var(--text-1); margin-bottom: 32px; letter-spacing: -0.02em; }
+    .dv-heading .accent { color: var(--host-green); }
+    .dv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+    .dv-grid.is-single { grid-template-columns: 1fr; max-width: 640px; margin: 0 auto; }
+    @media (max-width: 760px) { .dv-grid { grid-template-columns: 1fr; } }
+
+    .dv-box { text-align: left; position: relative; }
+    .dv-box-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .dv-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; }
+    .dv-badge--available { color: var(--host-green); background: rgba(52,211,153,0.14); }
+    .dv-badge--taken { color: rgba(200,212,232,0.55); background: rgba(255,255,255,0.07); }
+    .dv-badge--premium { color: var(--gold); background: rgba(255,215,0,0.13); }
+    .dv-badge--bundle { color: var(--cyan); background: rgba(0,229,255,0.13); }
+    .dv-fav { width: 30px; height: 30px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: rgba(200,212,232,0.55); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .dv-fav:hover { border-color: rgba(255,45,120,0.4); color: #FF2D78; }
+    .dv-fav.is-active { color: #FF2D78; border-color: rgba(255,45,120,0.4); transform: scale(1.08); }
+    .dv-fav:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .dv-domain { font-family: 'JetBrains Mono', monospace; font-size: clamp(22px,2.6vw,28px); font-weight: 700; color: var(--text-1); margin-bottom: 16px; overflow-wrap: anywhere; }
+    .dv-domain .tld { color: var(--text-2); }
+    .dv-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .dv-price-was { font-size: 14px; color: rgba(200,212,232,0.35); text-decoration: line-through; }
+    .dv-price-now { font-size: 26px; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; }
+    .dv-price-note { font-size: 12.5px; color: var(--text-2); margin-bottom: 20px; }
+    .dv-cta { width: 100%; justify-content: center; background: var(--host-green); color: #06251b; border-radius: 11px; padding: 13px; font-size: 14px; font-weight: 700; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease; }
+    .dv-cta:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.45); }
+    .dv-cta:disabled { background: rgba(255,255,255,0.07); color: rgba(200,212,232,0.4); cursor: default; }
+    .dv-cta.is-added { background: var(--raised); color: var(--host-green); border: 1px solid rgba(52,211,153,0.4); }
+    .dv-note { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-top: 6px; }
+
+    .dv-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .dv-chip-row .tld-pill { font-size: 12px; padding: 7px 14px; }
+
+    .dv-why { border-top: 1px solid rgba(255,255,255,0.08); margin-top: 22px; padding-top: 18px; }
+    .dv-why-title { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+    .dv-why-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .dv-why-list li { display: flex; gap: 9px; font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+    .dv-why-list li svg { flex-shrink: 0; margin-top: 2px; color: var(--host-green); }
+
+    .dv-loading { max-width: 1020px; margin: 0 auto; }
+
+    /* ── Explore endings ── */
+    .dx-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .dx-found { font-size: 13.5px; color: var(--text-2); }
+    .dx-found b { color: var(--text-1); }
+    .dx-title { font-size: 19px; font-weight: 700; color: var(--text-1); }
+    .dx-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    @media (max-width: 860px) { .dx-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 480px) { .dx-grid { grid-template-columns: 1fr; } }
+    .dx-card { background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s ease; }
+    .dx-card:hover { transform: translateY(-3px); border-color: rgba(52,211,153,0.25); }
+    .dx-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .dx-card-badge { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; color: rgba(200,212,232,0.55); background: rgba(255,255,255,0.06); }
+    .dx-card-badge.is-available { color: var(--host-green); background: rgba(52,211,153,0.14); }
+    .dx-card-badge.is-premium { color: var(--gold); background: rgba(255,215,0,0.13); }
+    .dx-fav { width: 24px; height: 24px; border-radius: 50%; border: none; background: none; color: rgba(200,212,232,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: color 0.2s ease; }
+    .dx-fav:hover { color: #FF2D78; }
+    .dx-card-tld { font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; color: var(--text-1); }
+    .dx-card-price { font-size: 13px; color: var(--text-1); font-weight: 600; display: flex; align-items: baseline; gap: 6px; }
+    .dx-card-price .was { font-size: 11px; color: rgba(200,212,232,0.35); text-decoration: line-through; font-weight: 400; }
+    .dx-card-cta { align-self: flex-start; width: 34px; height: 34px; border-radius: 9px; background: rgba(52,211,153,0.12); border: 1px solid rgba(52,211,153,0.25); color: var(--host-green); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease; }
+    .dx-card-cta:hover:not(:disabled) { transform: translateY(-1px); background: rgba(52,211,153,0.2); }
+    .dx-card-cta:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── Everything included strip ── */
+    .de-strip { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 18px; background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 22px 28px; }
+    .de-title { font-size: 14px; font-weight: 700; color: var(--text-1); white-space: nowrap; }
+    .de-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .de-chip { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: var(--text-2); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; padding: 7px 14px; white-space: nowrap; }
+
+    /* ── Trusted-by strip ── */
+    .dt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    @media (max-width: 860px) { .dt-grid { grid-template-columns: 1fr; } }
+    .dt-card { background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+    .dt-quote { font-size: 14.5px; line-height: 1.75; color: var(--text-1); flex: 1; }
+    .dt-who { display: flex; align-items: center; gap: 12px; }
+    .dt-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12.5px; flex-shrink: 0; }
+    .dt-name { font-size: 13.5px; font-weight: 600; color: var(--text-1); }
+    .dt-role { font-size: 12px; color: var(--text-2); }
+
+    /* ── Cart drawer ── */
+    #cart-backdrop {
+      position: fixed; inset: 0; z-index: 340;
+      background: rgba(4,6,10,0.6); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
+    }
+    #cart-backdrop.open { opacity: 1; pointer-events: auto; }
+
+    #cart-drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; z-index: 350;
+      width: min(420px, 100vw);
+      background: var(--surface); border-left: 1px solid rgba(255,255,255,0.08);
+      box-shadow: -24px 0 64px -20px rgba(0,0,0,0.6);
+      display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.34,1,0.64,1);
+    }
+    #cart-drawer.open { transform: translateX(0); }
+
+    .cart-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .cart-drawer-head h3 { font-size: 17px; color: var(--text-1); }
+    .cart-drawer-close {
+      display: flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,0.06); color: var(--text-2); border: none; cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .cart-drawer-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .cart-drawer-close:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .cart-drawer-items { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; }
+    .cart-drawer-empty-text { color: var(--text-2); font-size: 13.5px; text-align: center; margin-top: 40px; line-height: 1.7; }
+    .cart-drawer-empty-text a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); transition: color 0.2s ease, border-color 0.2s ease; }
+    .cart-drawer-empty-text a:hover { color: var(--host-green-pale); border-color: var(--host-green-pale); }
+    .cart-drawer-empty-text a:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; border-radius: 2px; }
+    .cart-continue-btn {
+      display: block; margin: 20px auto 0; padding: 11px 24px;
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+      color: var(--text-1); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px;
+      cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease, border-color 0.2s ease;
+    }
+    .cart-continue-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.28); transform: translateY(-2px); }
+    .cart-continue-btn:active { transform: translateY(0); }
+    .cart-continue-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .cart-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--raised); border: 1px solid rgba(255,255,255,0.07); }
+    .cart-item-domain { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 600; color: var(--text-1); flex: 1; min-width: 0; overflow-wrap: anywhere; }
+    .cart-item-price { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-2); flex-shrink: 0; }
+    .cart-item-remove {
+      display: flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,45,120,0.1); color: rgba(255,150,185,0.85); border: none; cursor: pointer; font-size: 14px; line-height: 1;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .cart-item-remove:hover { background: rgba(255,45,120,0.2); color: #fff; }
+    .cart-item-remove:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .cart-drawer-foot { padding: 20px 24px 24px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .cart-drawer-total { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+    .cart-drawer-total-label { font-size: 13px; color: var(--text-2); }
+    .cart-drawer-total-value { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--host-green); }
+    .cart-checkout-btn {
+      display: flex; width: 100%; justify-content: center; align-items: center; gap: 8px;
+      padding: 13px 22px; font-size: 13.5px;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; border: none; cursor: pointer; border-radius: 10px;
+      background: var(--host-green); color: #06251b;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .cart-checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.5); }
+    .cart-checkout-btn:active:not(:disabled) { transform: translateY(0); }
+    .cart-checkout-btn:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .cart-checkout-btn:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); opacity: 1; cursor: default; }
+
+    /* ── Registrant / checkout panel (inside cart drawer) ── */
+    .cart-checkout-panel { flex: 1; overflow-y: auto; padding: 16px 24px; display: flex; flex-direction: column; }
+    .cart-checkout-panel[hidden] { display: none; }
+    .cart-back-btn {
+      display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      color: var(--text-2); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 18px;
+      transition: color 0.2s ease;
+    }
+    .cart-back-btn:hover { color: var(--host-green); }
+    .cart-back-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .registrant-form { display: flex; flex-direction: column; gap: 12px; }
+    .registrant-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-2); }
+    .registrant-form input {
+      font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-1);
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.1); border-radius: 9px;
+      padding: 10px 12px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .registrant-form input::placeholder { color: rgba(200,212,232,0.32); }
+    .registrant-form input:focus { border-color: var(--host-green); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+    .registrant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .registrant-total { display: flex; align-items: baseline; justify-content: space-between; margin: 6px 0 4px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.07); }
+    .registrant-error { font-size: 12.5px; color: rgba(255,150,185,0.92); background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25); border-radius: 9px; padding: 10px 12px; }
+    .registrant-error[hidden] { display: none; }
+    .registrant-submit-btn { margin-top: 4px; }
+    .registrant-submit-btn:disabled .btn-arrow { display: none; }
+
+    /* ── Included-free banner ── */
+    #host-included {
+      padding: 56px 28px;
+      background: var(--surface);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .host-included-inner {
+      max-width: 1000px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap;
+    }
+    .host-included-text h3 { font-size: 19px; color: var(--text-1); margin-bottom: 8px; }
+    .host-included-text p { font-size: 14px; color: var(--text-2); max-width: 480px; }
+    .host-tier-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .host-tier-chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+      padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--c, var(--host-green));
+      color: var(--c, var(--host-green));
+      background: color-mix(in srgb, var(--c, var(--host-green)) 12%, transparent);
+    }
+
+    /* ── Process (setup vs transfer-in) ── */
+    .host-process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    @media (max-width: 860px) { .host-process-grid { grid-template-columns: 1fr; } }
+    .host-process-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 32px 30px;
+    }
+    .host-process-card h3 { font-size: 18px; color: var(--text-1); margin-bottom: 4px; }
+    .host-process-card .host-process-tag { font-size: 12.5px; color: var(--host-green); font-family: 'JetBrains Mono', monospace; margin-bottom: 20px; display: block; }
+    .host-step { display: flex; gap: 16px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+    .host-step:first-of-type { border-top: none; }
+    .host-step-n {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 7px;
+      background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25);
+      color: var(--host-green); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .host-step p { font-size: 14px; color: var(--text-2); line-height: 1.65; }
+    .host-step p b { color: var(--text-1); }
+
+    /* ── Managed hosting ── */
+    .host-managed-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+    @media (max-width: 900px) { .host-managed-grid { grid-template-columns: 1fr; } }
+    .host-managed-list { display: flex; flex-direction: column; gap: 4px; }
+    .host-managed-item { display: flex; gap: 14px; padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+    .host-managed-item:first-child { border-top: none; }
+    .host-managed-item svg { flex-shrink: 0; color: var(--host-green); margin-top: 2px; }
+    .host-managed-item h4 { font-size: 15px; color: var(--text-1); margin-bottom: 4px; font-family: 'Inter', sans-serif; font-weight: 600; }
+    .host-managed-item p { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+    .host-managed-panel {
+      background: var(--surface); border: 1px solid rgba(52,211,153,0.16);
+      border-radius: 20px; padding: 36px; position: relative; overflow: hidden;
+    }
+    .host-managed-panel::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 30% 0%, rgba(52,211,153,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .host-managed-panel-inner { position: relative; z-index: 1; }
+    .host-managed-quote { font-family: 'JetBrains Mono', monospace; font-size: 17px; color: var(--text-1); line-height: 1.55; margin-bottom: 18px; }
+    .host-managed-quote span { color: var(--host-green); }
+
+    /* ── Concierge (V1 + V2 parallel) ── */
+    .host-path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 860px) { .host-path-grid { grid-template-columns: 1fr; } }
+    .host-path-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 34px 30px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .host-path-card .host-path-icon {
+      width: 44px; height: 44px; border-radius: 11px;
+      background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25);
+      display: flex; align-items: center; justify-content: center; color: var(--host-green);
+      margin-bottom: 6px;
+    }
+    .host-path-card h3 { font-size: 18px; color: var(--text-1); }
+    .host-path-card p { font-size: 14px; color: var(--text-2); line-height: 1.7; flex: 1; }
+    .host-path-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .host-path-actions .addon-card-cta { font-size: 13px; padding: 11px 24px; }
+
+    /* ── Pricing model ── */
+    .host-price-flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; max-width: 900px; margin: 0 auto 40px; }
+    @media (max-width: 700px) { .host-price-flow { grid-template-columns: 1fr; } .host-price-arrow { transform: rotate(90deg); margin: 0 auto; } }
+    .host-price-card {
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px;
+      padding: 30px 28px; text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .host-price-card.is-y2 { border-color: rgba(52,211,153,0.3); box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25), 0 0 0 1px rgba(52,211,153,0.12), 0 20px 50px -20px rgba(52,211,153,0.25); }
+    .host-price-card .k { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); margin-bottom: 14px; display: block; }
+    .host-price-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .host-price-row-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-2); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+    .host-price-row-label--brand { color: var(--host-green); }
+    .host-price-row-label--muted { color: rgba(200,212,232,0.32); }
+    .host-price-divider { height: 1px; background: rgba(255,255,255,0.05); margin-bottom: 14px; }
+    .host-price-card .v { font-size: clamp(1.8rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.03em; color: var(--text-1); white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .host-price-card .v.grad { color: var(--host-green); }
+    .host-price-card .v.is-muted { color: rgba(200,212,232,0.32); }
+    .host-price-card .d { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+    .host-price-arrow { display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.25); animation: host-arrow-pulse 3s ease-in-out infinite; }
+    @keyframes host-arrow-pulse {
+      0%, 100% { color: rgba(255,255,255,0.25); }
+      50%      { color: var(--host-green); }
+    }
+    @media (prefers-reduced-motion: reduce) { .host-price-arrow { animation: none; } }
+    .host-price-note { max-width: 640px; margin: 0 auto; text-align: center; font-size: 14.5px; color: var(--text-2); line-height: 1.75; }
+    .host-price-note b { color: var(--text-1); }
+
+    /* ── Compare table (ported from email-marketing.html's .compare-table) ── */
+    .compare-table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); background: var(--base); }
+    .compare-table { width: 100%; border-collapse: collapse; min-width: 640px; table-layout: fixed; }
+    .compare-table th:first-child, .compare-table td:first-child { width: 150px; }
+    .compare-table th:last-child, .compare-table td:last-child { width: 260px; }
+    .compare-table th, .compare-table td { padding: 14px 16px; text-align: left; }
+    @media (max-width: 560px) {
+      .compare-table { min-width: 540px; }
+      .compare-table th:first-child, .compare-table td:first-child { width: 110px; }
+      .compare-table th:last-child, .compare-table td:last-child { width: 160px; }
+      .compare-table th, .compare-table td { padding: 10px 12px; }
+    }
+    .compare-table thead th { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--host-green); background: rgba(255,255,255,0.03); }
+    .compare-table thead th:first-child { color: transparent; }
+    .compare-table tbody th { font-size: 13px; font-weight: 600; color: var(--text-1); }
+    .compare-table tbody td { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; color: var(--text-1); }
+    .compare-table tbody tr { border-top: 1px solid rgba(255,255,255,0.06); }
+    .compare-table tbody tr.is-vardweb td, .compare-table tbody tr.is-vardweb th { background: rgba(52,211,153,0.05); }
+    .compare-table .ck { color: #33D17A; }
+    .compare-table .xk { color: rgba(200,212,232,0.28); }
+
+    /* Row-label tooltip triggers — scoped to the label text itself, not the whole cell */
+    .compare-table tbody .tt-label.tt-trigger {
+      cursor: help;
+      border-bottom: 1px dashed rgba(255,255,255,0.3);
+      padding-bottom: 1px;
+    }
+    .compare-table tbody .tt-label.tt-trigger:focus-visible {
+      outline: 2px solid #60A5FA; outline-offset: 2px; border-radius: 3px;
+    }
+    @media (hover: hover) {
+      .compare-table tbody .tt-label.tt-trigger:hover { border-bottom-color: rgba(96,165,250,0.55); }
+    }
+
+    /* Shared floating tooltip (position: fixed, escapes .compare-table-wrap's overflow-x:auto clip) */
+    .tt-box {
+      position: fixed; z-index: 500; max-width: 35ch;
+      background: #0a0a0a;
+      border: 1px solid #3a3a3a; border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
+      color: #fff;
+      box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
+      opacity: 0; transform: translateY(4px) scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
+
+    /* ── Add-ons (matched to email-marketing.html's .addon-card sizing/formatting) ── */
+    @property --border-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    #host-addons .section-inner { max-width: 1000px; }
+    .addon-card-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    .addon-card {
+      --addon-c1: #A7F3D0; --addon-c2: var(--host-green); --addon-c3: var(--host-green-deep);
+      border-radius: 18px; padding: 2.5px;
+      background: conic-gradient(from var(--border-angle), var(--addon-c1), var(--addon-c2), var(--addon-c3), var(--addon-c1));
+      animation: addon-border-spin 7s linear infinite;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes addon-border-spin { to { --border-angle: 360deg; } }
+    @media (prefers-reduced-motion: reduce) { .addon-card { animation: none; } }
+    @media (hover: hover) {
+      .addon-card:hover { transform: translateY(-4px); }
+    }
+    .addon-card-content {
+      position: relative; z-index: 1;
+      background: linear-gradient(180deg, #060606, #000000);
+      border-radius: 15.5px; height: 100%; overflow: hidden;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 16px;
+      padding: 28px 32px;
+      box-shadow: 0 16px 34px -14px rgba(0,0,0,0.55), 0 0 22px color-mix(in srgb, var(--addon-c2) 12%, transparent);
+    }
+    .addon-card-icon {
+      position: absolute;
+      right: var(--icon-right, 6%); top: var(--icon-top, 50%);
+      transform: var(--icon-transform, translateY(-50%)) rotate(var(--icon-rotate, 0deg));
+      z-index: -1; pointer-events: none;
+    }
+    .addon-card-icon img { width: var(--icon-w, 140px); height: var(--icon-h, 140px); object-fit: contain; display: block; }
+    @media (max-width: 374px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile, var(--icon-right, 6%));
+        top: var(--icon-top-mobile, var(--icon-top, 50%));
+        transform: var(--icon-transform-mobile, var(--icon-transform, translateY(-50%))) rotate(var(--icon-rotate-mobile, var(--icon-rotate, 0deg)));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile, var(--icon-w, 140px));
+        height: var(--icon-h-mobile, var(--icon-h, 140px));
+      }
+    }
+    @media (min-width: 375px) and (max-width: 424px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile-375, var(--icon-right-mobile, var(--icon-right, 6%)));
+        top: var(--icon-top-mobile-375, var(--icon-top-mobile, var(--icon-top, 50%)));
+        transform: var(--icon-transform-mobile-375, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-mobile-375, var(--icon-rotate-mobile, var(--icon-rotate, 0deg))));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile-375, var(--icon-w-mobile, var(--icon-w, 140px)));
+        height: var(--icon-h-mobile-375, var(--icon-h-mobile, var(--icon-h, 140px)));
+      }
+    }
+    @media (min-width: 425px) and (max-width: 560px) {
+      .addon-card-icon {
+        right: var(--icon-right-mobile-425, var(--icon-right-mobile, var(--icon-right, 6%)));
+        top: var(--icon-top-mobile-425, var(--icon-top-mobile, var(--icon-top, 50%)));
+        transform: var(--icon-transform-mobile-425, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-mobile-425, var(--icon-rotate-mobile, var(--icon-rotate, 0deg))));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-mobile-425, var(--icon-w-mobile, var(--icon-w, 140px)));
+        height: var(--icon-h-mobile-425, var(--icon-h-mobile, var(--icon-h, 140px)));
+      }
+    }
+    .addon-card-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 8px; }
+    .addon-card-desc { font-family: 'Inter', sans-serif; font-size: 14.5px; color: var(--text-2); line-height: 1.7; }
+    .addon-card-cta {
+      flex-shrink: 0; margin-top: auto;
+      border: none; color: #000;
+      background: linear-gradient(120deg, var(--host-green) 0%, var(--host-green-deep) 100%);
+      box-shadow: 0 8px 20px -6px color-mix(in srgb, var(--host-green) 50%, transparent), 0 10px 28px -8px color-mix(in srgb, var(--host-green-deep) 30%, transparent);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+    }
+    .addon-card-cta:hover {
+      box-shadow: 0 10px 28px -6px color-mix(in srgb, var(--host-green) 55%, transparent), 0 12px 34px -8px color-mix(in srgb, var(--host-green-deep) 45%, transparent);
+      transform: translateY(-2px) translateZ(0);
+    }
+    @media (max-width: 560px) {
+      .addon-card-cta { align-self: stretch; justify-content: center; }
+    }
+
+    /* ── FAQ (ported from email-marketing.html's .em-faq-*) ── */
+    .host-faq-inner { max-width: 1000px; margin: 0 auto; }
+    .host-faq-list { display: flex; flex-direction: column; gap: 10px; }
+    .host-faq-item {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .host-faq-item:hover { border-color: rgba(52,211,153,0.22); }
+    .host-faq-item.open { border-color: rgba(52,211,153,0.3); box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 20px rgba(52,211,153,0.04); }
+    .host-faq-trigger {
+      width: 100%; display: flex; align-items: center; gap: 16px;
+      background: none; border: none; cursor: pointer; text-align: left;
+      padding: 22px 26px; font-family: 'Inter', sans-serif;
+      transition: background 0.2s ease;
+    }
+    .host-faq-trigger:hover { background: rgba(52,211,153,0.03); }
+    .host-faq-item.open .host-faq-trigger { background: rgba(52,211,153,0.05); }
+    .host-faq-trigger-icon {
+      flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px;
+      background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.14);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .host-faq-item.open .host-faq-trigger-icon { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); }
+    .host-faq-question { flex: 1; font-size: 15px; font-weight: 600; color: var(--text-1); font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; }
+    .host-faq-toggle {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.14);
+      flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .host-faq-item.open .host-faq-toggle { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); }
+    .host-faq-plus, .host-faq-minus { position: absolute; transition: opacity 0.2s ease, transform 0.2s ease; }
+    .host-faq-plus { opacity: 1; transform: rotate(0deg); }
+    .host-faq-minus { opacity: 0; transform: rotate(-90deg); }
+    .host-faq-item.open .host-faq-plus { opacity: 0; transform: rotate(90deg); }
+    .host-faq-item.open .host-faq-minus { opacity: 1; transform: rotate(0deg); }
+    .host-faq-content { max-height: 0; overflow: hidden; transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1); }
+    .host-faq-content-inner { padding: 0 26px 22px 44px; font-size: 14.5px; color: var(--text-2); line-height: 1.85; position: relative; }
+    .host-faq-content-inner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 26px;
+      width: 2px; height: calc(100% - 22px);
+      background: linear-gradient(to bottom, var(--host-green), transparent);
+      opacity: 0;
+      border-radius: 2px;
+      transition: opacity 0.3s ease;
+    }
+    .host-faq-item.open .host-faq-content-inner::before { opacity: 0.38; }
+    .host-faq-trigger:focus-visible { outline: 2px solid rgba(52,211,153,0.5); outline-offset: -2px; }
+
+    @media (max-width: 600px) {
+      .host-faq-trigger { padding: 18px 20px; gap: 12px; }
+      .host-faq-content-inner { padding: 0 20px 20px 20px; }
+      .host-faq-content-inner::before { display: none; }
+    }
+
+    /* ── Small-mobile button safety net (425/375/320px) ── */
+    @media (max-width: 480px) {
+      .btn { white-space: nowrap; font-size: 12px; padding: 9px 15px; justify-content: center; }
+      .host-path-actions, .host-cta-actions { flex-direction: column; align-items: stretch; }
+      .host-cta-actions .btn, .host-cta-actions .addon-card-cta { padding: 13px 20px; }
+    }
+
+    /* ── CTA (ported from email-marketing.html's .em-cta, expanded to match
+       smm.html's .smm-cta-card footprint/heading treatment) ── */
+    .host-cta { padding: 90px 28px 110px; }
+    .host-cta-card {
+      max-width: 1200px; margin: 0 auto; position: relative; overflow: hidden;
+      border-radius: 48px; min-height: 560px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px; text-align: center;
+      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      border: 1px solid rgba(52,211,153,0.14);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(52,211,153,0.08);
+    }
+    .host-cta-content {
+      position: relative; z-index: 1;
+      max-width: 1000px; width: 100%; margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .host-cta-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05;
+      font-size: clamp(30px, 5.2vw, 64px);
+      color: var(--text-1); margin: 18px 0 16px;
+    }
+    .host-cta-heading .muted { color: rgba(238,240,248,0.55); display: block; }
+    .host-cta-break { display: none; }
+    @media (min-width: 641px) { .host-cta-break { display: block; } }
+    @media (max-width: 640px) {
+      .host-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
+    }
+    @media (max-width: 340px) {
+      .host-cta-heading { font-size: 26px; }
+    }
+    .host-cta-sub { font-size: 15px; color: var(--text-2); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
+    .host-cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .host-cta-actions .btn {
+      padding: 15px 34px; font-size: 13.5px;
+      transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased;
+    }
+    .host-cta-actions .btn:hover { transform: translateY(-2px) translateZ(0); }
+    .host-cta-actions .btn:focus-visible { outline: 2px solid rgba(52,211,153,0.6); outline-offset: 2px; }
+    .host-cta-actions .addon-card-cta { padding: 17px 36px; }
+
+    /* ── Footer (shared site chrome) ── */
+    .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 52px; }
+    .footer-brand-tagline { font-size: 14px; color: rgba(200,212,232,0.45); line-height: 1.65; margin: 16px 0 24px; max-width: 260px; }
+    .footer-social-row { display: flex; gap: 10px; }
+    .social-btn { width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; color: rgba(200,212,232,0.48); text-decoration: none; transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease; }
+    .social-btn:hover { border-color: rgba(0,229,255,0.4); color: var(--cyan); background: rgba(0,229,255,0.06); }
+    .social-btn:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 2px; }
+    .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+    .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
+    .footer-link:hover { color: var(--cyan); }
+    .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
+    .footer-link.active { color: var(--host-green); }
+    .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
+    .trust-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      width: 130px;
+      padding: 7px 16px 7px 7px;
+      white-space: nowrap;
+      background: var(--text-1);
+      border: 1px solid rgba(20,16,10,0.22);
+      border-radius: 13px;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(20,16,10,0.2), 0 10px 24px -12px rgba(20,16,10,0.55);
+      transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s cubic-bezier(0.22,1,0.36,1);
+      transform: translateZ(0);
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform;
+      -webkit-font-smoothing: antialiased;
+    }
+    .trust-badge:hover { transform: translateY(-3px) translateZ(0); box-shadow: 0 2px 4px rgba(20,16,10,0.22), 0 16px 32px -12px rgba(20,16,10,0.55); }
+    .trust-badge:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    .trust-badge:active { transform: translateY(-1px) translateZ(0); }
+    .trust-badge-icon { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trust-badge-text { display: flex; flex-direction: column; line-height: 1.28; }
+    .trust-badge-text span:first-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    .trust-badge-text span:last-child { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--base); letter-spacing: -0.01em; }
+    @media (max-width: 768px) { .trust-badge-row { justify-content: center; } }
+    @media (max-width: 560px) { .trust-badge-row { gap: 10px; } .trust-badge { padding: 6px 13px 6px 6px; } }
+    .footer-divider { height: 1px; background: rgba(200,212,232,0.06); margin-bottom: 28px; }
+    .footer-copy { color: rgba(200,212,232,0.28); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-bottom-bar { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 16px; }
+    .footer-credit { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 9999px; cursor: default; background: linear-gradient(145deg, rgba(200,212,232,0.035) 0%, rgba(200,212,232,0.01) 100%); border: 1px solid rgba(200,212,232,0.08); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(200,212,232,0.1), inset 0 -1px 2px rgba(7,9,16,0.8); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    @keyframes footer-heartbeat {
+      0%,100% { transform: scale(1);   filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); }
+      15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); }
+      30%     { transform: scale(1); }
+    }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    @media (prefers-reduced-motion: reduce) { .animate-footer-heartbeat { animation: none; } }
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } .footer-bottom-bar { flex-direction: column; align-items: flex-start; } }
+
+    /* ── Mobile Nav (shared site chrome) ── */
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
+
+    .nav-account-btn {
+      background: none; border: none; padding: 0; gap: 8px;
+      color: rgba(238,240,248,0.85); font-weight: 600;
+      transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
+    .nav-account-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 4px; border-radius: 4px; }
+
+    .nav-cart-btn {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      background: none; border: none; padding: 4px; margin: 0; cursor: pointer; color: #fff;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+    }
+    .nav-cart-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nav-cart-btn:hover { transform: translateY(-2px); opacity: 0.85; }
+    .nav-cart-btn:active { transform: translateY(0); }
+    .nav-cart-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; border-radius: 6px; }
+    .cart-count-badge {
+      position: absolute; top: -3px; right: -4px;
+      min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+      background: var(--host-green); color: #06251b;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 2px #070910;
+    }
+    .cart-count-badge[hidden] { display: none; }
+
+    @media (max-width: 1024px) {
+      .nav-inner { position: relative; }
+      .nav-links { display: none; }
+      .nav-right .btn { display: none; }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
+      #nav-cart-btn { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
+      #nav-cart-btn:hover, #nav-cart-btn:active { transform: translateY(-50%); opacity: 1; }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--host-green); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(0,229,255,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(0,229,255,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--host-green); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(0,229,255,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(0,229,255,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--cyan); margin: 4px 16px 0; padding: 13px 24px; background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); border-radius: 10px; }
+      .mob-cta-primary:hover { background: rgba(0,229,255,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+      section { padding: 64px 22px; }
+      .host-hero-frame { padding: 84px 12px 48px; }
+      #host-hero { padding: 46px 20px; border-radius: 20px; }
+      .host-hero-sub { white-space: normal; max-width: 460px; }
+      .host-search-bar { border-radius: 16px; }
+      .host-search-input-wrap { padding: 0 12px; }
+      .host-search-input-wrap svg { display: none; }
+      .host-tld-badge { display: none; }
+      .host-search-btn { padding: 0 16px; margin: 0; border-radius: 10px; }
+      .host-search-btn-label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" aria-label="VardWeb Home">
+        <div class="logo-nav-wrap">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </div>
+      </a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
+            Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" id="dd-home-menu" role="menu">
+            <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
+            <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
+            <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
+            <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+            <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+            <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+            <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
+          </div>
+        </div>
+        <a href="faq.html"      class="nav-link">FAQ</a>
+        <a href="blog.html"     class="nav-link">Blog</a>
+        <a href="our-work.html" class="nav-link">Our Work</a>
+        <a href="about.html"    class="nav-link">About</a>
+        <div class="nav-dropdown">
+          <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+            Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" id="dd-services-menu" role="menu">
+            <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
+            <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
+            <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+            <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+            <a href="hosting-services.html" class="dropdown-item active" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
+            <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
+            <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
+          </div>
+        </div>
+        <a href="contact.html"  class="nav-link">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
+          <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
+          Account
+        </a>
+        <button type="button" class="nav-cart-btn" id="nav-cart-btn" aria-haspopup="dialog" aria-controls="cart-drawer" aria-label="Open cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span id="cart-count-badge" class="cart-count-badge" hidden>0</span>
+        </button>
+        <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="nav-mobile-menu">
+      <div class="mob-section-label">Navigate</div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+        Home
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-home-panel"><div>
+      <a href="index.html"          class="mob-link mob-sub">Landing</a>
+      <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
+      <a href="index.html#services" class="mob-link mob-sub">Services</a>
+      <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+      <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+      <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+        Company
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-company-panel"><div>
+      <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+      <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+      <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+      <a href="about.html"    class="mob-link mob-sub">About Us</a>
+      <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
+        Services
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-services-panel"><div>
+      <a href="services.html" class="mob-link mob-sub">All Services</a>
+      <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
+      <a href="ecommerce.html"  class="mob-link mob-sub">E-Commerce</a>
+      <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+      <a href="contact.html"  class="mob-link mob-sub">App Development</a>
+      <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
+      <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
+      <a href="hosting-services.html" class="mob-link mob-sub active">Domain &amp; Hosting</a>
+      <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
+      <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
+      <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+        Legal
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+      <a href="privacy.html"        class="mob-link mob-sub">Privacy Policy</a>
+      <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+      <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
+      <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+      <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+      </div></div>
+      <div class="mob-divider"></div>
+      <a href="/crm/login.html" class="mob-link mob-cta-ghost">Account →</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <div class="host-hero-frame">
+    <section id="host-hero">
+      <div id="host-hero-glow" aria-hidden="true">
+        <div style="top:-160px;left:50%;transform:translateX(-50%);width:900px;height:620px;background:radial-gradient(ellipse,rgba(52,211,153,0.16) 0%,transparent 68%);"></div>
+        <div style="bottom:-140px;left:8%;width:500px;height:420px;background:radial-gradient(ellipse,rgba(0,229,255,0.07) 0%,transparent 70%);"></div>
+        <div style="top:10%;right:2%;width:380px;height:340px;background:radial-gradient(ellipse,rgba(255,215,0,0.05) 0%,transparent 70%);"></div>
+      </div>
+
+      <div class="host-hero-content" style="max-width:900px;">
+        <form id="domain-search-form" class="host-search-bar" role="search" aria-label="Domain search">
+          <label for="domain-input" class="sr-only">Domain name</label>
+          <div class="host-search-input-wrap">
+            <div class="host-search-input-row">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="domain-input" name="domain" placeholder="Type the domain you want" autocomplete="off" />
+            </div>
+          </div>
+          <div class="host-tld-badge" id="tld-badge">
+            <span id="tld-badge-text">.com</span>
+            <button type="button" class="host-tld-badge-clear" id="tld-badge-clear" aria-label="Reset to .com">×</button>
+          </div>
+          <button type="submit" class="btn host-search-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="host-search-btn-label">Search Domains</span>
+          </button>
+        </form>
+
+        <div class="host-tld-row" role="group" aria-label="Choose a domain extension">
+          <button type="button" class="tld-pill" data-tld=".ca">.ca</button>
+          <button type="button" class="tld-pill active" data-tld=".com">.com</button>
+          <button type="button" class="tld-pill" data-tld=".co">.co</button>
+          <button type="button" class="tld-pill" data-tld=".net">.net</button>
+          <button type="button" class="tld-pill" data-tld=".org">.org</button>
+          <button type="button" class="tld-pill" data-tld=".shop">.shop</button>
+          <button type="button" class="tld-pill" data-tld=".ai">.ai</button>
+          <button type="button" class="tld-pill tld-extra" data-tld=".io" hidden>.io</button>
+          <button type="button" class="tld-pill tld-extra" data-tld=".app" hidden>.app</button>
+          <button type="button" class="tld-pill tld-extra" data-tld=".dev" hidden>.dev</button>
+          <button type="button" class="tld-pill tld-extra" data-tld=".xyz" hidden>.xyz</button>
+          <button type="button" class="tld-pill" id="tld-more-btn" aria-expanded="false">+ View More</button>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div id="cart-backdrop" tabindex="-1"></div>
+    <div id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title">
+      <div class="cart-drawer-head">
+        <h3 id="cart-drawer-title">Your cart is empty</h3>
+        <button type="button" class="cart-drawer-close" id="cart-drawer-close" aria-label="Close cart">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="cart-drawer-items" id="cart-drawer-items">
+        <p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out faster.</p>
+        <button type="button" class="cart-continue-btn" id="cart-continue-btn">Continue Shopping</button>
+      </div>
+
+      <div class="cart-checkout-panel" id="cart-checkout-panel" hidden>
+        <button type="button" class="cart-back-btn" id="cart-back-btn">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to cart
+        </button>
+        <form id="registrant-form" class="registrant-form">
+          <label>Full name <input type="text" name="name" autocomplete="name" required /></label>
+          <label>Email <input type="email" name="email" autocomplete="email" required /></label>
+          <label>Phone <input type="tel" name="phone" autocomplete="tel" required /></label>
+          <label>Address <input type="text" name="address" autocomplete="street-address" required /></label>
+          <div class="registrant-row">
+            <label>City <input type="text" name="city" autocomplete="address-level2" required /></label>
+            <label>State / Province <input type="text" name="state" autocomplete="address-level1" required /></label>
+          </div>
+          <div class="registrant-row">
+            <label>Postal code <input type="text" name="postal_code" autocomplete="postal-code" required /></label>
+            <label>Country <input type="text" name="country" autocomplete="country" placeholder="e.g. CA, US" required /></label>
+          </div>
+          <p class="registrant-error" id="registrant-error" hidden></p>
+          <div class="registrant-total">
+            <span class="cart-drawer-total-label">Total</span>
+            <span class="cart-drawer-total-value" id="registrant-total">$0.00</span>
+          </div>
+          <button type="submit" class="cart-checkout-btn registrant-submit-btn" id="registrant-submit-btn">Continue to payment →</button>
+        </form>
+      </div>
+
+      <div class="cart-drawer-foot" id="cart-drawer-foot">
+        <div class="cart-drawer-total">
+          <span class="cart-drawer-total-label">Total</span>
+          <span class="cart-drawer-total-value" id="cart-drawer-total">$0.00</span>
+        </div>
+        <button type="button" class="cart-checkout-btn" id="cart-checkout-btn" disabled>Checkout →</button>
+      </div>
+    </div>
+
+    <!-- ============ VERDICT ============ -->
+    <section id="domain-verdict">
+      <div class="section-inner" style="max-width:1020px;">
+        <h2 id="dv-heading" class="dv-heading reveal-fade">Looking up your domain…</h2>
+        <div id="dv-loading" class="dv-loading"><div class="host-result-skeleton"></div></div>
+        <div id="dv-boxes" class="dv-grid" hidden></div>
+      </div>
+    </section>
+
+    <!-- ============ EXPLORE ENDINGS ============ -->
+    <section id="domain-explore" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="section-inner" style="max-width:1020px;">
+        <div class="dx-head">
+          <p id="dx-found-text" class="dx-found"></p>
+          <h3 class="dx-title">Explore <span id="dx-base-label"></span> Endings</h3>
+        </div>
+        <div id="dx-grid" class="dx-grid"></div>
+      </div>
+    </section>
+
+    <!-- ============ EVERYTHING INCLUDED ============ -->
+    <section id="domain-everything">
+      <div class="section-inner" style="max-width:1020px;">
+        <div class="de-strip reveal-fade">
+          <p class="de-title">Everything You Need, Included Free</p>
+          <div class="de-chips">
+            <span class="de-chip">WHOIS Privacy</span>
+            <span class="de-chip">Cloudflare DNS</span>
+            <span class="de-chip">DMARC Setup</span>
+            <span class="de-chip">Registrar Lock</span>
+            <span class="de-chip">DDoS Protection</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FULL ENDINGS GRID ============ -->
+    <section id="domain-grid-section" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="section-inner" style="max-width:820px;">
+        <div class="section-head reveal-fade" style="margin-bottom:32px;">
+          <p class="sec-tag">// All Extensions</p>
+          <h2>Every ending we could find for <span id="grid-base-label"></span></h2>
+        </div>
+        <div id="domain-grid-loading" class="host-result-skeleton"></div>
+        <div id="domain-grid-results" class="host-search-results" style="margin-top:0;" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============ TRUSTED BY ============ -->
+    <section id="domain-trusted">
+      <div class="section-inner" style="max-width:1020px;">
+        <div class="section-head reveal-fade">
+          <p class="sec-tag">// Trusted By VardWeb Clients</p>
+          <h2>Real businesses, real domains</h2>
+          <p>Don't just take our word for it — here's what clients say after building on their own domain with us.</p>
+        </div>
+        <div class="dt-grid">
+          <div class="dt-card reveal-fade">
+            <p class="dt-quote">"Our eBay store still drives most of our volume, but bigger buyers wanted a real website before wiring a deposit for a bulk order. Having one now closes that conversation in a single email."</p>
+            <div class="dt-who">
+              <div class="dt-avatar" style="background:linear-gradient(135deg,#00E5FF,#005580);color:#070910;">MR</div>
+              <div><div class="dt-name">Marcus R.</div><div class="dt-role">eBay Store Owner</div></div>
+            </div>
+          </div>
+          <div class="dt-card reveal-fade" style="transition-delay:0.05s">
+            <p class="dt-quote">"Amazon is still where most people find us first, but our own site is where they check we're a real company before reordering wholesale. It's paid for itself in fewer 'is this legit' emails alone."</p>
+            <div class="dt-who">
+              <div class="dt-avatar" style="background:linear-gradient(135deg,#FF2D78,#8c0f3a);color:#fff;">PS</div>
+              <div><div class="dt-name">Priya S.</div><div class="dt-role">Amazon Marketplace Seller</div></div>
+            </div>
+          </div>
+          <div class="dt-card reveal-fade" style="transition-delay:0.1s">
+            <p class="dt-quote">"Most of my leads still start with a LinkedIn message, but people look at the website before they'll get on a call. Having something that actually looks like a consultancy changed how those calls go."</p>
+            <div class="dt-who">
+              <div class="dt-avatar" style="background:linear-gradient(135deg,#FFD700,#8a6000);color:#070910;">DW</div>
+              <div><div class="dt-name">Daniel W.</div><div class="dt-role">LinkedIn Consultant</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="host-faq" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="host-faq-inner">
+        <p class="sec-tag reveal-fade">// frequently asked</p>
+        <h2 class="reveal-fade" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px; transition-delay:0.05s">
+          Domain Questions, <span class="host-heading-grad">Answered</span>
+        </h2>
+        <div class="host-faq-list">
+          <div class="host-faq-item reveal-fade" style="transition-delay:0s">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <span class="host-faq-question">Will I actually own my domain?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Yes, always. The registrant contact is set to your name or business at the moment of registration. VardWeb executes the purchase and handles billing, but we are never the legal owner of your domain, even briefly.</div></div>
+          </div>
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.05s">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></div>
+              <span class="host-faq-question">What does the 10% renewal fee actually cover?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">It's the only margin we take on a domain, and only from year two onward. It covers the ongoing management, renewal handling, and support that comes with keeping your domain and/or DNS running correctly. Well under what most registrars mark up on renewal (see the comparison above).</div></div>
+          </div>
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.1s">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+              <span class="host-faq-question">Can I transfer a domain I already own?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Yes — as long as it's at least 60 days past its last registration or transfer (an ICANN-wide rule, not ours). Unlock it at your current registrar, grab the auth code, and send it our way. See the transfer-in steps above for the full process.</div></div>
+          </div>
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.15s">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg></div>
+              <span class="host-faq-question">What actually protects my domain once it's live?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Every domain we manage runs on Cloudflare's network, with WHOIS privacy, DNSSEC, SSL, and DDoS protection bundled in by default. Never sold back to you as an add-on. See the comparison table above for how that holds up on price against other registrars.</div></div>
+          </div>
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.2s">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg></div>
+              <span class="host-faq-question">What if I already have hosting elsewhere?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">No problem. We can work with what you have, or make the case for moving to our network if it's a better fit. Either way, nothing changes without your say-so.</div></div>
+          </div>
+          <div class="host-faq-item reveal-fade" style="transition-delay:0.25s">
+            <button class="host-faq-trigger" aria-expanded="false">
+              <div class="host-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></div>
+              <span class="host-faq-question">How does the premium domain sourcing fee work?</span>
+              <div class="host-faq-toggle" aria-hidden="true">
+                <svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </div>
+            </button>
+            <div class="host-faq-content"><div class="host-faq-content-inner">If the domain you want is short, brandable, or already claimed by someone else, we'll track down the owner and handle the acquisition on your behalf. No upfront cost. We only charge a 15% success fee if we actually land it for you, on top of whatever the acquisition itself costs. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See more general FAQs →</a></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div>
+          <div class="logo-nav-wrap" style="display:inline-flex;">
+            <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+          </div>
+          <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
+          <div class="footer-social-row">
+            <a href="#" class="social-btn" aria-label="Twitter / X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="#" class="social-btn" aria-label="GitHub"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg></a>
+            <a href="#" class="social-btn" aria-label="Discord"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.01.082.027.16.061.23a19.9 19.9 0 0 0 5.993 3.03.077.077 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg></a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-head">Home</p>
+          <a href="index.html#hero"     class="footer-link">Landing</a>
+          <a href="index.html#why-us"   class="footer-link">Why Us?</a>
+          <a href="index.html#services" class="footer-link">Services</a>
+          <a href="index.html#advanced" class="footer-link">Advanced</a>
+          <a href="index.html#investment" class="footer-link">Investment</a>
+          <a href="index.html#results"  class="footer-link">Results</a>
+          <a href="index.html#roadmap"  class="footer-link">Roadmap</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Company</p>
+          <a href="faq.html"      class="footer-link">FAQ</a>
+          <a href="blog.html"     class="footer-link">Blog</a>
+          <a href="our-work.html" class="footer-link">Our Work</a>
+          <a href="about.html"    class="footer-link">About Us</a>
+          <a href="contact.html"  class="footer-link">Contact</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Services</p>
+          <a href="services.html" class="footer-link">All Services</a>
+          <a href="web-design.html" class="footer-link">Web Design</a>
+          <a href="ecommerce.html" class="footer-link">E-Commerce</a>
+          <a href="contact.html" class="footer-link">Landing Pages</a>
+          <a href="contact.html" class="footer-link">App Development</a>
+          <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="footer-link">Email Marketing</a>
+          <a href="hosting-services.html" class="footer-link active">Domain &amp; Hosting</a>
+          <a href="content-creation.html" class="footer-link">Content Creation &amp; CM</a>
+          <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
+          <a href="contact.html" class="footer-link">Custom Request</a>
+        </div>
+        <div>
+          <p class="footer-col-head">Legal</p>
+          <a href="privacy.html"         class="footer-link">Privacy Policy</a>
+          <a href="terms.html"           class="footer-link">Terms of Service</a>
+          <a href="cookie-policy.html"   class="footer-link">Cookie Policy</a>
+          <a href="accessibility.html"   class="footer-link">Accessibility</a>
+          <a href="wcag-compliance.html" class="footer-link">WCAG Compliance</a>
+        </div>
+      </div>
+    <div class="trust-badge-row reveal-fade">
+      <a href="about.html" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+        </span>
+        <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        </span>
+        <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
+      </a>
+      <a href="privacy.html#gdpr-pipeda" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--cyan);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#14100a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.6 8 11 4.6-2.4 8-6 8-11V5z"/><path d="m9 12 2 2 4-4"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>PIPEDA</span><span>Compliant</span></span>
+      </a>
+      <a href="accessibility.html" class="trust-badge">
+        <span class="trust-badge-icon" style="background:var(--gold);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#14100a" aria-hidden="true"><circle cx="12" cy="4.2" r="1.9"/><path d="M12 8c-3.6 0-7 .7-7 2.1 0 .9.9 1.5 3.6 1.9l1 .2-1.8 8.6c-.1.6.3 1.2 1 1.3.6.1 1.2-.3 1.3-1l1.4-6.6h1l1.4 6.6c.1.6.7 1 1.3 1 .6-.1 1-.7 1-1.3l-1.8-8.6 1-.2c2.7-.4 3.6-1 3.6-1.9C19 8.7 15.6 8 12 8z"/></svg>
+        </span>
+        <span class="trust-badge-text"><span>WCAG 2.1</span><span>Compliant</span></span>
+      </a>
+    </div>
+
+      <div class="footer-divider"></div>
+      <div class="footer-bottom-bar">
+        <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+        <div class="footer-credit">
+          <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
+          <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
+          <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">by</span>
+          <span style="color:#C8D4E8;font-weight:900;font-size:12px;margin-left:2px;font-family:'Plus Jakarta Sans',sans-serif;">VardWeb</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) entry.target.classList.add('is-visible');
+        });
+      }, { threshold: 0.2 });
+      document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
+    })();
+  </script>
+
+  <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Desktop dropdown a11y (focus/hover)
+      document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+        var trigger = dd.querySelector('.nav-dropdown-trigger');
+        if (!trigger) return;
+        dd.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+        dd.addEventListener('focusout', function (e) {
+          if (!dd.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false');
+        });
+        dd.addEventListener('mouseleave', function () {
+          if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // TLD single-select pills
+      var tldPills = Array.prototype.slice.call(document.querySelectorAll('.tld-pill[data-tld]'));
+      var tldBadge = document.getElementById('tld-badge');
+      var tldBadgeText = document.getElementById('tld-badge-text');
+      function setTld(tld) {
+        tldPills.forEach(function (p) { p.classList.toggle('active', p.dataset.tld === tld); });
+        if (tldBadgeText) tldBadgeText.textContent = tld;
+        if (tldBadge) tldBadge.hidden = false;
+      }
+      function clearTld() {
+        tldPills.forEach(function (p) { p.classList.remove('active'); });
+        if (tldBadgeText) tldBadgeText.textContent = '';
+        if (tldBadge) tldBadge.hidden = true;
+      }
+      tldPills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+          if (pill.classList.contains('active')) { clearTld(); }
+          else { setTld(pill.dataset.tld); }
+        });
+      });
+      var tldBadgeClear = document.getElementById('tld-badge-clear');
+      if (tldBadgeClear) {
+        tldBadgeClear.addEventListener('click', clearTld);
+      }
+
+      // "+ View More" TLD reveal
+      var moreBtn = document.getElementById('tld-more-btn');
+      var extraPills = document.querySelectorAll('.tld-extra');
+      if (moreBtn) {
+        moreBtn.addEventListener('click', function () {
+          var expanded = moreBtn.getAttribute('aria-expanded') === 'true';
+          extraPills.forEach(function (p) { p.hidden = expanded; });
+          moreBtn.setAttribute('aria-expanded', String(!expanded));
+          moreBtn.textContent = expanded ? '+ View More' : '− View Less';
+        });
+      }
+
+      // Domain search — V2 self-serve: live Openprovider availability check + cart.
+      // V1 concierge path (contact.html redirect) stays reachable via the
+      // "Talk to a human instead" link added next to the results panel.
+      var domainInput = document.getElementById('domain-input');
+      var searchInputWrap = document.querySelector('.host-search-input-wrap');
+      if (domainInput && searchInputWrap) {
+        domainInput.addEventListener('focus', function () { searchInputWrap.classList.add('is-focused'); });
+        domainInput.addEventListener('blur', function () { searchInputWrap.classList.remove('is-focused'); });
+      }
+
+      function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+      function formatPrice(price) {
+        return typeof price === 'number' ? '$' + price.toFixed(2) + '/yr' : '—';
+      }
+
+      // ── Cart (localStorage, no login required) ──────────────────────
+      var CART_KEY = 'vardweb_domain_cart';
+      function loadCart() {
+        try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+        catch (e) { return []; }
+      }
+      function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+        renderCart();
+      }
+      function cartHasItem(domain, tld) {
+        return loadCart().some(function (i) { return i.domain === domain && i.tld === tld; });
+      }
+      function addToCart(item) {
+        var cart = loadCart();
+        if (cart.some(function (i) { return i.domain === item.domain && i.tld === item.tld; })) return;
+        cart.push(item);
+        saveCart(cart);
+      }
+      function removeFromCart(index) {
+        var cart = loadCart();
+        cart.splice(index, 1);
+        saveCart(cart);
+      }
+
+      var cartHeaderBtn = document.getElementById('nav-cart-btn');
+      var cartCountBadge = document.getElementById('cart-count-badge');
+      var cartDrawer = document.getElementById('cart-drawer');
+      var cartBackdrop = document.getElementById('cart-backdrop');
+      var cartDrawerTitle = document.getElementById('cart-drawer-title');
+      var cartItemsEl = document.getElementById('cart-drawer-items');
+      var cartDrawerFoot = document.getElementById('cart-drawer-foot');
+      var cartTotalEl = document.getElementById('cart-drawer-total');
+      var cartCheckoutBtn = document.getElementById('cart-checkout-btn');
+
+      function renderCart() {
+        var cart = loadCart();
+        if (cartCountBadge) {
+          cartCountBadge.textContent = String(cart.length);
+          cartCountBadge.hidden = cart.length === 0;
+        }
+
+        if (!cartItemsEl) return;
+        if (cart.length === 0) {
+          if (cartDrawerTitle) cartDrawerTitle.textContent = 'Your cart is empty';
+          cartItemsEl.innerHTML =
+            '<p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out faster.</p>' +
+            '<button type="button" class="cart-continue-btn" id="cart-continue-btn">Continue Shopping</button>';
+          var continueBtn = document.getElementById('cart-continue-btn');
+          if (continueBtn) continueBtn.addEventListener('click', closeCart);
+          if (cartDrawerFoot) cartDrawerFoot.hidden = true;
+        } else {
+          if (cartDrawerTitle) cartDrawerTitle.textContent = 'Your Cart';
+          cartItemsEl.innerHTML = cart.map(function (item, i) {
+            return '<div class="cart-item">' +
+              '<span class="cart-item-domain">' + escapeHtml(item.domain) + '</span>' +
+              '<span class="cart-item-price">' + formatPrice(item.price) + '</span>' +
+              '<button type="button" class="cart-item-remove" data-index="' + i + '" aria-label="Remove ' + escapeHtml(item.domain) + '">×</button>' +
+              '</div>';
+          }).join('');
+          cartItemsEl.querySelectorAll('.cart-item-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () { removeFromCart(Number(btn.dataset.index)); });
+          });
+          if (cartDrawerFoot) cartDrawerFoot.hidden = false;
+        }
+
+        var total = cart.reduce(function (sum, i) { return sum + (typeof i.price === 'number' ? i.price : 0); }, 0);
+        if (cartTotalEl) cartTotalEl.textContent = '$' + total.toFixed(2);
+        if (cartCheckoutBtn) cartCheckoutBtn.disabled = cart.length === 0;
+
+        // Reflect cart state on any currently-rendered result cards
+        document.querySelectorAll('.host-result-cta[data-domain]').forEach(function (btn) {
+          var inCart = cartHasItem(btn.dataset.domain, btn.dataset.tld);
+          if (btn.dataset.available === 'true') {
+            btn.textContent = inCart ? 'Added ✓' : 'Add to Cart';
+            btn.classList.toggle('added', inCart);
+            btn.disabled = inCart;
+          }
+        });
+      }
+
+      function openCart() {
+        showCartView();
+        if (cartDrawer) cartDrawer.classList.add('open');
+        if (cartBackdrop) cartBackdrop.classList.add('open');
+      }
+      function closeCart() {
+        if (cartDrawer) cartDrawer.classList.remove('open');
+        if (cartBackdrop) cartBackdrop.classList.remove('open');
+      }
+      if (cartHeaderBtn) cartHeaderBtn.addEventListener('click', openCart);
+      var cartDrawerClose = document.getElementById('cart-drawer-close');
+      if (cartDrawerClose) cartDrawerClose.addEventListener('click', closeCart);
+      if (cartBackdrop) cartBackdrop.addEventListener('click', closeCart);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeCart();
+      });
+
+      renderCart();
+
+      // ── Checkout: registrant form → create-domain-checkout → Stripe ───
+      var _sbCfg = window.SUPABASE_CONFIG || {};
+      var cartDrawerItemsWrap = document.getElementById('cart-drawer-items');
+      var cartCheckoutPanel = document.getElementById('cart-checkout-panel');
+      var registrantForm = document.getElementById('registrant-form');
+      var registrantError = document.getElementById('registrant-error');
+      var registrantSubmitBtn = document.getElementById('registrant-submit-btn');
+      var registrantTotalEl = document.getElementById('registrant-total');
+
+      function showCheckoutPanel() {
+        var cart = loadCart();
+        if (cart.length === 0) return;
+        var total = cart.reduce(function (sum, i) { return sum + (typeof i.price === 'number' ? i.price : 0); }, 0);
+        if (registrantTotalEl) registrantTotalEl.textContent = '$' + total.toFixed(2);
+        if (cartDrawerItemsWrap) cartDrawerItemsWrap.hidden = true;
+        if (cartDrawerFoot) cartDrawerFoot.hidden = true;
+        if (cartCheckoutPanel) cartCheckoutPanel.hidden = false;
+      }
+      function showCartView() {
+        if (cartDrawerItemsWrap) cartDrawerItemsWrap.hidden = false;
+        if (cartCheckoutPanel) cartCheckoutPanel.hidden = true;
+        if (registrantError) registrantError.hidden = true;
+        renderCart();
+      }
+      if (cartCheckoutBtn) cartCheckoutBtn.addEventListener('click', showCheckoutPanel);
+      var cartBackBtn = document.getElementById('cart-back-btn');
+      if (cartBackBtn) cartBackBtn.addEventListener('click', showCartView);
+
+      if (registrantForm) {
+        registrantForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var cart = loadCart();
+          if (cart.length === 0) return;
+
+          var fd = new FormData(registrantForm);
+          var registrant = {
+            name: fd.get('name'), phone: fd.get('phone'), address: fd.get('address'),
+            city: fd.get('city'), state: fd.get('state'), postal_code: fd.get('postal_code'), country: fd.get('country'),
+          };
+          var buyerEmail = fd.get('email');
+
+          if (registrantError) registrantError.hidden = true;
+          registrantSubmitBtn.disabled = true;
+          registrantSubmitBtn.textContent = 'Redirecting to payment…';
+
+          fetch(_sbCfg.url + '/functions/v1/create-domain-checkout', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: cart, registrant: registrant, buyer_email: buyerEmail }),
+          })
+            .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+            .then(function (r) {
+              if (!r.ok || r.json.error || !r.json.checkout_url) {
+                throw new Error(r.json.error || 'Checkout failed');
+              }
+              window.location.href = r.json.checkout_url;
+            })
+            .catch(function (err) {
+              registrantSubmitBtn.disabled = false;
+              registrantSubmitBtn.textContent = 'Continue to payment →';
+              if (registrantError) {
+                registrantError.textContent = err.message || 'Something went wrong starting checkout — please try again.';
+                registrantError.hidden = false;
+              }
+            });
+        });
+      }
+
+      // ── Results page: re-submit navigates with a fresh q/tld ──────────
+      var searchForm = document.getElementById('domain-search-form');
+      if (searchForm) {
+        searchForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var input = document.getElementById('domain-input');
+          var base = (input.value || '').trim().replace(/\s+/g, '').replace(/\.[a-z]+$/i, '');
+          if (!base) { input.focus(); return; }
+          var tld = (tldBadgeText && tldBadgeText.textContent) || '.com';
+          window.location.href = 'domain-search.html?q=' + encodeURIComponent(base) + '&tld=' + encodeURIComponent(tld);
+        });
+      }
+
+      // ── Batched availability checks (MAX_DOMAINS_PER_REQUEST = 20 server-side) ──
+      // Some TLDs (.ai in particular) are slow enough at the registry level that
+      // batching them with others can stall the whole batch's response for a long
+      // time. A hard client-side timeout keeps the page responsive either way —
+      // a timed-out batch just renders as if those endings came back empty.
+      function withTimeout(promise, ms) {
+        return new Promise(function (resolve) {
+          var settled = false;
+          var timer = setTimeout(function () { if (!settled) { settled = true; resolve([]); } }, ms);
+          promise.then(function (v) { if (!settled) { settled = true; clearTimeout(timer); resolve(v); } });
+        });
+      }
+      function checkDomainsBatch(list) {
+        if (!list.length) return Promise.resolve([]);
+        var req = fetch(_sbCfg.url + '/functions/v1/check-domain-availability', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domains: list }),
+        })
+          .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+          .then(function (r) { return (r.ok && !r.json.error) ? (r.json.results || []) : []; })
+          .catch(function () { return []; });
+        return withTimeout(req, 8000);
+      }
+      // .ai in particular is slow enough at the registry that it can stall an
+      // entire shared batch — isolate it (and any future slow TLD) into its own
+      // single-item request so a timeout there never costs its batch-mates.
+      var SLOW_TLDS = ['.ai'];
+      // check-domain-availability's own stated cap is 20/request, but empirically
+      // Openprovider's /domains/check hangs outright (no error, just times out)
+      // once a single call asks for 8+ domains — 5 leaves real headroom under
+      // the observed 7-domain breaking point.
+      var SAFE_BATCH_SIZE = 5;
+      // Small batches run in a limited pool (not full Promise.all, not fully
+      // sequential) — a few in flight at once keeps the wait reasonable without
+      // reproducing the concurrent-auth-race 502s a full burst triggers.
+      function runPooled(items, worker, concurrency) {
+        return new Promise(function (resolve) {
+          if (!items.length) { resolve([]); return; }
+          var results = new Array(items.length);
+          var next = 0, active = 0, done = 0;
+          function pump() {
+            if (done === items.length) { resolve(results); return; }
+            while (active < concurrency && next < items.length) {
+              (function (idx) {
+                active++; next++;
+                worker(items[idx]).then(function (r) { results[idx] = r; active--; done++; pump(); });
+              })(next);
+            }
+          }
+          pump();
+        });
+      }
+      // onBatchDone, if given, fires with each batch's results as it lands —
+      // checking dozens of domains against a live registry a handful at a time
+      // takes real seconds, so the grid renders progressively instead of
+      // sitting on a skeleton until the very last (slowest) batch returns.
+      function checkDomains(list, onBatchDone) {
+        var normal = list.filter(function (d) { return SLOW_TLDS.indexOf(d.tld) === -1; });
+        var slow = list.filter(function (d) { return SLOW_TLDS.indexOf(d.tld) !== -1; });
+        var batches = [];
+        for (var i = 0; i < normal.length; i += SAFE_BATCH_SIZE) batches.push(normal.slice(i, i + SAFE_BATCH_SIZE));
+        slow.forEach(function (d) { batches.push([d]); });
+        function runBatch(batch) {
+          return checkDomainsBatch(batch).then(function (results) {
+            // An empty result for a non-empty request is unambiguous failure
+            // (a real answer always has one entry per domain asked, even for
+            // taken ones) — worth one retry since most failures here are
+            // transient (a slow TLD, a brief 502), not permanent.
+            return (!results.length && batch.length) ? checkDomainsBatch(batch) : results;
+          }).then(function (results) {
+            if (onBatchDone) onBatchDone(results);
+            return results;
+          });
+        }
+        return runPooled(batches, runBatch, 3).then(function (arrs) { return [].concat.apply([], arrs); });
+      }
+
+      function heartIcon() {
+        return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2.5C10.5 5 12 4 14 4c4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg>';
+      }
+      function checkIcon() {
+        return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      }
+      function cartIcon() {
+        return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+      }
+
+      // Real, derivable qualities only — no fabricated "searched N times" style stats.
+      function pickDomainFacts(base, tldStr, result) {
+        var facts = [];
+        facts.push(base.length <= 10
+          ? '"' + base + '" is ' + base.length + ' characters — short names are easier to type, say, and remember.'
+          : '"' + base + '" is ' + base.length + ' characters long.');
+        if (!/[-0-9]/.test(base)) facts.push('No hyphens or numbers, so it reads cleanly out loud and in a URL bar.');
+        var tldNotes = {
+          '.com': 'The most recognized ending on the web — a safe default for most brands.',
+          '.io': 'Popular with tech and software products.',
+          '.co': 'A short, brandable alternative to .com.',
+          '.app': 'Signals a mobile or web app at a glance.',
+          '.dev': 'A clear fit for developer tools and technical products.',
+          '.shop': 'Tells visitors it’s a storefront before they even click.',
+          '.ai': 'Strongly associated with AI-focused products right now.',
+          '.xyz': 'Flexible and inexpensive — works for almost any project.',
+        };
+        if (tldNotes[tldStr]) facts.push(tldNotes[tldStr]);
+        if (result && result.available && !result.premium) facts.push('Available right now — exact-match names like this don’t stay open long.');
+        return facts.slice(0, 3);
+      }
+
+      var qp = new URLSearchParams(window.location.search);
+      var qBase = (qp.get('q') || '').trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+      var qTld = qp.get('tld') || '.com';
+      if (!/^\.[a-z]{2,10}$/i.test(qTld)) qTld = '.com';
+
+      var domainInputEl = document.getElementById('domain-input');
+      if (qBase && domainInputEl) domainInputEl.value = qBase;
+      setTld(qTld);
+      if (extraPills && Array.prototype.some.call(extraPills, function (p) { return p.dataset.tld === qTld; }) && moreBtn) {
+        moreBtn.click();
+      }
+
+      var dvHeading = document.getElementById('dv-heading');
+      var dvLoading = document.getElementById('dv-loading');
+      var dvBoxes = document.getElementById('dv-boxes');
+      var gridLoadingEl = document.getElementById('domain-grid-loading');
+      var gridResultsEl = document.getElementById('domain-grid-results');
+
+      var BUNDLE_TLDS = ['.net', '.xyz', '.store', '.online', '.info'];
+      var EXPLORE_TLDS = ['.net', '.org', '.ai', '.io'];
+      // Kept deliberately short — each entry is its own registry round-trip, and
+      // Openprovider's /domains/check hangs outright past ~7 domains per call
+      // (see SAFE_BATCH_SIZE), so a long list here means real, felt load time.
+      var GRID_TLDS = ['.com', '.net', '.org', '.io', '.co', '.ai', '.app', '.dev', '.xyz', '.shop',
+        '.store', '.online', '.info', '.biz', '.live', '.site', '.tech', '.studio', '.design', '.cloud',
+        '.email', '.build', '.club', '.pro', '.work'];
+      var VARIANT_PREFIXES = ['get', 'my'];
+      var VARIANT_SUFFIXES = ['hq', 'app', 'hub'];
+      var VARIANT_TLDS = ['.com', '.co'];
+
+      function renderVerdict(primary, bundleAvailable) {
+        dvLoading.hidden = true;
+        dvBoxes.hidden = false;
+        var domainFull = qBase + qTld;
+        var facts = pickDomainFacts(qBase, qTld, primary);
+        var whyHtml = '<div class="dv-why"><p class="dv-why-title">Why it\'s great</p><ul class="dv-why-list">' +
+          facts.map(function (f) { return '<li>' + checkIcon() + '<span>' + escapeHtml(f) + '</span></li>'; }).join('') +
+          '</ul></div>';
+        var favBtn = '<button type="button" class="dv-fav" aria-label="Save this domain">' + heartIcon() + '</button>';
+
+        if (primary.available && primary.premium) {
+          dvHeading.textContent = 'This is a premium listing — ' + domainFull;
+          dvBoxes.className = 'dv-grid is-single';
+          dvBoxes.innerHTML =
+            '<div class="dv-box host-price-card">' +
+              '<div class="dv-box-top"><span class="dv-badge dv-badge--premium">Premium Domain</span>' + favBtn + '</div>' +
+              '<div class="dv-domain">' + escapeHtml(qBase) + '<span class="tld">' + escapeHtml(qTld) + '</span></div>' +
+              '<div class="dv-price-row"><span class="dv-price-now">' + formatPrice(primary.price) + '</span></div>' +
+              '<p class="dv-price-note">This domain is privately held — pricing reflects a premium acquisition, not standard registration.</p>' +
+              '<button type="button" class="btn dv-cta" id="dv-primary-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(qTld) + '" data-price="' + (primary.price || 0) + '">Make It Yours</button>' +
+              whyHtml +
+            '</div>';
+        } else {
+          var isAvailable = Boolean(primary.available);
+          dvHeading.innerHTML = isAvailable
+            ? 'Great news — <span class="accent">' + escapeHtml(domainFull) + '</span> is available'
+            : escapeHtml(domainFull) + ' is already taken';
+          dvBoxes.className = 'dv-grid';
+          var leftBox =
+            '<div class="dv-box host-price-card">' +
+              '<div class="dv-box-top"><span class="dv-badge ' + (isAvailable ? 'dv-badge--available' : 'dv-badge--taken') + '">' + (isAvailable ? 'Great Name' : 'Domain Taken') + '</span>' + favBtn + '</div>' +
+              '<div class="dv-domain">' + escapeHtml(qBase) + '<span class="tld">' + escapeHtml(qTld) + '</span></div>' +
+              (isAvailable
+                ? '<div class="dv-price-row"><span class="dv-price-now">' + formatPrice(primary.price) + '</span></div><p class="dv-price-note">for first year</p>' +
+                  '<button type="button" class="btn dv-cta" id="dv-primary-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(qTld) + '" data-price="' + (primary.price || 0) + '">Make It Yours</button>'
+                : '<p class="dv-note">Someone already owns this one. Try a different ending below, or grab it as part of a bundle.</p>' +
+                  '<button type="button" class="btn dv-cta" disabled>Taken</button>') +
+              whyHtml +
+            '</div>';
+
+          var rightBox = '';
+          if (bundleAvailable.length) {
+            var chipHtml = bundleAvailable.map(function (r) {
+              return '<span class="tld-pill active">' + escapeHtml(r.tld) + '</span>';
+            }).join('');
+            var bundleTotal = bundleAvailable.reduce(function (s, r) { return s + (typeof r.price === 'number' ? r.price : 0); }, 0);
+            rightBox =
+              '<div class="dv-box host-price-card">' +
+                '<div class="dv-box-top"><span class="dv-badge dv-badge--bundle">Bundle &amp; Save</span></div>' +
+                '<div class="dv-domain">' + escapeHtml(qBase) + '</div>' +
+                '<div class="dv-chip-row">' + chipHtml + '</div>' +
+                '<div class="dv-price-row"><span class="dv-price-now">' + formatPrice(bundleTotal) + '</span></div>' +
+                '<p class="dv-price-note">for ' + bundleAvailable.length + ' other ending' + (bundleAvailable.length > 1 ? 's' : '') + ', first year</p>' +
+                '<button type="button" class="btn dv-cta" id="dv-bundle-cta">Add Bundle to Cart</button>' +
+              '</div>';
+          }
+          dvBoxes.innerHTML = leftBox + rightBox;
+        }
+
+        var primaryCta = dvBoxes.querySelector('#dv-primary-cta');
+        if (primaryCta) {
+          primaryCta.addEventListener('click', function () {
+            addToCart({ domain: primaryCta.dataset.domain, tld: primaryCta.dataset.tld, price: Number(primaryCta.dataset.price) });
+            primaryCta.textContent = 'Added ✓';
+            primaryCta.classList.add('is-added');
+            primaryCta.disabled = true;
+          });
+        }
+        var bundleCta = dvBoxes.querySelector('#dv-bundle-cta');
+        if (bundleCta) {
+          bundleCta.addEventListener('click', function () {
+            bundleAvailable.forEach(function (r) { addToCart({ domain: qBase + r.tld, tld: r.tld, price: r.price }); });
+            bundleCta.textContent = 'Added ✓';
+            bundleCta.classList.add('is-added');
+            bundleCta.disabled = true;
+          });
+        }
+        renderCart();
+      }
+
+      function renderExplore(results) {
+        document.getElementById('dx-base-label').textContent = qBase;
+        var grid = document.getElementById('dx-grid');
+        grid.innerHTML = results.map(function (r) {
+          var badge = (r.premium && r.available) ? 'Premium' : (r.available ? 'Available' : 'Domain Taken');
+          var badgeClass = (r.premium && r.available) ? 'is-premium' : (r.available ? 'is-available' : '');
+          var domainFull = r.domain + r.tld;
+          return '<div class="dx-card">' +
+            '<div class="dx-card-top"><span class="dx-card-badge ' + badgeClass + '">' + badge + '</span>' +
+              '<button type="button" class="dx-fav" aria-label="Save">' + heartIcon() + '</button></div>' +
+            '<div class="dx-card-tld">' + escapeHtml(r.tld) + '</div>' +
+            '<div class="dx-card-price">' + (r.available ? formatPrice(r.price) : '—') + '</div>' +
+            '<button type="button" class="dx-card-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" ' + (r.available ? '' : 'disabled') + ' aria-label="Add ' + escapeHtml(domainFull) + ' to cart">' + cartIcon() + '</button>' +
+          '</div>';
+        }).join('');
+        grid.querySelectorAll('.dx-card-cta:not(:disabled)').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            addToCart({ domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price) });
+            btn.disabled = true;
+          });
+        });
+      }
+
+      function renderGrid(results) {
+        // Called once per batch as results stream in, so an empty array here
+        // just means "nothing landed yet" — not "nothing exists". The genuine
+        // empty-state message is handled separately once every batch is in.
+        gridLoadingEl.hidden = true;
+        if (!results.length) return;
+        gridResultsEl.innerHTML = results.map(function (r) {
+          var domainFull = r.domain + r.tld;
+          var available = Boolean(r.available);
+          var statusLabel = (r.premium && available) ? 'Premium' : (available ? 'Available' : 'Taken');
+          return '<div class="host-result-card" data-available="' + available + '">' +
+            '<span class="host-result-domain">' + escapeHtml(domainFull) + '</span>' +
+            '<span class="host-result-status">' + statusLabel + '</span>' +
+            '<span class="host-result-price">' + (available ? formatPrice(r.price) : '') + '</span>' +
+            '<button type="button" class="host-result-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" data-available="' + available + '" ' + (available ? '' : 'disabled') + '>' +
+            (available ? 'Add to Cart' : 'Taken') + '</button>' +
+            '</div>';
+        }).join('');
+        gridResultsEl.querySelectorAll('.host-result-cta[data-available="true"]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            addToCart({ domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price) });
+          });
+        });
+        renderCart();
+      }
+
+      if (qBase) {
+        var bundleCandidates = BUNDLE_TLDS.filter(function (t) { return t !== qTld; });
+        var exploreCandidates = EXPLORE_TLDS.filter(function (t) { return t !== qTld; });
+        // BUNDLE_TLDS and EXPLORE_TLDS overlap (both include .net) — dedupe into
+        // one request per unique TLD, then look results up by tld string rather
+        // than by position, since duplicate domain+tld pairs in one request can
+        // make the server's index-based response mapping unreliable.
+        var extraTlds = [];
+        bundleCandidates.concat(exploreCandidates).forEach(function (t) {
+          if (extraTlds.indexOf(t) === -1) extraTlds.push(t);
+        });
+        var primaryPlusExtras = [{ name: qBase, tld: qTld }].concat(extraTlds.map(function (t) { return { name: qBase, tld: t }; }));
+
+        checkDomains(primaryPlusExtras).then(function (results) {
+          var byTld = {};
+          results.forEach(function (r) { byTld[r.tld] = r; });
+          var primary = byTld[qTld] || { available: false, price: null, premium: false, domain: qBase, tld: qTld };
+          var bundleResults = bundleCandidates.map(function (t) { return byTld[t]; }).filter(function (r) { return r && r.available; });
+          var exploreResults = exploreCandidates.map(function (t) { return byTld[t]; }).filter(Boolean);
+          renderVerdict(primary, bundleResults);
+          renderExplore(exploreResults);
+        });
+
+        var matchList = GRID_TLDS.filter(function (t) { return t !== qTld; }).map(function (t) { return { name: qBase, tld: t }; });
+        var variantList = [];
+        VARIANT_PREFIXES.forEach(function (p) { VARIANT_TLDS.forEach(function (t) { variantList.push({ name: p + qBase, tld: t }); }); });
+        VARIANT_SUFFIXES.forEach(function (s) { VARIANT_TLDS.forEach(function (t) { variantList.push({ name: qBase + s, tld: t }); }); });
+        var totalChecked = matchList.length + variantList.length + 1;
+        document.getElementById('dx-found-text').innerHTML = 'Checked <b>' + totalChecked + '</b> endings for "' + escapeHtml(qBase) + '"';
+
+        var gridAccum = [];
+        function renderGridAccum() {
+          var score = function (r) { return (r.premium && r.available) ? 1 : (r.available ? 0 : 2); };
+          var sorted = gridAccum.slice().sort(function (a, b) { return score(a) - score(b); }).slice(0, 100);
+          renderGrid(sorted);
+        }
+        checkDomains(matchList.concat(variantList), function (batchResults) {
+          gridAccum = gridAccum.concat(batchResults);
+          renderGridAccum();
+        }).then(function () {
+          gridLoadingEl.hidden = true;
+          if (!gridAccum.length) {
+            gridResultsEl.innerHTML = '<div class="host-result-error">No results came back — try a different name.</div>';
+          }
+        });
+      } else {
+        dvHeading.textContent = 'Type a domain name above to get started.';
+        dvLoading.hidden = true;
+      }
+
+      // FAQ accordion
+      document.querySelectorAll('.host-faq-item').forEach(function (item, i) {
+        var btn = item.querySelector('.host-faq-trigger');
+        var content = item.querySelector('.host-faq-content');
+        var panelId = 'host-faq-panel-' + (i + 1);
+        content.id = panelId;
+        btn.setAttribute('aria-controls', panelId);
+      });
+      document.querySelectorAll('.host-faq-trigger').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = btn.closest('.host-faq-item');
+          var content = item.querySelector('.host-faq-content');
+          var isOpen = item.classList.contains('open');
+          if (isOpen) {
+            content.style.maxHeight = '0';
+            item.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+          } else {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            item.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    });
+  </script>
+
+  <script>
+    /* ── Shared floating tooltip for .tt-trigger elements (compare table) ── */
+    (function () {
+      var triggers = document.querySelectorAll('.tt-trigger');
+      if (!triggers.length) return;
+
+      var box = document.createElement('div');
+      box.className = 'tt-box';
+      box.id = 'tt-box-shared';
+      box.setAttribute('role', 'tooltip');
+      document.body.appendChild(box);
+
+      var openTrigger = null;
+      var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      function position(trigger) {
+        var r = trigger.getBoundingClientRect();
+        var bw = box.offsetWidth, bh = box.offsetHeight;
+        var left = r.left + r.width / 2 - bw / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
+        var top = r.top - bh - 6;
+        var below = top < 8;
+        if (below) top = r.bottom + 6;
+        box.style.left = left + 'px';
+        box.style.top = top + 'px';
+        box.classList.toggle('tt-below', below);
+      }
+
+      function show(trigger) {
+        openTrigger = trigger;
+        box.textContent = trigger.getAttribute('data-tooltip') || '';
+        box.classList.add('is-open');
+        position(trigger);
+        trigger.setAttribute('aria-expanded', 'true');
+        trigger.setAttribute('aria-describedby', 'tt-box-shared');
+      }
+
+      function hide() {
+        if (!openTrigger) return;
+        openTrigger.setAttribute('aria-expanded', 'false');
+        openTrigger.removeAttribute('aria-describedby');
+        openTrigger = null;
+        box.classList.remove('is-open');
+      }
+
+      var HOVER_DELAY = 150;
+      var hoverTimer = null;
+
+      triggers.forEach(function (t) {
+        t.addEventListener('mouseenter', function () {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(function () {
+            if (t.matches(':hover')) show(t);
+          }, HOVER_DELAY);
+        });
+        t.addEventListener('mouseleave', function () {
+          clearTimeout(hoverTimer);
+          if (openTrigger === t) hide();
+        });
+        t.addEventListener('focus', function () { show(t); });
+        t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
+
+        if (!canHover) {
+          t.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (openTrigger === t) { hide(); } else { show(t); }
+          });
+        }
+      });
+
+      document.addEventListener('click', function () { hide(); });
+      document.addEventListener('pointerdown', function (e) {
+        if (!openTrigger) return;
+        if (e.target === openTrigger || openTrigger.contains(e.target)) return;
+        hide();
+      }, true);
+      window.addEventListener('scroll', function () {
+        if (!openTrigger) return;
+        if (canHover) { position(openTrigger); } else { hide(); }
+      }, true);
+      window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
+    })();
+  </script>
+
+  <script>
+  (function () {
+    function parse(text) {
+      var m = text.trim().match(/^([+\-]?)(\d+(?:\.\d+)?)(.*)$/);
+      if (!m) return null;
+      var dec = (m[2].split('.')[1] || '').length;
+      return { prefix: m[1], target: parseFloat(m[2]), suffix: m[3], decimals: dec, original: text.trim() };
+    }
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function animateSpan(el) {
+      var parsed = parse(el.textContent);
+      if (!parsed) return;
+      el.setAttribute('data-count-done', '');
+      var duration = 1600, start = performance.now();
+      (function tick(now) {
+        var t = Math.min((now - start) / duration, 1);
+        el.textContent = parsed.prefix + (parsed.target * easeOutCubic(t)).toFixed(parsed.decimals) + parsed.suffix;
+        if (t < 1) requestAnimationFrame(tick); else el.textContent = parsed.original;
+      })(start);
+    }
+    var flow = document.querySelector('.host-price-flow');
+    if (!flow) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        entry.target.querySelectorAll('[data-count]:not([data-count-done])').forEach(animateSpan);
+      });
+    }, { threshold: 0.3 });
+    observer.observe(flow);
+  })();
+  </script>
+
+  <!-- ── CTA shader background — ambient WebGL noise/glow wash behind the closing
+       CTA, in the page's green domain/hosting theme. Same technique as the
+       .smm-cta-shader IIFE on smm.html (simplex noise → color blend → vignette
+       → grain), recolored to --host-green / --host-green-deep / --host-green-pale. ── -->
+  <script>
+    (function () {
+      var canvas = document.querySelector('.host-cta-shader');
+      if (!canvas) return;
+
+      var gl = canvas.getContext('webgl', { antialias: true });
+      if (!gl) return;
+
+      var vertexSrc = [
+        'attribute vec2 position;',
+        'varying vec2 vUv;',
+        'void main() {',
+        '  vUv = position * 0.5 + 0.5;',
+        '  gl_Position = vec4(position, 0.0, 1.0);',
+        '}'
+      ].join('\n');
+
+      var fragmentSrc = [
+        'precision highp float;',
+        'varying vec2 vUv;',
+        'uniform vec2  u_resolution;',
+        'uniform float u_time;',
+        'uniform float u_grain;',
+        'uniform vec3  u_colors[3];',
+        'uniform vec3  u_bg;',
+        'vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+        'vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }',
+        'vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }',
+        'float snoise(vec2 v) {',
+        '  const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);',
+        '  vec2 i  = floor(v + dot(v, C.yy));',
+        '  vec2 x0 = v - i + dot(i, C.xx);',
+        '  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);',
+        '  vec4 x12 = x0.xyxy + C.xxzz;',
+        '  x12.xy -= i1;',
+        '  i = mod289(i);',
+        '  vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));',
+        '  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);',
+        '  m = m*m; m = m*m;',
+        '  vec3 x = 2.0 * fract(p * C.www) - 1.0;',
+        '  vec3 h = abs(x) - 0.5;',
+        '  vec3 ox = floor(x + 0.5);',
+        '  vec3 a0 = x - ox;',
+        '  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);',
+        '  vec3 g;',
+        '  g.x  = a0.x  * x0.x  + h.x  * x0.y;',
+        '  g.yz = a0.yz * x12.xz + h.yz * x12.yw;',
+        '  return 130.0 * dot(m, g);',
+        '}',
+        'void main() {',
+        '  vec2 uv = vUv;',
+        '  float ratio = u_resolution.x / u_resolution.y;',
+        '  vec2 p = (uv - 0.5) * vec2(ratio, 1.0);',
+        '  float t = u_time * 0.15;',
+        '  float n1 = snoise(p * 0.9 + vec2(t * 0.6, -t * 0.4));',
+        '  float n2 = snoise(p * 1.3 + vec2(-t * 0.5, t * 0.35) + n1 * 0.3);',
+        '  float n3 = snoise(p * 1.8 + vec2(t * 0.3, -t * 0.5) + n2 * 0.25);',
+        '  vec3 col = u_bg;',
+        '  col = mix(col, u_colors[0], smoothstep(-0.15, 0.55, n1) * 0.55);',
+        '  col = mix(col, u_colors[1], smoothstep(-0.05, 0.6, n2) * 0.5);',
+        '  col = mix(col, u_colors[2], smoothstep(0.0, 0.7, n1 * n2 + n3 * 0.3) * 0.2);',
+        '  float dist = length(p) * 1.4;',
+        '  float glow = smoothstep(0.85, 0.0, dist) * 0.14;',
+        '  col += u_colors[1] * glow;',
+        '  float vignette = 1.0 - smoothstep(0.35, 1.25, dist);',
+        '  col = mix(col * 0.15, col, vignette);',
+        '  float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453 + u_time);',
+        '  col += (grain - 0.5) * u_grain * 0.06;',
+        '  gl_FragColor = vec4(col, 1.0);',
+        '}'
+      ].join('\n');
+
+      function createShader(type, src) {
+        var s = gl.createShader(type);
+        gl.shaderSource(s, src);
+        gl.compileShader(s);
+        return s;
+      }
+
+      var program = gl.createProgram();
+      gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexSrc));
+      gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentSrc));
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      var buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+      var posLoc = gl.getAttribLocation(program, 'position');
+      gl.enableVertexAttribArray(posLoc);
+      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+      var locs = {
+        res:    gl.getUniformLocation(program, 'u_resolution'),
+        time:   gl.getUniformLocation(program, 'u_time'),
+        grain:  gl.getUniformLocation(program, 'u_grain'),
+        colors: gl.getUniformLocation(program, 'u_colors'),
+        bg:     gl.getUniformLocation(program, 'u_bg')
+      };
+
+      function hexToRgb(hex) {
+        var h = hex.replace('#', '');
+        return [
+          parseInt(h.slice(0, 2), 16) / 255,
+          parseInt(h.slice(2, 4), 16) / 255,
+          parseInt(h.slice(4, 6), 16) / 255
+        ];
+      }
+
+      var BG = hexToRgb('#070910');
+      var COLORS = new Float32Array(
+        ['#34D399', '#059669', '#A7F3D0'].reduce(function (acc, hex) {
+          return acc.concat(hexToRgb(hex));
+        }, [])
+      );
+      var GRAIN = 0.6;
+      var SPEED = 0.25;
+
+      function resize() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, canvas.clientWidth * dpr);
+        canvas.height = Math.max(1, canvas.clientHeight * dpr);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+
+      var ro = new ResizeObserver(resize);
+      ro.observe(canvas);
+      resize();
+
+      var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function draw(t) {
+        gl.uniform2f(locs.res, canvas.width, canvas.height);
+        gl.uniform1f(locs.time, t);
+        gl.uniform1f(locs.grain, GRAIN);
+        gl.uniform3fv(locs.colors, COLORS);
+        gl.uniform3f(locs.bg, BG[0], BG[1], BG[2]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
+
+      if (reduceMotion) {
+        draw(0);
+      } else {
+        (function render(ts) {
+          draw(ts * 0.001 * SPEED);
+          requestAnimationFrame(render);
+        })(0);
+      }
+    })();
+  </script>
+</body>
+</html>
