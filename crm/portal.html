@@ -206,9 +206,16 @@
   let clientId = null;
   if (!session) { window.location.href = '/crm/login.html'; }
   else {
-    const { data: profile } = await sb.from('user_profiles').select('*, clients(*)').eq('id', session.user.id).single();
-    if (!profile) { window.location.href = '/crm/login.html'; }
-    else if (profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
+    let { data: profile } = await sb.from('user_profiles').select('*, clients(*)').eq('id', session.user.id).single();
+    if (!profile) {
+      // A valid session with no profile row (e.g. a first login via the email
+      // confirmation link, which never went through a form that creates one)
+      // used to bounce back to login.html — which then bounced straight back
+      // here, looping forever. Self-heal instead: create the missing row.
+      try { await sb.from('user_profiles').upsert({ id: session.user.id, role: 'client' }, { onConflict: 'id' }); } catch (e) {}
+      profile = { role: 'client', client_id: null, full_name: null, clients: null };
+    }
+    if (profile.role === 'admin') { window.location.href = '/crm/dashboard.html'; }
     else {
       clientId = profile.client_id;
       const clientName = profile.clients?.business_name || 'My Account';

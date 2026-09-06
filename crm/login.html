@@ -1116,6 +1116,12 @@
         if (error) throw error;
 
         const { data: profile } = await tempSb.from('user_profiles').select('role').eq('id', data.user.id).single();
+        if (!profile) {
+          // A valid, authenticated account with no profile row (e.g. first
+          // login right after confirming via the email link) — create one
+          // now so later pages don't treat "no profile" as "not logged in".
+          try { await tempSb.from('user_profiles').upsert({ id: data.user.id, role: 'client' }, { onConflict: 'id' }); } catch (e) {}
+        }
         const isAdmin = profile?.role === 'admin';
 
         /* Store session under the correct role-keyed slot, then clear the temp slot */
