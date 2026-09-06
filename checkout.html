@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — VardWeb</title>
+  <meta name="description" content="Sign in and complete your domain purchase with VardWeb." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --cyan:    #00E5FF;
+      --pink:    #FF2D78;
+      --gold:    #FFD700;
+      --base:    #070910;
+      --surface: #0f1219;
+      --raised:  #161b27;
+      --border:  rgba(0,229,255,0.3);
+      --text-1:  #eef0f8;
+      --text-2:  rgba(200,212,232,0.62);
+
+      /* Domain & Hosting accent — matches hosting-services.html */
+      --host-green:      #34D399;
+      --host-green-deep: #059669;
+      --host-green-pale: #A7F3D0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scrollbar-gutter: stable; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--base); }
+    ::-webkit-scrollbar-thumb { background: rgba(52,211,153,0.22); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(52,211,153,0.4); }
+
+    body {
+      background: var(--base);
+      color: var(--text-1);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 300px;
+      opacity: 0.036;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    h1, h2, h3, h4 { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.03em; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ── Nav (shared site chrome) ── */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(7,9,16,0.78);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(0,229,255,0.07);
+      height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; width: 100%; margin: 0 auto;
+      padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { height: 34px; width: auto; display: block; }
+    .logo-nav-wrap { display: inline-flex; background: #ffffff; border-radius: 8px; padding: 4px 10px; }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600; font-size: 13px;
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border: none; cursor: pointer;
+      padding: 9px 22px; border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .btn:active { transform: translateY(0) !important; }
+    .btn:focus-visible { outline: 2px solid rgba(52,211,153,0.55); outline-offset: 2px; }
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,229,255,0.14), rgba(0,229,255,0.07));
+      border: 1px solid rgba(0,229,255,0.38);
+      color: var(--cyan);
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(0,229,255,0.12)); box-shadow: 0 0 22px rgba(0,229,255,0.22), 0 4px 14px rgba(0,0,0,0.35); transform: translateY(-2px); }
+    .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.14); color: rgba(200,212,232,0.72); }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: #fff; background: rgba(255,255,255,0.05); transform: translateY(-2px); }
+    .btn-arrow { display: inline-block; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .btn:hover .btn-arrow { transform: translateX(4px); }
+
+    .nav-account-btn {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--text-1);
+      font-size: 12.5px; padding: 8px 16px;
+    }
+    .nav-account-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    .nav-cart-btn {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      background: none; border: none; padding: 4px; margin: 0; cursor: pointer; color: #fff;
+      text-decoration: none;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+    }
+    .nav-cart-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .nav-cart-btn:hover { transform: translateY(-2px); opacity: 0.85; }
+    .nav-cart-btn:active { transform: translateY(0); }
+    .nav-cart-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; border-radius: 6px; }
+    .cart-count-badge {
+      position: absolute; top: -3px; right: -4px;
+      min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+      background: var(--host-green); color: #06251b;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 2px #070910;
+    }
+    .cart-count-badge[hidden] { display: none; }
+
+    /* Circular "?" tooltip trigger */
+    .tt-icon-trigger {
+      flex-shrink: 0; width: 15px; height: 15px; border-radius: 50%;
+      background: none; border: 1px solid rgba(255,255,255,0.28); color: rgba(200,212,232,0.6);
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center; cursor: help; padding: 0;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .tt-icon-trigger:hover { border-color: rgba(255,255,255,0.55); color: var(--text-1); }
+    .tt-icon-trigger:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+    .tt-box {
+      position: fixed; z-index: 500; max-width: 35ch;
+      background: #0a0a0a; border: 1px solid #3a3a3a; border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
+      color: #fff; white-space: pre-line;
+      box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
+      opacity: 0; transform: translateY(4px) scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
+
+    main { padding-top: 64px; min-height: 100vh; }
+
+    /* ── Page header ── */
+    .co-header { max-width: 1400px; margin: 0 auto; padding: 36px 24px 0; }
+    .co-back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 600; color: var(--text-2); text-decoration: none;
+      transition: color 0.2s ease; margin-bottom: 14px;
+    }
+    .co-back-link:hover { color: var(--host-green); }
+    .co-title { font-size: 26px; }
+
+    /* ── Auth gate (fixed overlay modal) ── */
+    #auth-gate {
+      position: fixed; inset: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      background: var(--base);
+      overflow-y: auto;
+    }
+    #auth-gate[hidden] { display: none; }
+    #auth-gate::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none;
+      background: radial-gradient(80% 60% at 50% 30%, rgba(255,255,255,0.05), transparent 60%);
+    }
+
+    .auth-bg-lines { position: fixed; inset: 0; pointer-events: none; opacity: 0.7; overflow: hidden; }
+    .auth-bg-lines .hline, .auth-bg-lines .vline { position: absolute; background: rgba(255,255,255,0.06); will-change: transform, opacity; }
+    .auth-bg-lines .hline { left: 0; right: 0; height: 1px; transform: scaleX(0); transform-origin: 50% 50%; animation: authDrawX 0.8s cubic-bezier(0.22,0.61,0.36,1) forwards; }
+    .auth-bg-lines .vline { top: 0; bottom: 0; width: 1px; transform: scaleY(0); transform-origin: 50% 0%; animation: authDrawY 0.9s cubic-bezier(0.22,0.61,0.36,1) forwards; }
+    .auth-bg-lines .hline:nth-child(1) { top: 18%; animation-delay: 0.12s; }
+    .auth-bg-lines .hline:nth-child(2) { top: 50%; animation-delay: 0.22s; }
+    .auth-bg-lines .hline:nth-child(3) { top: 82%; animation-delay: 0.32s; }
+    .auth-bg-lines .vline:nth-child(4) { left: 22%; animation-delay: 0.42s; }
+    .auth-bg-lines .vline:nth-child(5) { left: 50%; animation-delay: 0.54s; }
+    .auth-bg-lines .vline:nth-child(6) { left: 78%; animation-delay: 0.66s; }
+    .auth-bg-lines .hline::after, .auth-bg-lines .vline::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(52,211,153,0.28), transparent);
+      opacity: 0; animation: authShimmer 0.9s ease-out forwards;
+    }
+    .auth-bg-lines .hline:nth-child(1)::after { animation-delay: 0.12s; }
+    .auth-bg-lines .hline:nth-child(2)::after { animation-delay: 0.22s; }
+    .auth-bg-lines .hline:nth-child(3)::after { animation-delay: 0.32s; }
+    .auth-bg-lines .vline:nth-child(4)::after { animation-delay: 0.42s; }
+    .auth-bg-lines .vline:nth-child(5)::after { animation-delay: 0.54s; }
+    .auth-bg-lines .vline:nth-child(6)::after { animation-delay: 0.66s; }
+    @keyframes authDrawX { 0% { transform: scaleX(0); opacity: 0; } 60% { opacity: 0.95; } 100% { transform: scaleX(1); opacity: 0.7; } }
+    @keyframes authDrawY { 0% { transform: scaleY(0); opacity: 0; } 60% { opacity: 0.95; } 100% { transform: scaleY(1); opacity: 0.7; } }
+    @keyframes authShimmer { 0% { opacity: 0; } 35% { opacity: 0.25; } 100% { opacity: 0; } }
+
+    .auth-particles { position: fixed; inset: 0; width: 100%; height: 100%; opacity: 0.4; mix-blend-mode: screen; pointer-events: none; }
+
+    .auth-topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 20px 28px; }
+    .auth-brand { display: flex; align-items: center; gap: 9px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
+    .auth-brand img { height: 22px; width: auto; display: block; background: #fff; border-radius: 5px; padding: 2px 5px; }
+    .auth-close-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14); color: rgba(200,212,232,0.72);
+      cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .auth-close-btn svg { width: 15px; height: 15px; }
+    .auth-close-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: #fff; transform: translateY(-2px) rotate(90deg); }
+    .auth-close-btn:active { transform: translateY(0) rotate(90deg); }
+    .auth-close-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+
+    .auth-card-wrap { position: relative; z-index: 1; width: 100%; max-width: 420px; margin: 64px 0 24px; }
+    .auth-card-wrap.card-animate { opacity: 0; transform: translateY(20px); animation: authFadeUp 0.8s cubic-bezier(0.22,0.61,0.36,1) 0.35s forwards; }
+    @keyframes authFadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .auth-bg-lines .hline, .auth-bg-lines .vline { animation: none; transform: none; opacity: 0.7; }
+      .auth-bg-lines .hline::after, .auth-bg-lines .vline::after { animation: none; opacity: 0; }
+      .auth-card-wrap.card-animate { animation: none; opacity: 1; transform: none; }
+      .auth-close-btn:hover { transform: none; }
+    }
+
+    .auth-card {
+      width: 100%; max-width: 420px;
+      background: rgba(15,18,25,0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(52,211,153,0.18); border-radius: 18px;
+      padding: 40px 36px;
+      box-shadow: 0 30px 70px -30px rgba(0,0,0,0.6);
+    }
+    .auth-card .btn-primary {
+      background: linear-gradient(135deg, rgba(52,211,153,0.16), rgba(52,211,153,0.08));
+      border: 1px solid rgba(52,211,153,0.4);
+      color: var(--host-green);
+    }
+    .auth-card .btn-primary:hover { background: linear-gradient(135deg, rgba(52,211,153,0.24), rgba(52,211,153,0.13)); box-shadow: 0 0 22px rgba(52,211,153,0.22), 0 4px 14px rgba(0,0,0,0.35); }
+    .auth-input-wrap { position: relative; }
+    .auth-field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: rgba(200,212,232,0.4); pointer-events: none; }
+    .auth-field-icon svg { width: 16px; height: 16px; display: block; }
+    .auth-input-wrap.has-icon input { padding-left: 42px; }
+    .auth-input-wrap.has-toggle input { padding-right: 42px; }
+    .eye-toggle {
+      position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: rgba(200,212,232,0.5); display: flex; align-items: center; padding: 8px;
+      transition: color 0.15s ease;
+    }
+    .eye-toggle:hover { color: var(--text-1); }
+    .eye-toggle:focus-visible { outline: 2px solid rgba(52,211,153,0.5); border-radius: 4px; }
+    .eye-toggle svg { width: 17px; height: 17px; }
+    .auth-title { font-size: 24px; margin-bottom: 6px; }
+    .auth-sub { color: var(--text-2); font-size: 13.5px; margin-bottom: 26px; line-height: 1.6; }
+    .auth-field { margin-bottom: 16px; display: flex; flex-direction: column; gap: 6px; }
+    .auth-field label { font-size: 11.5px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+    .auth-field input {
+      width: 100%;
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.1); border-radius: 9px;
+      padding: 12px 14px; color: var(--text-1); font-family: 'Inter', sans-serif; font-size: 14px;
+      outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .auth-field input::placeholder { color: rgba(200,212,232,0.32); }
+    .auth-field input:focus { border-color: var(--host-green); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+    .auth-check-row { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; font-size: 13px; color: var(--text-2); }
+    .auth-check-row input { accent-color: var(--host-green); width: 15px; height: 15px; }
+    .auth-forgot { text-align: right; margin: -8px 0 18px; }
+    .auth-forgot button { background: none; border: none; padding: 0; color: var(--host-green); font-size: 12.5px; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.15s ease; }
+    .auth-forgot button:hover { opacity: 0.75; }
+    .auth-submit { width: 100%; justify-content: center; margin-bottom: 4px; }
+    .auth-switch { text-align: center; margin-top: 24px; font-size: 13px; color: var(--text-2); }
+    .auth-switch button { background: none; border: none; padding: 0; color: var(--host-green); font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px; }
+    .auth-switch button:hover { text-decoration: underline; }
+    .auth-error {
+      font-size: 12.5px; color: rgba(255,150,185,0.92);
+      background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25); border-radius: 9px;
+      padding: 10px 12px; margin-bottom: 16px; line-height: 1.5;
+    }
+    .auth-error[hidden] { display: none; }
+    .auth-notice {
+      font-size: 12.5px; color: var(--host-green-pale);
+      background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.25); border-radius: 9px;
+      padding: 10px 12px; margin-bottom: 16px; line-height: 1.5;
+    }
+    .auth-notice[hidden] { display: none; }
+    .auth-legal { font-size: 11.5px; color: var(--text-2); line-height: 1.65; margin-bottom: 22px; }
+    .auth-legal a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); }
+    .auth-legal a:hover { color: var(--host-green-pale); }
+    .auth-continue-email-btn { width: 100%; justify-content: center; margin-bottom: 22px; }
+    [data-auth-form][hidden] { display: none; }
+
+    /* ── Checkout main ── */
+    #checkout-main[hidden] { display: none; }
+    .checkout-shell { max-width: 1400px; margin: 0 auto; padding: 28px 24px 100px; }
+    .checkout-step[hidden] { display: none; }
+    .checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
+    @media (max-width: 880px) { .checkout-grid { grid-template-columns: 1fr; } }
+    .checkout-col-left { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+    .co-section-title {
+      font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--host-green);
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; margin-bottom: 12px;
+    }
+    #checkout-empty { text-align: center; padding: 80px 24px; color: var(--text-2); }
+    #checkout-empty a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); }
+    #checkout-empty[hidden] { display: none; }
+
+    /* Amber informational banner */
+    .co-alert-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 12.5px; line-height: 1.5; color: #1a1500;
+      background: #FFE78F; border: 1px solid rgba(0,0,0,0.12); border-radius: 4px;
+      padding: 12px 14px;
+    }
+    .co-alert-banner svg { flex-shrink: 0; width: 19px; height: 19px; margin-top: 1px; color: #1a1500; }
+    .co-alert-banner[hidden] { display: none; }
+
+    /* Cart item cards */
+    .co-item-list { display: flex; flex-direction: column; gap: 12px; }
+    .co-item { background: var(--raised); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; padding: 16px 18px; display: flex; flex-direction: column; }
+    .co-item-top { display: flex; align-items: stretch; gap: 16px; padding-bottom: 14px; }
+    .co-item-icon {
+      flex-shrink: 0; width: 110px; height: 110px; border-radius: 4px;
+      background: #000; color: #fff; display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 20px; letter-spacing: 0.048em;
+    }
+    .co-item-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .co-item-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .co-item-domain { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; color: var(--text-1); min-width: 0; overflow-wrap: anywhere; }
+    .co-item-type-label { font-size: 10.5px; letter-spacing: 0.02em; color: var(--text-2); }
+    .co-item-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px;
+      color: #A855F7; background: rgba(168,85,247,0.14); flex-shrink: 0;
+    }
+    .co-item-right { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
+    .co-item-price-stack, .co-addon-price-stack { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+    .co-price-now { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; color: var(--host-green); white-space: nowrap; }
+    .co-price-was { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-2); text-decoration: line-through; white-space: nowrap; }
+    .co-price-off { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: var(--host-green); white-space: nowrap; }
+    .co-addon-price-stack .co-price-now { font-size: 12.5px; }
+    .co-item-remove {
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(255,45,120,0.1); color: rgba(255,150,185,0.9); border: none; cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .co-item-remove:hover { background: rgba(255,45,120,0.22); color: #fff; }
+    .co-item-remove:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
+    .co-item-term select {
+      display: block; min-width: 120px;
+      appearance: none; -webkit-appearance: none; -moz-appearance: none;
+      background-color: var(--surface); border: 1px solid rgba(255,255,255,0.14); color: var(--text-1);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8d4e8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 11px;
+      border-radius: 4px; padding: 8px 34px 8px 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      outline: none; cursor: pointer;
+    }
+    .co-item-term select:focus { border-color: var(--host-green); }
+    .co-item-term select option { background: var(--surface); color: var(--text-1); }
+    .co-item-term select option:checked { color: var(--host-green); }
+    .co-item-term select option:hover { color: var(--host-green); background: var(--raised); }
+    .co-item-note { font-size: 12px; color: var(--text-2); }
+    .co-item-onetime-note { font-size: 12px; color: #A855F7; font-weight: 600; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em; }
+
+    /* Domain add-on row (Full Domain Protection) */
+    .co-addon-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
+    .co-addon-label { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-1); min-width: 0; }
+    .co-addon-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1 1 200px; }
+    .co-addon-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .co-addon-title { font-size: 12.5px; font-weight: 700; color: var(--text-1); }
+    .co-addon-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 4px; color: #000; background: #66FBFF;
+    }
+    .co-addon-subtitle {
+      display: inline-block; align-self: flex-start; font-size: 10.5px; color: var(--text-2);
+      background: rgba(255,255,255,0.05); padding: 2px 7px; border-radius: 5px;
+    }
+    .co-addon-bullets { list-style: none; display: flex; flex-direction: column; gap: 3px; margin-top: 2px; margin-left: -50px; }
+    .co-addon-bullets li { font-size: 11.5px; color: var(--text-2); padding-left: 14px; position: relative; }
+    .co-addon-bullets li::before { content: '•'; position: absolute; left: 2px; color: var(--host-green); font-weight: 700; }
+    .co-addon-price-block { display: flex; align-items: center; flex-shrink: 0; margin-left: auto; }
+    .co-toggle-wrap { display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-top: 2px; }
+    .co-toggle { position: relative; width: 38px; height: 21px; flex-shrink: 0; }
+    .co-toggle input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .co-toggle-track {
+      position: absolute; inset: 0; border-radius: 999px; background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.14); transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .co-toggle-thumb {
+      position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%;
+      background: #fff; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .co-toggle input:checked ~ .co-toggle-track { background: var(--host-green); border-color: var(--host-green-deep); }
+    .co-toggle input:checked ~ .co-toggle-thumb { transform: translateX(17px); }
+    .co-toggle input:focus-visible ~ .co-toggle-track { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+
+    /* Bundle & Save */
+    .co-bundle-card { background: var(--surface); border: 1px solid rgba(0,229,255,0.16); border-radius: 4px; padding: 18px 20px; margin-bottom: 12px; }
+    .co-bundle-card:last-child { margin-bottom: 0; }
+    .co-bundle-heading { font-size: 13px; color: var(--text-1); line-height: 1.5; margin-bottom: 14px; }
+    .co-bundle-heading strong { color: var(--host-green); }
+    .co-bundle-chip-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .co-bundle-tld-chip {
+      display: flex; flex-direction: row; align-items: center;
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+      width: 263px; height: 52px; padding: 5px 5px 5px 14px;
+    }
+    .co-bundle-tld-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; color: var(--text-1); white-space: nowrap; }
+    .co-bundle-tld-bottom { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+    .co-bundle-price-row { display: flex; flex-direction: column; justify-content: center; gap: 1px; }
+    .co-bundle-price-row .co-price-was { font-size: 11px; }
+    .co-bundle-price-row .co-price-now { font-size: 14px; }
+
+    /* Icon CTA — exact copy of domain-search.html's .dx-card-cta */
+    .dx-card-cta {
+      flex-shrink: 0; width: 42px; height: 42px; padding: 0; border-radius: 9px;
+      background: #fff; border: 2.5px solid #000; color: #06251b;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .dx-card-cta:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .dx-card-cta.is-added { background: var(--host-green); }
+    @media (hover: hover) and (pointer: fine) {
+      .dx-card-cta:hover { background: var(--host-green); transform: translateY(-1px); }
+    }
+    #addon-bundle-block[hidden] { display: none; }
+    .co-bundle-loading { font-size: 12.5px; color: var(--text-2); }
+
+    /* Inline search widget */
+    .co-search-box { background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 20px; }
+    .co-search-row { display: flex; gap: 10px; }
+    .co-search-row input {
+      flex: 1; min-width: 0; background: var(--raised); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px;
+      padding: 11px 14px; color: var(--text-1); font-family: 'Inter', sans-serif; font-size: 14px; outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .co-search-row input:focus { border-color: var(--host-green); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+    .co-search-results { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .co-search-taken-msg { font-size: 13px; color: var(--text-2); margin-bottom: 2px; }
+    .co-search-highlight { color: var(--host-green); font-weight: 600; }
+    .co-search-how-about { font-size: 12.5px; font-weight: 700; color: var(--text-1); margin: 4px 0 2px; }
+    .co-search-result-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--raised); border-radius: 8px; }
+    .co-search-result-domain { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 13.5px; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+    .co-search-price-col { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+    .co-search-price-row { display: flex; align-items: baseline; gap: 6px; }
+    .co-search-price-row .co-price-was { font-size: 11px; }
+    .co-search-price-row .co-price-now { font-size: 14px; }
+    .co-search-price-note { display: flex; align-items: center; gap: 4px; font-size: 10.5px; color: var(--text-2); }
+    .co-search-close-btn { align-self: flex-start; margin-top: 4px; }
+    .co-search-loading, .co-search-empty { font-size: 12.5px; color: var(--text-2); margin-top: 14px; }
+    @keyframes hostSkeletonSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .co-search-skel-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--raised); border-radius: 8px; }
+    .co-search-skel-bar {
+      border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%);
+      background-size: 200% 100%; animation: hostSkeletonSweep 1.4s ease-in-out infinite;
+    }
+    .co-search-skel-domain { flex: 1; height: 14px; max-width: 160px; }
+    .co-search-skel-price-col { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+    .co-search-skel-price-now { width: 60px; height: 13px; }
+    .co-search-skel-price-note { width: 70px; height: 9px; }
+    .co-search-skel-btn { width: 42px; height: 42px; border-radius: 9px; flex-shrink: 0; }
+
+    /* Shared small CTA button used inside cart column widgets */
+    .co-cta-btn {
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
+      color: #06251b; background: var(--host-green); border: none; border-radius: 7px;
+      padding: 9px 16px; cursor: pointer; flex-shrink: 0; white-space: nowrap;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .co-cta-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px -6px rgba(52,211,153,0.45); }
+    .co-cta-btn:active:not(:disabled) { transform: translateY(0); }
+    .co-cta-btn:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+
+    /* Order summary */
+    .order-summary-col { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 16px; }
+    .order-summary { background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 26px; }
+    .order-summary h3 { font-size: 17px; margin-bottom: 18px; }
+    .order-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-2); margin-bottom: 8px; }
+    .order-summary-total { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 0 20px; margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 20px; }
+    .order-summary-total .label { font-size: 13px; color: var(--text-2); }
+    .order-summary-total .val { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--host-green); }
+    .order-summary-note { font-size: 11.5px; color: var(--text-2); line-height: 1.5; margin: -10px 0 18px; text-align: center; }
+    .order-summary-savings {
+      display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 12.5px; color: var(--host-green-pale);
+      text-align: center; margin: -8px 0 18px;
+    }
+    .order-summary-savings[hidden] { display: none; }
+    .order-summary-savings-icon { width: 18px; height: 18px; flex-shrink: 0; border-radius: 4px; transform: translateY(-1px); }
+    .order-summary-savings strong { color: var(--host-green); font-family: 'JetBrains Mono', monospace; }
+    .co-edit-order-link { background: none; border: none; padding: 0; font-size: 12px; color: var(--host-green); cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.15s ease; }
+    .co-edit-order-link:hover { opacity: 0.75; text-decoration: underline; }
+    .co-edit-order-link:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+
+    .co-trust-note { text-align: center; padding: 4px 10px; }
+    .co-trust-title { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; }
+    .co-trust-title svg { width: 20px; height: 20px; color: var(--host-green); flex-shrink: 0; }
+    .co-trust-note p { font-size: 11.5px; color: var(--text-2); line-height: 1.55; }
+
+    .co-form-subtitle { font-size: 12.5px; color: var(--text-2); margin: -6px 0 16px; }
+    .registrant-form { display: flex; flex-direction: column; gap: 12px; }
+    .registrant-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-2); }
+    .registrant-hint { font-size: 11px; color: var(--text-2); font-weight: 400; }
+    .registrant-form input, .registrant-form select {
+      font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-1);
+      background: var(--raised); border: 1px solid rgba(255,255,255,0.1); border-radius: 7px;
+      padding: 10px 12px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .registrant-form input::placeholder { color: rgba(200,212,232,0.32); }
+    .registrant-form input:focus, .registrant-form select:focus { border-color: var(--host-green); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+    .registrant-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .registrant-row-phone { grid-template-columns: 92px 1fr; }
+    .registrant-error { font-size: 12.5px; color: rgba(255,150,185,0.92); background: rgba(255,45,120,0.08); border: 1px solid rgba(255,45,120,0.25); border-radius: 8px; padding: 10px 12px; margin-top: 4px; }
+    .registrant-error[hidden] { display: none; }
+    .registrant-submit-btn { width: 100%; justify-content: center; margin-top: 6px; }
+    .registrant-btn-row { display: flex; gap: 12px; margin-top: 6px; }
+    .registrant-btn-row .cart-checkout-btn { flex: 1; margin-top: 0; }
+    .registrant-btn-row .btn-ghost { flex-shrink: 0; }
+
+    .cart-checkout-btn {
+      position: relative;
+      display: flex; width: 100%; justify-content: center; align-items: center; gap: 8px;
+      padding: 13px 22px; font-size: 13.5px;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; border: none; cursor: pointer; border-radius: 4px;
+      background: var(--host-green); color: #06251b;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+    }
+    .cart-checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.5); }
+    .cart-checkout-btn:active:not(:disabled) { transform: translateY(0); }
+    .cart-checkout-btn:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .cart-checkout-btn:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); opacity: 1; cursor: default; }
+    .cco-label { display: inline-block; transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .cart-checkout-btn:hover .cco-label, .cart-checkout-btn:focus-visible .cco-label { transform: translateX(-10px); }
+    .cco-arrow {
+      position: absolute; right: 22px; top: 50%; font-size: 20px; line-height: 1;
+      opacity: 0; transform: translateY(-50%) translateX(14px);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+    }
+    .cart-checkout-btn:hover .cco-arrow, .cart-checkout-btn:focus-visible .cco-arrow { opacity: 1; transform: translateY(-50%) translateX(-8px); }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="index.html" aria-label="VardWeb Home">
+        <div class="logo-nav-wrap">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </div>
+      </a>
+      <div class="nav-right">
+        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">Account</a>
+        <a href="#checkout-cart-col" class="nav-cart-btn" id="nav-cart-btn" aria-label="Jump to your cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span id="cart-count-badge" class="cart-count-badge" hidden>0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="co-header">
+      <a href="domain-search.html" class="co-back-link">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </a>
+      <h1 class="co-title">Checkout</h1>
+    </div>
+
+    <!-- ============ AUTH GATE ============ -->
+    <div id="auth-gate">
+      <div class="auth-bg-lines" aria-hidden="true">
+        <div class="hline"></div><div class="hline"></div><div class="hline"></div>
+        <div class="vline"></div><div class="vline"></div><div class="vline"></div>
+      </div>
+      <canvas class="auth-particles" id="auth-particles-canvas" aria-hidden="true"></canvas>
+
+      <div class="auth-topbar">
+        <span class="auth-brand"><img src="brand_assets/VardWeb.png" alt="VardWeb" /></span>
+        <button type="button" class="auth-close-btn" id="auth-close-btn" aria-label="Close and return to domain search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="auth-card-wrap card-animate">
+        <div class="auth-card">
+
+        <!-- Sign In view -->
+        <div data-auth-form="signin">
+          <h2 class="auth-title">Sign In</h2>
+          <p class="auth-sub">New to VardWeb? <button type="button" class="auth-switch-inline" id="show-create-view" style="background:none;border:none;padding:0;color:var(--host-green);font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;">Create an Account</button></p>
+          <div class="auth-error" id="signin-error" hidden></div>
+          <div class="auth-notice" id="signin-notice" hidden></div>
+          <form id="signin-form" novalidate>
+            <div class="auth-field">
+              <label for="signin-email">Email</label>
+              <div class="auth-input-wrap has-icon">
+                <span class="auth-field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+                <input type="email" id="signin-email" autocomplete="email" placeholder="you@example.com" required />
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="signin-password">Password</label>
+              <div class="auth-input-wrap has-icon has-toggle">
+                <span class="auth-field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                <input type="password" id="signin-password" autocomplete="current-password" placeholder="••••••••" required />
+                <button type="button" class="eye-toggle" data-eye-for="signin-password" aria-label="Show password">
+                  <svg class="icon-eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="auth-forgot">
+              <button type="button" id="forgot-password-btn">Forgot password?</button>
+            </div>
+            <label class="auth-check-row">
+              <input type="checkbox" checked /> Keep me signed in on this device
+            </label>
+            <button type="submit" class="btn btn-primary auth-submit" id="signin-submit-btn">Sign In <span class="btn-arrow">→</span></button>
+          </form>
+        </div>
+
+        <!-- Create Account view -->
+        <div data-auth-form="create" hidden>
+          <h2 class="auth-title">Create Account</h2>
+          <p class="auth-sub">Already have an account? <button type="button" style="background:none;border:none;padding:0;color:var(--host-green);font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;font-size:13.5px;" id="show-signin-view">Sign In</button></p>
+          <p class="auth-legal">By continuing, you agree to VardWeb's <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a>.</p>
+          <div class="auth-error" id="create-error" hidden></div>
+          <div class="auth-notice" id="create-notice" hidden></div>
+          <button type="button" class="btn btn-ghost auth-continue-email-btn" id="continue-with-email-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+            Continue with Email
+          </button>
+          <form id="create-form" hidden novalidate>
+            <div class="auth-field">
+              <label for="create-email">Email</label>
+              <div class="auth-input-wrap has-icon">
+                <span class="auth-field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+                <input type="email" id="create-email" autocomplete="email" placeholder="you@example.com" required />
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="create-password">Password</label>
+              <div class="auth-input-wrap has-icon has-toggle">
+                <span class="auth-field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                <input type="password" id="create-password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required />
+                <button type="button" class="eye-toggle" data-eye-for="create-password" aria-label="Show password">
+                  <svg class="icon-eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="create-password-confirm">Confirm Password</label>
+              <div class="auth-input-wrap has-icon has-toggle">
+                <span class="auth-field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                <input type="password" id="create-password-confirm" autocomplete="new-password" placeholder="••••••••" minlength="8" required />
+                <button type="button" class="eye-toggle" data-eye-for="create-password-confirm" aria-label="Show password">
+                  <svg class="icon-eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="icon-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary auth-submit" id="create-submit-btn">Create Account <span class="btn-arrow">→</span></button>
+          </form>
+        </div>
+
+        <!-- Forgot password view -->
+        <div data-auth-form="forgot" hidden>
+          <h2 class="auth-title">Reset Password</h2>
+          <p class="auth-sub">Enter your account email and we'll send you a secure link to create a new password.</p>
+          <div class="auth-error" id="forgot-error" hidden></div>
+          <div class="auth-notice" id="forgot-notice" hidden></div>
+          <form id="forgot-form" novalidate>
+            <div class="auth-field">
+              <label for="forgot-email">Email</label>
+              <div class="auth-input-wrap has-icon">
+                <span class="auth-field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg></span>
+                <input type="email" id="forgot-email" autocomplete="email" placeholder="you@example.com" required />
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary auth-submit" id="forgot-submit-btn">Send Reset Link <span class="btn-arrow">→</span></button>
+          </form>
+          <p class="auth-switch"><button type="button" id="back-to-signin-btn">← Back to Sign In</button></p>
+        </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CHECKOUT MAIN ============ -->
+    <div id="checkout-main" hidden>
+      <div class="checkout-shell">
+
+        <div id="checkout-empty" hidden>
+          <p>Your cart is empty. <a href="domain-search.html">Find a domain to get started →</a></p>
+        </div>
+
+        <div id="checkout-content" hidden>
+
+          <div id="checkout-step-cart" class="checkout-step">
+            <div class="checkout-grid">
+
+              <div class="checkout-col-left" id="checkout-cart-col">
+                <div class="co-alert-banner" id="co-phone-alert" role="status">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span>Almost there! Phone verification may be required to complete your order.</span>
+                </div>
+
+                <section>
+                  <div class="co-section-title">Your Cart</div>
+                  <div class="co-item-list" id="checkout-item-list"></div>
+                </section>
+
+                <section id="addon-bundle-block" hidden>
+                  <div class="co-section-title">Bundle &amp; Save</div>
+                  <div id="addon-bundle-content"></div>
+                </section>
+
+                <section id="inline-search-widget">
+                  <div class="co-section-title">Add Another Domain</div>
+                  <div class="co-search-box">
+                    <form id="co-search-form" class="co-search-row">
+                      <input type="text" id="co-search-input" placeholder="Search another domain name" autocomplete="off" />
+                      <button type="submit" class="co-cta-btn">Check</button>
+                    </form>
+                    <div id="co-search-results"></div>
+                  </div>
+                </section>
+              </div>
+
+              <div class="order-summary-col">
+                <aside class="order-summary" id="order-summary-cart">
+                  <h3>Order Summary</h3>
+                  <div class="order-summary-row"><span id="order-summary-count-cart">0 items</span><span></span></div>
+                  <div class="order-summary-total">
+                    <span class="label">Subtotal (CAD)</span>
+                    <span class="val" id="order-summary-total-cart">C$0.00</span>
+                  </div>
+                  <p class="order-summary-note">Subtotal does not include applicable taxes and fees.</p>
+                  <div class="order-summary-savings" id="order-summary-savings" hidden>
+                    <img src="/brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" class="order-summary-savings-icon" />
+                    <span>Nice! You saved <strong id="order-summary-savings-amount">C$0.00</strong> on your order.</span>
+                  </div>
+                  <button type="button" class="cart-checkout-btn" id="proceed-to-billing-btn"><span class="cco-label">Ready for Checkout</span><span class="cco-arrow" aria-hidden="true">→</span></button>
+                </aside>
+
+                <div class="co-trust-note">
+                  <div class="co-trust-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                    Quality You Can Trust
+                  </div>
+                  <p>Your VardWeb Guides are available 24/7/365 to answer your questions and help you better understand your purchase.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div id="checkout-step-billing" class="checkout-step" hidden>
+            <div class="checkout-grid">
+
+              <div class="checkout-col-left" id="checkout-billing-col">
+                <section>
+                  <div class="co-section-title">Billing Information</div>
+                  <p class="co-form-subtitle">All fields required unless otherwise stated.</p>
+                  <form id="registrant-form" class="registrant-form">
+                    <label>Country / Region
+                      <select name="country" id="billing-country" autocomplete="country" required>
+                        <option value="">Select…</option>
+                        <option value="CA">Canada</option>
+                        <option value="US">United States</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="AU">Australia</option>
+                        <option value="NZ">New Zealand</option>
+                        <option value="IE">Ireland</option>
+                        <option value="DE">Germany</option>
+                        <option value="FR">France</option>
+                        <option value="NL">Netherlands</option>
+                        <option value="BE">Belgium</option>
+                        <option value="ES">Spain</option>
+                        <option value="IT">Italy</option>
+                        <option value="PT">Portugal</option>
+                        <option value="SE">Sweden</option>
+                        <option value="NO">Norway</option>
+                        <option value="DK">Denmark</option>
+                        <option value="FI">Finland</option>
+                        <option value="CH">Switzerland</option>
+                        <option value="AT">Austria</option>
+                        <option value="PL">Poland</option>
+                        <option value="MX">Mexico</option>
+                        <option value="BR">Brazil</option>
+                        <option value="IN">India</option>
+                        <option value="JP">Japan</option>
+                        <option value="SG">Singapore</option>
+                        <option value="AE">United Arab Emirates</option>
+                      </select>
+                    </label>
+                    <div class="registrant-row">
+                      <label>First Name <input type="text" name="first_name" autocomplete="given-name" required /></label>
+                      <label>Last Name <input type="text" name="last_name" autocomplete="family-name" required /></label>
+                    </div>
+                    <label>Email <input type="email" name="email" autocomplete="email" required /></label>
+                    <div class="registrant-row registrant-row-phone">
+                      <label>Code
+                        <select name="phone_code" id="billing-phone-code" autocomplete="tel-country-code">
+                          <option value="+1">+1</option>
+                          <option value="+44">+44</option>
+                          <option value="+61">+61</option>
+                          <option value="+64">+64</option>
+                          <option value="+353">+353</option>
+                          <option value="+49">+49</option>
+                          <option value="+33">+33</option>
+                          <option value="+31">+31</option>
+                          <option value="+32">+32</option>
+                          <option value="+34">+34</option>
+                          <option value="+39">+39</option>
+                          <option value="+351">+351</option>
+                          <option value="+46">+46</option>
+                          <option value="+47">+47</option>
+                          <option value="+45">+45</option>
+                          <option value="+358">+358</option>
+                          <option value="+41">+41</option>
+                          <option value="+43">+43</option>
+                          <option value="+48">+48</option>
+                          <option value="+52">+52</option>
+                          <option value="+55">+55</option>
+                          <option value="+91">+91</option>
+                          <option value="+81">+81</option>
+                          <option value="+65">+65</option>
+                          <option value="+971">+971</option>
+                        </select>
+                      </label>
+                      <label>Phone Number <input type="tel" name="phone" autocomplete="tel-national" required /></label>
+                    </div>
+                    <label>Address <input type="text" name="address" autocomplete="address-line1" required /></label>
+                    <label>Address Cont. (optional) <input type="text" name="address2" autocomplete="address-line2" /></label>
+                    <label>City <input type="text" name="city" autocomplete="address-level2" required /></label>
+                    <div class="registrant-row">
+                      <label>Province / Region <input type="text" name="state" autocomplete="address-level1" required /></label>
+                      <label>Zip / Postal Code <input type="text" name="postal_code" autocomplete="postal-code" required /></label>
+                    </div>
+                    <label>Organization (optional) <input type="text" name="organization" autocomplete="organization" /></label>
+                    <label>Tax ID (optional)
+                      <input type="text" name="tax_id" />
+                      <span class="registrant-hint">For correct tax calculation.</span>
+                    </label>
+                    <p class="registrant-error" id="registrant-error" hidden></p>
+                    <div class="registrant-btn-row">
+                      <button type="submit" class="cart-checkout-btn" id="billing-submit-btn">Continue to Payment →</button>
+                      <button type="button" class="btn btn-ghost" id="billing-cancel-btn">Back to Cart</button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+
+              <aside class="order-summary" id="order-summary-billing">
+                <h3>Order Summary</h3>
+                <div class="order-summary-row">
+                  <span id="order-summary-count-billing">0 items</span>
+                  <button type="button" class="co-edit-order-link" id="edit-order-btn">Edit order</button>
+                </div>
+                <div class="order-summary-total">
+                  <span class="label">Total</span>
+                  <span class="val" id="order-summary-total-billing">C$0.00</span>
+                </div>
+                <p class="order-summary-note">Includes applicable taxes and fees calculated at checkout.</p>
+              </aside>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/supabase-config.js"></script>
+  <script type="module" src="/nav-auth.js"></script>
+  <script src="/tld-catalog.js"></script>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    var _sbCfg = window.SUPABASE_CONFIG || {};
+    var clientSb = createClient(_sbCfg.url || '', _sbCfg.anonKey || '', { auth: { storageKey: 'vw-client-auth' } });
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    var measureCanvas = document.createElement('canvas');
+    var measureCtx = measureCanvas.getContext('2d');
+    function measureTextWidth(text, font) {
+      measureCtx.font = font;
+      return measureCtx.measureText(text).width;
+    }
+
+    function cartAddIcon() {
+      return '<svg width="20" height="20" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" d="m8 16l8.72-.727c2.729-.227 3.341-.823 3.643-3.544L21 6M6 6h.5M22 6h-2.5m-10 0h7M13 9.5v-7"/><circle cx="6" cy="20" r="2"/><circle cx="17" cy="20" r="2"/><path stroke-linecap="round" d="M8 20h7M2 2h.966c.945 0 1.768.625 1.997 1.515L7.94 15.076a1.96 1.96 0 0 1-.35 1.686L6.631 18"/></g></svg>';
+    }
+    function cartCheckIcon() {
+      return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+    }
+
+    // ── Pricing helpers (matches domain-search.html's conventions) ──────
+    function formatPrice(price) {
+      return typeof price === 'number' ? 'C$' + price.toFixed(2) + '/yr' : '—';
+    }
+    function formatOneTime(price) {
+      return typeof price === 'number' ? 'C$' + price.toFixed(2) : '—';
+    }
+    var TLD_BASE_PRICE = {
+      '.com': 10.46, '.net': 12.18, '.org': 10.28, '.info': 8.98, '.biz': 14.98,
+      '.io': 32.99, '.co': 27.99, '.ai': 79.99, '.app': 14.99, '.dev': 14.99,
+      '.xyz': 1.99, '.shop': 34.99, '.store': 44.99, '.online': 34.99, '.site': 24.99,
+      '.tech': 44.99, '.club': 12.99, '.me': 17.99, '.tv': 34.99, '.ca': 13.99
+    };
+    function baseRegistrationPrice(tldStr) {
+      return TLD_BASE_PRICE.hasOwnProperty(tldStr) ? TLD_BASE_PRICE[tldStr] : 16.99;
+    }
+    // Year 1 is at cost (0% markup); Year 2+ renews at a flat +20% over wholesale.
+    var RENEWAL_MARKUP = 0.20;
+    function renewalPricePerYear(base) { return base * (1 + RENEWAL_MARKUP); }
+    function multiYearTotal(base, years) {
+      return base + Math.max((years || 1) - 1, 0) * renewalPricePerYear(base);
+    }
+    var TERM_OPTIONS = [1, 2, 3, 5, 10];
+    var DOMAIN_PROTECTION_PRICE = 12.60;          // Year 1 (C$1.05/mo)
+    var DOMAIN_PROTECTION_RENEWAL_PRICE = 19.80;  // Year 2+ (C$1.65/mo)
+
+    // ── Cart (localStorage, shared sitewide via CART_KEY) ───────────────
+    var CART_KEY = 'vardweb_domain_cart';
+    function loadCart() {
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+      catch (e) { return []; }
+    }
+    function persistCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); }
+    function itemMatches(i, item) {
+      return i.domain === item.domain && i.tld === item.tld &&
+        (i.type || null) === (item.type || null) &&
+        (i.type !== 'addon' || i.key === item.key);
+    }
+    function cartHasItem(item) {
+      return loadCart().some(function (i) { return itemMatches(i, item); });
+    }
+    function addToCart(item) {
+      var cart = loadCart();
+      if (cart.some(function (i) { return itemMatches(i, item); })) return;
+      cart.push(item);
+      saveCart(cart);
+    }
+    function removeItem(item) {
+      var cart = loadCart().filter(function (i) { return !itemMatches(i, item); });
+      saveCart(cart);
+    }
+    function removeDomainAndAddons(domain, tld) {
+      var cart = loadCart().filter(function (i) { return !(i.domain === domain && i.tld === tld); });
+      saveCart(cart);
+    }
+    function updateItemYears(domain, tld, years) {
+      var cart = loadCart();
+      cart.forEach(function (i) { if (i.domain === domain && i.tld === tld) i.years = years; });
+      saveCart(cart);
+    }
+    function saveCart(cart) {
+      persistCart(cart);
+      renderAll();
+    }
+
+    var cartCountBadge = document.getElementById('cart-count-badge');
+    function syncCartBadge() {
+      var cart = loadCart();
+      var domainCount = cart.filter(function (i) { return i.type !== 'addon'; }).length;
+      if (cartCountBadge) {
+        cartCountBadge.textContent = String(domainCount);
+        cartCountBadge.hidden = domainCount === 0;
+      }
+    }
+
+    // ── Auth gate ────────────────────────────────────────────────────
+    var authGateEl = document.getElementById('auth-gate');
+    var checkoutMainEl = document.getElementById('checkout-main');
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ── Auth gate particle background ───────────────────────────────
+    var authParticlesRaf = null;
+    (function () {
+      var canvas = document.getElementById('auth-particles-canvas');
+      var ctx = canvas && canvas.getContext('2d');
+      if (!canvas || !ctx || prefersReducedMotion) return;
+
+      var particles = [];
+      function makeParticle() {
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          v: Math.random() * 0.25 + 0.05,
+          o: Math.random() * 0.35 + 0.15
+        };
+      }
+      function setSize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      function initParticles() {
+        particles = [];
+        var count = Math.floor((canvas.width * canvas.height) / 9000);
+        for (var i = 0; i < count; i++) particles.push(makeParticle());
+      }
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function (p) {
+          p.y -= p.v;
+          if (p.y < 0) {
+            p.x = Math.random() * canvas.width;
+            p.y = canvas.height + Math.random() * 40;
+            p.v = Math.random() * 0.25 + 0.05;
+            p.o = Math.random() * 0.35 + 0.15;
+          }
+          ctx.fillStyle = 'rgba(167,244,211,' + p.o + ')';
+          ctx.fillRect(p.x, p.y, 0.7, 2.2);
+        });
+        authParticlesRaf = requestAnimationFrame(draw);
+      }
+      function onResize() { setSize(); initParticles(); }
+
+      window.addEventListener('resize', onResize);
+      window.startAuthParticles = function () {
+        if (authParticlesRaf) return;
+        setSize();
+        initParticles();
+        authParticlesRaf = requestAnimationFrame(draw);
+      };
+      window.stopAuthParticles = function () {
+        if (authParticlesRaf) { cancelAnimationFrame(authParticlesRaf); authParticlesRaf = null; }
+      };
+    })();
+
+    // ── Password show/hide eye toggles ──────────────────────────────
+    document.querySelectorAll('.eye-toggle').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var input = document.getElementById(btn.dataset.eyeFor);
+        if (!input) return;
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.querySelector('.icon-eye-open').style.display = show ? 'none' : '';
+        btn.querySelector('.icon-eye-off').style.display = show ? '' : 'none';
+        btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      });
+    });
+
+    // ── Auth overlay close ───────────────────────────────────────────
+    function closeAuthGate() { window.location.href = 'domain-search.html'; }
+    document.getElementById('auth-close-btn').addEventListener('click', closeAuthGate);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !authGateEl.hidden) closeAuthGate();
+    });
+
+    function hideAuthMessage(el) {
+      if (el._hideTimer) { clearTimeout(el._hideTimer); el._hideTimer = null; }
+      el.hidden = true;
+      el.textContent = '';
+    }
+    function showAuthMessage(el, text) {
+      if (el._hideTimer) clearTimeout(el._hideTimer);
+      el.textContent = text;
+      el.hidden = false;
+      el._hideTimer = setTimeout(function () { hideAuthMessage(el); }, 15000);
+    }
+    function showAuthForm(name) {
+      document.querySelectorAll('[data-auth-form]').forEach(function (el) {
+        var isTarget = el.getAttribute('data-auth-form') === name;
+        el.hidden = !isTarget;
+        if (!isTarget) el.querySelectorAll('.auth-error, .auth-notice').forEach(hideAuthMessage);
+      });
+    }
+    document.getElementById('show-create-view').addEventListener('click', function () { showAuthForm('create'); });
+    document.getElementById('show-signin-view').addEventListener('click', function () { showAuthForm('signin'); });
+    document.getElementById('forgot-password-btn').addEventListener('click', function () {
+      var email = document.getElementById('signin-email').value.trim();
+      if (email) document.getElementById('forgot-email').value = email;
+      showAuthForm('forgot');
+    });
+    document.getElementById('back-to-signin-btn').addEventListener('click', function () { showAuthForm('signin'); });
+
+    document.getElementById('continue-with-email-btn').addEventListener('click', function (e) {
+      e.target.hidden = true;
+      document.getElementById('create-form').hidden = false;
+      document.getElementById('create-email').focus();
+    });
+
+    async function ensureProfileRow(userId) {
+      try {
+        await clientSb.from('user_profiles').upsert({ id: userId, role: 'client' }, { onConflict: 'id' });
+      } catch (e) { /* non-fatal — profile row is a nice-to-have for nav/CRM, not required for checkout */ }
+    }
+
+    function showCheckoutGate() {
+      authGateEl.hidden = false;
+      checkoutMainEl.hidden = true;
+      document.body.style.overflow = 'hidden';
+      if (window.startAuthParticles) window.startAuthParticles();
+    }
+    function showCheckoutMain() {
+      authGateEl.hidden = true;
+      checkoutMainEl.hidden = false;
+      document.body.style.overflow = '';
+      if (window.stopAuthParticles) window.stopAuthParticles();
+      showCartStep();
+      renderAll();
+    }
+
+    // ── Cart step ↔ Billing step ─────────────────────────────────────
+    var cartStepEl = document.getElementById('checkout-step-cart');
+    var billingStepEl = document.getElementById('checkout-step-billing');
+
+    function showCartStep() {
+      billingStepEl.hidden = true;
+      cartStepEl.hidden = false;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    }
+    function showBillingStep() {
+      var domainItems = loadCart().filter(function (i) { return i.type !== 'addon'; });
+      if (domainItems.length === 0) return;
+      cartStepEl.hidden = true;
+      billingStepEl.hidden = false;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    }
+
+    document.getElementById('signin-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('signin-error');
+      var noticeEl = document.getElementById('signin-notice');
+      var btn = document.getElementById('signin-submit-btn');
+      hideAuthMessage(errEl);
+      hideAuthMessage(noticeEl);
+      btn.disabled = true; btn.textContent = 'Signing in…';
+      try {
+        var email = document.getElementById('signin-email').value.trim();
+        var password = document.getElementById('signin-password').value;
+        var res = await clientSb.auth.signInWithPassword({ email: email, password: password });
+        if (res.error) throw res.error;
+        await ensureProfileRow(res.data.user.id);
+        showCheckoutMain();
+      } catch (err) {
+        var signinMsg;
+        if (err && (err.message === 'Email not confirmed' || err.code === 'email_not_confirmed')) {
+          signinMsg = 'Check your email and verify your account.';
+        } else if (err && err.message === 'Invalid login credentials') {
+          signinMsg = 'Incorrect email or password. Please try again.';
+        } else {
+          signinMsg = (err && err.message) || 'Sign in failed. Please try again.';
+        }
+        showAuthMessage(errEl, signinMsg);
+      } finally {
+        btn.disabled = false; btn.innerHTML = 'Sign In <span class="btn-arrow">→</span>';
+      }
+    });
+
+    document.getElementById('create-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('create-error');
+      var noticeEl = document.getElementById('create-notice');
+      var btn = document.getElementById('create-submit-btn');
+      hideAuthMessage(errEl); hideAuthMessage(noticeEl);
+
+      var email = document.getElementById('create-email').value.trim();
+      var password = document.getElementById('create-password').value;
+      var confirm = document.getElementById('create-password-confirm').value;
+      if (password !== confirm) {
+        showAuthMessage(errEl, 'Passwords do not match.');
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Creating account…';
+      try {
+        var res = await clientSb.auth.signUp({ email: email, password: password });
+        if (res.error) throw res.error;
+        if (res.data.session) {
+          await ensureProfileRow(res.data.user.id);
+          showCheckoutMain();
+        } else {
+          showAuthForm('signin');
+          showAuthMessage(document.getElementById('signin-notice'), 'Check your email to confirm your account, then sign in.');
+        }
+      } catch (err) {
+        showAuthMessage(errEl, (err && err.message) || 'Something went wrong creating your account.');
+      } finally {
+        btn.disabled = false; btn.innerHTML = 'Create Account <span class="btn-arrow">→</span>';
+      }
+    });
+
+    document.getElementById('forgot-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('forgot-error');
+      var noticeEl = document.getElementById('forgot-notice');
+      var btn = document.getElementById('forgot-submit-btn');
+      hideAuthMessage(errEl); hideAuthMessage(noticeEl);
+      var email = document.getElementById('forgot-email').value.trim();
+      if (!email) {
+        showAuthMessage(errEl, 'Please enter your email address.');
+        return;
+      }
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await clientSb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/crm/reset-password.html' });
+      } catch (e2) { /* always show success to prevent email enumeration */ }
+      showAuthMessage(noticeEl, 'If an account with that email exists, a reset link has been sent.');
+      btn.disabled = false; btn.innerHTML = 'Send Reset Link <span class="btn-arrow">→</span>';
+    });
+
+    // ── Checkout render ──────────────────────────────────────────────
+    var itemListEl = document.getElementById('checkout-item-list');
+    var emptyEl = document.getElementById('checkout-empty');
+    var contentEl = document.getElementById('checkout-content');
+
+    function setText(id, text) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+    function updateOrderSummaryTotals(domainItemCount, total) {
+      var countText = domainItemCount + (domainItemCount === 1 ? ' item' : ' items');
+      setText('order-summary-count-cart', countText);
+      setText('order-summary-count-billing', countText);
+      setText('order-summary-total-cart', 'C$' + total.toFixed(2));
+      setText('order-summary-total-billing', 'C$' + total.toFixed(2));
+    }
+
+    // Real savings from year-1-at-cost pricing vs. the standard renewal-markup rate
+    // (constant per item regardless of chosen term — only Year 1 differs from the renewal rate).
+    function calcSavings(cart) {
+      var savings = 0;
+      cart.forEach(function (i) {
+        if (i.type === 'addon' && i.key === 'domain_protection') savings += DOMAIN_PROTECTION_RENEWAL_PRICE - DOMAIN_PROTECTION_PRICE;
+        else if (i.type !== 'addon' && !i.premium) savings += renewalPricePerYear(i.price) - i.price;
+      });
+      return savings;
+    }
+
+    function itemLineTotal(item) {
+      if (item.type === 'addon' || item.premium) return item.price || 0;
+      return multiYearTotal(item.price || 0, item.years || 1);
+    }
+
+    function renderCartItems() {
+      var cart = loadCart();
+      var domainItems = cart.filter(function (i) { return i.type !== 'addon'; });
+
+      if (domainItems.length === 0) {
+        emptyEl.hidden = false;
+        contentEl.hidden = true;
+        syncCartBadge();
+        return;
+      }
+      emptyEl.hidden = true;
+      contentEl.hidden = false;
+
+      itemListEl.innerHTML = domainItems.map(function (item) {
+        var protectionItem = { type: 'addon', key: 'domain_protection', domain: item.domain, tld: item.tld };
+        var hasProtection = cartHasItem(protectionItem);
+        var lineTotal = itemLineTotal(item);
+
+        var typeLabelHtml = item.premium ? '' : '<span class="co-item-type-label">' + escapeHtml(item.tld.toUpperCase()) + ' Domain Registration</span>';
+        var subtitleHtml = item.premium ? '' : '<span class="co-addon-subtitle">THE MORE DOMAIN NAMES YOU OWN, THE MORE PROTECTED YOUR BRAND IS</span>';
+
+        var itemWas = renewalPricePerYear(item.price || 0);
+        var metaHtml;
+        if (item.premium) {
+          metaHtml = '<div class="co-item-onetime-note">Premium Domain Purchase — One-Time Fee</div>';
+        } else {
+          var termOptionsHtml = TERM_OPTIONS.map(function (y) {
+            return '<option value="' + y + '"' + ((item.years || 1) === y ? ' selected' : '') + '>' + y + ' Year' + (y > 1 ? 's' : '') + '</option>';
+          }).join('');
+          var renewDate = new Date();
+          var renewMonth = renewDate.toLocaleString('en-US', { month: 'long' });
+          var renewYear = renewDate.getFullYear() + (item.years || 1);
+          metaHtml =
+            '<div class="co-item-term"><select class="co-item-term-select" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '">' + termOptionsHtml + '</select></div>' +
+            '<div class="co-item-note">Renews ' + renewMonth + ' ' + renewYear + ' for ~C$' + itemWas.toFixed(2) + '</div>';
+        }
+
+        var priceNowText = item.premium ? formatOneTime(lineTotal) : formatPrice(lineTotal).replace('/yr', item.years > 1 ? ' total' : '/yr');
+        var priceStackHtml = '<div class="co-item-price-stack"><span class="co-price-now">' + priceNowText + '</span>';
+        if (!item.premium && (item.years || 1) === 1) {
+          var itemOffPct = Math.round((1 - item.price / itemWas) * 100);
+          priceStackHtml += '<span class="co-price-was">' + formatPrice(itemWas) + '</span>' +
+            '<span class="co-price-off">' + itemOffPct + '% off</span>';
+        }
+        priceStackHtml += '</div>';
+
+        var protectionOffPct = Math.round((1 - DOMAIN_PROTECTION_PRICE / DOMAIN_PROTECTION_RENEWAL_PRICE) * 100);
+        var addonHtml = item.premium ? '' :
+          '<div class="co-addon-row">' +
+            '<label class="co-toggle-wrap"><span class="co-toggle"><input type="checkbox" class="co-protection-toggle" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '"' + (hasProtection ? ' checked' : '') + ' /><span class="co-toggle-track"></span><span class="co-toggle-thumb"></span></span></label>' +
+            '<div class="co-addon-body">' +
+              '<div class="co-addon-title-row">' +
+                '<span class="co-addon-title">Full Domain Protection</span>' +
+                '<span class="co-addon-badge">Recommended</span>' +
+              '</div>' +
+              '<span class="co-addon-subtitle">CHOSEN BY OVER 80% OF CUSTOMERS EACH MONTH</span>' +
+              '<ul class="co-addon-bullets">' +
+                '<li>Prevents hackers from stealing your domain or making any other unauthorized changes.</li>' +
+                '<li>Requires your approval via 2-factor verification for vital changes like deleting or transferring a domain.</li>' +
+              '</ul>' +
+            '</div>' +
+            '<div class="co-addon-price-block"><div class="co-addon-price-stack">' +
+              '<span class="co-price-now">C$' + DOMAIN_PROTECTION_PRICE.toFixed(2) + '/yr</span>' +
+              '<span class="co-price-was">C$' + DOMAIN_PROTECTION_RENEWAL_PRICE.toFixed(2) + '/yr</span>' +
+              '<span class="co-price-off">' + protectionOffPct + '% off</span>' +
+            '</div></div>' +
+          '</div>';
+
+        return '<div class="co-item">' +
+          '<div class="co-item-top">' +
+            '<div class="co-item-icon">WWW</div>' +
+            '<div class="co-item-info">' +
+              '<div class="co-item-name-row">' +
+                '<span class="co-item-domain">' + escapeHtml(item.domain) + '</span>' +
+                (item.premium ? '<span class="co-item-badge">Premium</span>' : '') +
+              '</div>' +
+              subtitleHtml +
+              typeLabelHtml +
+              metaHtml +
+            '</div>' +
+            '<div class="co-item-right">' +
+              priceStackHtml +
+              '<button type="button" class="co-item-remove" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '" aria-label="Remove ' + escapeHtml(item.domain) + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+            '</div>' +
+          '</div>' +
+          addonHtml +
+        '</div>';
+      }).join('');
+
+      itemListEl.querySelectorAll('.co-item-remove').forEach(function (btn) {
+        btn.addEventListener('click', function () { removeDomainAndAddons(btn.dataset.domain, btn.dataset.tld); });
+      });
+      itemListEl.querySelectorAll('.co-item-term-select').forEach(function (sel) {
+        sel.addEventListener('change', function () {
+          updateItemYears(sel.dataset.domain, sel.dataset.tld, Number(sel.value));
+        });
+        var info = sel.closest('.co-item-info');
+        var label = info && info.querySelector('.co-item-type-label');
+        if (label) {
+          var textWidth = measureTextWidth(label.textContent, '10.5px Inter, sans-serif');
+          sel.style.width = Math.ceil(textWidth + 34 + 10 + 2) + 'px'; // + arrow space + left padding + border
+        }
+      });
+      itemListEl.querySelectorAll('.co-protection-toggle').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          var domain = cb.dataset.domain, tld = cb.dataset.tld;
+          var addonItem = { type: 'addon', key: 'domain_protection', domain: domain, tld: tld, price: DOMAIN_PROTECTION_PRICE, years: 1 };
+          if (cb.checked) addToCart(addonItem); else removeItem(addonItem);
+        });
+      });
+
+      // Order summary totals
+      var total = cart.reduce(function (sum, i) { return sum + itemLineTotal(i); }, 0);
+      updateOrderSummaryTotals(domainItems.length, total);
+
+      var savings = calcSavings(cart);
+      var savingsEl = document.getElementById('order-summary-savings');
+      if (savingsEl) {
+        savingsEl.hidden = savings <= 0;
+        setText('order-summary-savings-amount', 'C$' + savings.toFixed(2));
+      }
+
+      syncCartBadge();
+    }
+
+    // ── Bundle & Save (reuses domain-search.html's BUNDLE_TLDS convention) ──
+    var CANADIAN_TIMEZONES = ['America/St_Johns', 'America/Halifax', 'America/Moncton', 'America/Toronto', 'America/Winnipeg', 'America/Regina', 'America/Edmonton', 'America/Vancouver', 'America/Whitehorse'];
+    function isLikelyCanadian() {
+      try {
+        var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        if (CANADIAN_TIMEZONES.indexOf(tz) !== -1) return true;
+        var langs = (navigator.languages || [navigator.language || '']).map(function (l) { return (l || '').toLowerCase(); });
+        return langs.indexOf('en-ca') !== -1 || langs.indexOf('fr-ca') !== -1;
+      } catch (e) { return false; }
+    }
+    var BUNDLE_TLD_POOL = ['.com', '.net', '.org', '.io', '.co', '.app', '.dev', '.xyz', '.shop', '.store', '.online', '.site'];
+    var BUNDLE_TLDS = isLikelyCanadian() ? ['.ca'].concat(BUNDLE_TLD_POOL) : BUNDLE_TLD_POOL;
+
+    function withTimeout(promise, ms) {
+      return new Promise(function (resolve) {
+        var settled = false;
+        var timer = setTimeout(function () { if (!settled) { settled = true; resolve([]); } }, ms);
+        promise.then(function (v) { if (!settled) { settled = true; clearTimeout(timer); resolve(v); } });
+      });
+    }
+    function checkDomainsBatch(list) {
+      if (!list.length) return Promise.resolve([]);
+      var req = fetch(_sbCfg.url + '/functions/v1/check-domain-availability', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ domains: list }),
+      })
+        .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+        .then(function (r) { return (r.ok && !r.json.error) ? (r.json.results || []) : []; })
+        .catch(function () { return []; });
+      return withTimeout(req, 8000);
+    }
+
+    var bundleBlockEl = document.getElementById('addon-bundle-block');
+    var bundleContentEl = document.getElementById('addon-bundle-content');
+
+    function renderBundleSuggestions() {
+      var cart = loadCart();
+      var domainItems = cart.filter(function (i) { return i.type !== 'addon' && !i.premium; });
+      if (!domainItems.length) { bundleBlockEl.hidden = true; return; }
+
+      // One suggestion card per unique base still missing at least one BUNDLE_TLDS ending.
+      var bases = {};
+      domainItems.forEach(function (i) {
+        var base = i.domain.slice(0, i.domain.length - i.tld.length);
+        if (!bases[base]) bases[base] = [];
+        bases[base].push(i.tld);
+      });
+
+      var baseKeys = Object.keys(bases).slice(0, 3); // cap the number of bundle checks per page load
+      if (!baseKeys.length) { bundleBlockEl.hidden = true; return; }
+
+      bundleBlockEl.hidden = false;
+      bundleContentEl.innerHTML = '<p class="co-bundle-loading">Checking bundle suggestions…</p>';
+
+      Promise.all(baseKeys.map(function (base) {
+        var missing = BUNDLE_TLDS.filter(function (t) { return bases[base].indexOf(t) === -1; });
+        if (!missing.length) return Promise.resolve({ base: base, results: [] });
+        return checkDomainsBatch(missing.map(function (t) { return { name: base, tld: t }; }))
+          .then(function (results) { return { base: base, results: results.filter(function (r) { return r.available; }).slice(0, 6) }; });
+      })).then(function (groups) {
+        var cardsHtml = groups.filter(function (g) { return g.results.length; }).map(function (g) {
+          var chipsHtml = g.results.map(function (r) {
+            var now = typeof r.price === 'number' ? r.price : baseRegistrationPrice(r.tld);
+            var was = renewalPricePerYear(now);
+            var inCart = cartHasItem({ domain: g.base + r.tld, tld: r.tld });
+            return '<div class="co-bundle-tld-chip">' +
+              '<span class="co-bundle-tld-name">' + escapeHtml(r.tld) + '</span>' +
+              '<div class="co-bundle-tld-bottom">' +
+                '<div class="co-bundle-price-row"><span class="co-price-now">' + formatPrice(now) + '</span><span class="co-price-was">' + formatPrice(was) + '</span></div>' +
+                '<button type="button" class="dx-card-cta co-bundle-add' + (inCart ? ' is-added' : '') + '" data-base="' + escapeHtml(g.base) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + now + '" aria-label="' + (inCart ? 'Remove ' : 'Add ') + escapeHtml(g.base + r.tld) + '">' + (inCart ? cartCheckIcon() : cartAddIcon()) + '</button>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+          return '<div class="co-bundle-card">' +
+            '<p class="co-bundle-heading">It\'s your name. Own it. Lock in your matching <strong>' + escapeHtml(g.base) + '</strong> domain names before someone else does.</p>' +
+            '<div class="co-bundle-chip-row">' + chipsHtml + '</div>' +
+          '</div>';
+        }).join('');
+        if (!cardsHtml) { bundleBlockEl.hidden = true; return; }
+        bundleContentEl.innerHTML = cardsHtml;
+        bundleContentEl.querySelectorAll('.co-bundle-add').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var item = { domain: btn.dataset.base + btn.dataset.tld, tld: btn.dataset.tld, price: Number(btn.dataset.price), years: 1 };
+            if (cartHasItem(item)) removeItem(item); else addToCart(item);
+            renderBundleSuggestions();
+          });
+        });
+      });
+    }
+
+    // ── Inline search + alternatives widget ─────────────────────────
+    var coSearchForm = document.getElementById('co-search-form');
+    var coSearchResultsEl = document.getElementById('co-search-results');
+    var ALT_TLD_SHORTLIST = ['.co', '.net', '.shop', '.io', '.org', '.online', '.store', '.info'];
+    // Fallback name variants (matches domain-search.html's "verdict box" pattern) — guarantees
+    // we can usually surface real alternatives even when every shortlist TLD is taken.
+    var VARIANT_PREFIXES = ['get', 'my'];
+    var VARIANT_SUFFIXES = ['hq', 'app', 'hub'];
+    var VARIANT_TLDS = ['.com', '.co'];
+    function buildVariantCandidates(base, excludeTld) {
+      var names = VARIANT_PREFIXES.map(function (p) { return p + base; })
+        .concat(VARIANT_SUFFIXES.map(function (s) { return base + s; }));
+      var candidates = [];
+      names.forEach(function (n) {
+        VARIANT_TLDS.forEach(function (t) { if (t !== excludeTld) candidates.push({ name: n, tld: t }); });
+      });
+      return candidates;
+    }
+
+    function searchSkeletonHtml() {
+      var row = '<div class="co-search-skel-row">' +
+        '<div class="co-search-skel-bar co-search-skel-domain"></div>' +
+        '<div class="co-search-skel-price-col">' +
+          '<div class="co-search-skel-bar co-search-skel-price-now"></div>' +
+          '<div class="co-search-skel-bar co-search-skel-price-note"></div>' +
+        '</div>' +
+        '<div class="co-search-skel-bar co-search-skel-btn"></div>' +
+      '</div>';
+      return '<div class="co-search-results">' + row + row + '</div>';
+    }
+
+    function isTldSupported(tld) {
+      return window.TLD_CATALOG ? window.TLD_CATALOG.some(function (t) { return t.tld === tld && !t.restricted; }) : true;
+    }
+
+    function renderSearchAddBtn(r) {
+      var domainFull = r.domain + r.tld;
+      var item = { domain: domainFull, tld: r.tld, price: r.price, premium: Boolean(r.premium) };
+      var inCart = cartHasItem(item);
+      return '<button type="button" class="dx-card-cta co-search-add' + (inCart ? ' is-added' : '') + '" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" data-premium="' + Boolean(r.premium) + '" aria-label="' + (inCart ? 'Remove ' : 'Add ') + escapeHtml(domainFull) + '">' + (inCart ? cartCheckIcon() : cartAddIcon()) + '</button>';
+    }
+
+    function renderSearchPriceCol(r) {
+      if (r.premium) {
+        return '<div class="co-search-price-col"><div class="co-search-price-row"><span class="co-price-now">' + formatOneTime(r.price) + '</span></div></div>';
+      }
+      var was = renewalPricePerYear(r.price || 0);
+      return '<div class="co-search-price-col">' +
+        '<div class="co-search-price-row"><span class="co-price-was">' + formatPrice(was) + '</span><span class="co-price-now">' + formatPrice(r.price) + '</span></div>' +
+        '<span class="co-search-price-note">for first year<button type="button" class="tt-icon-trigger" data-tooltip="' +
+          escapeHtml('Pricing\n\nWe offer a lower first-year price to help you get up and running online. After the first year, this domain renews at the standard rate — currently ~C$' + was.toFixed(2) + '/yr.\n\nICANN’s flat ~C$0.25 per-domain-year fee and applicable taxes may apply at checkout.') +
+          '" aria-label="What is this?">?</button></span>' +
+      '</div>';
+    }
+
+    function wireSearchAddButtons(scopeEl) {
+      scopeEl.querySelectorAll('.co-search-add').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = { domain: btn.dataset.domain, tld: btn.dataset.tld, price: Number(btn.dataset.price), premium: btn.dataset.premium === 'true' };
+          if (!item.premium) item.years = 1;
+          if (cartHasItem(item)) removeItem(item); else addToCart(item);
+          renderSearchWidgetState();
+        });
+      });
+      var closeBtn = scopeEl.querySelector('.co-search-close-btn');
+      if (closeBtn) closeBtn.addEventListener('click', closeSearchResults);
+    }
+    function closeSearchResults() {
+      lastSearchResults = null;
+      coSearchResultsEl.innerHTML = '';
+      var input = document.getElementById('co-search-input');
+      if (input) input.value = '';
+    }
+    var lastSearchResults = null;
+    function renderSearchWidgetState() {
+      if (!lastSearchResults) return;
+      renderSearchResults(lastSearchResults.primary, lastSearchResults.alts);
+    }
+
+    function renderSearchResults(primary, alts) {
+      lastSearchResults = { primary: primary, alts: alts };
+      var closeBtnHtml = '<button type="button" class="btn btn-ghost co-search-close-btn">Close</button>';
+      if (primary && primary.available) {
+        coSearchResultsEl.innerHTML =
+          '<div class="co-search-results"><div class="co-search-result-row">' +
+            '<span class="co-search-result-domain"><span class="co-search-highlight">' + escapeHtml(primary.domain + primary.tld) + '</span></span>' +
+            renderSearchPriceCol(primary) +
+            renderSearchAddBtn(primary) +
+          '</div>' + closeBtnHtml + '</div>';
+      } else {
+        var available = alts.filter(function (r) { return r.available; }).slice(0, 3);
+        var rowsHtml = available.map(function (r) {
+          return '<div class="co-search-result-row">' +
+            '<span class="co-search-result-domain">' + escapeHtml(r.domain + r.tld) + '</span>' +
+            renderSearchPriceCol(r) +
+            renderSearchAddBtn(r) +
+          '</div>';
+        }).join('');
+        coSearchResultsEl.innerHTML =
+          '<div class="co-search-results">' +
+            '<p class="co-search-taken-msg">Sorry, <span class="co-search-highlight">' + escapeHtml(primary.domain + primary.tld) + '</span> is taken.</p>' +
+            (rowsHtml ? '<p class="co-search-how-about">How about one of these?</p>' + rowsHtml : '<p class="co-search-empty">No available alternatives came back — try a different name.</p>') +
+            closeBtnHtml +
+          '</div>';
+      }
+      wireSearchAddButtons(coSearchResultsEl);
+    }
+
+    coSearchForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = document.getElementById('co-search-input');
+      var raw = (input.value || '').trim().replace(/\s+/g, '');
+      if (!raw) { input.focus(); return; }
+      var m = raw.match(/^(.+?)(\.[a-z]{2,24})$/i);
+      var base = (m ? m[1] : raw).toLowerCase().replace(/[^a-z0-9-]/g, '');
+      var tld = m ? m[2].toLowerCase() : '.com';
+      if (!base) { input.focus(); return; }
+      if (!isTldSupported(tld)) {
+        coSearchResultsEl.innerHTML = '<p class="co-search-empty">' + escapeHtml(tld) + ' isn\'t a supported ending — try another.</p>';
+        return;
+      }
+
+      var alts = ALT_TLD_SHORTLIST.filter(function (t) { return t !== tld; }).slice(0, 6);
+      var requestList = [{ name: base, tld: tld }].concat(alts.map(function (t) { return { name: base, tld: t }; }));
+
+      coSearchResultsEl.innerHTML = searchSkeletonHtml();
+      checkDomainsBatch(requestList).then(function (results) {
+        var primary = results.filter(function (r) { return r.tld === tld; })[0] || { domain: base, tld: tld, available: false, price: null };
+        var altResults = results.filter(function (r) { return r.tld !== tld; });
+        var availableCount = altResults.filter(function (r) { return r.available; }).length;
+        if (!primary.available && availableCount < 3) {
+          checkDomainsBatch(buildVariantCandidates(base, tld)).then(function (variantResults) {
+            renderSearchResults(primary, altResults.concat(variantResults));
+          });
+        } else {
+          renderSearchResults(primary, altResults);
+        }
+      });
+    });
+
+    // ── Cart step ↔ Billing step navigation ──────────────────────────
+    document.getElementById('proceed-to-billing-btn').addEventListener('click', showBillingStep);
+    document.getElementById('edit-order-btn').addEventListener('click', showCartStep);
+    document.getElementById('billing-cancel-btn').addEventListener('click', function (e) {
+      e.preventDefault();
+      showCartStep();
+    });
+
+    // ── Checkout submit: registrant form → create-domain-checkout → Stripe ──
+    var registrantForm = document.getElementById('registrant-form');
+    var registrantError = document.getElementById('registrant-error');
+    var registrantSubmitBtn = document.getElementById('billing-submit-btn');
+
+    registrantForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var cart = loadCart();
+      if (cart.length === 0) return;
+
+      var fd = new FormData(registrantForm);
+      var firstName = (fd.get('first_name') || '').trim();
+      var lastName = (fd.get('last_name') || '').trim();
+      var address = (fd.get('address') || '').trim();
+      var address2 = (fd.get('address2') || '').trim();
+      var registrant = {
+        name: (firstName + ' ' + lastName).trim(),
+        phone: (fd.get('phone_code') || '') + (fd.get('phone') || ''),
+        address: address2 ? address + ', ' + address2 : address,
+        city: fd.get('city'), state: fd.get('state'), postal_code: fd.get('postal_code'), country: fd.get('country'),
+        organization: fd.get('organization') || '', tax_id: fd.get('tax_id') || '',
+      };
+      var buyerEmail = fd.get('email');
+
+      registrantError.hidden = true;
+      registrantSubmitBtn.disabled = true;
+      registrantSubmitBtn.textContent = 'Redirecting to payment…';
+
+      fetch(_sbCfg.url + '/functions/v1/create-domain-checkout', {
+        method: 'POST',
+        headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart, registrant: registrant, buyer_email: buyerEmail }),
+      })
+        .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
+        .then(function (r) {
+          if (!r.ok || r.json.error || !r.json.checkout_url) throw new Error(r.json.error || 'Checkout failed');
+          window.location.href = r.json.checkout_url;
+        })
+        .catch(function (err) {
+          registrantSubmitBtn.disabled = false;
+          registrantSubmitBtn.textContent = 'Continue to Payment →';
+          registrantError.textContent = err.message || 'Something went wrong starting checkout — please try again.';
+          registrantError.hidden = false;
+        });
+    });
+
+    function renderAll() {
+      renderCartItems();
+      renderBundleSuggestions();
+    }
+
+    // ── Boot: resolve session before showing anything ───────────────
+    (async function boot() {
+      var session = null;
+      try {
+        var res = await clientSb.auth.getSession();
+        session = res.data.session;
+      } catch (e) { /* dev mode / offline */ }
+      if (session) {
+        try {
+          var fd2 = registrantForm.querySelector('input[name="email"]');
+          if (fd2 && !fd2.value) fd2.value = session.user.email;
+        } catch (e) {}
+        showCheckoutMain();
+      } else {
+        showCheckoutGate();
+      }
+      syncCartBadge();
+    })();
+  </script>
+
+  <script>
+    /* ── Shared floating tooltip for .tt-icon-trigger elements (delegated) ── */
+    (function () {
+      var TRIGGER_SELECTOR = '.tt-icon-trigger';
+      var box = document.createElement('div');
+      box.className = 'tt-box';
+      box.id = 'tt-box-shared';
+      box.setAttribute('role', 'tooltip');
+      document.body.appendChild(box);
+
+      var openTrigger = null;
+      var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      function position(trigger) {
+        var r = trigger.getBoundingClientRect();
+        var bw = box.offsetWidth, bh = box.offsetHeight;
+        var left = r.left + r.width / 2 - bw / 2;
+        left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
+        var top = r.top - bh - 6;
+        var below = top < 8;
+        if (below) top = r.bottom + 6;
+        box.style.left = left + 'px';
+        box.style.top = top + 'px';
+      }
+      function show(trigger) {
+        openTrigger = trigger;
+        box.textContent = trigger.getAttribute('data-tooltip') || '';
+        box.classList.add('is-open');
+        position(trigger);
+        trigger.setAttribute('aria-expanded', 'true');
+        trigger.setAttribute('aria-describedby', 'tt-box-shared');
+      }
+      function hide() {
+        if (!openTrigger) return;
+        openTrigger.setAttribute('aria-expanded', 'false');
+        openTrigger.removeAttribute('aria-describedby');
+        openTrigger = null;
+        box.classList.remove('is-open');
+      }
+      var hoverTimer = null;
+      document.addEventListener('mouseover', function (e) {
+        var t = e.target.closest(TRIGGER_SELECTOR);
+        if (!t) return;
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(function () { if (t.matches(':hover')) show(t); }, 150);
+      });
+      document.addEventListener('mouseout', function (e) {
+        var t = e.target.closest(TRIGGER_SELECTOR);
+        if (!t) return;
+        clearTimeout(hoverTimer);
+        if (openTrigger === t) hide();
+      });
+      document.addEventListener('focusin', function (e) { var t = e.target.closest(TRIGGER_SELECTOR); if (t) show(t); });
+      document.addEventListener('focusout', function (e) { var t = e.target.closest(TRIGGER_SELECTOR); if (t && openTrigger === t) hide(); });
+      document.addEventListener('click', function (e) {
+        var t = e.target.closest(TRIGGER_SELECTOR);
+        if (t && !canHover) { e.stopPropagation(); if (openTrigger === t) hide(); else show(t); return; }
+        hide();
+      });
+      window.addEventListener('scroll', function () { if (!openTrigger) return; if (canHover) position(openTrigger); else hide(); }, true);
+      window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
+    })();
+  </script>
+</body>
+</html>
