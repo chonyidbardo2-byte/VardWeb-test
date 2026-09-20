@@ -213,6 +213,66 @@
       margin: 0 auto; max-width: 1200px;
     }
 
+    /* ── CTA card — sized to match hosting-services.html's .host-cta-card
+       exactly, but recolored to a warm amber/orange/pink palette (matching
+       the animated-shader-hero reference) instead of this page's cyan
+       brand ramp — an intentional, scoped exception for this one card. ── */
+    .svc-cta { padding: 90px 28px 110px; }
+    .svc-cta-card {
+      max-width: 1200px; margin: 0 auto; position: relative; overflow: hidden;
+      border-radius: 48px; min-height: 560px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 28px; text-align: center;
+      background: linear-gradient(180deg, #1c130a 0%, #100b06 100%);
+      border: 1px solid rgba(245,166,35,0.16);
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(245,166,35,0.1);
+    }
+
+    /* Background — vanilla-WebGL2 port of the animated-shader-hero
+       reference's own fragment shader (raymarched cloud + light-trail
+       accumulation loop), unmodified — its default output already is the
+       warm gold/orange/brown palette seen in the reference, so no
+       recoloring uniforms are needed here (unlike .svc-hero-shader). */
+    .svc-cta-shader-2 { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+
+    .svc-cta-content { position: relative; z-index: 1; max-width: 640px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+    .svc-cta-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border-radius: 999px;
+      background: rgba(245,166,35,0.09);
+      border: 1.5px solid rgba(245,166,35,0.32);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
+      color: rgba(238,240,248,0.9); letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 26px; white-space: nowrap;
+    }
+    .svc-cta-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: #F5A623; box-shadow: 0 0 8px #F5A623; flex-shrink: 0; }
+    .svc-cta-heading { font-weight: 800; line-height: 1.15; font-size: clamp(1.6rem, 3.5vw, 2.4rem); color: var(--text-1); margin: 0 0 18px; }
+    .svc-cta-grad {
+      background: linear-gradient(135deg, #FFD76A 0%, #F5A623 50%, #F2545B 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .svc-cta-sub { font-size: 15px; line-height: 1.82; color: var(--text-2); max-width: 440px; margin: 0 auto 32px; }
+    .svc-cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .svc-cta-actions .btn { font-size: 14px; padding: 12px 28px; transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
+    .svc-cta-actions .btn-primary {
+      background: linear-gradient(135deg, rgba(245,166,35,0.22), rgba(232,87,0,0.14));
+      border: 1px solid rgba(245,166,35,0.45);
+      color: #FFD76A;
+    }
+    .svc-cta-actions .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(245,166,35,0.32), rgba(232,87,0,0.2));
+      box-shadow: 0 0 22px rgba(245,166,35,0.25), 0 4px 14px rgba(0,0,0,0.35);
+      transform: translateY(-2px);
+    }
+    .svc-cta-actions .btn-primary:focus-visible { outline: 2px solid rgba(245,166,35,0.55); }
+    .svc-cta-actions .btn-ghost:hover { border-color: rgba(245,166,35,0.35); }
+    @media (max-width: 640px) {
+      .svc-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
+      .svc-cta-pill { font-size: 11px; padding: 7px 14px; gap: 6px; }
+    }
+
     /* ── Footer ── */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
     .footer-inner { max-width: 1200px; margin: 0 auto; }
@@ -225,6 +285,12 @@
     .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
     .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
     .footer-link:hover { color: var(--cyan); }
+    .footer-col-services .footer-link[href="ecommerce.html"]:hover { color: #EF4444; }
+    .footer-col-services .footer-link[href="sem-seo.html"]:hover { color: #f97316; }
+    .footer-col-services .footer-link[href="email-marketing.html"]:hover { color: #60A5FA; }
+    .footer-col-services .footer-link[href="hosting-services.html"]:hover { color: #34D399; }
+    .footer-col-services .footer-link[href="content-creation.html"]:hover { color: #FBBF24; }
+    .footer-col-services .footer-link[href="smm.html"]:hover { color: #F472B6; }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--cyan); }
     .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
@@ -447,6 +513,46 @@
         opacity: 0.92;
       }
     }
+    /* ── Services hero background (layered: static wash → animated silk
+       canvas → scrim → bottom fade → content), ported directly from the
+       reference "silk" component's own Canvas2D drawing logic — no
+       framework, this project has no React/build step, so only the raw
+       gradient/noise/pattern math is reused here as a vanilla-JS IIFE,
+       recolored to this page's own near-black base instead of the
+       reference's literal grays so it reads as one continuous surface with
+       the rest of the page. ── */
+    .svc-hero-section {
+      position: relative; overflow: hidden;
+      min-height: 64vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 128px 28px 96px;
+    }
+    .svc-hero-bg-wash {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(160deg, var(--base) 0%, var(--surface) 50%, var(--base) 100%);
+    }
+    /* Animated Canvas2D layer — paints above .svc-hero-bg-wash (same
+       z-index, later in DOM order so it paints on top); the wash stays
+       visible immediately and doubles as the canvas-unavailable fallback. */
+    .svc-hero-shader { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+    .svc-hero-scrim {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background: radial-gradient(ellipse 70% 60% at 50% 42%, rgba(7,9,16,0.05) 0%, rgba(7,9,16,0.28) 62%, rgba(7,9,16,0.5) 100%);
+    }
+    /* Bottom fade — same convention as index.html's .hero-fade, so the hero
+       blends into the services grid section below instead of a hard edge. */
+    .svc-hero-fade {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background: linear-gradient(to bottom, transparent 78%, var(--base) 100%);
+    }
+    .svc-hero-tagline {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px; font-weight: 600; letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin: 0;
+    }
+    .svc-hero-tagline .svc-hero-dot { color: rgba(200,212,232,0.28); margin: 0 0.5em; }
     /* hero image */
     .svc-hero-img img {
       width: 100%; height: auto; display: block;
@@ -505,18 +611,26 @@
     .nav-right { display: flex; align-items: center; gap: 18px; }
 
     .nav-account-btn {
-      background: none; border: none; padding: 0; gap: 8px;
+      background: none; border: none; padding: 8px; gap: 8px;
       color: rgba(238,240,248,0.85); font-weight: 600;
       transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
     .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
     .nav-account-btn:focus-visible { outline: 2px solid var(--host-green, #34D399); outline-offset: 4px; border-radius: 4px; }
+    .nav-account-btn .ico-body { stroke-dasharray: 40; stroke-dashoffset: 0; opacity: 1; }
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-account-btn .ico-head { transform-origin: 12px 8px; }
+      .nav-account-btn:hover .ico-head, .nav-account-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      .nav-account-btn:hover .ico-body, .nav-account-btn:focus-visible .ico-body { animation: navIconBodyDraw 0.36s ease-in-out 0.18s backwards; }
+    }
     @media (max-width: 1024px) {
       .nav-links { display: none; }
-      .nav-right .btn { display: none; }
+      .nav-right { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
@@ -608,7 +722,10 @@
   <div class="nav-inner">
     <a href="index.html" aria-label="VardWeb Home">
       <div class="logo-nav-wrap">
-        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        <picture>
+          <source media="(max-width: 1024px)" srcset="brand_assets/VardWeb_Favicon_2.png">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </picture>
       </div>
     </a>
 
@@ -652,14 +769,13 @@
     </div>
 
     <div class="nav-right">
-      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
-        <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
-        Account
+      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="ico-head" cx="12" cy="8" r="5"/><path class="ico-body" d="M20 21a8 8 0 0 0-16 0"/></svg>
       </a>
-      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
     </div>
+    <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
   <div class="nav-mobile-menu">
     <div class="mob-section-label">Navigate</div>
@@ -724,30 +840,29 @@
 
 <main id="main-content" tabindex="-1">
 
-<!-- ── Page header ── -->
-<div style="padding:140px 28px 80px;text-align:center;position:relative;overflow:visible;">
-  <div style="position:absolute;top:0;left:0;right:0;bottom:-160px;pointer-events:none;z-index:0;overflow:hidden;">
-    <div style="position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:860px;height:640px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.06) 0%,transparent 68%);"></div>
-    <div style="position:absolute;top:0;right:0;width:480px;height:400px;background:radial-gradient(ellipse,rgba(255,45,120,0.035) 0%,transparent 70%);"></div>
-    <div style="position:absolute;top:60px;left:0;width:380px;height:300px;background:radial-gradient(ellipse,rgba(255,215,0,0.025) 0%,transparent 70%);"></div>
-  </div>
-  <div id="services-hero" class="svc-hero-flex" style="position:relative;z-index:1;max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;">
+<!-- ── Page header / hero ── -->
+<section class="svc-hero-section" style="text-align:center;" aria-label="Services hero">
+  <div class="svc-hero-bg-wash"></div>
+  <canvas class="svc-hero-shader" aria-hidden="true"></canvas>
+  <div class="svc-hero-scrim"></div>
+  <div class="svc-hero-fade" aria-hidden="true"></div>
+  <div id="services-hero" class="svc-hero-flex" style="position:relative;z-index:3;max-width:960px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:48px;">
     <div style="text-align:center;">
       <h1 style="font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;line-height:1.06;margin-bottom:20px;color:var(--text-1);">
         Services
       </h1>
-      <p style="font-size:16px;line-height:1.82;color:var(--text-2);max-width:500px;margin:0 auto;">
-        Pick your weapon. We'll do the rest.
+      <p class="svc-hero-tagline">
+        Pick<span class="svc-hero-dot">•</span>Your<span class="svc-hero-dot">•</span>Weapon
       </p>
     </div>
     <div class="svc-hero-img" style="flex-shrink:0;width:190px;pointer-events:none;" aria-hidden="true">
       <img src="brand_assets/icons/svc-hero-illustration.webp" alt="" loading="lazy" style="filter:drop-shadow(0 24px 48px rgba(0,0,0,0.45));"/>
     </div>
   </div>
-</div>
+</section>
 
 <!-- ── Services grid ── -->
-<section style="padding:16px 28px 100px;" aria-label="All services">
+<section style="padding:56px 28px 100px;" aria-label="All services">
   <div style="max-width:1200px;margin:0 auto;">
 
     <div class="services-page-grid">
@@ -1079,27 +1194,25 @@
 <div class="divider"></div>
 
 <!-- ── CTA ── -->
-<section id="services-cta" style="padding:80px 28px 100px;">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;background:var(--surface);border:1px solid rgba(0,229,255,0.1);border-radius:24px;padding:64px 40px;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:300px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.05) 0%,transparent 70%);pointer-events:none;"></div>
-      <div style="position:absolute;top:0;right:0;width:300px;height:240px;background:radial-gradient(ellipse,rgba(255,45,120,0.03) 0%,transparent 70%);pointer-events:none;"></div>
-      <div style="position:relative;z-index:1;">
-        <p class="sec-tag" style="margin-bottom:16px;">// not sure where to start?</p>
-        <h2 style="font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:18px;color:var(--text-1);">
-          Let's figure it out <span class="grad-cyan-pink">together</span>
-        </h2>
-        <p style="font-size:15px;line-height:1.82;color:var(--text-2);max-width:440px;margin:0 auto 32px;">
-          Tell us what you're building and we'll match you with the right service — or build something entirely new.
-        </p>
-        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
-          <a href="contact.html" class="btn btn-primary" style="font-size:14px;padding:12px 28px;">
-            Start a Project <span aria-hidden="true">→</span>
-          </a>
-          <a href="our-work.html" class="btn btn-ghost" style="font-size:14px;padding:12px 28px;">
-            See Our Work
-          </a>
-        </div>
+<section class="svc-cta">
+  <div class="svc-cta-card">
+    <canvas class="svc-cta-shader-2" aria-hidden="true"></canvas>
+    <div class="svc-cta-content">
+      <div class="svc-cta-pill">
+        <span class="svc-cta-pill-dot"></span>
+        not sure where to start?
+      </div>
+      <h2 class="svc-cta-heading">
+        Let's figure it out <span class="svc-cta-grad">together</span>
+      </h2>
+      <p class="svc-cta-sub">Tell us what you're building and we'll match you with the right service, or build something entirely new.</p>
+      <div class="svc-cta-actions">
+        <a href="contact.html" class="btn btn-primary">
+          Start a Project <span aria-hidden="true">→</span>
+        </a>
+        <a href="our-work.html" class="btn btn-ghost">
+          See Our Work
+        </a>
       </div>
     </div>
   </div>
@@ -1140,7 +1253,7 @@
         <a href="about.html"    class="footer-link">About Us</a>
         <a href="contact.html"  class="footer-link">Contact</a>
       </div>
-      <div>
+      <div class="footer-col-services">
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link active">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
@@ -1194,7 +1307,7 @@
 
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
-      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <p class="footer-copy">© 2019-2026 VardWeb. All rights reserved.</p>
       <div class="footer-credit">
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
         <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
@@ -1378,5 +1491,271 @@
   });
 })();
 </script>
+
+<!-- ── Hero silk background — animated Canvas2D flow behind the services
+     hero, ported directly from the reference "silk" component's own
+     Canvas2D drawing logic (no framework — the original design was a
+     React/shadcn component, but this project has no React/build step, so
+     only the raw gradient/noise/pattern math is reused here as a vanilla-JS
+     IIFE), recolored to this page's own near-black/gray tones instead of
+     the component's literal grays so the hero reads as one continuous dark
+     surface with the rest of the page; bails out quietly (leaving
+     .svc-hero-bg-wash visible) if canvas 2D is unavailable. This is a
+     CPU-side per-pixel loop rather than the GPU shaders used elsewhere on
+     this site, so it renders into a downscaled internal buffer and is
+     frame-rate throttled to stay cheap — the pattern is inherently soft, so
+     neither trade-off is visible, especially under the page's own grain
+     overlay (body::after). ── -->
+<script>
+(function () {
+  var canvas = document.querySelector('.svc-hero-shader');
+  if (!canvas) return;
+
+  var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var RENDER_SCALE = 0.55;
+  var width = 0, height = 0;
+
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    width = Math.max(1, Math.round(rect.width * RENDER_SCALE));
+    height = Math.max(1, Math.round(rect.height * RENDER_SCALE));
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  var ro = new ResizeObserver(resize);
+  ro.observe(canvas);
+  resize();
+
+  function noise(x, y) {
+    var G = 2.71828;
+    var rx = G * Math.sin(G * x);
+    var ry = G * Math.sin(G * y);
+    return (rx * ry * (1 + x)) % 1;
+  }
+
+  var speed = 0.02;
+  var patternScale = 2;
+  var noiseIntensity = 0.8;
+  var time = 0;
+
+  function draw() {
+    if (!width || !height) return;
+
+    var image = ctx.createImageData(width, height);
+    var data = image.data;
+    var tOffset = speed * time;
+
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        var u = (x / width) * patternScale;
+        var v = (y / height) * patternScale;
+        var texX = u;
+        var texY = v + 0.03 * Math.sin(8.0 * texX - tOffset);
+
+        var pattern = 0.6 + 0.4 * Math.sin(
+          5.0 * (texX + texY + Math.cos(3.0 * texX + 5.0 * texY) + 0.02 * tOffset) +
+          Math.sin(20.0 * (texX + texY - 0.1 * tOffset))
+        );
+
+        var rnd = noise(x, y);
+        var intensity = Math.max(0, pattern - (rnd / 15.0) * noiseIntensity);
+
+        // Neutral gray-violet, deliberately darker than the reference
+        // component's own (123,116,129) so it stays "near-black" against
+        // this page's much darker base than the reference's #1a1a1a.
+        var r = Math.floor(58 * intensity);
+        var g = Math.floor(56 * intensity);
+        var b = Math.floor(66 * intensity);
+
+        var i = (y * width + x) * 4;
+        data[i] = r;
+        data[i + 1] = g;
+        data[i + 2] = b;
+        data[i + 3] = Math.min(255, Math.floor(170 * intensity));
+      }
+    }
+
+    ctx.putImageData(image, 0, 0);
+
+    var overlay = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) / 2);
+    overlay.addColorStop(0, 'rgba(0,0,0,0.08)');
+    overlay.addColorStop(1, 'rgba(0,0,0,0.4)');
+    ctx.fillStyle = overlay;
+    ctx.fillRect(0, 0, width, height);
+
+    time += 1;
+  }
+
+  if (reduceMotion) {
+    draw();
+  } else {
+    var lastFrame = 0;
+    var FRAME_INTERVAL = 1000 / 28;
+    (function render(now) {
+      if (now - lastFrame >= FRAME_INTERVAL) {
+        lastFrame = now;
+        draw();
+      }
+      requestAnimationFrame(render);
+    })(0);
+  }
+})();
+</script>
+
+<!-- ── CTA background — vanilla-WebGL2 port of the animated-shader-hero
+     reference's own fragment shader (raymarched cloud + accumulating
+     light-trail loop), ported unmodified the same way every other shader
+     canvas on this site was (see .svc-hero-shader above) — only this one
+     needs webgl2 instead of webgl, since the source is GLSL ES 3.00
+     (#version 300 es, in/out qualifiers). Its default output already is
+     the warm gold/orange/brown palette from the reference, so there are
+     no color uniforms to wire up here. The original component also
+     plumbs move/touch/pointerCount/pointers uniforms for mouse
+     interaction, but this shader's main() never reads them and the
+     canvas is pointer-events:none, so they're omitted entirely. ── -->
+<script>
+(function () {
+  var canvas = document.querySelector('.svc-cta-shader-2');
+  if (!canvas) return;
+
+  var gl = canvas.getContext('webgl2', { antialias: true, alpha: true });
+  if (!gl) return;
+
+  var vertexSrc = [
+    '#version 300 es',
+    'precision highp float;',
+    'in vec4 position;',
+    'void main() {',
+    '  gl_Position = position;',
+    '}'
+  ].join('\n');
+
+  var fragmentSrc = [
+    '#version 300 es',
+    'precision highp float;',
+    'out vec4 O;',
+    'uniform vec2 resolution;',
+    'uniform float time;',
+    '#define FC gl_FragCoord.xy',
+    '#define T time',
+    '#define R resolution',
+    '#define MN min(R.x,R.y)',
+    'float rnd(vec2 p) {',
+    '  p = fract(p * vec2(12.9898, 78.233));',
+    '  p += dot(p, p + 34.56);',
+    '  return fract(p.x * p.y);',
+    '}',
+    'float noise(in vec2 p) {',
+    '  vec2 i = floor(p), f = fract(p), u = f * f * (3. - 2. * f);',
+    '  float',
+    '  a = rnd(i),',
+    '  b = rnd(i + vec2(1, 0)),',
+    '  c = rnd(i + vec2(0, 1)),',
+    '  d = rnd(i + 1.);',
+    '  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);',
+    '}',
+    'float fbm(vec2 p) {',
+    '  float t = .0, a = 1.; mat2 m = mat2(1., -.5, .2, 1.2);',
+    '  for (int i = 0; i < 5; i++) {',
+    '    t += a * noise(p);',
+    '    p *= 2. * m;',
+    '    a *= .5;',
+    '  }',
+    '  return t;',
+    '}',
+    'float clouds(vec2 p) {',
+    '  float d = 1., t = .0;',
+    '  for (float i = .0; i < 3.; i++) {',
+    '    float a = d * fbm(i * 10. + p.x * .2 + .2 * (1. + i) * p.y + d + i * i + p);',
+    '    t = mix(t, d, a);',
+    '    d = a;',
+    '    p *= 2. / (i + 1.);',
+    '  }',
+    '  return t;',
+    '}',
+    'void main(void) {',
+    '  vec2 uv = (FC - .5 * R) / MN, st = uv * vec2(2, 1);',
+    '  vec3 col = vec3(0);',
+    '  float bg = clouds(vec2(st.x + T * .5, -st.y));',
+    '  uv *= 1. - .3 * (sin(T * .2) * .5 + .5);',
+    '  for (float i = 1.; i < 12.; i++) {',
+    '    uv += .1 * cos(i * vec2(.1 + .01 * i, .8) + i * i + T * .5 + .1 * uv.x);',
+    '    vec2 p = uv;',
+    '    float d = length(p);',
+    '    col += .00125 / d * (cos(sin(i) * vec3(1, 2, 3)) + 1.);',
+    '    float b = noise(i + p + bg * 1.731);',
+    '    col += .002 * b / length(max(p, vec2(b * p.x * .02, p.y)));',
+    '    col = mix(col, vec3(bg * .25, bg * .137, bg * .05), d);',
+    '  }',
+    '  O = vec4(col, 1);',
+    '}'
+  ].join('\n');
+
+  function createShader(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  var program = gl.createProgram();
+  gl.attachShader(program, createShader(gl.VERTEX_SHADER, vertexSrc));
+  gl.attachShader(program, createShader(gl.FRAGMENT_SHADER, fragmentSrc));
+  gl.linkProgram(program);
+  gl.useProgram(program);
+
+  var buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+
+  var posLoc = gl.getAttribLocation(program, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  var locs = {
+    resolution: gl.getUniformLocation(program, 'resolution'),
+    time:       gl.getUniformLocation(program, 'time')
+  };
+
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  var ro = new ResizeObserver(resize);
+  ro.observe(canvas);
+  resize();
+
+  var start = performance.now();
+
+  function draw(elapsedSec) {
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform2f(locs.resolution, canvas.width, canvas.height);
+    gl.uniform1f(locs.time, elapsedSec);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+
+  if (reduceMotion) {
+    draw(8);
+  } else {
+    (function render(now) {
+      draw(Math.max(0, (now - start) / 1000));
+      requestAnimationFrame(render);
+    })(performance.now());
+  }
+})();
+</script>
+
 </body>
 </html>

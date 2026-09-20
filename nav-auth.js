@@ -27,8 +27,26 @@ function readCache() {
 function writeCache(data) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch (_) {} }
 function clearCache() { try { localStorage.removeItem(CACHE_KEY); } catch (_) {} }
 
+function ensureProfileIconStyle() {
+  if (document.getElementById('nav-profile-icon-style')) return;
+  const style = document.createElement('style');
+  style.id = 'nav-profile-icon-style';
+  style.textContent = `
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconCheckBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @keyframes navIconCheckTickDraw { 0% { stroke-dashoffset: 20; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      #nav-profile-btn .ico-head { transform-origin: 10px 8px; }
+      #nav-profile-btn:hover .ico-head, #nav-profile-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      #nav-profile-btn:hover .ico-body-check, #nav-profile-btn:focus-visible .ico-body-check { animation: navIconCheckBodyDraw 0.36s ease-in-out 0.12s backwards; }
+      #nav-profile-btn:hover .ico-tick, #nav-profile-btn:focus-visible .ico-tick { animation: navIconCheckTickDraw 0.3s ease-in-out 0.3s backwards; }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 function buildProfileWrapper({ name, role, email }, getSb) {
-  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  ensureProfileIconStyle();
   const dashUrl  = role === 'admin' ? '/crm/dashboard.html' : '/crm/portal.html';
   const dashLabel = role === 'admin' ? 'Dashboard' : 'My Portal';
   const roleBadge = role === 'admin'
@@ -38,10 +56,11 @@ function buildProfileWrapper({ name, role, email }, getSb) {
   const wrapper = document.createElement('div');
   wrapper.style.cssText = 'position:relative;display:inline-block;';
   wrapper.innerHTML = `
-    <button id="nav-profile-btn" type="button" style="display:inline-flex;align-items:center;gap:10px;background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.18);border-radius:10px;padding:7px 14px 7px 8px;cursor:pointer;font-family:'Inter',sans-serif;color:#eef0f8;transition:background 0.2s ease,border-color 0.2s ease;">
-      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00E5FF 0%,#FF2D78 100%);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#070910;flex-shrink:0;">${initials}</div>
-      <span style="font-size:13px;font-weight:500;letter-spacing:-0.01em;">${name}</span>
-      <svg id="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;flex-shrink:0;transition:transform 0.2s ease;"><polyline points="6 9 12 15 18 9"/></svg>
+    <button id="nav-profile-btn" type="button" aria-label="Account menu" style="display:inline-flex;align-items:center;justify-content:center;background:none;border:none;padding:8px;cursor:pointer;color:#eef0f8;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path class="ico-body-check" d="M2 21a8 8 0 0 1 13.292-6"/><circle class="ico-head" cx="10" cy="8" r="5"/><path class="ico-tick" d="m16 19 2 2 4-4"/>
+      </svg>
+      <svg id="nav-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
 
     <div id="nav-profile-dropdown" hidden style="position:absolute;top:calc(100% + 8px);right:0;background:#0f1219;border:1px solid rgba(0,229,255,0.15);border-radius:12px;padding:8px;min-width:224px;box-shadow:0 16px 48px rgba(0,0,0,0.6),0 0 0 1px rgba(0,229,255,0.05);z-index:1000;">
@@ -79,9 +98,6 @@ function buildProfileWrapper({ name, role, email }, getSb) {
   });
 
   dropdown.addEventListener('click', e => e.stopPropagation());
-
-  btn.addEventListener('mouseenter', () => { btn.style.background = 'rgba(0,229,255,0.1)'; btn.style.borderColor = 'rgba(0,229,255,0.3)'; });
-  btn.addEventListener('mouseleave', () => { btn.style.background = 'rgba(0,229,255,0.06)'; btn.style.borderColor = 'rgba(0,229,255,0.18)'; });
 
   wrapper.querySelectorAll('.nav-dd-item').forEach(el => {
     el.addEventListener('mouseenter', () => { el.style.background = el.id === 'nav-signout-btn' ? 'rgba(255,45,120,0.16)' : 'rgba(0,229,255,0.08)'; });

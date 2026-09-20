@@ -241,11 +241,15 @@
       background: rgba(52,211,153,0.07);
       border: 1.5px solid rgba(52,211,153,0.3);
       backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
+      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600; line-height: 1;
       color: rgba(238,240,248,0.9); letter-spacing: 0.06em; text-transform: uppercase;
-      margin-bottom: 26px;
+      margin-bottom: 26px; white-space: nowrap;
     }
     .host-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--host-green); box-shadow: 0 0 8px var(--host-green); flex-shrink: 0; }
+    .host-hero-pill-text { position: relative; top: 1.5px; }
+    @media (max-width: 480px) {
+      .host-hero-pill { font-size: 11px; padding: 7px 14px; gap: 6px; }
+    }
 
     .host-hero-kicker {
       display: block;
@@ -423,8 +427,9 @@
 
     @media (max-width: 700px) {
       .host-suggest-panel { grid-template-columns: 1fr; }
-      .host-suggest-info { border-left: none !important; border-top: 1px solid rgba(20,24,34,0.08); }
+      .host-suggest-info { border-left: none !important; border-top: 1px solid rgba(20,24,34,0.08); padding: 20px 18px; gap: 8px; }
       .host-suggest-list { border-right: none; border-bottom: 1px solid rgba(20,24,34,0.08); }
+      .host-suggest-info-example { display: none; }
     }
 
     .host-hero-fine { font-size: 12.5px; color: rgba(238,240,248,0.5); margin-top: 22px; max-width: 460px; margin-left: auto; margin-right: auto; }
@@ -436,62 +441,10 @@
     .host-hero-concierge a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); transition: color 0.2s ease, border-color 0.2s ease; }
     .host-hero-concierge a:hover { color: var(--host-green-pale); border-color: var(--host-green-pale); }
     .host-hero-concierge a:focus-visible { outline: 2px solid var(--host-green); outline-offset: 3px; border-radius: 2px; }
-
-    /* ── Search results ── */
-    .host-search-results { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; max-width: 820px; margin-left: auto; margin-right: auto; text-align: left; }
-    .host-search-results[hidden] { display: none; }
-
-    .host-result-skeleton {
-      height: 68px; border-radius: 14px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%);
-      background-size: 200% 100%;
-      animation: hostSkeletonSweep 1.4s ease-in-out infinite;
+    .host-hero-concierge-br { display: none; }
+    @media (max-width: 700px) {
+      .host-hero-concierge-br { display: inline; }
     }
-    @keyframes hostSkeletonSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-    .host-result-error {
-      padding: 16px 20px; border-radius: 14px;
-      background: rgba(255,45,120,0.07); border: 1px solid rgba(255,45,120,0.28);
-      color: rgba(255,180,205,0.92); font-size: 13.5px; line-height: 1.6;
-    }
-
-    .host-result-card {
-      display: flex; align-items: center; gap: 16px;
-      padding: 16px 20px; border-radius: 14px;
-      background: var(--raised);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 12px 32px -18px rgba(0,0,0,0.6);
-      transform: translateZ(0); backface-visibility: hidden;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s ease;
-    }
-    .host-result-card[data-available="true"] { border-color: rgba(52,211,153,0.3); }
-    .host-result-card[data-available="true"]:hover { transform: translateY(-2px) translateZ(0); }
-    .host-result-card[data-available="false"] { opacity: 0.55; }
-
-    .host-result-domain { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15.5px; color: var(--text-1); flex: 1; min-width: 0; overflow-wrap: anywhere; }
-    .host-result-status { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; flex-shrink: 0; }
-    .host-result-card[data-available="true"] .host-result-status { color: var(--host-green); background: rgba(52,211,153,0.12); }
-    .host-result-card[data-available="false"] .host-result-status { color: rgba(200,212,232,0.5); background: rgba(255,255,255,0.06); }
-    .host-result-premium-badge {
-      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
-      letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;
-      flex-shrink: 0; color: #A855F7; background: rgba(168,85,247,0.14);
-    }
-    .host-result-price { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; color: var(--text-2); flex-shrink: 0; min-width: 68px; text-align: right; }
-
-    .host-result-cta {
-      font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700;
-      color: #06251b; background: var(--host-green); border: none; border-radius: 9px;
-      padding: 9px 16px; cursor: pointer; flex-shrink: 0;
-      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
-    }
-    .host-result-cta:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px -6px rgba(52,211,153,0.45); }
-    .host-result-cta:active:not(:disabled) { transform: translateY(0); }
-    .host-result-cta:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
-    .host-result-cta:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); cursor: default; }
-    .host-result-cta.added { background: var(--raised); color: var(--host-green); border: 1px solid rgba(52,211,153,0.4); }
-    .host-result-cta.is-broker { background: rgba(255,255,255,0.08); color: var(--host-green); border: 1px solid rgba(52,211,153,0.4); }
-    .host-result-cta.is-broker:hover { background: rgba(52,211,153,0.12); }
 
     /* Circular "?" tooltip trigger — distinct from the dashed-underline .tt-trigger text style */
     .tt-icon-trigger {
@@ -503,11 +456,6 @@
     }
     .tt-icon-trigger:hover { border-color: rgba(255,255,255,0.55); color: var(--text-1); }
     .tt-icon-trigger:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
-
-    @media (max-width: 640px) {
-      .host-result-card { flex-wrap: wrap; }
-      .host-result-domain { flex-basis: 100%; }
-    }
 
     /* ── Cart drawer ── */
     #cart-backdrop {
@@ -546,7 +494,7 @@
     .cart-continue-btn {
       display: block; margin: 20px auto 0; padding: 11px 24px;
       font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
-      color: var(--text-1); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 9px;
+      color: var(--text-1); background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 4px;
       cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease, border-color 0.2s ease;
     }
     .cart-continue-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.28); transform: translateY(-2px); }
@@ -557,10 +505,37 @@
     .cart-item-top { display: grid; grid-template-columns: 1fr auto; column-gap: 12px; row-gap: 3px; }
     .cart-item-info, .cart-item-pricing { display: contents; }
     .cart-item-domain { grid-column: 1; grid-row: 1; min-width: 0; font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 700; color: var(--text-1); overflow-wrap: anywhere; }
+    .cart-item-type-badge {
+      grid-column: 2; grid-row: 1; justify-self: end; align-self: start;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .cart-item-type-badge.is-domain { color: #06251b; background: var(--host-green); border-radius: 6px; }
+    .cart-item-type-badge.is-bundle { color: #000; background: #54D8FF; border-radius: 6px; }
+    .cart-item-type-badge.is-premium { color: #000; background: #D6B4FA; border-radius: 8px; }
     .cart-item-desc { grid-column: 1; grid-row: 2; font-size: 11.5px; color: var(--text-2); }
     .cart-item-term { grid-column: 1; grid-row: 3; align-self: center; font-size: 11.5px; color: var(--text-2); }
+    /* Exact style copy of checkout.html's .co-item-term select (colors, border,
+       chevron, font, radius) — narrowed to roughly half its 120px min-width to
+       fit this drawer's tighter row. */
+    .cart-item-term-select {
+      display: block; min-width: 65px;
+      appearance: none; -webkit-appearance: none; -moz-appearance: none;
+      background-color: var(--surface); border: 1px solid rgba(255,255,255,0.14); color: var(--text-1);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8d4e8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center; background-size: 9px;
+      border-radius: 4px; padding: 4px 22px 4px 6px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      outline: none; cursor: pointer;
+    }
+    .cart-item-term-select:focus { border-color: var(--host-green); }
+    .cart-item-term-select option { background: var(--surface); color: var(--text-1); }
+    .cart-item-term-select option:checked { color: var(--host-green); }
+    .cart-item-term-select option:hover { color: var(--host-green); background: var(--raised); }
+    .cart-item-term { display: inline-flex; align-items: center; gap: 5px; }
     .cart-item-price-now { grid-column: 2; grid-row: 3; justify-self: end; align-self: center; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700; color: var(--host-green); white-space: nowrap; }
     .cart-item-price-was { grid-column: 2; grid-row: 4; justify-self: end; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-2); text-decoration: line-through; white-space: nowrap; }
+    .cart-item-price-note { grid-column: 2; grid-row: 4; justify-self: end; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: var(--text-2); white-space: nowrap; }
     .cart-item-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .cart-item-renew-note { font-size: 11px; color: var(--text-2); }
     .cart-item-remove {
@@ -578,6 +553,12 @@
     .cart-item-fee-label { font-size: 12px; font-weight: 700; color: var(--text-1); }
     .cart-item-fee-price { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--host-green); flex-shrink: 0; }
 
+    /* Grouped bundle drawer card (companion domains added together as one purchase) */
+    .cart-bundle-included-label { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--host-green); padding: 9px 16px; background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); margin: 12px -16px 10px; }
+    .cart-bundle-list { display: flex; flex-direction: column; gap: 6px; }
+    .cart-bundle-row { background: var(--base); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+    .cart-bundle-domain { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12.5px; color: var(--text-1); }
+
     .cart-drawer-foot { padding: 20px 24px 24px; border-top: 1px solid rgba(255,255,255,0.07); }
     .cart-drawer-summary-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; font-size: 13px; color: var(--text-2); }
     .cart-drawer-total-label { font-size: 13px; color: var(--text-2); }
@@ -586,98 +567,16 @@
     .cart-checkout-btn {
       display: flex; width: 100%; justify-content: center; align-items: center; gap: 8px;
       padding: 13px 22px; font-size: 13.5px;
-      font-family: 'JetBrains Mono', monospace; font-weight: 700; border: none; cursor: pointer; border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; border: none; cursor: pointer; border-radius: 4px;
       background: var(--host-green); color: #06251b;
       transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
     }
     .cart-checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.5); }
     .cart-checkout-btn:active:not(:disabled) { transform: translateY(0); }
-    .cart-checkout-btn:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+    .cart-checkout-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--host-green-pale); }
+    .cart-checkout-btn:hover:not(:disabled) .btn-arrow { transform: translateX(4px); }
     .cart-checkout-btn:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); opacity: 1; cursor: default; }
     .cart-drawer-foot .cart-continue-btn { display: block; width: 100%; margin: 0; }
-
-    /* ── Broker modal ── */
-    #broker-modal-backdrop {
-      position: fixed; inset: 0; z-index: 420;
-      background: rgba(4,6,10,0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-      opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
-    }
-    #broker-modal-backdrop.open { opacity: 1; pointer-events: auto; }
-
-    #broker-modal {
-      position: fixed; top: 50%; left: 50%; z-index: 430;
-      width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 48px); overflow-y: auto;
-      background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
-      padding: 36px 32px 28px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 24px 64px -20px rgba(0,0,0,0.6), 0 0 0 1px rgba(52,211,153,0.08);
-      transform: translate(-50%, -50%) scale(0.94); opacity: 0; pointer-events: none;
-      transition: transform 0.32s cubic-bezier(0.34,1.56,0.64,1), opacity 0.24s ease;
-    }
-    #broker-modal.open { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
-    body.bm-open { overflow: hidden; }
-
-    #broker-modal::before {
-      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; border-radius: inherit;
-      background:
-        radial-gradient(ellipse 55% 45% at 0% 0%, rgba(52,211,153,0.12) 0%, transparent 65%),
-        radial-gradient(ellipse 55% 45% at 100% 100%, rgba(52,211,153,0.12) 0%, transparent 65%);
-    }
-
-    .bm-close {
-      position: absolute; top: 20px; right: 20px; z-index: 1;
-      display: flex; align-items: center; justify-content: center;
-      width: 32px; height: 32px; border-radius: 50%;
-      background: rgba(255,255,255,0.06); color: var(--text-2); border: none; cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-    .bm-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
-    .bm-close:active { transform: scale(0.94); }
-    .bm-close:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
-
-    .bm-title { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700; color: var(--text-1); letter-spacing: -0.01em; margin-bottom: 6px; padding-right: 36px; }
-    .bm-subhead { position: relative; z-index: 1; font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--host-green); margin-bottom: 22px; }
-
-    .bm-steps { position: relative; z-index: 1; list-style: none; display: flex; flex-direction: column; gap: 20px; margin-bottom: 26px; }
-    .bm-step { display: flex; gap: 14px; align-items: flex-start; }
-    .bm-step-icon {
-      flex-shrink: 0; width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
-      background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.18);
-      color: var(--host-green); display: flex; align-items: center; justify-content: center;
-    }
-    .bm-step-avatar { width: 24px; height: 24px; object-fit: contain; }
-    .bm-step-copy b { display: block; font-size: 14px; font-weight: 700; color: var(--text-1); margin-bottom: 4px; line-height: 1.4; }
-    .bm-step-copy p { font-size: 13px; color: var(--text-2); line-height: 1.7; }
-
-    .bm-fee-box {
-      position: relative; z-index: 1;
-      background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px;
-      padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
-      margin-bottom: 18px;
-    }
-    .bm-fee-left { display: flex; flex-direction: column; gap: 3px; }
-    .bm-fee-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-2); font-family: 'JetBrains Mono', monospace; }
-    .bm-fee-value { display: inline-flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; }
-    .bm-fee-caption { font-size: 12px; color: var(--text-2); }
-    .bm-add-btn {
-      flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
-      font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 700;
-      background: var(--host-green); color: #000; border-radius: 11px; padding: 12px 22px;
-      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
-    }
-    .bm-add-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 26px -8px rgba(52,211,153,0.45); }
-    .bm-add-btn:active { transform: translateY(0); }
-    .bm-add-btn:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
-
-    .bm-contact-line { position: relative; z-index: 1; text-align: center; font-size: 12.5px; color: var(--text-2); }
-    .bm-contact-line a { color: var(--host-green); text-decoration: none; border-bottom: 1px dashed rgba(52,211,153,0.4); transition: border-color 0.2s ease; }
-    .bm-contact-line a:hover { border-bottom-color: var(--host-green); }
-    .bm-contact-line a:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; border-radius: 2px; }
-
-    @media (max-width: 480px) {
-      #broker-modal { padding: 28px 20px 22px; }
-      .bm-fee-box { flex-direction: column; align-items: flex-start; }
-      .bm-add-btn { width: 100%; }
-    }
 
     /* ── Included-free banner ── */
     #host-included {
@@ -692,14 +591,58 @@
     }
     .host-included-text h3 { font-size: 19px; color: var(--text-1); margin-bottom: 8px; }
     .host-included-text p { font-size: 14px; color: var(--text-2); max-width: 480px; }
-    .host-tier-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .host-included-link-br { display: none; }
+    @media (max-width: 700px) {
+      .host-included-link-br { display: inline; }
+    }
+
+    .host-tier-marquee-wrap {
+      position: relative;
+      flex: 1 1 260px;
+      max-width: 320px;
+      min-width: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+    }
+    @media (max-width: 700px) {
+      .host-tier-marquee-wrap { max-width: 100%; flex-basis: 100%; }
+    }
+    /* Gate posts live on the outer (unmasked) wrapper so they stay fully
+       visible — roughly 2x a chip's rendered height, not full-height lines,
+       so they read as a small portal frame the chips pass through. */
+    .host-tier-marquee-wrap::before, .host-tier-marquee-wrap::after {
+      content: ''; position: absolute; top: 50%; width: 3px; height: 52px;
+      transform: translateY(-50%); border-radius: 999px; z-index: 2;
+      animation: tier-portal-pulse 2.4s ease-in-out infinite;
+    }
+    .host-tier-marquee-wrap::before {
+      left: 0; background: #4C6FFF;
+      box-shadow: 0 0 6px 1px rgba(76,111,255,0.9), 0 0 20px 6px rgba(76,111,255,0.4), 0 0 38px 12px rgba(76,111,255,0.18);
+    }
+    .host-tier-marquee-wrap::after {
+      right: 0; background: #FF7A45;
+      box-shadow: 0 0 6px 1px rgba(255,122,69,0.9), 0 0 20px 6px rgba(255,122,69,0.4), 0 0 38px 12px rgba(255,122,69,0.18);
+    }
+    @keyframes tier-portal-pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+
+    .host-tier-marquee {
+      position: relative; overflow: hidden; width: 100%; height: 100%;
+      display: flex; align-items: center;
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 34px, #000 calc(100% - 34px), transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0, #000 34px, #000 calc(100% - 34px), transparent 100%);
+    }
+
+    .host-tier-chips { display: flex; flex-wrap: nowrap; gap: 8px; width: max-content; animation: tier-marquee-scroll 20s linear infinite; }
     .host-tier-chip {
       font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
-      padding: 6px 14px; border-radius: 999px;
+      padding: 6px 0; border-radius: 999px; flex: 0 0 92px; text-align: center; white-space: nowrap;
       border: 1px solid var(--c, var(--host-green));
       color: var(--c, var(--host-green));
       background: color-mix(in srgb, var(--c, var(--host-green)) 12%, transparent);
     }
+    @keyframes tier-marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-400px); } }
+    @media (prefers-reduced-motion: reduce) { .host-tier-chips { animation: none; } }
 
     /* ── Process (setup vs transfer-in) ── */
     .host-process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
@@ -1045,6 +988,12 @@
     .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
     .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
     .footer-link:hover { color: var(--cyan); }
+    .footer-col-services .footer-link[href="ecommerce.html"]:hover { color: #EF4444; }
+    .footer-col-services .footer-link[href="sem-seo.html"]:hover { color: #f97316; }
+    .footer-col-services .footer-link[href="email-marketing.html"]:hover { color: #60A5FA; }
+    .footer-col-services .footer-link[href="hosting-services.html"]:hover { color: #34D399; }
+    .footer-col-services .footer-link[href="content-creation.html"]:hover { color: #FBBF24; }
+    .footer-col-services .footer-link[href="smm.html"]:hover { color: #F472B6; }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--host-green); }
     .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
@@ -1094,13 +1043,21 @@
     .nav-right { display: flex; align-items: center; gap: 18px; }
 
     .nav-account-btn {
-      background: none; border: none; padding: 0; gap: 8px;
+      background: none; border: none; padding: 8px; gap: 8px;
       color: rgba(238,240,248,0.85); font-weight: 600;
       transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
     .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
     .nav-account-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 4px; border-radius: 4px; }
+    .nav-account-btn .ico-body { stroke-dasharray: 40; stroke-dashoffset: 0; opacity: 1; }
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-account-btn .ico-head { transform-origin: 12px 8px; }
+      .nav-account-btn:hover .ico-head, .nav-account-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      .nav-account-btn:hover .ico-body, .nav-account-btn:focus-visible .ico-body { animation: navIconBodyDraw 0.36s ease-in-out 0.18s backwards; }
+    }
 
     .nav-cart-btn {
       position: relative; display: inline-flex; align-items: center; justify-content: center;
@@ -1124,11 +1081,9 @@
     @media (max-width: 1024px) {
       .nav-inner { position: relative; }
       .nav-links { display: none; }
-      .nav-right .btn { display: none; }
+      .nav-right { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
       .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
-      #nav-cart-btn { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
-      #nav-cart-btn:hover, #nav-cart-btn:active { transform: translateY(-50%); opacity: 1; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
@@ -1179,7 +1134,10 @@
     <div class="nav-inner">
       <a href="index.html" aria-label="VardWeb Home">
         <div class="logo-nav-wrap">
-          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+          <picture>
+            <source media="(max-width: 1024px)" srcset="brand_assets/VardWeb_Favicon_2.png">
+            <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+          </picture>
         </div>
       </a>
       <div class="nav-links">
@@ -1221,18 +1179,17 @@
         <a href="contact.html"  class="nav-link">Contact</a>
       </div>
       <div class="nav-right">
-        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
-          <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
-          Account
+        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn" aria-label="Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="ico-head" cx="12" cy="8" r="5"/><path class="ico-body" d="M20 21a8 8 0 0 0-16 0"/></svg>
         </a>
         <button type="button" class="nav-cart-btn" id="nav-cart-btn" aria-haspopup="dialog" aria-controls="cart-drawer" aria-label="Open cart">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span id="cart-count-badge" class="cart-count-badge" hidden>0</span>
         </button>
-        <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
       </div>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
     </div>
     <div class="nav-mobile-menu">
       <div class="mob-section-label">Navigate</div>
@@ -1309,7 +1266,7 @@
       <div class="host-hero-content">
         <div class="host-hero-pill">
           <span class="host-hero-pill-dot"></span>
-          Find & Buy Available Domains
+          <span class="host-hero-pill-text">Find & Buy Available Domains</span>
         </div>
 
         <p class="host-hero-kicker">
@@ -1378,18 +1335,12 @@
           <button type="button" class="tld-pill" data-tld=".org">.org</button>
           <button type="button" class="tld-pill" data-tld=".shop">.shop</button>
           <button type="button" class="tld-pill" data-tld=".ai">.ai</button>
-          <button type="button" class="tld-pill tld-extra" data-tld=".io" hidden>.io</button>
-          <button type="button" class="tld-pill tld-extra" data-tld=".app" hidden>.app</button>
-          <button type="button" class="tld-pill tld-extra" data-tld=".dev" hidden>.dev</button>
-          <button type="button" class="tld-pill tld-extra" data-tld=".xyz" hidden>.xyz</button>
-          <button type="button" class="tld-pill" id="tld-more-btn" aria-expanded="false">+ View More</button>
+          <button type="button" class="tld-pill" id="tld-more-btn">+ View More</button>
         </div>
 
         <p class="host-hero-note">No markup at signup — and even at renewal, it's a flat, disclosed 20%.</p>
 
-        <div id="host-search-results" class="host-search-results" hidden aria-live="polite"></div>
-
-        <p class="host-hero-concierge">Prefer us to just handle it? <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&learnMore=1">Talk to a human instead →</a></p>
+        <p class="host-hero-concierge">Prefer us to just handle it?<br class="host-hero-concierge-br"> <a href="contact.html?type=Domain%20%26%20Hosting&amp;typeColor=%2334D399&learnMore=1">Talk to a human instead →</a></p>
     </section>
     </div>
 
@@ -1402,54 +1353,20 @@
         </button>
       </div>
       <div class="cart-drawer-items" id="cart-drawer-items">
-        <p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out faster.</p>
+        <p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out.</p>
         <button type="button" class="cart-continue-btn" id="cart-continue-btn">Continue Shopping</button>
       </div>
 
       <div class="cart-drawer-foot" id="cart-drawer-foot">
         <div class="cart-drawer-summary-row">
           <span id="cart-drawer-count">0 items</span>
-          <span><span class="cart-drawer-total-label">Subtotal</span> <span class="cart-drawer-total-value" id="cart-drawer-total">$0.00</span></span>
+          <span><span class="cart-drawer-total-label">Subtotal</span> <span class="cart-drawer-total-value" id="cart-drawer-total">C$0.00</span></span>
         </div>
         <div class="cart-drawer-foot-btns">
-          <button type="button" class="cart-checkout-btn" id="cart-continue-to-cart-btn" disabled>Continue to Cart →</button>
+          <button type="button" class="cart-checkout-btn" id="cart-continue-to-cart-btn" disabled>Continue to Cart <span class="btn-arrow" aria-hidden="true">→</span></button>
           <button type="button" class="cart-continue-btn" id="cart-continue-shopping-btn">Continue Shopping</button>
         </div>
       </div>
-    </div>
-
-    <div id="broker-modal-backdrop" tabindex="-1"></div>
-    <div id="broker-modal" role="dialog" aria-modal="true" aria-labelledby="broker-modal-title">
-      <button type="button" class="bm-close" id="broker-modal-close" aria-label="Close">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-      <h3 id="broker-modal-title" class="bm-title">Domain Broker Service</h3>
-      <p class="bm-subhead">Here's how this works:</p>
-      <ol class="bm-steps">
-        <li class="bm-step">
-          <span class="bm-step-icon"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" class="bm-step-avatar" /></span>
-          <div class="bm-step-copy"><b>You get a dedicated domain broker.</b><p>When you purchase the service, a dedicated broker will help you formulate a strategy and budget to try to acquire your domain.</p></div>
-        </li>
-        <li class="bm-step">
-          <span class="bm-step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>
-          <div class="bm-step-copy"><b>The domain broker works the deal for you.</b><p>They go to work with the domain owner, trying to get you the lowest possible price. (Don't worry, your identity remains confidential.)</p></div>
-        </li>
-        <li class="bm-step">
-          <span class="bm-step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
-          <div class="bm-step-copy"><b>The domain is securely transferred to your account.</b><p>If the owner agrees to the sale, you'll pay the negotiated sale price plus a 15% commission. Then the domain is securely transferred to you. VardWeb handles all steps of the transaction, giving you peace of mind.</p></div>
-        </li>
-      </ol>
-      <div class="bm-fee-box">
-        <div class="bm-fee-left">
-          <span class="bm-fee-label">Broker Service Fee</span>
-          <span class="bm-fee-value">C$0<button type="button" class="tt-icon-trigger" data-tooltip="Pricing
-
-When you purchase our Domain Broker Service, you get a dedicated broker who will contact the current domain owner and negotiate a sale price on your behalf. If the seller agrees to sell the domain, you pay the negotiated sale price plus a 15% commission, and we will securely transfer the domain to you." aria-label="Pricing details">?</button></span>
-          <span class="bm-fee-caption">plus commission</span>
-        </div>
-        <a class="btn bm-add-btn" id="broker-modal-cta" href="contact.html?service=Domain%20broker%20request">Add to Cart</a>
-      </div>
-      <p class="bm-contact-line">Questions? <a href="contact.html" id="broker-modal-contact-link">Contact us</a></p>
     </div>
 
     <!-- ============ INCLUDED FREE BANNER ============ -->
@@ -1457,13 +1374,21 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
       <div class="host-included-inner reveal-fade">
         <div class="host-included-text">
           <h3>Already building with us? Domain setup is free.</h3>
-          <p>Domain hosting &amp; delegation is bundled into every VardWeb site-build package, at no extra cost. <a href="web-design.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See what's included in each tier →</a></p>
+          <p>Domain hosting &amp; delegation is bundled into every VardWeb site-build package, at no extra cost.<br class="host-included-link-br"> <a href="web-design.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See what's included in each tier →</a></p>
         </div>
-        <div class="host-tier-chips">
-          <span class="host-tier-chip" style="--c:#CD7F32;">Bronze</span>
-          <span class="host-tier-chip" style="--c:#C2D0E8;">Silver</span>
-          <span class="host-tier-chip" style="--c:#FFD700;">Gold</span>
-          <span class="host-tier-chip" style="--c:#A855F7;">Custom</span>
+        <div class="host-tier-marquee-wrap">
+          <div class="host-tier-marquee">
+            <div class="host-tier-chips">
+              <span class="host-tier-chip" style="--c:#CD7F32;">Bronze</span>
+              <span class="host-tier-chip" style="--c:#C2D0E8;">Silver</span>
+              <span class="host-tier-chip" style="--c:#FFD700;">Gold</span>
+              <span class="host-tier-chip" style="--c:#A855F7;">Custom</span>
+              <span class="host-tier-chip" style="--c:#CD7F32;" aria-hidden="true">Bronze</span>
+              <span class="host-tier-chip" style="--c:#C2D0E8;" aria-hidden="true">Silver</span>
+              <span class="host-tier-chip" style="--c:#FFD700;" aria-hidden="true">Gold</span>
+              <span class="host-tier-chip" style="--c:#A855F7;" aria-hidden="true">Custom</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1844,7 +1769,7 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         <div class="host-cta-content reveal-fade">
           <div class="host-hero-pill" style="margin-bottom:0;">
             <span class="host-hero-pill-dot"></span>
-            Your domain is waiting
+            <span class="host-hero-pill-text">Your domain is waiting</span>
           </div>
           <h2 class="host-cta-heading">
             Search for your<br class="host-cta-break"> <span class="host-heading-grad">domain name now.</span>
@@ -1893,7 +1818,7 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
           <a href="about.html"    class="footer-link">About Us</a>
           <a href="contact.html"  class="footer-link">Contact</a>
         </div>
-        <div>
+        <div class="footer-col-services">
           <p class="footer-col-head">Services</p>
           <a href="services.html" class="footer-link">All Services</a>
           <a href="web-design.html" class="footer-link">Web Design</a>
@@ -1947,7 +1872,7 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
 
       <div class="footer-divider"></div>
       <div class="footer-bottom-bar">
-        <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+        <p class="footer-copy">© 2019-2026 VardWeb. All rights reserved.</p>
         <div class="footer-credit">
           <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
           <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
@@ -1973,6 +1898,19 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
   <script src="/tld-catalog.js"></script>
   <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    var _icCfg = window.SUPABASE_CONFIG || {};
+    window.__vwClientSb = createClient(_icCfg.url || '', _icCfg.anonKey || '', { auth: { storageKey: 'vw-client-auth' } });
+    window.__vwClientSb.auth.getSession().then(function (r) {
+      window.__vwClientSession = r.data.session;
+      if (window.__vwOnAuthChange) window.__vwOnAuthChange(window.__vwClientSession);
+    });
+    window.__vwClientSb.auth.onAuthStateChange(function (event, session) {
+      window.__vwClientSession = session;
+      if (window.__vwOnAuthChange) window.__vwOnAuthChange(session);
+    });
+  </script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Desktop dropdown a11y (focus/hover)
@@ -1987,31 +1925,6 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
           if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
         });
       });
-
-      // Replace the static "+ View More" extras with the full non-restricted
-      // TLD_CATALOG (minus the 7 always-visible curated pills), so the row
-      // reflects every ending that's actually checkable instead of a fixed
-      // ~11-entry hand list. Runs before the pill wiring below so the new
-      // buttons get picked up by its querySelectorAll('.tld-pill[data-tld]').
-      (function refreshTldExtras() {
-        var row = document.querySelector('.host-tld-row');
-        var moreBtnEl = document.getElementById('tld-more-btn');
-        if (!row || !moreBtnEl || typeof TLD_CATALOG === 'undefined') return;
-        var visible = ['.ca', '.com', '.co', '.net', '.org', '.shop', '.ai'];
-        row.querySelectorAll('.tld-pill.tld-extra').forEach(function (p) { p.remove(); });
-        var frag = document.createDocumentFragment();
-        TLD_CATALOG.forEach(function (t) {
-          if (t.restricted || visible.indexOf(t.tld) !== -1) return;
-          var btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'tld-pill tld-extra';
-          btn.dataset.tld = t.tld;
-          btn.hidden = true;
-          btn.textContent = t.tld;
-          frag.appendChild(btn);
-        });
-        row.insertBefore(frag, moreBtnEl);
-      })();
 
       // TLD single-select pills
       var tldPills = Array.prototype.slice.call(document.querySelectorAll('.tld-pill[data-tld]'));
@@ -2038,15 +1951,22 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         tldBadgeClear.addEventListener('click', clearTld);
       }
 
-      // "+ View More" TLD reveal
+      // "+ View More" TLD — send visitors to the full domain search page
+      // with its TLD filter panel already open, instead of expanding in place.
+      // Carries over whatever's already typed/selected here (mirrors the
+      // suggestion-row navigation below) so the destination page has a real
+      // qBase to work with — without it, domain-search.html's filter pills
+      // (built from the same GRID_TLDS/qBase-gated block that runs the actual
+      // availability checks) never populate at all. Falls back to a generic
+      // placeholder base when the box is empty rather than leaving it blank.
       var moreBtn = document.getElementById('tld-more-btn');
-      var extraPills = document.querySelectorAll('.tld-extra');
       if (moreBtn) {
         moreBtn.addEventListener('click', function () {
-          var expanded = moreBtn.getAttribute('aria-expanded') === 'true';
-          extraPills.forEach(function (p) { p.hidden = expanded; });
-          moreBtn.setAttribute('aria-expanded', String(!expanded));
-          moreBtn.textContent = expanded ? '+ View More' : '− View Less';
+          var raw = (domainInput.value || '').trim().replace(/\s+/g, '');
+          var m = raw.match(/^(.+?)(\.[a-z]{2,24})$/i);
+          var base = (m ? m[1] : raw).toLowerCase().replace(/[^a-z0-9-]/g, '') || 'abc';
+          var tld = m ? m[2].toLowerCase() : ((tldBadgeText && tldBadgeText.textContent) || '.com');
+          window.location.href = 'domain-search.html?q=' + encodeURIComponent(base) + '&tld=' + encodeURIComponent(tld) + '&openTldFilter=1';
         });
       }
 
@@ -2172,10 +2092,8 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         window.addEventListener('resize', function () {
           if (!suggestPanel.hidden) positionSuggestPanel();
         });
-        // A fixed-position panel can't track the search bar while the page
-        // scrolls, so close it rather than let it visually detach.
         window.addEventListener('scroll', function () {
-          if (!suggestPanel.hidden) hideSuggestions();
+          if (!suggestPanel.hidden) positionSuggestPanel();
         }, { passive: true });
         suggestList.addEventListener('click', function (e) {
           var row = e.target.closest('.host-suggest-row');
@@ -2198,15 +2116,30 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         });
       }
       function formatPrice(price) {
-        return typeof price === 'number' ? '$' + price.toFixed(2) + '/yr' : '—';
+        return typeof price === 'number' ? 'C$' + price.toFixed(2) + '/yr' : '—';
       }
       function formatOneTime(price) {
-        return typeof price === 'number' ? '$' + price.toFixed(2) : '—';
+        return typeof price === 'number' ? 'C$' + price.toFixed(2) : '—';
+      }
+      // Like formatPrice, but for a cart line's real total — which for a
+      // min-year-restricted TLD (e.g. .ai) is already a multi-year sum, not a
+      // per-year rate, so labeling it "/yr" would be misleading.
+      function formatMultiPrice(value, years) {
+        return typeof value === 'number' ? 'C$' + value.toFixed(2) + (years > 1 ? '/' + years + 'yr' : '/yr') : '—';
+      }
+      // Year 1 is at cost (0% markup); Year 2+ renews at a flat +20% over wholesale.
+      var RENEWAL_MARKUP = 0.20;
+      function renewalPricePerYear(base) { return base * (1 + RENEWAL_MARKUP); }
+      function multiYearTotal(base, years) {
+        return base + Math.max((years || 1) - 1, 0) * renewalPricePerYear(base);
+      }
+      function formatRenewalEstimate(price) {
+        return typeof price === 'number' ? '~C$' + renewalPricePerYear(price).toFixed(2) + '/yr' : 'the standard rate';
       }
       // Approximate standard per-year registration cost by TLD — used only to
-      // show a premium domain's informational base-registration figure in the
-      // cart card; the actual one-time premium fee (item.price) is what's
-      // really charged. Same table as domain-search.html's premium modal.
+      // show a premium domain's real Year 2+ renewal estimate in the cart
+      // card (the actual one-time premium fee is unrelated). Same table as
+      // domain-search.html's premium modal.
       var TLD_BASE_PRICE = {
         '.com': 10.46, '.net': 12.18, '.org': 10.28, '.info': 8.98, '.biz': 14.98,
         '.io': 32.99, '.co': 27.99, '.ai': 79.99, '.app': 14.99, '.dev': 14.99,
@@ -2220,6 +2153,47 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
       }
 
+      // ── Term/years selection — per-TLD limited (see tld-catalog.js's
+      // maxYears/minYears, researched against Openprovider's own per-TLD docs) ──
+      var TERM_OPTIONS = [1, 2, 3, 5, 10];
+      // Unrestricted TLDs use the site's default package sizes (TERM_OPTIONS).
+      // A TLD with a minYears/maxYears instead gets every consecutive year in
+      // its real range, since filtering TERM_OPTIONS down would silently skip
+      // valid years (e.g. .cn's max-5 would show 1,2,3,5 and skip 4).
+      function getYearOptionsForTld(tld) {
+        var entry = (window.TLD_CATALOG || []).find(function (t) { return t.tld === tld; });
+        if (!entry || (entry.maxYears === undefined && entry.minYears === undefined)) return TERM_OPTIONS;
+        var min = entry.minYears || 1;
+        var max = entry.maxYears || 10;
+        var opts = [];
+        for (var y = min; y <= max; y++) opts.push(y);
+        return opts;
+      }
+      function clampYearsForTld(years, tld) {
+        var opts = getYearOptionsForTld(tld);
+        if (opts.indexOf(years) !== -1) return years;
+        if (years < opts[0]) return opts[0];
+        return opts[opts.length - 1];
+      }
+      // Short explainer for the "?" tooltip next to a restricted term-select —
+      // empty string means this TLD has no min/max, so no tooltip is shown.
+      // nowTotal/wasTotal/years (already computed by the caller) let a
+      // min-year TLD's tooltip cite the exact same numbers shown on-screen,
+      // so there's no risk of the tooltip's math drifting from the price.
+      function termRestrictionTooltip(tld, nowTotal, wasTotal, years) {
+        var entry = (window.TLD_CATALOG || []).find(function (t) { return t.tld === tld; });
+        if (!entry) return '';
+        if (entry.minYears) {
+          var msg = tld + ' domains require a minimum of ' + entry.minYears + ' years to register.';
+          if (typeof nowTotal === 'number' && years > 1) {
+            msg += '\n\nRest assured, your first-year discount isn\'t lost — it carries through into this total: year one bills at cost and each year after at the standard rate, coming to ' + formatMultiPrice(nowTotal, years) + ' across all ' + years + ' years (versus ' + formatMultiPrice(wasTotal, years) + ' if every year were billed at the standard rate).';
+          }
+          return msg;
+        }
+        if (entry.maxYears) return tld + ' domains can be registered for a maximum of ' + entry.maxYears + ' year' + (entry.maxYears > 1 ? 's' : '') + '.';
+        return '';
+      }
+
       // ── Cart (localStorage, no login required) ──────────────────────
       var CART_KEY = 'vardweb_domain_cart';
       function loadCart() {
@@ -2229,6 +2203,11 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
       function saveCart(cart) {
         localStorage.setItem(CART_KEY, JSON.stringify(cart));
         renderCart();
+      }
+      function updateCartItemYears(domain, tld, years) {
+        var cart = loadCart();
+        cart.forEach(function (i) { if (i.domain === domain && i.tld === tld && i.type !== 'addon') i.years = years; });
+        saveCart(cart);
       }
       // Only ever matches real domain items here — this page never creates
       // addon-type entries (those are added on checkout.html), so domain+tld
@@ -2260,6 +2239,10 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         var cart = loadCart().filter(function (i) { return !(i.domain === domain && i.tld === tld); });
         saveCart(cart);
       }
+      function removeBundle(bundleId) {
+        var cart = loadCart().filter(function (i) { return i.bundleId !== bundleId; });
+        saveCart(cart);
+      }
 
       var cartHeaderBtn = document.getElementById('nav-cart-btn');
       var cartCountBadge = document.getElementById('cart-count-badge');
@@ -2273,6 +2256,98 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
       var cartContinueToCartBtn = document.getElementById('cart-continue-to-cart-btn');
       var cartContinueShoppingBtn = document.getElementById('cart-continue-shopping-btn');
 
+      function renderCartDrawerItem(item) {
+        var years = item.premium ? 1 : clampYearsForTld(item.years || 1, item.tld);
+        var baseAnnual = item.price || 0;
+        var nowTotal = item.premium ? baseAnnual : multiYearTotal(baseAnnual, years);
+        var wasTotal = renewalPricePerYear(baseAnnual) * years;
+        var descLabel = escapeHtml(item.tld).toUpperCase() + (item.premium ? ' Premium Domain Registration' : ' Domain Registration');
+        var renewLabel = new Date().toLocaleString('en-US', { month: 'long' }) + ' ' + (new Date().getFullYear() + years);
+        var feeLabel = item.premium ? 'Premium Domain Purchase Registration Fee' : 'Domain Purchase Registration Fee';
+        var feePrice = item.premium ? (item.price || 0) : nowTotal;
+        var badgeHtml = item.premium ?
+          '<span class="cart-item-type-badge is-premium">Premium</span>' :
+          '<span class="cart-item-type-badge is-domain">Domain</span>';
+        var termTooltip = item.premium ? '' : termRestrictionTooltip(item.tld, nowTotal, wasTotal, years);
+        var termHtml = item.premium
+          ? '<div class="cart-item-term">1 Year</div>'
+          : '<div class="cart-item-term"><select class="cart-item-term-select" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '">' +
+              getYearOptionsForTld(item.tld).map(function (y) {
+                return '<option value="' + y + '"' + (years === y ? ' selected' : '') + '>' + y + ' Year' + (y > 1 ? 's' : '') + '</option>';
+              }).join('') +
+            '</select>' +
+            (termTooltip ? '<button type="button" class="tt-icon-trigger" data-tooltip="' + escapeHtml(termTooltip) + '" aria-label="Term restriction details">?</button>' : '') +
+            '</div>';
+        return '<div class="cart-item">' +
+          '<div class="cart-item-top">' +
+            '<div class="cart-item-info">' +
+              '<div class="cart-item-domain">' + escapeHtml(item.domain) + '</div>' +
+              badgeHtml +
+              '<div class="cart-item-desc">' + descLabel + '</div>' +
+              termHtml +
+            '</div>' +
+            '<div class="cart-item-pricing">' +
+              '<div class="cart-item-price-now">' + (item.premium ? formatOneTime(nowTotal) : formatMultiPrice(nowTotal, years)) + '</div>' +
+              (item.premium ? '<div class="cart-item-price-note">One-Time Fee</div>' : '<div class="cart-item-price-was">' + formatMultiPrice(wasTotal, years) + '</div>') +
+            '</div>' +
+          '</div>' +
+          '<div class="cart-item-bottom">' +
+            '<span class="cart-item-renew-note">Renews ' + renewLabel + ' for ' + (item.premium ? formatRenewalEstimate(baseRegistrationPrice(item.tld)) : '~' + formatMultiPrice(wasTotal, years)) + '</span>' +
+            '<button type="button" class="cart-item-remove" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '" aria-label="Remove ' + escapeHtml(item.domain) + '">' + trashIcon() + '</button>' +
+          '</div>' +
+          '<div class="cart-item-fee-row">' +
+            '<span class="cart-item-fee-label">' + feeLabel + '</span>' +
+            '<span class="cart-item-fee-price">' + formatOneTime(feePrice) + '</span>' +
+          '</div>' +
+          '</div>';
+      }
+
+      function renderCartDrawerBundle(group) {
+        var nowTotal = 0, wasTotal = 0;
+        group.forEach(function (i) {
+          var years = i.years || 1;
+          var baseAnnual = i.price || 0;
+          nowTotal += multiYearTotal(baseAnnual, years);
+          wasTotal += renewalPricePerYear(baseAnnual) * years;
+        });
+        var bundleId = group[0].bundleId;
+        var nowYear = new Date().getFullYear();
+        var renewMonth = new Date().toLocaleString('en-US', { month: 'long' });
+        var rowsHtml = group.map(function (i) {
+          var years = i.years || 1;
+          var renewLabel = renewMonth + ' ' + (nowYear + years);
+          return '<div class="cart-bundle-row">' +
+            '<span class="cart-bundle-domain">' + escapeHtml(i.domain) + '</span>' +
+            '<span class="cart-item-renew-note">Renews ' + renewLabel + ' for ' + formatOneTime(i.price || 0) + '</span>' +
+          '</div>';
+        }).join('');
+        return '<div class="cart-item">' +
+          '<div class="cart-item-top">' +
+            '<div class="cart-item-info">' +
+              '<div class="cart-item-domain">Brand Protection<br>Domain Bundle</div>' +
+              '<span class="cart-item-type-badge is-bundle">Bundle</span>' +
+              '<div class="cart-item-desc">THE MORE DOMAIN NAMES YOU OWN, THE MORE PROTECTED YOUR BRAND IS</div>' +
+              '<div class="cart-item-term">1 Year</div>' +
+            '</div>' +
+            '<div class="cart-item-pricing">' +
+              '<div class="cart-item-price-now">' + formatOneTime(nowTotal) + '</div>' +
+              '<div class="cart-item-price-was">' + formatOneTime(wasTotal) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="cart-item-bottom" style="justify-content:flex-end;">' +
+            '<button type="button" class="cart-item-remove cart-bundle-remove" data-bundle-id="' + escapeHtml(bundleId) + '" aria-label="Remove bundle">' + trashIcon() + '</button>' +
+          '</div>' +
+          '<div class="cart-bundle-included-label">Included</div>' +
+          '<div class="cart-bundle-list">' + rowsHtml + '</div>' +
+        '</div>';
+      }
+
+      // Keeps the cart drawer's empty-state copy (logged-in "ghost town" vs.
+      // logged-out "Log in to check out") current the instant sign-in/out
+      // resolves — this page has no instant-checkout modal to also handle,
+      // unlike domain-search.html's version of this hook.
+      window.__vwOnAuthChange = function () { renderCart(); };
+
       function renderCart() {
         var cart = loadCart();
         var domainItems = cart.filter(function (i) { return i.type !== 'addon'; });
@@ -2285,61 +2360,62 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
         if (domainItems.length === 0) {
           if (cartDrawerTitle) cartDrawerTitle.textContent = 'Your cart is empty';
           cartItemsEl.innerHTML =
-            '<p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out faster.</p>' +
+            (window.__vwClientSession
+              ? '<p class="cart-drawer-empty-text">Your cart is currently a ghost town. Population: 0.</p>'
+              : '<p class="cart-drawer-empty-text">Have an account? <a href="/crm/login.html">Log in</a> to check out.</p>') +
             '<button type="button" class="cart-continue-btn" id="cart-continue-btn">Continue Shopping</button>';
           var continueBtn = document.getElementById('cart-continue-btn');
           if (continueBtn) continueBtn.addEventListener('click', closeCart);
           if (cartDrawerFoot) cartDrawerFoot.hidden = true;
         } else {
           if (cartDrawerTitle) cartDrawerTitle.textContent = 'Cart';
+          var seenBundles = {};
+          // A bundle's linked primary (item.primaryForBundle, stamped by
+          // domain-search.html's dv-bundle-cta handler when the bundle was
+          // added) always renders directly above its Bundle card, not at its
+          // own array position — this page only ever displays the shared
+          // cart, so a bundle added elsewhere must still render correctly here.
+          var primaryByBundleId = {};
+          domainItems.forEach(function (i) { if (i.primaryForBundle) primaryByBundleId[i.primaryForBundle] = i; });
+          // Which bundleIds actually still have a companion group present —
+          // lets a primaryForBundle reference that no longer points at
+          // anything (a stale/orphaned item, however it came to be) fall
+          // through and render as a normal standalone card instead of
+          // silently vanishing while still counting toward the cart badge.
+          var bundleIdsPresent = {};
+          domainItems.forEach(function (i) { if (i.bundleId) bundleIdsPresent[i.bundleId] = true; });
           cartItemsEl.innerHTML = domainItems.map(function (item) {
-            var years = item.premium ? 1 : (item.years || 1);
-            var baseAnnual = item.premium ? baseRegistrationPrice(item.tld) : (item.price || 0);
-            var nowTotal = baseAnnual * years;
-            var wasTotal = nowTotal * 1.2;
-            var descLabel = escapeHtml(item.tld).toUpperCase() + (item.premium ? ' Premium Domain Registration' : ' Domain Registration');
-            var renewLabel = new Date().toLocaleString('en-US', { month: 'long' }) + ' ' + (new Date().getFullYear() + years);
-            var feeLabel = item.premium ? 'Premium Domain Purchase One Time Fee' : 'Domain Purchase Registration Fee';
-            var feePrice = item.premium ? (item.price || 0) : nowTotal;
-            return '<div class="cart-item">' +
-              '<div class="cart-item-top">' +
-                '<div class="cart-item-info">' +
-                  '<div class="cart-item-domain">' + escapeHtml(item.domain) + '</div>' +
-                  '<div class="cart-item-desc">' + descLabel + '</div>' +
-                  '<div class="cart-item-term">' + years + ' Year' + (years > 1 ? 's' : '') + '</div>' +
-                '</div>' +
-                '<div class="cart-item-pricing">' +
-                  '<div class="cart-item-price-now">' + formatPrice(nowTotal) + '</div>' +
-                  '<div class="cart-item-price-was">' + formatPrice(wasTotal) + '</div>' +
-                '</div>' +
-              '</div>' +
-              '<div class="cart-item-bottom">' +
-                '<span class="cart-item-renew-note">Renews ' + renewLabel + ' for ~' + formatPrice(wasTotal) + '</span>' +
-                '<button type="button" class="cart-item-remove" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '" aria-label="Remove ' + escapeHtml(item.domain) + '">' + trashIcon() + '</button>' +
-              '</div>' +
-              '<div class="cart-item-fee-row">' +
-                '<span class="cart-item-fee-label">' + feeLabel + '</span>' +
-                '<span class="cart-item-fee-price">' + formatOneTime(feePrice) + '</span>' +
-              '</div>' +
-              '</div>';
+            if (item.primaryForBundle && bundleIdsPresent[item.primaryForBundle]) return '';
+            if (!item.bundleId) return renderCartDrawerItem(item);
+            if (seenBundles[item.bundleId]) return '';
+            seenBundles[item.bundleId] = true;
+            var group = domainItems.filter(function (i) { return i.bundleId === item.bundleId; });
+            var primaryHtml = primaryByBundleId[item.bundleId] ? renderCartDrawerItem(primaryByBundleId[item.bundleId]) : '';
+            return primaryHtml + renderCartDrawerBundle(group);
           }).join('');
           cartItemsEl.querySelectorAll('.cart-item-remove').forEach(function (btn) {
+            if (btn.classList.contains('cart-bundle-remove')) return;
             btn.addEventListener('click', function () { removeDomainAndAddons(btn.dataset.domain, btn.dataset.tld); });
+          });
+          cartItemsEl.querySelectorAll('.cart-bundle-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () { removeBundle(btn.dataset.bundleId); });
+          });
+          cartItemsEl.querySelectorAll('.cart-item-term-select').forEach(function (sel) {
+            sel.addEventListener('change', function () {
+              updateCartItemYears(sel.dataset.domain, sel.dataset.tld, Number(sel.value));
+            });
           });
           if (cartDrawerFoot) cartDrawerFoot.hidden = false;
         }
 
-        var total = cart.reduce(function (sum, i) { return sum + (typeof i.price === 'number' ? i.price * (i.premium || i.type === 'addon' ? 1 : (i.years || 1)) : 0); }, 0);
+        var total = cart.reduce(function (sum, i) {
+          if (typeof i.price !== 'number') return sum;
+          if (i.premium || i.type === 'addon') return sum + i.price;
+          return sum + multiYearTotal(i.price, i.years || 1);
+        }, 0);
         if (cartDrawerCountEl) cartDrawerCountEl.textContent = domainItems.length + (domainItems.length === 1 ? ' item' : ' items');
-        if (cartTotalEl) cartTotalEl.textContent = '$' + total.toFixed(2);
+        if (cartTotalEl) cartTotalEl.textContent = 'C$' + total.toFixed(2);
         if (cartContinueToCartBtn) cartContinueToCartBtn.disabled = domainItems.length === 0;
-
-        // Reflect cart state on any currently-rendered result cards
-        document.querySelectorAll('.host-result-cta[data-domain]:not(.is-broker)').forEach(function (btn) {
-          var inCart = cartHasItem(btn.dataset.domain, btn.dataset.tld);
-          btn.textContent = inCart ? 'Added ✓' : 'Add to Cart';
-          btn.classList.toggle('added', inCart);
-        });
       }
 
       function openCart() {
@@ -2361,50 +2437,9 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
 
       renderCart();
 
-      // ── Broker modal: open/close, focus trap, return focus to trigger ──
-      var brokerModal = document.getElementById('broker-modal');
-      var brokerModalBackdrop = document.getElementById('broker-modal-backdrop');
-      var brokerModalClose = document.getElementById('broker-modal-close');
-      var brokerModalCta = document.getElementById('broker-modal-cta');
-      var brokerModalContactLink = document.getElementById('broker-modal-contact-link');
-      var brokerModalLastTrigger = null;
-
-      function openBrokerModal(triggerEl) {
-        brokerModalLastTrigger = triggerEl || document.activeElement;
-        var domain = triggerEl && triggerEl.dataset ? triggerEl.dataset.domain : '';
-        var serviceText = domain ? 'Domain broker request: ' + domain : 'Domain broker request';
-        var href = 'contact.html?service=' + encodeURIComponent(serviceText);
-        if (brokerModalCta) brokerModalCta.href = href;
-        if (brokerModalContactLink) brokerModalContactLink.href = href;
-        if (brokerModal) brokerModal.classList.add('open');
-        if (brokerModalBackdrop) brokerModalBackdrop.classList.add('open');
-        document.body.classList.add('bm-open');
-        if (brokerModalClose) brokerModalClose.focus();
-      }
-      function closeBrokerModal() {
-        if (brokerModal) brokerModal.classList.remove('open');
-        if (brokerModalBackdrop) brokerModalBackdrop.classList.remove('open');
-        document.body.classList.remove('bm-open');
-        if (brokerModalLastTrigger && typeof brokerModalLastTrigger.focus === 'function') brokerModalLastTrigger.focus();
-        brokerModalLastTrigger = null;
-      }
-      if (brokerModalClose) brokerModalClose.addEventListener('click', closeBrokerModal);
-      if (brokerModalBackdrop) brokerModalBackdrop.addEventListener('click', closeBrokerModal);
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeBrokerModal();
-        if (e.key === 'Tab' && brokerModal && brokerModal.classList.contains('open')) {
-          var focusable = brokerModal.querySelectorAll('a[href], button:not([disabled])');
-          if (!focusable.length) return;
-          var first = focusable[0], last = focusable[focusable.length - 1];
-          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-        }
-      });
-
       // ── Checkout: "Continue to Cart" hands off to the dedicated checkout
       // page (sign-in gate, term selection, addons, Stripe handoff all live
       // there now — this drawer only manages what's in the cart). ─────────
-      var _sbCfg = window.SUPABASE_CONFIG || {};
       if (cartContinueToCartBtn) {
         cartContinueToCartBtn.addEventListener('click', function () {
           if (!cartContinueToCartBtn.disabled) window.location.href = 'checkout.html';
@@ -2412,77 +2447,9 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
       }
       if (cartContinueShoppingBtn) cartContinueShoppingBtn.addEventListener('click', closeCart);
 
-      // ── Live availability search ─────────────────────────────────────
-      var resultsEl = document.getElementById('host-search-results');
-
-      function renderResultsLoading() {
-        resultsEl.hidden = false;
-        resultsEl.innerHTML = '<div class="host-result-skeleton"></div>';
-      }
-      function renderResultsError(message) {
-        if (message) console.error('[domain search]', message);
-        resultsEl.hidden = false;
-        resultsEl.innerHTML = '<div class="host-result-error">We couldn\'t complete that search right now' +
-          ' — you can also <a href="contact.html?type=' + encodeURIComponent('Domain & Hosting') + '&typeColor=%2334D399&learnMore=1" style="color:inherit;text-decoration:underline;">talk to us directly</a>.</div>';
-      }
-      function renderResults(results) {
-        resultsEl.hidden = false;
-        if (!results.length) {
-          resultsEl.innerHTML = '<div class="host-result-error">No results came back — try a different name.</div>';
-          return;
-        }
-        resultsEl.innerHTML = results.map(function (r) {
-          var domainFull = r.domain + r.tld;
-          var available = Boolean(r.available);
-          var unsupported = Boolean(r.unsupported);
-          var premium = Boolean(r.premium);
-          var statusLabel = available ? 'Available' : (unsupported ? 'Domain Unavailable' : 'Taken');
-          var isBroker = premium || !available;
-          var ctaLabel = isBroker ? 'Hire a Broker' : 'Add to Cart';
-          var ctaClass = 'host-result-cta' + (isBroker ? ' is-broker' : '');
-          var premiumBadgeHtml = premium ? '<span class="host-result-premium-badge">Premium</span>' : '';
-          return '<div class="host-result-card" data-available="' + available + '">' +
-            '<span class="host-result-domain">' + escapeHtml(domainFull) + '</span>' +
-            premiumBadgeHtml +
-            '<span class="host-result-status">' + statusLabel + '</span>' +
-            '<span class="host-result-price">' + ((available && !premium) ? formatPrice(r.price) : '') + '</span>' +
-            '<button type="button" class="' + ctaClass + '" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(r.tld) + '" data-price="' + (r.price || 0) + '" data-available="' + available + '">' +
-            ctaLabel + '</button>' +
-            '</div>';
-        }).join('');
-        resultsEl.querySelectorAll('.host-result-cta:not(.is-broker)').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var domain = btn.dataset.domain, tld = btn.dataset.tld;
-            if (cartHasItem(domain, tld)) removeFromCartByKey(domain, tld);
-            else addToCart({ domain: domain, tld: tld, price: Number(btn.dataset.price), years: 1 });
-          });
-        });
-        resultsEl.querySelectorAll('.host-result-cta.is-broker').forEach(function (btn) {
-          btn.addEventListener('click', function () { openBrokerModal(btn); });
-        });
-        renderCart();
-      }
-
-      function checkDomainOnce(base, tld) {
-        return fetch(_sbCfg.url + '/functions/v1/check-domain-availability', {
-          method: 'POST',
-          headers: { Authorization: 'Bearer ' + _sbCfg.anonKey, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ domains: [{ name: base, tld: tld }] }),
-        })
-          .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
-          .catch(function () { return { ok: false, json: { error: 'network error' } }; });
-      }
-      // A failed or empty response is worth exactly one retry — most failures
-      // here are transient (a brief 502, a rate-limit blip), not permanent,
-      // mirroring domain-search.html's checkDomains()/runBatch retry-once
-      // behavior, which is why that page rarely surfaces this kind of error.
-      function checkDomainWithRetry(base, tld) {
-        return checkDomainOnce(base, tld).then(function (r) {
-          var failed = !r.ok || r.json.error || !(r.json.results && r.json.results.length);
-          return failed ? checkDomainOnce(base, tld) : r;
-        });
-      }
-
+      // ── Hero search: hands off to domain-search.html, which owns the
+      // actual availability search/results UI (including its own premium
+      // and broker flows) — this hero just captures the typed name + TLD. ──
       var searchForm = document.getElementById('domain-search-form');
       if (searchForm) {
         searchForm.addEventListener('submit', function (e) {
@@ -2494,21 +2461,7 @@ When you purchase our Domain Broker Service, you get a dedicated broker who will
           var base = (m ? m[1] : raw).toLowerCase().replace(/[^a-z0-9-]/g, '');
           var tld = m ? m[2].toLowerCase() : ((tldBadgeText && tldBadgeText.textContent) || '.com');
           if (!base) { input.focus(); return; }
-
-          if (!isTldSupported(tld)) {
-            renderResults([{ domain: base, tld: tld, available: false, unsupported: true, price: null }]);
-            return;
-          }
-
-          renderResultsLoading();
-
-          checkDomainWithRetry(base, tld).then(function (r) {
-            if (!r.ok || r.json.error || !(r.json.results && r.json.results.length)) {
-              renderResultsError(r.json && r.json.error);
-              return;
-            }
-            renderResults(r.json.results);
-          });
+          window.location.href = 'domain-search.html?q=' + encodeURIComponent(base) + '&tld=' + encodeURIComponent(tld);
         });
       }
 
