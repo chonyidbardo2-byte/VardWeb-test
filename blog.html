@@ -145,6 +145,33 @@
       margin: 0 auto; max-width: 1200px;
     }
 
+    /* ── Newsletter CTA panel ── */
+    .nl-input {
+      background: rgba(32,32,36,0.65); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px; padding: 13px 20px; font-size: 14px;
+      color: var(--text-1); font-family: 'Inter',sans-serif; outline: none;
+      flex: 1 1 220px; min-width: 220px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .nl-input::placeholder { color: rgba(200,212,232,0.4); }
+    .nl-input:hover { border-color: rgba(255,255,255,0.28); }
+    .nl-input:focus-visible {
+      border-color: rgba(255,255,255,0.45);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+    }
+    .nl-btn {
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13.5px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: #fff; color: #0a0a12; border: none; border-radius: 10px;
+      padding: 13px 26px; white-space: nowrap; min-width: 160px; cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+    .nl-btn:hover, .nl-btn:active {
+      background: #e6e7eb;
+    }
+    .nl-btn:focus-visible { outline: 2px solid rgba(14,165,233,0.6); outline-offset: 3px; }
+    .nl-btn:active { transform: scale(0.97); }
+
     /* ── Blog Cards ── */
     .post-card {
       background: var(--surface);
@@ -244,6 +271,12 @@
     .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
     .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
     .footer-link:hover { color: var(--cyan); }
+    .footer-col-services .footer-link[href="ecommerce.html"]:hover { color: #EF4444; }
+    .footer-col-services .footer-link[href="sem-seo.html"]:hover { color: #f97316; }
+    .footer-col-services .footer-link[href="email-marketing.html"]:hover { color: #60A5FA; }
+    .footer-col-services .footer-link[href="hosting-services.html"]:hover { color: #34D399; }
+    .footer-col-services .footer-link[href="content-creation.html"]:hover { color: #FBBF24; }
+    .footer-col-services .footer-link[href="smm.html"]:hover { color: #F472B6; }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--cyan); }
     .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
@@ -318,19 +351,27 @@
     .nav-right { display: flex; align-items: center; gap: 18px; }
 
     .nav-account-btn {
-      background: none; border: none; padding: 0; gap: 8px;
+      background: none; border: none; padding: 8px; gap: 8px;
       color: rgba(238,240,248,0.85); font-weight: 600;
       transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
     .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
     .nav-account-btn:focus-visible { outline: 2px solid var(--host-green, #34D399); outline-offset: 4px; border-radius: 4px; }
+    .nav-account-btn .ico-body { stroke-dasharray: 40; stroke-dashoffset: 0; opacity: 1; }
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-account-btn .ico-head { transform-origin: 12px 8px; }
+      .nav-account-btn:hover .ico-head, .nav-account-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      .nav-account-btn:hover .ico-body, .nav-account-btn:focus-visible .ico-body { animation: navIconBodyDraw 0.36s ease-in-out 0.18s backwards; }
+    }
     @media (max-width: 1024px) {
       .nav-inner { position: relative; }
       .nav-links { display: none; }
-      .nav-right .btn { display: none; }
+      .nav-right { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
@@ -428,7 +469,10 @@
   <div class="nav-inner">
     <a href="index.html" aria-label="VardWeb Home">
       <div class="logo-nav-wrap">
-        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        <picture>
+          <source media="(max-width: 1024px)" srcset="brand_assets/VardWeb_Favicon_2.png">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </picture>
       </div>
     </a>
     <div class="nav-links">
@@ -470,14 +514,13 @@
       <a href="contact.html"  class="nav-link">Contact</a>
     </div>
     <div class="nav-right">
-      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
-        <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true"><circle cx="10" cy="5.5" r="4.5"/><path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/></svg>
-        Account
+      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="ico-head" cx="12" cy="8" r="5"/><path class="ico-body" d="M20 21a8 8 0 0 0-16 0"/></svg>
       </a>
-      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
     </div>
+    <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
   <div class="nav-mobile-menu">
     <div class="mob-section-label">Navigate</div>
@@ -544,31 +587,53 @@
 
 <!-- ── HERO ── -->
 <section id="blog-hero" style="
-  padding: 160px 28px 88px;
+  padding: 120px 28px 0;
   text-align: center;
-  background:
-    radial-gradient(ellipse 65% 55% at 25% 15%, rgba(0,229,255,0.055) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 45% at 78% 85%, rgba(255,45,120,0.045) 0%, transparent 65%),
-    var(--base);
-  position: relative; overflow: hidden;
+  background: var(--base);
+  position: relative;
+  overflow: hidden;
 ">
   <div style="
     position: absolute; inset: 0; pointer-events: none;
     background-image:
-      linear-gradient(rgba(0,229,255,0.022) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.022) 1px, transparent 1px);
+      linear-gradient(rgba(0,229,255,0.013) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.013) 1px, transparent 1px);
     background-size: 44px 44px;
   "></div>
-  <div style="position: relative; z-index: 1; max-width: 680px; margin: 0 auto;">
-    <p class="sec-tag" style="margin-bottom: 20px;">// knowledge base</p>
-    <h1 style="font-size: clamp(38px, 6vw, 70px); font-weight: 900; line-height: 1.03; color: var(--text-1); margin-bottom: 22px;">
-      The Web<br><span class="grad-cyan-pink">Design Brief</span>
-    </h1>
-    <p style="font-size: 17px; color: var(--text-2); line-height: 1.78; max-width: 520px; margin: 0 auto 14px;">
-      Straight talk on web design, conversion, performance, and the business of building
-      a presence that actually works for you.
-    </p>
+  <h1 style="
+    position: relative; z-index: 3;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(64px, 13vw, 176px);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0;
+  ">Blog</h1>
+
+  <!-- Gradient line pair (indigo wide/blurred + sky narrow/blurred, each with a crisp 1px twin) -->
+  <div style="position: relative; z-index: 2; width: 100%; max-width: 640px; height: 24px; margin: -12px auto 0;">
+    <div style="position:absolute; left:10%; right:10%; top:6px; height:2px;
+      background: linear-gradient(90deg, transparent, #6366f1, transparent);
+      filter: blur(3px);"></div>
+    <div style="position:absolute; left:10%; right:10%; top:6px; height:1px;
+      background: linear-gradient(90deg, transparent, #6366f1, transparent);"></div>
+    <div style="position:absolute; left:30%; right:30%; top:6px; height:5px;
+      background: linear-gradient(90deg, transparent, #0ea5e9, transparent);
+      filter: blur(3px);"></div>
+    <div style="position:absolute; left:30%; right:30%; top:6px; height:1px;
+      background: linear-gradient(90deg, transparent, #0ea5e9, transparent);"></div>
   </div>
+
+  <!-- Sparkle field -->
+  <canvas id="blog-hero-sparkles" aria-hidden="true" style="
+    position: relative; z-index: 1;
+    display: block;
+    width: 100%; height: 340px;
+    margin-top: -10px;
+    -webkit-mask-image: radial-gradient(ellipse 50% 65% at 50% 0%, #000 40%, transparent 75%);
+    mask-image: radial-gradient(ellipse 50% 65% at 50% 0%, #000 40%, transparent 75%);
+  "></canvas>
 </section>
 
 <div class="divider"></div>
@@ -857,38 +922,68 @@
     <!-- Newsletter strip -->
     <div id="blog-newsletter" style="
       margin-top: 72px;
-      background: var(--surface);
-      border: 1px solid rgba(0,229,255,0.1);
+      background: #0a0a0a;
+      border: 1px solid rgba(255,255,255,0.14);
       border-radius: 20px;
-      padding: 48px 40px;
+      padding: 56px 44px;
       display: flex; align-items: center; justify-content: space-between;
-      gap: 32px; flex-wrap: wrap;
+      gap: 40px; flex-wrap: wrap;
       position: relative; overflow: hidden;
+      box-shadow: 0 24px 60px -24px rgba(0,0,0,0.65);
     ">
-      <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 120% at 100% 50%,rgba(0,229,255,0.04) 0%,transparent 65%);pointer-events:none;"></div>
-      <div style="position:relative;z-index:1;">
-        <div class="sec-tag" style="margin-bottom:10px;">// stay sharp</div>
-        <h3 style="font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:8px;letter-spacing:-0.02em;">Get new posts in your inbox</h3>
-        <p style="font-size:14px;color:var(--text-2);max-width:380px;">
-          No spam. Just practical web design and business insights when we publish — usually every couple of weeks.
+      <!-- teal smoke: organic turbulence-masked cloud (not a smooth gradient blob), macro-shaped to the top band, fading by ~40% height -->
+      <div style="position:absolute;inset:0;pointer-events:none;filter:blur(15px);
+        background: radial-gradient(ellipse 70% 90% at 65% 42%, rgba(0,210,235,1) 0%, rgba(0,145,168,0.95) 45%, rgba(0,80,95,0.8) 100%);
+        -webkit-mask-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='260'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.007' numOctaves='5' seed='11' stitchTiles='stitch' result='n'/%3E%3CfeColorMatrix in='n' type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncG type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncB type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E&quot;), linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 18%, rgba(255,255,255,0.15) 28%, rgba(255,255,255,0.4) 36%, rgba(255,255,255,0.72) 44%, rgba(255,255,255,0.92) 52%, #fff 62%, #fff 100%);
+        mask-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='260'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.007' numOctaves='5' seed='11' stitchTiles='stitch' result='n'/%3E%3CfeColorMatrix in='n' type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncG type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncB type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c)'/%3E%3C/svg%3E&quot;), linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.03) 18%, rgba(255,255,255,0.15) 28%, rgba(255,255,255,0.4) 36%, rgba(255,255,255,0.72) 44%, rgba(255,255,255,0.92) 52%, #fff 62%, #fff 100%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        -webkit-mask-repeat: no-repeat, no-repeat;
+        mask-repeat: no-repeat, no-repeat;
+        -webkit-mask-size: 100% 100%, 100% 100%;
+        mask-size: 100% 100%, 100% 100%;
+      "></div>
+      <!-- mid-strength textured blue band across the top: same turbulence-mask technique as the main cloud, bridging the gap between the barely-visible h3 tint and the main cloud so the top reads as consistently organic/cloudy rather than one smooth gradient -->
+      <div style="position:absolute;inset:0;pointer-events:none;filter:blur(15px);
+        background: radial-gradient(ellipse 90% 70% at 50% 0%, rgba(0,180,205,0.85) 0%, rgba(0,120,140,0.5) 60%, rgba(0,70,85,0.3) 100%);
+        -webkit-mask-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='260'%3E%3Cfilter id='c2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.007' numOctaves='5' seed='23' stitchTiles='stitch' result='n'/%3E%3CfeColorMatrix in='n' type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncG type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncB type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c2)'/%3E%3C/svg%3E&quot;), radial-gradient(ellipse 90% 45% at 50% -5%, #fff 0%, rgba(255,255,255,0.8) 35%, rgba(255,255,255,0.4) 60%, transparent 85%);
+        mask-image: url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='760' height='260'%3E%3Cfilter id='c2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.007' numOctaves='5' seed='23' stitchTiles='stitch' result='n'/%3E%3CfeColorMatrix in='n' type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncG type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3CfeFuncB type='gamma' exponent='1.7' amplitude='1.3' offset='-0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23c2)'/%3E%3C/svg%3E&quot;), radial-gradient(ellipse 90% 45% at 50% -5%, #fff 0%, rgba(255,255,255,0.8) 35%, rgba(255,255,255,0.4) 60%, transparent 85%);
+        -webkit-mask-composite: source-in;
+        mask-composite: intersect;
+        -webkit-mask-repeat: no-repeat, no-repeat;
+        mask-repeat: no-repeat, no-repeat;
+        -webkit-mask-size: 100% 100%, 100% 100%;
+        mask-size: 100% 100%, 100% 100%;
+      "></div>
+      <!-- grain -->
+      <div style="position:absolute;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:0.5;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;);"></div>
+      <!-- dark anchor: reinforces black at top-left and bottom-left so the cloud fades into black there -->
+      <div style="position:absolute;inset:0;pointer-events:none;background:
+        radial-gradient(ellipse 55% 60% at 0% 0%, rgba(0,0,0,0.6) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 65% at 0% 100%, rgba(0,0,0,0.65) 0%, transparent 65%);
+      "></div>
+      <!-- barely-visible blue, anchored above/behind the h3, so top-left isn't pure flat black -->
+      <div style="position:absolute;inset:0;pointer-events:none;background:
+        radial-gradient(ellipse 38% 34% at 9% 3%, rgba(0,160,182,0.12) 0%, transparent 70%);
+      "></div>
+
+      <div style="position:relative;z-index:1;flex:1 1 360px;">
+        <h3 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(26px,3.2vw,38px);font-weight:800;color:var(--text-1);margin-bottom:14px;letter-spacing:-0.03em;line-height:1.1;">Get new posts in your inbox</h3>
+        <p style="font-size:14.5px;color:var(--text-2);max-width:400px;line-height:1.7;">
+          No spam. Just practical web design and business insights when we publish, usually every couple of weeks.
         </p>
       </div>
-      <div style="position:relative;z-index:1;">
-        <form id="newsletter-form" style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="position:relative;z-index:1;flex:1 1 380px;max-width:420px;">
+        <form id="newsletter-form" style="position:relative;display:flex;gap:10px;flex-wrap:wrap;">
           <label for="newsletter-email" class="sr-only">Email address</label>
-          <input type="email" id="newsletter-email" name="email" required placeholder="your@email.com" style="
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(0,229,255,0.18);
-            border-radius: 8px; padding: 11px 18px; font-size: 13.5px;
-            color: var(--text-1); font-family: 'Inter',sans-serif; outline: none;
-            min-width: 220px;
-          " />
-          <button type="submit" id="newsletter-submit" class="btn btn-primary" style="white-space:nowrap;min-width:152px;justify-content:center;">
-            Subscribe <span aria-hidden="true">→</span>
+          <input type="email" id="newsletter-email" name="email" required placeholder="your@email.com" class="nl-input" />
+          <button type="submit" id="newsletter-submit" class="nl-btn">
+            Subscribe <span aria-hidden="true" style="font-size:1.5em;line-height:0;">→</span>
           </button>
+          <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" style="
+            position:absolute;top:100%;left:0;right:0;margin-top:8px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-2);min-height:16px;
+          "></p>
         </form>
-        <p id="newsletter-status" role="status" aria-live="polite" aria-atomic="true" style="
-          margin-top:8px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text-2);min-height:16px;
-        "></p>
       </div>
     </div>
 
@@ -929,7 +1024,7 @@
         <a href="about.html"    class="footer-link">About Us</a>
         <a href="contact.html"  class="footer-link">Contact</a>
       </div>
-      <div>
+      <div class="footer-col-services">
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
@@ -983,7 +1078,7 @@
 
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
-      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <p class="footer-copy">© 2019-2026 VardWeb. All rights reserved.</p>
       <div class="footer-credit">
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
         <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
@@ -1032,12 +1127,129 @@
     }, { threshold: threshold || 0.15 });
     obs.observe(el);
   }
+  function revealSequence(els, delayMs) {
+    els = els.filter(Boolean);
+    if (!els.length) return;
+    els.forEach(function (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(32px)';
+    });
+    var obs = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      obs.disconnect();
+      els.forEach(function (el, i) {
+        setTimeout(function () {
+          el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+          el.addEventListener('transitionend', function cleanup(evt) {
+            if (evt.propertyName !== 'transform') return;
+            el.style.opacity = '';
+            el.style.transform = '';
+            el.style.transition = '';
+            el.removeEventListener('transitionend', cleanup);
+          });
+        }, i * delayMs);
+      });
+    }, { threshold: 0.15 });
+    obs.observe(els[0]);
+  }
   revealOne(document.getElementById('blog-hero'), 0.01);
   revealOne(document.getElementById('blog-filter-row'));
   revealOne(document.getElementById('blog-featured'));
   revealOne(document.getElementById('blog-newsletter'));
+  document.querySelectorAll('.post-card').forEach(function (card) {
+    revealOne(card.querySelector('.post-title'));
+    revealOne(card.querySelector('.post-excerpt'));
+    revealOne(card.querySelector('.post-meta'));
+  });
+  var nlHeading = document.querySelector('#blog-newsletter h3');
+  var nlParagraph = nlHeading ? nlHeading.nextElementSibling : null;
+  revealSequence([nlHeading, nlParagraph, document.getElementById('newsletter-form')], 140);
 })();
+</script>
 
+<script>
+/* ── Blog hero: sparkle/twinkle field (vanilla canvas, no libraries) ── */
+(function () {
+  var canvas = document.getElementById('blog-hero-sparkles');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var particles = [], W = 0, H = 0, rafId = null, t = 0;
+
+  function resize() {
+    var rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seed();
+  }
+
+  function seed() {
+    var count = Math.round(W * H * 0.009);
+    particles = [];
+    for (var i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.1 + 0.3,
+        baseAlpha: Math.random() * 0.5 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.12 + 0.05,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3
+      });
+    }
+  }
+
+  function step() {
+    particles.forEach(function (p) {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) { p.x = 0; p.vx *= -1; }
+      else if (p.x > W) { p.x = W; p.vx *= -1; }
+      if (p.y < 0) { p.y = 0; p.vy *= -1; }
+      else if (p.y > H) { p.y = H; p.vy *= -1; }
+    });
+  }
+
+  function draw(animated) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    particles.forEach(function (p) {
+      var alpha = animated
+        ? p.baseAlpha * (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(p.phase + t * p.speed)))
+        : p.baseAlpha;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function tick() {
+    t += 1;
+    step();
+    draw(true);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', function () {
+    resize();
+    if (reduceMotion) draw(false);
+  });
+
+  resize();
+  if (reduceMotion) draw(false);
+  else rafId = requestAnimationFrame(tick);
+})();
+</script>
+
+<script>
 /* ── Post grid: stagger reveal ── */
 (function () {
   var ease = 'cubic-bezier(0.22,1,0.36,1)';

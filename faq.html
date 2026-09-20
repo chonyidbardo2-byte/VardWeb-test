@@ -9,6 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+
   <style>
     :root {
       --cyan:    #00E5FF;
@@ -172,6 +180,33 @@
       letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--cyan);
       margin-bottom: 16px;
+    }
+
+    /* ── FAQ Hero: particle wave background ── */
+    .faq-hero {
+      position: relative; overflow: hidden;
+      min-height: clamp(440px, 48vh, 540px);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 140px 28px 90px;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 60% 50% at 75% 20%, rgba(0,229,255,0.06) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 25% 80%, rgba(255,45,120,0.05) 0%, transparent 65%),
+        var(--base);
+    }
+    .faq-hero-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+    .faq-hero-grid {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+    .faq-hero-fade {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at 50% 55%, rgba(7,9,16,0.35) 0%, transparent 70%),
+        linear-gradient(to bottom, rgba(7,9,16,0.15) 0%, transparent 30%, transparent 70%, var(--base) 100%);
     }
 
     /* ── Divider ── */
@@ -407,6 +442,12 @@
     .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
     .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
     .footer-link:hover { color: var(--cyan); }
+    .footer-col-services .footer-link[href="ecommerce.html"]:hover { color: #EF4444; }
+    .footer-col-services .footer-link[href="sem-seo.html"]:hover { color: #f97316; }
+    .footer-col-services .footer-link[href="email-marketing.html"]:hover { color: #60A5FA; }
+    .footer-col-services .footer-link[href="hosting-services.html"]:hover { color: #34D399; }
+    .footer-col-services .footer-link[href="content-creation.html"]:hover { color: #FBBF24; }
+    .footer-col-services .footer-link[href="smm.html"]:hover { color: #F472B6; }
     .footer-link:focus-visible { outline: 2px solid rgba(0,229,255,0.5); outline-offset: 3px; border-radius: 2px; }
     .footer-link.active { color: var(--cyan); }
     .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
@@ -484,19 +525,27 @@
     .nav-mobile-menu { display: none; }
     .nav-right { display: flex; align-items: center; gap: 18px; }
     .nav-account-btn {
-      background: none; border: none; padding: 0; gap: 8px;
+      background: none; border: none; padding: 8px; gap: 8px;
       color: rgba(238,240,248,0.85); font-weight: 600;
       transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
     .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
     .nav-account-btn:focus-visible { outline: 2px solid var(--host-green, #34D399); outline-offset: 4px; border-radius: 4px; }
+    .nav-account-btn .ico-body { stroke-dasharray: 40; stroke-dashoffset: 0; opacity: 1; }
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-account-btn .ico-head { transform-origin: 12px 8px; }
+      .nav-account-btn:hover .ico-head, .nav-account-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      .nav-account-btn:hover .ico-body, .nav-account-btn:focus-visible .ico-body { animation: navIconBodyDraw 0.36s ease-in-out 0.18s backwards; }
+    }
     @media (max-width: 1024px) {
       .nav-inner { position: relative; }
       .nav-links { display: none; }
-      .nav-right .btn { display: none; }
+      .nav-right { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
@@ -605,7 +654,10 @@
   <div class="nav-inner">
     <a href="index.html" aria-label="VardWeb Home">
       <div class="logo-nav-wrap">
-        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        <picture>
+          <source media="(max-width: 1024px)" srcset="brand_assets/VardWeb_Favicon_2.png">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </picture>
       </div>
     </a>
     <div class="nav-links">
@@ -647,16 +699,12 @@
       <a href="contact.html"  class="nav-link">Contact</a>
     </div>
     <div class="nav-right">
-      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
-        <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true">
-          <circle cx="10" cy="5.5" r="4.5"/>
-          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
-        </svg>
-        Account
+      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="ico-head" cx="12" cy="8" r="5"/><path class="ico-body" d="M20 21a8 8 0 0 0-16 0"/></svg>
       </a>
-      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
+    </div>
+    <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
     </div>
   </div>
   <div class="nav-mobile-menu">
@@ -723,35 +771,22 @@
 <main id="main-content" tabindex="-1">
 
 <!-- ── HERO ── -->
-<section style="
-  padding: 160px 28px 90px;
-  text-align: center;
-  background:
-    radial-gradient(ellipse 60% 50% at 75% 20%, rgba(0,229,255,0.06) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 25% 80%, rgba(255,45,120,0.05) 0%, transparent 65%),
-    var(--base);
-  position: relative; overflow: hidden;
-">
-  <div style="
-    position: absolute; inset: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
-    background-size: 44px 44px;
-  "></div>
+<section class="faq-hero" id="faq-hero">
+  <div id="faq-hero-bg" class="faq-hero-bg" aria-hidden="true"></div>
+  <div class="faq-hero-grid" aria-hidden="true"></div>
+  <div class="faq-hero-fade" aria-hidden="true"></div>
 
-  <div style="position: relative; z-index: 1; max-width: 700px; margin: 0 auto;">
-    <p class="sec-tag" style="margin-bottom: 20px;">// help &amp; answers</p>
+  <div style="position: relative; z-index: 3; margin: 0 auto;">
     <h1 style="
-      font-size: clamp(36px, 6vw, 68px);
-      font-weight: 900; line-height: 1.04;
+      font-size: clamp(22px, 8.5vw, 68px);
+      font-weight: 900; line-height: 1.04; white-space: nowrap;
       color: var(--text-1); margin-bottom: 22px;
     ">
-      Frequently<br><span class="grad-cyan-pink">Asked</span>
+      Frequently <span class="grad-cyan-pink">Asked</span>
     </h1>
     <p style="font-size: 17px; color: var(--text-2); line-height: 1.75; max-width: 520px; margin: 0 auto 32px;">
-      Clear answers to the questions we hear most. No jargon, no runaround —
-      just the information you need to move forward with confidence.
+      Clear answers to the questions we hear most. No jargon, no runaround.
+      Just the information you need to move forward with confidence.
     </p>
   </div>
 </section>
@@ -1290,7 +1325,7 @@
           </button>
           <div class="faq-content">
             <div class="faq-content-inner">
-              Yes. Domain setup and DNS delegation are included free in every Bronze/Silver/Gold/Custom package, managed through Cloudflare for SSL, CDN, and DDoS protection. We can also register a new domain or transfer one you already own, and — if you're not on a build package — search and register a domain at true wholesale cost with only a flat 10% margin on renewal. See <a href="hosting-services.html" style="color:var(--cyan);">Domain &amp; Hosting</a> for the full breakdown.
+              Yes. Domain setup and DNS delegation are included free in every Bronze/Silver/Gold/Custom package, managed through Cloudflare for SSL, CDN, and DDoS protection. We can also register a new domain or transfer one you already own, and — if you're not on a build package — search and register a domain at true wholesale cost with only a flat 20% margin on renewal. See <a href="hosting-services.html" style="color:var(--cyan);">Domain &amp; Hosting</a> for the full breakdown.
             </div>
           </div>
         </div>
@@ -1444,7 +1479,7 @@
         <a href="about.html"    class="footer-link">About Us</a>
         <a href="contact.html"  class="footer-link">Contact</a>
       </div>
-      <div>
+      <div class="footer-col-services">
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
@@ -1498,7 +1533,7 @@
 
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
-      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <p class="footer-copy">© 2019-2026 VardWeb. All rights reserved.</p>
       <div class="footer-credit">
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
         <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
@@ -1580,6 +1615,145 @@
     el.addEventListener('touchcancel', release);
   });
 })();
+</script>
+
+<script type="module">
+  /* ── FAQ Hero: particle wave background ──
+     Vanilla port of the supplied React ParticleWave component: a shader-
+     displaced THREE.Points grid waving via sin/cos. Loaded via CDN import
+     map since this site has no npm/React build step (see head), and scoped
+     to the hero section (ResizeObserver) instead of the full viewport, with
+     a smaller grid sized for a hero rather than a full-bleed background.
+     Dark/light theme branching removed — this site is fixed-dark, so uColor
+     is a static brand cyan. Mouse position is tracked but intentionally
+     left unused in the shader, matching the supplied source (dead code
+     there too). */
+  import * as THREE from 'three';
+
+  const particleVertex = `
+    attribute float scale;
+    uniform float uTime;
+    void main() {
+      vec3 p = position;
+      float s = scale;
+      p.y += (sin(p.x + uTime) * 0.5) + (cos(p.y + uTime) * 0.1) * 2.0;
+      p.x += (sin(p.y + uTime) * 0.5);
+      s += (sin(p.x + uTime) * 0.5) + (cos(p.y + uTime) * 0.1) * 2.0;
+      vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+      gl_PointSize = s * 15.0 * (1.0 / -mvPosition.z);
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `;
+
+  const particleFragment = `
+    uniform vec3 uColor;
+    void main() {
+      gl_FragColor = vec4(uColor, 0.5);
+    }
+  `;
+
+  function initFaqHeroParticles(section, mount) {
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'low-power' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(section.clientWidth, section.clientHeight);
+    renderer.setClearColor(0x000000, 0);
+    mount.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, section.clientWidth / section.clientHeight, 0.01, 1000);
+    camera.position.set(0, 6, 22);
+
+    const gap = 0.3;
+    const amountX = 140;
+    const amountY = 140;
+    const particleNum = amountX * amountY;
+    const particlePositions = new Float32Array(particleNum * 3);
+    const particleScales = new Float32Array(particleNum);
+
+    let i = 0, j = 0;
+    for (let ix = 0; ix < amountX; ix++) {
+      for (let iy = 0; iy < amountY; iy++) {
+        particlePositions[i] = ix * gap - ((amountX * gap) / 2);
+        particlePositions[i + 1] = 0;
+        particlePositions[i + 2] = iy * gap - ((amountY * gap) / 2);
+        particleScales[j] = 1;
+        i += 3;
+        j++;
+      }
+    }
+
+    const particleGeometry = new THREE.BufferGeometry();
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    particleGeometry.setAttribute('scale', new THREE.BufferAttribute(particleScales, 1));
+
+    const particleMaterial = new THREE.ShaderMaterial({
+      transparent: true,
+      vertexShader: particleVertex,
+      fragmentShader: particleFragment,
+      uniforms: {
+        uTime: { value: 0 },
+        uColor: { value: new THREE.Vector3(0.0, 0.898, 1.0) } // #00E5FF
+      }
+    });
+
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);
+
+    const mouse = { x: -10, y: -10 };
+    function handlePointerMove(e) {
+      const rect = section.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+    section.addEventListener('pointermove', handlePointerMove);
+
+    function resize() {
+      const w = section.clientWidth;
+      const h = section.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+
+    const lookTarget = new THREE.Vector3(0, -1.5, 0);
+    let rafId = 0;
+    function renderFrame() {
+      particleMaterial.uniforms.uTime.value += 0.008;
+      camera.lookAt(lookTarget);
+      renderer.render(scene, camera);
+    }
+    function animate() {
+      rafId = requestAnimationFrame(animate);
+      renderFrame();
+    }
+
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(section);
+    resize();
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId);
+      } else {
+        rafId = requestAnimationFrame(animate);
+      }
+    });
+
+    animate();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const section = document.getElementById('faq-hero');
+    const mount = document.getElementById('faq-hero-bg');
+    if (!section || !mount) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.WebGLRenderingContext) return;
+    try {
+      initFaqHeroParticles(section, mount);
+    } catch (e) {
+      /* WebGL init failed — leave the static gradient hero visible */
+    }
+  });
 </script>
 
 </body>

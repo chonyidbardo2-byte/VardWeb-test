@@ -99,7 +99,11 @@ async function getOrCreateCustomerHandle(apiBase: string, token: string, registr
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      name: { firstName, lastName },
+      // Openprovider's v1beta REST schema uses snake_case here (confirmed against
+      // their published openapi spec) — NOT the camelCase firstName/lastName this
+      // used to send, which Openprovider silently dropped and reported back as
+      // "Empty first name!" on every real customer-create call.
+      name: { first_name: firstName, last_name: lastName, full_name: String(registrant.name).trim() },
       address: { street, number, zipcode: registrant.postal_code, city: registrant.city, state: registrant.state, country: registrant.country },
       phone,
       email: registrant.email || buyerEmail,
@@ -182,11 +186,13 @@ serve(async (req) => {
     const handle = await getOrCreateCustomerHandle(apiBase, token, order.registrant, order.buyer_email);
 
     for (const item of order.items as Array<{ domain: string; tld: string; years?: number; type?: string }>) {
-      // Addon line items (e.g. Full Domain Protection) aren't real domains —
-      // Openprovider has nothing to register for them, so skip straight to a
-      // recorded no-op rather than sending a bogus domain-create call.
-      if (item.type === 'addon') {
-        results.push({ domain: item.domain, tld: item.tld, ok: true, skipped: 'addon' });
+      // Addon line items (e.g. Full Domain Protection) and broker service fees
+      // aren't real domains — Openprovider has nothing to register for them,
+      // so skip straight to a recorded no-op rather than sending a bogus
+      // domain-create call. A broker item's `domain` is only the reference
+      // domain the request was about, never one being registered here.
+      if (item.type === 'addon' || item.type === 'broker') {
+        results.push({ domain: item.domain, tld: item.tld, ok: true, skipped: item.type });
         continue;
       }
       try {
@@ -214,17 +220,29 @@ serve(async (req) => {
   // Stripe retries on non-2xx and we don't want a Resend hiccup to cause
   // duplicate Openprovider registration attempts on retry.
   try {
-    const domainResults = results.filter(r => r.skipped !== 'addon');
-    const html = allOk
-      ? `<p>Your domain purchase is complete:</p><ul>${domainResults.map(r => `<li>${r.domain}</li>`).join('')}</ul>`
-      : `<p>Your payment went through, but one or more domains needs attention on our end — we'll follow up shortly.</p><ul>${domainResults.map(r => `<li>${r.domain}: ${r.ok ? 'registered' : 'needs follow-up'}</li>`).join('')}</ul>`;
+    const domainResults = results.filter(r => r.skipped !== 'addon' && r.skipped !== 'broker');
+    const brokerResult = results.find(r => r.skipped === 'broker');
+    let subject: string;
+    let html: string;
+    if (domainResults.length === 0 && brokerResult) {
+      // Broker-fee-only order — nothing was registered, so don't call it a "domain purchase."
+      subject = 'Your Domain Broker Service request is confirmed';
+      html = `<p>Your Domain Broker Service request for <b>${brokerResult.domain}</b> is confirmed. A dedicated broker will be in touch shortly.</p>`;
+    } else if (allOk) {
+      subject = 'Your domain purchase is complete';
+      html = `<p>Your domain purchase is complete:</p><ul>${domainResults.map(r => `<li>${r.domain}</li>`).join('')}</ul>` +
+        (brokerResult ? `<p>Your Domain Broker Service request for <b>${brokerResult.domain}</b> is also confirmed.</p>` : '');
+    } else {
+      subject = 'Your domain purchase needs attention';
+      html = `<p>Your payment went through, but one or more domains needs attention on our end — we'll follow up shortly.</p><ul>${domainResults.map(r => `<li>${r.domain}: ${r.ok ? 'registered' : 'needs follow-up'}</li>`).join('')}</ul>`;
+    }
     await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/send-transactional-email`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         to: order.buyer_email,
         from: 'VardWeb <notifications@vardweb.com>',
-        subject: allOk ? 'Your domain purchase is complete' : 'Your domain purchase needs attention',
+        subject,
         html,
       }),
     });

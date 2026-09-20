@@ -133,7 +133,12 @@ serve(async (req) => {
         domain: domains[idx].name.trim().toLowerCase(),
         tld: domains[idx].tld,
         available: r.status === 'free',
-        price: r.premium?.price?.reseller?.price ?? r.price?.reseller?.price ?? r.price?.product?.price ?? null,
+        // `||` (not `??`) on purpose — Openprovider sometimes returns a literal
+        // 0 in the first field of a premium listing (price not populated there),
+        // which `??` would lock onto instead of falling through to a field that
+        // actually has the real price. A genuine $0 domain price isn't a case
+        // worth preserving.
+        price: r.premium?.price?.reseller?.price || r.price?.reseller?.price || r.price?.product?.price || null,
         premium: Boolean(r.premium),
       };
     });

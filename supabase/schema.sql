@@ -191,6 +191,29 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   full_name TEXT
 );
 
+-- client_billing_info — one saved billing/registrant profile per authenticated
+-- buyer, shared by checkout.html's #registrant-form and domain-search.html's
+-- #ic-registrant-form (both share one session via storageKey 'vw-client-auth').
+-- Stores the raw per-field pieces exactly as collected by those forms —
+-- combining first_name+last_name, phone_code+phone, address+address2 into a
+-- single registrant.* shape happens only at Stripe/domain-order submit time.
+CREATE TABLE IF NOT EXISTS client_billing_info (
+  id           UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  first_name   TEXT,
+  last_name    TEXT,
+  phone_code   TEXT,
+  phone        TEXT,
+  address      TEXT,
+  address2     TEXT,
+  city         TEXT,
+  state        TEXT,
+  postal_code  TEXT,
+  country      TEXT,
+  organization TEXT,
+  tax_id       TEXT,
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
 
 -- ── 2. HELPER FUNCTIONS ─────────────────────────────────────────
 -- SECURITY DEFINER bypasses RLS so these can safely query
@@ -232,6 +255,7 @@ ALTER TABLE site_analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blog_subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE domain_orders  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles  ENABLE ROW LEVEL SECURITY;
+ALTER TABLE client_billing_info ENABLE ROW LEVEL SECURITY;
 
 
 -- ── 4. RLS POLICIES ─────────────────────────────────────────────
@@ -350,3 +374,9 @@ DROP POLICY IF EXISTS "admin_all_profiles" ON user_profiles;
 CREATE POLICY "own_profile"         ON user_profiles FOR SELECT USING (id = auth.uid());
 CREATE POLICY "own_profile_insert"  ON user_profiles FOR INSERT WITH CHECK (id = auth.uid());
 CREATE POLICY "admin_all_profiles"  ON user_profiles FOR ALL    USING (is_admin());
+
+-- client_billing_info — owner reads/writes their own row; admin reads all.
+DROP POLICY IF EXISTS "admin_all_billing_info" ON client_billing_info;
+DROP POLICY IF EXISTS "own_billing_info"       ON client_billing_info;
+CREATE POLICY "admin_all_billing_info" ON client_billing_info FOR ALL USING (is_admin());
+CREATE POLICY "own_billing_info"       ON client_billing_info FOR ALL USING (id = auth.uid()) WITH CHECK (id = auth.uid());

@@ -71,7 +71,68 @@
     }
     .nav-logo { height: 34px; width: auto; display: block; }
     .logo-nav-wrap { display: inline-flex; background: #ffffff; border-radius: 8px; padding: 4px 10px; }
-    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 13.5px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 2px;
+      transition: color 0.2s ease;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--host-green);
+      transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .nav-link:hover { color: #fff; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link:focus-visible { outline: 2px solid rgba(52,211,153,0.5); outline-offset: 4px; border-radius: 2px; }
+    .nav-link.active { color: var(--host-green); }
+    .nav-link.active::after { width: 100%; }
+
+    /* ── Nav Dropdown ── */
+    .nav-dropdown { position: relative; display: flex; align-items: center; }
+    .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
+    .nav-dropdown:hover .chevron,
+    .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
+    .dropdown-menu::before {
+      content: ''; position: absolute; top: -6px; left: 0; right: 0; height: 6px;
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%) translateY(-6px);
+      background: rgba(15,18,25,0.96);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(52,211,153,0.12);
+      border-radius: 14px; padding: 14px 8px 8px;
+      min-width: 152px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 200;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(52,211,153,0.04) inset;
+    }
+    .nav-dropdown:hover .dropdown-menu,
+    .nav-dropdown:focus-within .dropdown-menu {
+      opacity: 1; pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .dropdown-item {
+      display: block; padding: 9px 14px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(200,212,232,0.58);
+      text-decoration: none; border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s ease, background 0.2s ease;
+      white-space: nowrap;
+    }
+    .dropdown-item:hover { color: var(--item-c, #fff); background: var(--item-bg, rgba(52,211,153,0.06)); }
+    .dropdown-item:focus-visible { outline: 2px solid rgba(52,211,153,0.35); outline-offset: -2px; border-radius: 8px; }
+    .nav-right { display: flex; align-items: center; gap: 18px; }
 
     .btn {
       font-family: 'JetBrains Mono', monospace;
@@ -95,10 +156,19 @@
     .btn:hover .btn-arrow { transform: translateX(4px); }
 
     .nav-account-btn {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); color: var(--text-1);
-      font-size: 12.5px; padding: 8px 16px;
+      background: none; border: none; padding: 8px; gap: 8px; color: var(--text-1); font-weight: 600;
+      transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .nav-account-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
+    .nav-account-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 4px; border-radius: 4px; }
+    .nav-account-btn .ico-body { stroke-dasharray: 40; stroke-dashoffset: 0; opacity: 1; }
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-account-btn .ico-head { transform-origin: 12px 8px; }
+      .nav-account-btn:hover .ico-head, .nav-account-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      .nav-account-btn:hover .ico-body, .nav-account-btn:focus-visible .ico-body { animation: navIconBodyDraw 0.36s ease-in-out 0.18s backwards; }
+    }
     .nav-cart-btn {
       position: relative; display: inline-flex; align-items: center; justify-content: center;
       background: none; border: none; padding: 4px; margin: 0; cursor: pointer; color: #fff;
@@ -118,6 +188,47 @@
       box-shadow: 0 0 0 2px #070910;
     }
     .cart-count-badge[hidden] { display: none; }
+
+    /* ── Mobile Nav ── */
+    .nav-hamburger { display: none; }
+    .nav-mobile-menu { display: none; }
+    @media (max-width: 1024px) {
+      .nav-inner { position: relative; }
+      .nav-links { display: none; }
+      .nav-right { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
+      .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; appearance: none; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+      .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
+      .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
+      .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); -webkit-transform: translateY(-8px) rotate(-45deg); }
+      .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(52,211,153,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
+      @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(52,211,153,0.55); padding: 10px 24px 6px; }
+      .mob-link { display: flex; align-items: center; padding: 13px 24px; font-size: 15px; font-weight: 500; color: rgba(200,212,232,0.65); text-decoration: none; position: relative; overflow: hidden; transition: color 0.2s ease, background 0.2s ease; }
+      .mob-link::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--host-green); transform: scaleY(0); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); transform-origin: bottom; }
+      .mob-link:hover { color: #fff; background: rgba(52,211,153,0.05); }
+      .mob-link:hover::before { transform: scaleY(1); }
+      .mob-link:focus-visible { outline: 2px solid rgba(52,211,153,0.45); outline-offset: -2px; }
+      .mob-link.active { color: var(--host-green); }
+      .mob-link.active::before { transform: scaleY(1); }
+      .nav-hamburger:focus-visible { outline: 2px solid rgba(52,211,153,0.5); outline-offset: 6px; border-radius: 4px; }
+      .mob-sub { padding-left: 40px; font-size: 13.5px; color: rgba(200,212,232,0.45); }
+      .mob-sub:hover { color: rgba(52,211,153,0.9); }
+      .mob-accordion-trigger { width: 100%; background: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; justify-content: space-between; }
+      .mob-chevron { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1); opacity: 0.5; flex-shrink: 0; }
+      .mob-accordion-trigger[aria-expanded="true"] { color: #fff; }
+      .mob-accordion-trigger[aria-expanded="true"] .mob-chevron { transform: rotate(180deg); opacity: 0.8; }
+      .mob-accordion-panel { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .mob-accordion-panel > div { overflow: hidden; }
+      .mob-accordion-panel.open { grid-template-rows: 1fr; }
+      .mob-divider { height: 1px; background: rgba(52,211,153,0.08); margin: 10px 24px; }
+      .mob-cta-ghost { font-weight: 600; color: rgba(200,212,232,0.7); }
+      .mob-cta-primary { font-weight: 700; color: var(--host-green); margin: 4px 16px 0; padding: 13px 24px; background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.2); border-radius: 10px; justify-content: center; }
+      .mob-cta-primary:hover { background: rgba(52,211,153,0.13); color: #fff; }
+      .mob-cta-primary::before { display: none; }
+    }
 
     /* Circular "?" tooltip trigger */
     .tt-icon-trigger {
@@ -292,6 +403,10 @@
     .checkout-step[hidden] { display: none; }
     .checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 28px; align-items: start; }
     @media (max-width: 880px) { .checkout-grid { grid-template-columns: 1fr; } }
+    @media (min-width: 881px) {
+      #checkout-step-payment .checkout-grid { grid-template-columns: 560px 380px; justify-content: center; }
+    }
+    #order-summary-payment { position: sticky; top: 88px; }
     .checkout-col-left { display: flex; flex-direction: column; gap: 26px; min-width: 0; }
     .co-section-title {
       font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--host-green);
@@ -300,6 +415,8 @@
     #checkout-empty { text-align: center; padding: 80px 24px; color: var(--text-2); }
     #checkout-empty a { color: var(--host-green); text-decoration: none; border-bottom: 1px solid rgba(52,211,153,0.35); }
     #checkout-empty[hidden] { display: none; }
+    #checkout-return-notice { text-align: center; padding: 80px 24px; color: var(--text-2); }
+    #checkout-return-notice[hidden] { display: none; }
 
     /* Amber informational banner */
     .co-alert-banner {
@@ -359,6 +476,16 @@
     .co-item-note { font-size: 12px; color: var(--text-2); }
     .co-item-onetime-note { font-size: 12px; color: #A855F7; font-weight: 600; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.02em; }
 
+    /* Grouped bundle cart card (multiple domains added together as one purchase) */
+    .co-bcard { background: var(--surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; padding: 16px 18px; display: flex; flex-direction: column; }
+    .co-bcard-term { font-size: 12px; letter-spacing: 0.02em; color: var(--text-2); }
+    .co-bcard-included-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--host-green); padding: 10px 18px; background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); margin: 14px -18px 12px; }
+    .co-bcard-list { display: flex; flex-direction: column; gap: 8px; }
+    .co-bcard-row { background: var(--raised); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 10px 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+    .co-bcard-domain { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; color: var(--text-1); }
+    .co-bcard .co-item-right { transform: translateY(6px); }
+    .co-bcard-title-br { display: none; }
+
     /* Domain add-on row (Full Domain Protection) */
     .co-addon-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
     .co-addon-label { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-1); min-width: 0; }
@@ -391,6 +518,97 @@
     .co-toggle input:checked ~ .co-toggle-track { background: var(--host-green); border-color: var(--host-green-deep); }
     .co-toggle input:checked ~ .co-toggle-thumb { transform: translateX(17px); }
     .co-toggle input:focus-visible ~ .co-toggle-track { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
+
+    /* Mobile reflow for cart cards — relocates existing elements only, no new data/copy */
+    @media (max-width: 600px) {
+      .co-item, .co-bcard { min-width: 0; }
+      .co-item-icon { width: 76px; height: 76px; font-size: 14px; }
+      .co-item-term-select { min-width: 0; width: 100%; max-width: 100%; }
+      .co-bcard-title-br { display: inline; }
+
+      /* Standalone .co-item header: icon | text meta, with the price stack as its
+         own row between term and note, then a full-width note+remove bar below —
+         bridges the intermediate wrapper divs with display:contents so their
+         children can share one grid. minmax(0,1fr) + min-width:0 keep everything
+         shrinkable so the card never overflows its container at narrow widths. */
+      .co-item > .co-item-top {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "icon name     name"
+          "icon subtitle subtitle"
+          "icon type     type"
+          "icon term     term"
+          "icon price    price"
+          "note note     remove";
+        column-gap: 10px;
+        row-gap: 6px;
+        align-items: start;
+        padding-bottom: 12px;
+        min-width: 0;
+      }
+      .co-item > .co-item-top > .co-item-info,
+      .co-item > .co-item-top > .co-item-right { display: contents; }
+      .co-item > .co-item-top .co-item-icon { grid-area: icon; }
+      .co-item > .co-item-top .co-item-name-row { grid-area: name; min-width: 0; }
+      .co-item > .co-item-top .co-addon-subtitle { grid-area: subtitle; align-self: start; }
+      .co-item > .co-item-top .co-item-type-label { grid-area: type; }
+      .co-item > .co-item-top .co-item-term { grid-area: term; }
+      .co-item > .co-item-top .co-item-onetime-note { grid-area: term; }
+      .co-item > .co-item-top .co-item-price-stack { grid-area: price; }
+      .co-item > .co-item-top .co-item-note { grid-area: note; align-self: center; min-width: 0; }
+      .co-item > .co-item-top .co-item-remove {
+        grid-area: remove; align-self: center; justify-self: end;
+        width: auto; height: auto; background: none; border-radius: 0;
+      }
+
+      /* Full Domain Protection addon row: same display:contents bridging so its
+         own price block can move to the top-right instead of wrapping below. */
+      .co-addon-row {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "toggle titlerow price"
+          "toggle subtitle subtitle"
+          "toggle bullets  bullets";
+        column-gap: 12px; row-gap: 6px; align-items: start;
+        min-width: 0;
+      }
+      .co-addon-row > .co-addon-body { display: contents; }
+      .co-toggle-wrap { grid-area: toggle; align-self: start; }
+      .co-addon-title-row { grid-area: titlerow; min-width: 0; }
+      .co-addon-row > .co-addon-body > .co-addon-subtitle { grid-area: subtitle; }
+      .co-addon-bullets { grid-area: bullets; margin-left: 0; min-width: 0; }
+      .co-addon-price-block { grid-area: price; margin-left: 0; align-self: start; }
+
+      /* Bundle card header: icon/title/subtitle stack, with the price stack
+         starting inline with the term row and extending downward from there. */
+      .co-bcard > .co-item-top {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+          "icon name     name"
+          "icon subtitle subtitle"
+          "icon term     price";
+        column-gap: 10px;
+        row-gap: 6px;
+        align-items: start;
+        min-width: 0;
+      }
+      .co-bcard > .co-item-top > .co-item-info { display: contents; }
+      .co-bcard > .co-item-top .co-item-icon { grid-area: icon; }
+      .co-bcard > .co-item-top .co-item-name-row { grid-area: name; min-width: 0; }
+      .co-bcard > .co-item-top .co-addon-subtitle { grid-area: subtitle; align-self: start; }
+      .co-bcard > .co-item-top .co-bcard-term { grid-area: term; }
+      .co-bcard > .co-item-top .co-item-right {
+        grid-area: price;
+        justify-content: flex-start;
+        transform: none;
+      }
+      .co-bcard > .co-item-top .co-item-remove {
+        background: none; width: auto; height: auto; border-radius: 0;
+      }
+    }
 
     /* Bundle & Save */
     .co-bundle-card { background: var(--surface); border: 1px solid rgba(0,229,255,0.16); border-radius: 4px; padding: 18px 20px; margin-bottom: 12px; }
@@ -496,7 +714,19 @@
     .co-trust-note p { font-size: 11.5px; color: var(--text-2); line-height: 1.55; }
 
     .co-form-subtitle { font-size: 12.5px; color: var(--text-2); margin: -6px 0 16px; }
+    #checkout-payment-element {
+      max-width: 560px; padding: 20px;
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px;
+    }
+    .billing-summary-card { background: var(--raised); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+    .billing-summary-card[hidden] { display: none; }
+    .billing-summary-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .billing-summary-name { font-size: 13.5px; font-weight: 700; color: var(--text-1); }
+    .billing-summary-address { font-size: 12px; color: var(--text-2); }
+    .billing-summary-change-btn { flex-shrink: 0; background: none; border: 1px solid rgba(255,255,255,0.14); border-radius: 4px; padding: 7px 14px; font-size: 12px; color: var(--host-green); cursor: pointer; font-family: inherit; }
+    .billing-summary-change-btn:hover { border-color: var(--host-green); }
     .registrant-form { display: flex; flex-direction: column; gap: 12px; }
+    .registrant-form[hidden] { display: none; }
     .registrant-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-2); }
     .registrant-hint { font-size: 11px; color: var(--text-2); font-weight: 400; }
     .registrant-form input, .registrant-form select {
@@ -514,6 +744,8 @@
     .registrant-btn-row { display: flex; gap: 12px; margin-top: 6px; }
     .registrant-btn-row .cart-checkout-btn { flex: 1; margin-top: 0; }
     .registrant-btn-row .btn-ghost { flex-shrink: 0; }
+    #billing-cancel-btn, #billing-summary-cancel-btn { border-radius: 4px; }
+    #checkout-step-payment .registrant-btn-row { justify-content: center; padding-top: 16px; }
 
     .cart-checkout-btn {
       position: relative;
@@ -544,16 +776,123 @@
     <div class="nav-inner">
       <a href="index.html" aria-label="VardWeb Home">
         <div class="logo-nav-wrap">
-          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+          <picture>
+            <source media="(max-width: 1024px)" srcset="brand_assets/VardWeb_Favicon_2.png">
+            <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+          </picture>
         </div>
       </a>
+      <div class="nav-links">
+        <div class="nav-dropdown">
+          <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
+            Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" id="dd-home-menu" role="menu">
+            <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
+            <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
+            <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
+            <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
+            <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
+            <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
+            <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
+          </div>
+        </div>
+        <a href="faq.html"      class="nav-link">FAQ</a>
+        <a href="blog.html"     class="nav-link">Blog</a>
+        <a href="our-work.html" class="nav-link">Our Work</a>
+        <a href="about.html"    class="nav-link">About</a>
+        <div class="nav-dropdown">
+          <a href="services.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
+            Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" id="dd-services-menu" role="menu">
+            <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
+            <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
+            <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
+            <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+            <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
+            <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
+            <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
+            <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
+          </div>
+        </div>
+        <a href="contact.html"  class="nav-link">Contact</a>
+      </div>
       <div class="nav-right">
-        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">Account</a>
+        <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn" aria-label="Account">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle class="ico-head" cx="12" cy="8" r="5"/><path class="ico-body" d="M20 21a8 8 0 0 0-16 0"/>
+          </svg>
+        </a>
         <a href="#checkout-cart-col" class="nav-cart-btn" id="nav-cart-btn" aria-label="Jump to your cart">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span id="cart-count-badge" class="cart-count-badge" hidden>0</span>
         </a>
       </div>
+      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="nav-mobile-menu">
+      <div class="mob-section-label">Navigate</div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
+        Home
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-home-panel"><div>
+      <a href="index.html"          class="mob-link mob-sub">Landing</a>
+      <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
+      <a href="index.html#services" class="mob-link mob-sub">Services</a>
+      <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
+      <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
+      <a href="index.html#results"  class="mob-link mob-sub">Results</a>
+      <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
+        Company
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-company-panel"><div>
+      <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
+      <a href="blog.html"     class="mob-link mob-sub">Blog</a>
+      <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
+      <a href="about.html"    class="mob-link mob-sub">About Us</a>
+      <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-services-panel">
+        Services
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-services-panel"><div>
+      <a href="services.html" class="mob-link mob-sub">All Services</a>
+      <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
+      <a href="ecommerce.html"  class="mob-link mob-sub">E-Commerce</a>
+      <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+      <a href="contact.html"  class="mob-link mob-sub">App Development</a>
+      <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
+      <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
+      <a href="hosting-services.html" class="mob-link mob-sub">Domain &amp; Hosting</a>
+      <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
+      <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
+      <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
+      </div></div>
+      <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
+        Legal
+        <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="mob-accordion-panel" id="mob-legal-panel"><div>
+      <a href="privacy.html"        class="mob-link mob-sub">Privacy Policy</a>
+      <a href="terms.html"          class="mob-link mob-sub">Terms of Service</a>
+      <a href="cookie-policy.html"  class="mob-link mob-sub">Cookie Policy</a>
+      <a href="accessibility.html"  class="mob-link mob-sub">Accessibility</a>
+      <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
+      <a href="domain-name-proxy-agreement.html" class="mob-link mob-sub">Domain Name Proxy Agreement</a>
+      <a href="hosting-agreement.html" class="mob-link mob-sub">Hosting Agreement</a>
+      </div></div>
+      <div class="mob-divider"></div>
+      <a href="/crm/login.html" class="mob-link mob-cta-ghost">Account →</a>
     </div>
   </nav>
 
@@ -695,6 +1034,10 @@
           <p>Your cart is empty. <a href="domain-search.html">Find a domain to get started →</a></p>
         </div>
 
+        <div id="checkout-return-notice" hidden>
+          <p>Thanks — we're finishing up your order. You'll receive a confirmation email shortly.</p>
+        </div>
+
         <div id="checkout-content" hidden>
 
           <div id="checkout-step-cart" class="checkout-step">
@@ -763,6 +1106,17 @@
                 <section>
                   <div class="co-section-title">Billing Information</div>
                   <p class="co-form-subtitle">All fields required unless otherwise stated.</p>
+                  <div id="billing-summary-card" class="billing-summary-card" hidden>
+                    <div class="billing-summary-text">
+                      <div class="billing-summary-name" id="billing-summary-name"></div>
+                      <div class="billing-summary-address" id="billing-summary-address"></div>
+                    </div>
+                    <button type="button" class="billing-summary-change-btn" id="billing-summary-change-btn">Change</button>
+                  </div>
+                  <div class="registrant-btn-row" id="billing-summary-btn-row" hidden>
+                    <button type="button" class="cart-checkout-btn" id="billing-summary-continue-btn">Continue to Payment →</button>
+                    <button type="button" class="btn btn-ghost" id="billing-summary-cancel-btn">Back to Cart</button>
+                  </div>
                   <form id="registrant-form" class="registrant-form">
                     <label>Country / Region
                       <select name="country" id="billing-country" autocomplete="country" required>
@@ -836,7 +1190,25 @@
                     <label>Address Cont. (optional) <input type="text" name="address2" autocomplete="address-line2" /></label>
                     <label>City <input type="text" name="city" autocomplete="address-level2" required /></label>
                     <div class="registrant-row">
-                      <label>Province / Region <input type="text" name="state" autocomplete="address-level1" required /></label>
+                      <label>Province / Region
+                        <select name="state" id="billing-state-select" autocomplete="address-level1" hidden disabled>
+                          <option value="">Select…</option>
+                          <option value="AB">Alberta</option>
+                          <option value="BC">British Columbia</option>
+                          <option value="MB">Manitoba</option>
+                          <option value="NB">New Brunswick</option>
+                          <option value="NL">Newfoundland and Labrador</option>
+                          <option value="NS">Nova Scotia</option>
+                          <option value="NT">Northwest Territories</option>
+                          <option value="NU">Nunavut</option>
+                          <option value="ON">Ontario</option>
+                          <option value="PE">Prince Edward Island</option>
+                          <option value="QC">Quebec</option>
+                          <option value="SK">Saskatchewan</option>
+                          <option value="YT">Yukon</option>
+                        </select>
+                        <input type="text" name="state" id="billing-state-input" autocomplete="address-level1" required />
+                      </label>
                       <label>Zip / Postal Code <input type="text" name="postal_code" autocomplete="postal-code" required /></label>
                     </div>
                     <label>Organization (optional) <input type="text" name="organization" autocomplete="organization" /></label>
@@ -859,9 +1231,55 @@
                   <span id="order-summary-count-billing">0 items</span>
                   <button type="button" class="co-edit-order-link" id="edit-order-btn">Edit order</button>
                 </div>
+                <div class="order-summary-row">
+                  <span>Subtotal</span>
+                  <span id="order-summary-subtotal-billing">C$0.00</span>
+                </div>
+                <div class="order-summary-row">
+                  <span id="order-summary-tax-label-billing">Tax</span>
+                  <span id="order-summary-tax-billing">C$0.00</span>
+                </div>
                 <div class="order-summary-total">
                   <span class="label">Total</span>
                   <span class="val" id="order-summary-total-billing">C$0.00</span>
+                </div>
+                <p class="order-summary-note">Includes applicable taxes and fees calculated at checkout.</p>
+              </aside>
+
+            </div>
+          </div>
+
+          <div id="checkout-step-payment" class="checkout-step" hidden>
+            <div class="checkout-grid">
+
+              <div class="checkout-col-left" id="checkout-payment-col">
+                <section>
+                  <div class="co-section-title">Payment</div>
+                  <p class="co-form-subtitle">Your card is processed securely by Stripe.</p>
+                  <div id="checkout-payment-element"></div>
+                  <p class="registrant-error" id="payment-error" hidden></p>
+                  <div class="registrant-btn-row">
+                    <button type="button" class="btn btn-ghost" id="payment-back-btn">Back to Billing</button>
+                  </div>
+                </section>
+              </div>
+
+              <aside class="order-summary" id="order-summary-payment">
+                <h3>Order Summary</h3>
+                <div class="order-summary-row">
+                  <span id="order-summary-count-payment">0 items</span>
+                </div>
+                <div class="order-summary-row">
+                  <span>Subtotal</span>
+                  <span id="order-summary-subtotal-payment">C$0.00</span>
+                </div>
+                <div class="order-summary-row">
+                  <span id="order-summary-tax-label-payment">Tax</span>
+                  <span id="order-summary-tax-payment">C$0.00</span>
+                </div>
+                <div class="order-summary-total">
+                  <span class="label">Total</span>
+                  <span class="val" id="order-summary-total-payment">C$0.00</span>
                 </div>
                 <p class="order-summary-note">Includes applicable taxes and fees calculated at checkout.</p>
               </aside>
@@ -874,15 +1292,34 @@
     </div>
   </main>
 
+  <script src="https://js.stripe.com/v3/"></script>
   <script src="/supabase-config.js"></script>
+  <script src="/nav-mobile.js"></script>
   <script type="module" src="/nav-auth.js"></script>
   <script src="/tld-catalog.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Desktop dropdown a11y (focus/hover)
+      document.querySelectorAll('.nav-dropdown').forEach(function (dd) {
+        var trigger = dd.querySelector('.nav-dropdown-trigger');
+        if (!trigger) return;
+        dd.addEventListener('focusin', function () { trigger.setAttribute('aria-expanded', 'true'); });
+        dd.addEventListener('focusout', function (e) {
+          if (!dd.contains(e.relatedTarget)) trigger.setAttribute('aria-expanded', 'false');
+        });
+        dd.addEventListener('mouseleave', function () {
+          if (!dd.matches(':focus-within')) trigger.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+  </script>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
     var _sbCfg = window.SUPABASE_CONFIG || {};
     var clientSb = createClient(_sbCfg.url || '', _sbCfg.anonKey || '', { auth: { storageKey: 'vw-client-auth' } });
+    var currentSession = null;
 
     function escapeHtml(s) {
       return String(s).replace(/[&<>"']/g, function (c) {
@@ -926,7 +1363,49 @@
     function multiYearTotal(base, years) {
       return base + Math.max((years || 1) - 1, 0) * renewalPricePerYear(base);
     }
+
+    // ── Canadian sales tax (GST/HST only — PST/QST intentionally excluded) ──
+    // VardWeb is a voluntary GST/HST registrant (under the $30k small-supplier
+    // threshold but already holds a GST/HST number, so charging GST/HST is
+    // required going forward). PST/QST is NOT charged: BC exempts pure web
+    // design without software, and SK/MB/QC's service-line rules are unclear
+    // without an accountant's sign-off — see the tax research plan for detail.
+    // HST provinces (NB/NL/NS/ON/PE) already are one single combined rate;
+    // everywhere else is plain 5% GST. Keep in sync with the matching table
+    // in supabase/functions/create-domain-checkout/index.ts.
+    var CA_TAX_RATES = {
+      AB: 0.05, BC: 0.05, MB: 0.05, NB: 0.15, NL: 0.15, NS: 0.14, NT: 0.05,
+      NU: 0.05, ON: 0.13, PE: 0.15, QC: 0.05, SK: 0.05, YT: 0.05
+    };
+    function getTaxRate(country, province) {
+      if (country !== 'CA') return 0;
+      return CA_TAX_RATES[province] || 0;
+    }
     var TERM_OPTIONS = [1, 2, 3, 5, 10];
+    // Unrestricted TLDs use the site's default package sizes (TERM_OPTIONS).
+    // A TLD with a minYears/maxYears (see tld-catalog.js — researched
+    // per-registry, not assumptions) instead gets every consecutive year in
+    // its real range, since filtering TERM_OPTIONS down would silently skip
+    // valid years (e.g. .cn's max-5 would show 1,2,3,5 and skip 4).
+    function getYearOptionsForTld(tld) {
+      var entry = (window.TLD_CATALOG || []).find(function (t) { return t.tld === tld; });
+      if (!entry || (entry.maxYears === undefined && entry.minYears === undefined)) return TERM_OPTIONS;
+      var min = entry.minYears || 1;
+      var max = entry.maxYears || 10;
+      var opts = [];
+      for (var y = min; y <= max; y++) opts.push(y);
+      return opts;
+    }
+    // Pulls an out-of-range years value (e.g. the site-wide years:1 default
+    // landing on a TLD that actually requires a 2-year minimum, like .ai) back
+    // into that TLD's valid range — used for display and again right before
+    // submit, so what's shown always matches what's actually charged.
+    function clampYearsForTld(years, tld) {
+      var opts = getYearOptionsForTld(tld);
+      if (opts.indexOf(years) !== -1) return years;
+      if (years < opts[0]) return opts[0];
+      return opts[opts.length - 1];
+    }
     var DOMAIN_PROTECTION_PRICE = 12.60;          // Year 1 (C$1.05/mo)
     var DOMAIN_PROTECTION_RENEWAL_PRICE = 19.80;  // Year 2+ (C$1.65/mo)
 
@@ -957,6 +1436,10 @@
     }
     function removeDomainAndAddons(domain, tld) {
       var cart = loadCart().filter(function (i) { return !(i.domain === domain && i.tld === tld); });
+      saveCart(cart);
+    }
+    function removeBundle(bundleId) {
+      var cart = loadCart().filter(function (i) { return i.bundleId !== bundleId; });
       saveCart(cart);
     }
     function updateItemYears(domain, tld, years) {
@@ -1097,37 +1580,74 @@
       } catch (e) { /* non-fatal — profile row is a nice-to-have for nav/CRM, not required for checkout */ }
     }
 
+    function saveBillingInfoBestEffort(userId, fd) {
+      try {
+        var row = {
+          id: userId,
+          first_name: fd.get('first_name') || '', last_name: fd.get('last_name') || '',
+          phone_code: fd.get('phone_code') || '', phone: fd.get('phone') || '',
+          address: fd.get('address') || '', address2: fd.get('address2') || '',
+          city: fd.get('city') || '', state: fd.get('state') || '', postal_code: fd.get('postal_code') || '',
+          country: fd.get('country') || '', organization: fd.get('organization') || '', tax_id: fd.get('tax_id') || '',
+          updated_at: new Date().toISOString(),
+        };
+        clientSb.from('client_billing_info').upsert(row, { onConflict: 'id' }).then(function (res) {
+          if (res && res.error) console.error('billing info save failed:', res.error);
+        }).catch(function (err) { console.error('billing info save failed:', err); });
+      } catch (e) { /* non-fatal — saved billing is a nice-to-have, must never block checkout */ }
+    }
+
     function showCheckoutGate() {
       authGateEl.hidden = false;
       checkoutMainEl.hidden = true;
       document.body.style.overflow = 'hidden';
       if (window.startAuthParticles) window.startAuthParticles();
     }
-    function showCheckoutMain() {
+    function showCheckoutMain(session) {
+      currentSession = session || null;
       authGateEl.hidden = true;
       checkoutMainEl.hidden = false;
       document.body.style.overflow = '';
       if (window.stopAuthParticles) window.stopAuthParticles();
       showCartStep();
       renderAll();
+      loadBillingInfo(currentSession);
     }
+    window.showCheckoutMain = showCheckoutMain;
 
-    // ── Cart step ↔ Billing step ─────────────────────────────────────
+    // ── Cart step ↔ Billing step ↔ Payment step ──────────────────────
     var cartStepEl = document.getElementById('checkout-step-cart');
     var billingStepEl = document.getElementById('checkout-step-billing');
+    var paymentStepEl = document.getElementById('checkout-step-payment');
+    var stripeClient = window.Stripe && window.STRIPE_CONFIG ? Stripe(window.STRIPE_CONFIG.publishableKey) : null;
+    var activeEmbeddedCheckout = null;
 
     function showCartStep() {
       billingStepEl.hidden = true;
+      paymentStepEl.hidden = true;
       cartStepEl.hidden = false;
       window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     }
     function showBillingStep() {
       var domainItems = loadCart().filter(function (i) { return i.type !== 'addon'; });
       if (domainItems.length === 0) return;
+      if (activeEmbeddedCheckout) {
+        activeEmbeddedCheckout.destroy();
+        activeEmbeddedCheckout = null;
+      }
       cartStepEl.hidden = true;
+      paymentStepEl.hidden = true;
       billingStepEl.hidden = false;
       window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     }
+    function showPaymentStep() {
+      cartStepEl.hidden = true;
+      billingStepEl.hidden = true;
+      paymentStepEl.hidden = false;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    }
+
+    document.getElementById('payment-back-btn').addEventListener('click', showBillingStep);
 
     document.getElementById('signin-form').addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -1143,7 +1663,7 @@
         var res = await clientSb.auth.signInWithPassword({ email: email, password: password });
         if (res.error) throw res.error;
         await ensureProfileRow(res.data.user.id);
-        showCheckoutMain();
+        showCheckoutMain(res.data.session);
       } catch (err) {
         var signinMsg;
         if (err && (err.message === 'Email not confirmed' || err.code === 'email_not_confirmed')) {
@@ -1180,7 +1700,7 @@
         if (res.error) throw res.error;
         if (res.data.session) {
           await ensureProfileRow(res.data.user.id);
-          showCheckoutMain();
+          showCheckoutMain(res.data.session);
         } else {
           showAuthForm('signin');
           showAuthMessage(document.getElementById('signin-notice'), 'Check your email to confirm your account, then sign in.');
@@ -1220,12 +1740,35 @@
       var el = document.getElementById(id);
       if (el) el.textContent = text;
     }
-    function updateOrderSummaryTotals(domainItemCount, total) {
+    function updateOrderSummaryTotals(domainItemCount, subtotal) {
       var countText = domainItemCount + (domainItemCount === 1 ? ' item' : ' items');
       setText('order-summary-count-cart', countText);
       setText('order-summary-count-billing', countText);
-      setText('order-summary-total-cart', 'C$' + total.toFixed(2));
-      setText('order-summary-total-billing', 'C$' + total.toFixed(2));
+      setText('order-summary-count-payment', countText);
+      setText('order-summary-total-cart', 'C$' + subtotal.toFixed(2));
+
+      var countryEl = document.getElementById('billing-country');
+      var stateSelectEl = document.getElementById('billing-state-select');
+      var country = countryEl ? countryEl.value : '';
+      var isCanada = country === 'CA';
+      var province = isCanada && stateSelectEl ? stateSelectEl.value : '';
+      var taxRate = getTaxRate(country, province);
+      var taxAmount = subtotal * taxRate;
+
+      setText('order-summary-subtotal-billing', 'C$' + subtotal.toFixed(2));
+      setText('order-summary-subtotal-payment', 'C$' + subtotal.toFixed(2));
+      var taxLabelText = 'Tax';
+      if (taxRate > 0) {
+        var provinceName = stateSelectEl && stateSelectEl.selectedOptions[0] ? stateSelectEl.selectedOptions[0].textContent : province;
+        var taxName = taxRate >= 0.13 ? 'HST' : 'GST';
+        taxLabelText = taxName + ' (' + provinceName + ', ' + (Math.round(taxRate * 10000) / 100) + '%)';
+      }
+      setText('order-summary-tax-label-billing', taxLabelText);
+      setText('order-summary-tax-label-payment', taxLabelText);
+      setText('order-summary-tax-billing', 'C$' + taxAmount.toFixed(2));
+      setText('order-summary-tax-payment', 'C$' + taxAmount.toFixed(2));
+      setText('order-summary-total-billing', 'C$' + (subtotal + taxAmount).toFixed(2));
+      setText('order-summary-total-payment', 'C$' + (subtotal + taxAmount).toFixed(2));
     }
 
     // Real savings from year-1-at-cost pricing vs. the standard renewal-markup rate
@@ -1244,23 +1787,14 @@
       return multiYearTotal(item.price || 0, item.years || 1);
     }
 
-    function renderCartItems() {
-      var cart = loadCart();
-      var domainItems = cart.filter(function (i) { return i.type !== 'addon'; });
-
-      if (domainItems.length === 0) {
-        emptyEl.hidden = false;
-        contentEl.hidden = true;
-        syncCartBadge();
-        return;
-      }
-      emptyEl.hidden = true;
-      contentEl.hidden = false;
-
-      itemListEl.innerHTML = domainItems.map(function (item) {
+    function renderStandaloneItemCard(item) {
         var protectionItem = { type: 'addon', key: 'domain_protection', domain: item.domain, tld: item.tld };
         var hasProtection = cartHasItem(protectionItem);
-        var lineTotal = itemLineTotal(item);
+        // Clamp for display so a stale/default years value that's out of this
+        // TLD's actual valid range (e.g. the sitewide years:1 default landing
+        // on .ai, which requires 2+) never shows an inconsistent price/term.
+        var displayYears = clampYearsForTld(item.years || 1, item.tld);
+        var lineTotal = itemLineTotal({ price: item.price, years: displayYears });
 
         var typeLabelHtml = item.premium ? '' : '<span class="co-item-type-label">' + escapeHtml(item.tld.toUpperCase()) + ' Domain Registration</span>';
         var subtitleHtml = item.premium ? '' : '<span class="co-addon-subtitle">THE MORE DOMAIN NAMES YOU OWN, THE MORE PROTECTED YOUR BRAND IS</span>';
@@ -1270,20 +1804,20 @@
         if (item.premium) {
           metaHtml = '<div class="co-item-onetime-note">Premium Domain Purchase — One-Time Fee</div>';
         } else {
-          var termOptionsHtml = TERM_OPTIONS.map(function (y) {
-            return '<option value="' + y + '"' + ((item.years || 1) === y ? ' selected' : '') + '>' + y + ' Year' + (y > 1 ? 's' : '') + '</option>';
+          var termOptionsHtml = getYearOptionsForTld(item.tld).map(function (y) {
+            return '<option value="' + y + '"' + (displayYears === y ? ' selected' : '') + '>' + y + ' Year' + (y > 1 ? 's' : '') + '</option>';
           }).join('');
           var renewDate = new Date();
           var renewMonth = renewDate.toLocaleString('en-US', { month: 'long' });
-          var renewYear = renewDate.getFullYear() + (item.years || 1);
+          var renewYear = renewDate.getFullYear() + displayYears;
           metaHtml =
             '<div class="co-item-term"><select class="co-item-term-select" data-domain="' + escapeHtml(item.domain) + '" data-tld="' + escapeHtml(item.tld) + '">' + termOptionsHtml + '</select></div>' +
             '<div class="co-item-note">Renews ' + renewMonth + ' ' + renewYear + ' for ~C$' + itemWas.toFixed(2) + '</div>';
         }
 
-        var priceNowText = item.premium ? formatOneTime(lineTotal) : formatPrice(lineTotal).replace('/yr', item.years > 1 ? ' total' : '/yr');
+        var priceNowText = item.premium ? formatOneTime(lineTotal) : formatPrice(lineTotal).replace('/yr', displayYears > 1 ? ' total' : '/yr');
         var priceStackHtml = '<div class="co-item-price-stack"><span class="co-price-now">' + priceNowText + '</span>';
-        if (!item.premium && (item.years || 1) === 1) {
+        if (!item.premium && displayYears === 1) {
           var itemOffPct = Math.round((1 - item.price / itemWas) * 100);
           priceStackHtml += '<span class="co-price-was">' + formatPrice(itemWas) + '</span>' +
             '<span class="co-price-off">' + itemOffPct + '% off</span>';
@@ -1331,10 +1865,92 @@
           '</div>' +
           addonHtml +
         '</div>';
+    }
+
+    function renderBundleCartCard(group) {
+      var totalNow = group.reduce(function (sum, i) { return sum + itemLineTotal(i); }, 0);
+      var totalWas = group.reduce(function (sum, i) { return sum + renewalPricePerYear(i.price || 0); }, 0);
+      var offPct = totalWas > 0 ? Math.round((1 - totalNow / totalWas) * 100) : 0;
+      var bundleId = group[0].bundleId;
+
+      var renewDate = new Date();
+      var renewMonth = renewDate.toLocaleString('en-US', { month: 'long' });
+
+      var rowsHtml = group.map(function (i) {
+        var renewYear = renewDate.getFullYear() + (i.years || 1);
+        return '<div class="co-bcard-row">' +
+          '<span class="co-bcard-domain">' + escapeHtml(i.domain) + '</span>' +
+          '<span class="co-item-note">Renews ' + renewMonth + ' ' + renewYear + ' for C$' + (i.price || 0).toFixed(2) + '</span>' +
+        '</div>';
+      }).join('');
+
+      return '<div class="co-bcard">' +
+        '<div class="co-item-top">' +
+          '<div class="co-item-icon">WWW</div>' +
+          '<div class="co-item-info">' +
+            '<div class="co-item-name-row">' +
+              '<span class="co-item-domain">Brand Protection<br class="co-bcard-title-br"> Domain Bundle</span>' +
+            '</div>' +
+            '<span class="co-addon-subtitle">THE MORE DOMAIN NAMES YOU OWN, THE MORE PROTECTED YOUR BRAND IS</span>' +
+            '<span class="co-bcard-term">1 Year</span>' +
+          '</div>' +
+          '<div class="co-item-right">' +
+            '<div class="co-item-price-stack"><span class="co-price-now">' + formatOneTime(totalNow) + '</span>' +
+              '<span class="co-price-was">' + formatOneTime(totalWas) + '</span>' +
+              '<span class="co-price-off">' + offPct + '% off</span>' +
+            '</div>' +
+            '<button type="button" class="co-item-remove co-bcard-remove" data-bundle-id="' + escapeHtml(bundleId) + '" aria-label="Remove bundle"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="co-bcard-included-label">Included</div>' +
+        '<div class="co-bcard-list">' + rowsHtml + '</div>' +
+      '</div>';
+    }
+
+    function renderCartItems() {
+      var cart = loadCart();
+      var domainItems = cart.filter(function (i) { return i.type !== 'addon'; });
+
+      if (domainItems.length === 0) {
+        emptyEl.hidden = false;
+        contentEl.hidden = true;
+        syncCartBadge();
+        return;
+      }
+      emptyEl.hidden = true;
+      contentEl.hidden = false;
+
+      var seenBundles = {};
+      // A bundle's linked primary (item.primaryForBundle, stamped by
+      // domain-search.html's dv-bundle-cta handler when the bundle was
+      // added) always renders directly above its Bundle card, not at its
+      // own array position — this page only ever displays the shared cart,
+      // so a bundle added elsewhere must still render correctly here.
+      var primaryByBundleId = {};
+      domainItems.forEach(function (i) { if (i.primaryForBundle) primaryByBundleId[i.primaryForBundle] = i; });
+      // Which bundleIds actually still have a companion group present — lets
+      // a primaryForBundle reference that no longer points at anything (a
+      // stale/orphaned item, however it came to be) fall through and render
+      // as a normal standalone card instead of silently vanishing while
+      // still counting toward the cart badge.
+      var bundleIdsPresent = {};
+      domainItems.forEach(function (i) { if (i.bundleId) bundleIdsPresent[i.bundleId] = true; });
+      itemListEl.innerHTML = domainItems.map(function (item) {
+        if (item.primaryForBundle && bundleIdsPresent[item.primaryForBundle]) return '';
+        if (!item.bundleId) return renderStandaloneItemCard(item);
+        if (seenBundles[item.bundleId]) return '';
+        seenBundles[item.bundleId] = true;
+        var group = domainItems.filter(function (i) { return i.bundleId === item.bundleId; });
+        var primaryHtml = primaryByBundleId[item.bundleId] ? renderStandaloneItemCard(primaryByBundleId[item.bundleId]) : '';
+        return primaryHtml + renderBundleCartCard(group);
       }).join('');
 
       itemListEl.querySelectorAll('.co-item-remove').forEach(function (btn) {
+        if (btn.classList.contains('co-bcard-remove')) return;
         btn.addEventListener('click', function () { removeDomainAndAddons(btn.dataset.domain, btn.dataset.tld); });
+      });
+      itemListEl.querySelectorAll('.co-bcard-remove').forEach(function (btn) {
+        btn.addEventListener('click', function () { removeBundle(btn.dataset.bundleId); });
       });
       itemListEl.querySelectorAll('.co-item-term-select').forEach(function (sel) {
         sel.addEventListener('change', function () {
@@ -1510,7 +2126,7 @@
       return '<div class="co-search-price-col">' +
         '<div class="co-search-price-row"><span class="co-price-was">' + formatPrice(was) + '</span><span class="co-price-now">' + formatPrice(r.price) + '</span></div>' +
         '<span class="co-search-price-note">for first year<button type="button" class="tt-icon-trigger" data-tooltip="' +
-          escapeHtml('Pricing\n\nWe offer a lower first-year price to help you get up and running online. After the first year, this domain renews at the standard rate — currently ~C$' + was.toFixed(2) + '/yr.\n\nICANN’s flat ~C$0.25 per-domain-year fee and applicable taxes may apply at checkout.') +
+          escapeHtml('Pricing\n\nWe offer a lower first-year price to help you get up and running online. After the first year, your domain will renew at the standard rate of ~C$' + was.toFixed(2) + '/yr.\n\nC$0.28 ICANN fees and applicable taxes may apply at checkout.') +
           '" aria-label="What is this?">?</button></span>' +
       '</div>';
     }
@@ -1608,17 +2224,90 @@
       showCartStep();
     });
 
+    // ── Country/province → live tax recompute ────────────────────────
+    var billingCountrySelect = document.getElementById('billing-country');
+    var billingStateSelect = document.getElementById('billing-state-select');
+    var billingStateInput = document.getElementById('billing-state-input');
+    function syncProvinceField() {
+      var isCanada = billingCountrySelect.value === 'CA';
+      billingStateSelect.hidden = !isCanada;
+      billingStateSelect.disabled = !isCanada;
+      billingStateSelect.required = isCanada;
+      billingStateInput.hidden = isCanada;
+      billingStateInput.disabled = isCanada;
+      billingStateInput.required = !isCanada;
+    }
+    billingCountrySelect.addEventListener('change', function () { syncProvinceField(); renderCartItems(); });
+    billingStateSelect.addEventListener('change', renderCartItems);
+    billingStateInput.addEventListener('input', renderCartItems);
+    syncProvinceField();
+
     // ── Checkout submit: registrant form → create-domain-checkout → Stripe ──
     var registrantForm = document.getElementById('registrant-form');
     var registrantError = document.getElementById('registrant-error');
     var registrantSubmitBtn = document.getElementById('billing-submit-btn');
 
+    // ── Saved billing info: collapsed accordion summary + autofill ───
+    var billingSummaryCard = document.getElementById('billing-summary-card');
+    var billingSummaryBtnRow = document.getElementById('billing-summary-btn-row');
+    var billingSummaryContinueBtn = document.getElementById('billing-summary-continue-btn');
+    var lastSavedBilling = null;
+    function setRegistrantSubmitLoading(isLoading) {
+      [registrantSubmitBtn, billingSummaryContinueBtn].forEach(function (btn) {
+        btn.disabled = isLoading;
+        btn.textContent = isLoading ? 'Loading payment…' : 'Continue to Payment →';
+      });
+    }
+    function oneLineAddress(row) {
+      return [row.address, row.address2, row.city, row.state, row.postal_code, row.country].filter(Boolean).join(', ');
+    }
+    function renderBillingSummary(row) {
+      document.getElementById('billing-summary-name').textContent = ((row.first_name || '') + ' ' + (row.last_name || '')).trim();
+      document.getElementById('billing-summary-address').textContent = oneLineAddress(row);
+    }
+    function showBillingSummaryView() { billingSummaryCard.hidden = false; billingSummaryBtnRow.hidden = false; registrantForm.hidden = true; }
+    function showBillingFormView() { billingSummaryCard.hidden = true; billingSummaryBtnRow.hidden = true; registrantForm.hidden = false; }
+    function populateBillingForm(row) {
+      ['first_name', 'last_name', 'phone_code', 'phone', 'address', 'address2', 'city', 'postal_code', 'organization', 'tax_id'].forEach(function (f) {
+        var el = registrantForm.querySelector('[name="' + f + '"]');
+        if (el) el.value = row[f] || '';
+      });
+      billingCountrySelect.value = row.country || '';
+      syncProvinceField();
+      billingStateSelect.value = row.state || '';
+      billingStateInput.value = row.state || '';
+      renderCartItems();
+    }
+    function loadBillingInfo(session) {
+      if (!session) { showBillingFormView(); return; }
+      clientSb.from('client_billing_info').select('*').eq('id', session.user.id).maybeSingle()
+        .then(function (res) {
+          if (res.error) console.error('billing info load failed:', res.error);
+          if (res.error || !res.data) { showBillingFormView(); return; }
+          lastSavedBilling = res.data;
+          populateBillingForm(res.data);
+          renderBillingSummary(res.data);
+          showBillingSummaryView();
+        })
+        .catch(function (err) { console.error('billing info load failed:', err); showBillingFormView(); });
+    }
+    document.getElementById('billing-summary-change-btn').addEventListener('click', function () {
+      if (lastSavedBilling) populateBillingForm(lastSavedBilling);
+      showBillingFormView();
+    });
+    billingSummaryContinueBtn.addEventListener('click', function () { registrantForm.requestSubmit(); });
+    document.getElementById('billing-summary-cancel-btn').addEventListener('click', function () { showCartStep(); });
+
     registrantForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var cart = loadCart();
       if (cart.length === 0) return;
+      // Guarantee what's actually charged always matches a valid term for its
+      // TLD, even if a stale/default years value never got corrected on-screen.
+      cart.forEach(function (i) { if (!i.premium && i.years) i.years = clampYearsForTld(i.years, i.tld); });
 
       var fd = new FormData(registrantForm);
+      if (currentSession) saveBillingInfoBestEffort(currentSession.user.id, fd);
       var firstName = (fd.get('first_name') || '').trim();
       var lastName = (fd.get('last_name') || '').trim();
       var address = (fd.get('address') || '').trim();
@@ -1633,8 +2322,7 @@
       var buyerEmail = fd.get('email');
 
       registrantError.hidden = true;
-      registrantSubmitBtn.disabled = true;
-      registrantSubmitBtn.textContent = 'Redirecting to payment…';
+      setRegistrantSubmitLoading(true);
 
       fetch(_sbCfg.url + '/functions/v1/create-domain-checkout', {
         method: 'POST',
@@ -1643,12 +2331,20 @@
       })
         .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
         .then(function (r) {
-          if (!r.ok || r.json.error || !r.json.checkout_url) throw new Error(r.json.error || 'Checkout failed');
-          window.location.href = r.json.checkout_url;
+          if (!r.ok || r.json.error || !r.json.client_secret) throw new Error(r.json.error || 'Checkout failed');
+          if (!stripeClient) throw new Error('Payment could not load — please refresh and try again.');
+          return stripeClient.initEmbeddedCheckout({
+            clientSecret: r.json.client_secret,
+          }).then(function (checkout) {
+            activeEmbeddedCheckout = checkout;
+            document.getElementById('checkout-payment-element').innerHTML = '';
+            checkout.mount('#checkout-payment-element');
+            setRegistrantSubmitLoading(false);
+            showPaymentStep();
+          });
         })
         .catch(function (err) {
-          registrantSubmitBtn.disabled = false;
-          registrantSubmitBtn.textContent = 'Continue to Payment →';
+          setRegistrantSubmitLoading(false);
           registrantError.textContent = err.message || 'Something went wrong starting checkout — please try again.';
           registrantError.hidden = false;
         });
@@ -1661,6 +2357,21 @@
 
     // ── Boot: resolve session before showing anything ───────────────
     (async function boot() {
+      // A `?order=` param means Stripe redirected back here after an
+      // off-iframe step (e.g. a 3DS authentication popup) rather than
+      // completing entirely inside the mounted Embedded Checkout — the
+      // webhook has already (or will shortly) finalize the order, so just
+      // reassure the buyer instead of re-showing a stale cart.
+      if (new URLSearchParams(window.location.search).get('order')) {
+        persistCart([]);
+        authGateEl.hidden = true;
+        checkoutMainEl.hidden = false;
+        document.getElementById('checkout-empty').hidden = true;
+        document.getElementById('checkout-content').hidden = true;
+        document.getElementById('checkout-return-notice').hidden = false;
+        syncCartBadge();
+        return;
+      }
       var session = null;
       try {
         var res = await clientSb.auth.getSession();
@@ -1671,7 +2382,7 @@
           var fd2 = registrantForm.querySelector('input[name="email"]');
           if (fd2 && !fd2.value) fd2.value = session.user.email;
         } catch (e) {}
-        showCheckoutMain();
+        showCheckoutMain(session);
       } else {
         showCheckoutGate();
       }

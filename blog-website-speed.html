@@ -98,6 +98,12 @@
     .footer-col-head { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
     .footer-link { font-size: 14px; color: rgba(200,212,232,0.48); text-decoration: none; display: block; margin-bottom: 12px; transition: color 0.2s ease; }
     .footer-link:hover { color: var(--cyan); }
+    .footer-col-services .footer-link[href="ecommerce.html"]:hover { color: #EF4444; }
+    .footer-col-services .footer-link[href="sem-seo.html"]:hover { color: #f97316; }
+    .footer-col-services .footer-link[href="email-marketing.html"]:hover { color: #60A5FA; }
+    .footer-col-services .footer-link[href="hosting-services.html"]:hover { color: #34D399; }
+    .footer-col-services .footer-link[href="content-creation.html"]:hover { color: #FBBF24; }
+    .footer-col-services .footer-link[href="smm.html"]:hover { color: #F472B6; }
     .footer-link.active { color: var(--cyan); }
     .trust-badge-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; }
     .trust-badge {
@@ -157,19 +163,27 @@
     .nav-mobile-menu { display: none; }
     .nav-right { display: flex; align-items: center; gap: 18px; }
     .nav-account-btn {
-      background: none; border: none; padding: 0; gap: 8px;
+      background: none; border: none; padding: 8px; gap: 8px;
       color: rgba(238,240,248,0.85); font-weight: 600;
       transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
     .nav-account-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
     .nav-account-btn:hover { color: #fff; background: none; box-shadow: none; transform: translateY(-2px); }
     .nav-account-btn:focus-visible { outline: 2px solid var(--host-green, #34D399); outline-offset: 4px; border-radius: 4px; }
+    .nav-account-btn .ico-body { stroke-dasharray: 40; stroke-dashoffset: 0; opacity: 1; }
+    @keyframes navIconHeadPop { 0% { opacity: 0; transform: scale(0.5); } 60% { transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes navIconBodyDraw { 0% { stroke-dashoffset: 40; opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-account-btn .ico-head { transform-origin: 12px 8px; }
+      .nav-account-btn:hover .ico-head, .nav-account-btn:focus-visible .ico-head { animation: navIconHeadPop 0.36s ease-out; }
+      .nav-account-btn:hover .ico-body, .nav-account-btn:focus-visible .ico-body { animation: navIconBodyDraw 0.36s ease-in-out 0.18s backwards; }
+    }
     @media (max-width: 1024px) {
       .nav-inner { position: relative; }
       .nav-links { display: none; }
-      .nav-right .btn { display: none; }
+      .nav-right { position: absolute; right: 28px; top: 50%; transform: translateY(-50%); }
       .nav-inner > a[aria-label="VardWeb Home"] { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: relative; z-index: 2; -webkit-tap-highlight-color: transparent; }
+      .nav-hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 24px; height: 18px; background: none; border: none; cursor: pointer; padding: 0; -webkit-appearance: none; position: absolute; left: 28px; top: 50%; transform: translateY(-50%); z-index: 2; -webkit-tap-highlight-color: transparent; }
       .nav-hamburger span { display: block; width: 100%; height: 2px; border-radius: 2px; background-color: #C8D4E8; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
       .nav-hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); -webkit-transform: translateY(8px) rotate(45deg); }
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
@@ -267,7 +281,10 @@
   <div class="nav-inner">
     <a href="index.html" aria-label="VardWeb Home">
       <div class="logo-nav-wrap">
-        <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        <picture>
+          <source media="(max-width: 1024px)" srcset="brand_assets/VardWeb_Favicon_2.png">
+          <img class="nav-logo" src="brand_assets/VardWeb.png" alt="VardWeb" />
+        </picture>
       </div>
     </a>
     <div class="nav-links">
@@ -309,17 +326,13 @@
       <a href="contact.html"  class="nav-link">Contact</a>
     </div>
     <div class="nav-right">
-      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn">
-        <svg width="20" height="20" viewBox="0 0 20 22" fill="#fff" aria-hidden="true">
-          <circle cx="10" cy="5.5" r="4.5"/>
-          <path d="M0 22c0-5.523 4.477-10 10-10s10 4.477 10 10H0z"/>
-        </svg>
-        Account
+      <a href="/crm/login.html" class="btn nav-account-btn" id="nav-login-btn" aria-label="Account">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="ico-head" cx="12" cy="8" r="5"/><path class="ico-body" d="M20 21a8 8 0 0 0-16 0"/></svg>
       </a>
-      <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
     </div>
+    <button class="nav-hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
   <div class="nav-mobile-menu">
     <div class="mob-section-label">Navigate</div>
@@ -614,7 +627,7 @@
         <a href="about.html"    class="footer-link">About Us</a>
         <a href="contact.html"  class="footer-link">Contact</a>
       </div>
-      <div>
+      <div class="footer-col-services">
         <p class="footer-col-head">Services</p>
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
@@ -668,7 +681,7 @@
 
     <div class="footer-divider"></div>
     <div class="footer-bottom-bar">
-      <p class="footer-copy">© 2026 VardWeb. All rights reserved.</p>
+      <p class="footer-copy">© 2019-2026 VardWeb. All rights reserved.</p>
       <div class="footer-credit">
         <span style="color:rgba(200,212,232,0.42);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;">Crafted with</span>
         <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
