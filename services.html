@@ -1723,9 +1723,10 @@
   };
 
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.matchMedia && window.matchMedia('(max-width: 640px)').matches;
 
   function resize() {
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2);
     var rect = canvas.getBoundingClientRect();
     canvas.width = Math.max(1, Math.floor(rect.width * dpr));
     canvas.height = Math.max(1, Math.floor(rect.height * dpr));
@@ -1748,6 +1749,32 @@
 
   if (reduceMotion) {
     draw(8);
+  } else if (isMobile) {
+    /* Mobile: pause off-screen and throttle to ~28fps (matches
+       .svc-hero-shader above) — same shader as desktop, just gated
+       so it isn't running full-tilt while scrolled out of view. */
+    var live = false, raf = null, lastFrame = 0;
+    var FRAME_INTERVAL = 1000 / 28;
+    function render(now) {
+      if (now - lastFrame >= FRAME_INTERVAL) {
+        lastFrame = now;
+        draw(Math.max(0, (now - start) / 1000));
+      }
+      raf = requestAnimationFrame(render);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !live) {
+          live = true;
+          lastFrame = 0;
+          raf = requestAnimationFrame(render);
+        } else if (!e.isIntersecting && live) {
+          live = false;
+          cancelAnimationFrame(raf);
+        }
+      });
+    }, { threshold: 0.05 });
+    io.observe(canvas);
   } else {
     (function render(now) {
       draw(Math.max(0, (now - start) / 1000));

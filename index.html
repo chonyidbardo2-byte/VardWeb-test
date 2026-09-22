@@ -497,7 +497,8 @@
     /* ── Tablet tier (426–768px) — card no longer balloons via 44vw; own
        font-size/width formula scaled for a tablet-sized card ── */
     @media (min-width: 426px) and (max-width: 768px) {
-      .industry-card { width: clamp(180px, 26vw, 230px); aspect-ratio: 2 / 1; padding: 16px 18px; }
+      .industry-card { width: clamp(180px, 26vw, 230px); aspect-ratio: 2 / 1; padding: 16px 18px; box-shadow: 0 8px 16px rgba(0,0,0,0.25) !important; }
+      .industry-card-img { filter: none; }
       .industry-marquee-set { gap: 16px; padding: 0 8px; }
       .industry-card-title.industry-card-title-desktop { display: none; }
       .industry-card-title.industry-card-title-mobile { display: -webkit-box; }
@@ -546,7 +547,8 @@
     }
 
     @media (max-width: 425px) {
-      .industry-card { width: 44vw; aspect-ratio: 1.9 / 1; padding: 14px 16px; }
+      .industry-card { width: 44vw; aspect-ratio: 1.9 / 1; padding: 14px 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.25) !important; }
+      .industry-card-img { filter: none; }
       .industry-marquee-set { gap: 14px; padding: 0 7px; }
       /* ── Mobile card title text (3-line cap; desktop untouched) ── */
       .industry-card-title.industry-card-title-desktop { display: none; }
@@ -1207,6 +1209,20 @@
         gap: 10px;
       }
       .footer-pill-row-secondary { gap: 14px !important; }
+
+      /* ── Reclaim vertical space so trust badges stay inside the fixed-height
+         curtain footer (overflow:hidden; height:100vh) — un-stack the trust
+         badges to 2-per-row instead of 4-high, and tighten spacing above them. ── */
+      .footer-pill-row-trust { flex-direction: row !important; }
+      #footer-main-content { margin-top: 32px !important; }
+      #footer-heading { margin-bottom: 20px !important; font-size: clamp(2.2rem, 9vw, 3.2rem) !important; }
+      #footer-links { gap: 12px !important; }
+      .footer-pill-cta { padding: 14px 30px !important; font-size: 14px !important; }
+    }
+    @media (max-width: 768px) and (max-height: 700px) {
+      #footer-main-content { margin-top: 16px !important; }
+      #footer-heading { margin-bottom: 12px !important; font-size: clamp(2rem, 8vw, 2.6rem) !important; }
+      #footer-links { gap: 8px !important; }
     }
 
     /* ── Mobile: hover states triggered by scroll instead of pointer ── */
@@ -1875,11 +1891,20 @@
   const track = document.querySelector('.industry-marquee-track');
   if (!wrap || !track) return;
 
+  // Mobile/touch images can fail to trigger native loading="lazy" since their
+  // only visible motion comes from a JS-driven transform, not real scroll.
+  if (window.matchMedia('(hover: none)').matches) {
+    document.querySelectorAll('.industry-marquee-wrap .industry-card-img[loading="lazy"]')
+      .forEach(function (img) { img.loading = 'eager'; });
+  }
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const DURATION_S = 125; // full loop duration in seconds (25% slower than the original 100s)
   let halfWidth = track.scrollWidth / 2; // width of one (of the two duplicated) card sets
   let offset = 0;
   let isDragging = false;
   let isHovering = false;
+  let inView = true;
   let startX = 0;
   let startOffset = 0;
   let lastT = null;
@@ -1894,18 +1919,24 @@
     track.style.transform = 'translateX(' + offset + 'px)';
   }
 
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      inView = entries[0].isIntersecting;
+    }, { threshold: 0 }).observe(wrap);
+  }
+
   function tick(t) {
     if (lastT === null) lastT = t;
     const dt = (t - lastT) / 1000;
     lastT = t;
-    if (!isDragging && !isHovering) {
+    if (!isDragging && !isHovering && inView) {
       offset -= (halfWidth / DURATION_S) * dt;
       wrapOffset();
       render();
     }
     requestAnimationFrame(tick);
   }
-  requestAnimationFrame(tick);
+  if (!reduceMotion) requestAnimationFrame(tick);
 
   document.querySelectorAll('.industry-card').forEach(function (card) {
     card.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') isHovering = true; });
@@ -2577,6 +2608,18 @@
     .inv-j-ball-scene {
       transition: opacity 0.45s cubic-bezier(0.16,1,0.3,1),
                   transform 0.45s cubic-bezier(0.16,1,0.3,1);
+    }
+    /* Touch devices: swap scenes instantly instead of animating the opacity/
+       transform transition — some mobile engines fail to repaint the nested
+       SVG <text> (the phone number) mid-transition, so remove the transition
+       entirely rather than chase the repaint bug. */
+    @media (hover: none) {
+      .inv-j-store,
+      .inv-j-phone,
+      .inv-j-calendar,
+      .inv-j-ball-scene {
+        transition: none;
+      }
     }
     .inv-j-phone,
     .inv-j-calendar,
@@ -4195,8 +4238,8 @@
 </main>
 
 <!-- ────────────────────── CINEMATIC FOOTER ────────────────────── -->
-<div id="footer-curtain" style="position:relative;height:100vh;clip-path:polygon(0% 0,100% 0%,100% 100%,0 100%);">
-  <footer class="cinematic-footer-wrapper" style="position:fixed;bottom:0;left:0;height:100vh;width:100%;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#070910;">
+<div id="footer-curtain" style="position:relative;height:100vh;height:100dvh;clip-path:polygon(0% 0,100% 0%,100% 100%,0 100%);">
+  <footer class="cinematic-footer-wrapper" style="position:fixed;bottom:0;left:0;height:100vh;height:100dvh;width:100%;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;background:#070910;">
 
     <!-- Aurora glow -->
     <div class="footer-aurora animate-footer-breathe" style="position:absolute;left:50%;top:50%;width:80vw;height:60vh;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;"></div>
@@ -4228,7 +4271,7 @@
     </div>
 
     <!-- Main center content -->
-    <div style="position:relative;z-index:10;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;margin-top:80px;width:100%;max-width:900px;margin-left:auto;margin-right:auto;">
+    <div id="footer-main-content" style="position:relative;z-index:10;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;padding:0 24px;margin-top:80px;width:100%;max-width:900px;margin-left:auto;margin-right:auto;">
       <h2 id="footer-heading" class="footer-text-glow" style="font-size:clamp(3rem,8vw,6.5rem);font-weight:900;letter-spacing:-0.04em;margin-bottom:48px;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;">Ready to build?</h2>
 
       <div id="footer-links" style="display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;">
