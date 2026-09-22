@@ -905,6 +905,23 @@
        own margins, to center it between the chip row above and .dv-price-note
        below without moving either of them. */
     .dv-box--alt .dv-price-row { margin-top: 4.5px; margin-bottom: -0.5px; }
+    /* Mobile-only: at narrow widths .dv-price-row's flex-wrap makes was/now
+       wrap onto two lines with a 10px vertical gap, reading as "far apart".
+       Two width tiers because whether they can un-wrap to one line depends on
+       how much box width is available: ≥~370px is wide enough to fit inline
+       with a tight gap, narrower phones aren't and stay stacked (just closer).
+       margin-bottom in each tier is tuned so .dv-price-note/the CTA button
+       below sit right under the row with the same tight gap as the row's own
+       was/now spacing (rendered gap = margin-bottom + 5px, a structural
+       offset between .dv-price-row (flex) and .dv-price-note (inline-flex);
+       verified live). No cross-box height concern here — .dv-grid is single-
+       column on mobile so each box sizes to its own content independently. */
+    @media (max-width: 369px) {
+      .dv-box--alt .dv-price-row { gap: 4px; margin-bottom: -1px; }
+    }
+    @media (min-width: 370px) and (max-width: 480px) {
+      .dv-box--alt .dv-price-row { gap: 2px; margin-bottom: -3px; }
+    }
     .dv-box-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; min-height: 45px; }
     .dv-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: 8px; }
     .dv-badge--available { color: var(--host-green); background: rgba(52,211,153,0.14); }
@@ -1933,6 +1950,22 @@
       .host-path-actions, .host-cta-actions { flex-direction: column; align-items: stretch; }
       .host-cta-actions .btn, .host-cta-actions .addon-card-cta { padding: 13px 20px; }
       .dv-cta { width: 100%; }
+      /* .host-result-cta-group's "Hire Broker" + "Taken" buttons sit in a grid
+         column sized to their combined max-content width, which never shrinks
+         — at narrow widths this pushes the whole page wider than the viewport
+         (body's overflow-x:hidden then clips/shifts everything). Stacking them
+         removes the combined-width requirement. */
+      .host-result-cta-group { flex-direction: column; align-items: flex-end; gap: 6px; }
+    }
+    /* Stacking alone isn't always enough at the very narrowest phones — the
+       "Hire Broker" badge's own width can still exceed the room left over
+       once the domain text column claims its share. Trim its padding/type
+       size a bit more for extra margin (content-width, not viewport-width,
+       drives this, so keep this conservative rather than chasing an exact
+       breakpoint). */
+    @media (max-width: 340px) {
+      .host-result-broker-badge, .host-result-cta { padding-left: 4px; padding-right: 4px; font-size: 8.5px; }
+      .host-result-cta-group { gap: 4px; }
     }
 
     /* ── CTA (ported from email-marketing.html's .em-cta, expanded to match
