@@ -1,5 +1,5 @@
 /*
- * _crypto.js — AES-256-GCM client-side encryption
+ * _crypto.js: AES-256-GCM client-side encryption
  *
  * All password fields are encrypted here before being sent to Supabase.
  * Supabase never sees plaintext. The master key lives only in .env,
@@ -40,7 +40,7 @@ export async function decrypt(encryptedString) {
 }
 
 /*
- * Encrypted CSV export — uses a separate user-chosen passphrase,
+ * Encrypted CSV export: uses a separate user-chosen passphrase,
  * derived to a key via PBKDF2. Downloaded as .enc file.
  */
 async function deriveKey(passphrase, salt) {

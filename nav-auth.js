@@ -1,4 +1,4 @@
-// nav-auth.js — shared module for all public pages
+// nav-auth.js: shared module for all public pages
 // Checks Supabase session; transforms #nav-login-btn into a profile dropdown if logged in.
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -6,13 +6,13 @@ const cfg = window.SUPABASE_CONFIG || {};
 if (!cfg.url || !cfg.anonKey) { console.warn('nav-auth: SUPABASE_CONFIG not available'); }
 
 // Logins are stored under role-keyed clients (crm/login.html, checkout.html),
-// not Supabase's default storage slot — check both so a session created by
+// not Supabase's default storage slot; check both so a session created by
 // either one shows up in the nav, whichever role it turns out to be.
 const adminSb  = createClient(cfg.url || '', cfg.anonKey || '', { auth: { storageKey: 'vw-admin-auth'  } });
 const clientSb = createClient(cfg.url || '', cfg.anonKey || '', { auth: { storageKey: 'vw-client-auth' } });
 
 // Caches last-known display info so the profile button can render instantly
-// on the next page load, before the real (async) Supabase check resolves —
+// on the next page load, before the real (async) Supabase check resolves;
 // avoids a flash of the logged-out "Account" button on every navigation.
 const CACHE_KEY = 'vw-nav-auth-cache';
 let sb = null; // assigned once the real session check resolves; read via closure below

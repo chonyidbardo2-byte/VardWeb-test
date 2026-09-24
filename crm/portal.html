@@ -113,7 +113,7 @@
       overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
     }
 
-    /* ── WCAG 2.2.2 — Respect reduced-motion preference ── */
+    /* ── WCAG 2.2.2: Respect reduced-motion preference ── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -144,7 +144,7 @@
     <div>
       <div style="font-size:14px;font-weight:700;color:var(--pink);margin-bottom:4px;">Your site is currently suspended</div>
       <div style="font-size:13px;color:rgba(255,100,130,0.85);line-height:1.6;">
-        Access to your site and content editor has been paused — this is usually due to an outstanding payment or a billing issue.
+        Access to your site and content editor has been paused. This is usually due to an outstanding payment or a billing issue.
         Please resolve any overdue invoices in the <strong>Billing</strong> tab below and contact
         <a href="mailto:support@vardweb.com" style="color:var(--pink);">support@vardweb.com</a> once payment is complete.
       </div>
@@ -183,7 +183,7 @@
   <!-- Social Links -->
   <div class="tab-panel" id="panel-social">
     <div class="section-title">Social links</div>
-    <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Add only the platforms you use. Changes sync to your live site automatically — no developer needed.</p>
+    <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Add only the platforms you use. Changes sync to your live site automatically. No developer needed.</p>
     <div id="socialContent"><div class="empty">Loading…</div></div>
   </div>
 
@@ -210,7 +210,7 @@
     if (!profile) {
       // A valid session with no profile row (e.g. a first login via the email
       // confirmation link, which never went through a form that creates one)
-      // used to bounce back to login.html — which then bounced straight back
+      // used to bounce back to login.html, which then bounced straight back
       // here, looping forever. Self-heal instead: create the missing row.
       try { await sb.from('user_profiles').upsert({ id: session.user.id, role: 'client' }, { onConflict: 'id' }); } catch (e) {}
       profile = { role: 'client', client_id: null, full_name: null, clients: null };
@@ -250,7 +250,7 @@
   const { data: allSitesRaw } = await sb.from('sites').select('*').eq('client_id', clientId).order('created_at', { ascending: false });
   let allSites = allSitesRaw || [];
 
-  // For sites in a shared domain group, show only the primary site — hide alias sites
+  // For sites in a shared domain group, show only the primary site: hide alias sites
   const _groupIds = [...new Set(allSites.map(s => s.domain_group_id).filter(Boolean))];
   if (_groupIds.length) {
     const { data: _groups } = await sb.from('domain_groups').select('id, content_mode').in('id', _groupIds);
@@ -290,7 +290,7 @@
     if (cmsBtn) {
       cmsBtn.style.opacity = suspended ? '0.35' : '';
       cmsBtn.style.pointerEvents = suspended ? 'none' : '';
-      cmsBtn.title = suspended ? 'Site is suspended — contact VardWeb to restore access' : '';
+      cmsBtn.title = suspended ? 'Site is suspended. Contact VardWeb to restore access' : '';
     }
   }
 
@@ -427,7 +427,7 @@
         <div class="info-row"><span class="info-label">Flat Rate <button class="help-tip" data-help="flat-rate"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">$${parseFloat(lease.flat_rate || 0).toFixed(2)} (one-time build)</span></div>
         <div class="help-panel" id="help-flat-rate">This is a one-time payment for building your website. It's charged at the start of your project and doesn't repeat.</div>
         <div class="info-row"><span class="info-label">Recurring <button class="help-tip" data-help="recurring"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">$${parseFloat(lease.recurring_rate || 0).toFixed(2)}/${lease.billing_cycle || 'mo'}</span></div>
-        <div class="help-panel" id="help-recurring">This is your ongoing fee. It covers hosting, maintenance, and continued support from VardWeb — billed ${lease.billing_cycle === 'yearly' ? 'once per year' : 'monthly'}.</div>
+        <div class="help-panel" id="help-recurring">This is your ongoing fee. It covers hosting, maintenance, and continued support from VardWeb, billed ${lease.billing_cycle === 'yearly' ? 'once per year' : 'monthly'}.</div>
         <div class="info-row">
           <span class="info-label">Next Charge <button class="help-tip" data-help="next-charge"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span>
           <span class="info-value" style="color:${renewColor};font-weight:600;">${renewLabel}</span>
@@ -441,7 +441,7 @@
         <div class="info-row"><span class="info-label">Contract</span><span class="info-value">${lease.contract_accepted ? `<span style="color:#22c55e;">✓ Accepted${lease.contract_accepted_at ? ' · ' + new Date(lease.contract_accepted_at).toLocaleDateString() : ''}</span>` : '<span style="color:var(--gold);">Pending your acceptance</span>'}</span></div>
       </div>`;
 
-      /* Contract acceptance widget — shown only when not yet accepted */
+      /* Contract acceptance widget: shown only when not yet accepted */
       if (!lease.contract_accepted) {
         html += `<div class="card" style="border-color:rgba(255,215,0,0.3);background:rgba(255,215,0,0.04);margin-top:0;">
           <div style="font-size:13px;font-weight:700;color:var(--gold);margin-bottom:10px;">Contract Acceptance Required</div>
@@ -480,16 +480,16 @@
           : '';
         return `<div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;${inv.status === 'overdue' ? 'border-color:rgba(255,45,120,0.3);' : ''}">
           <div>
-            <div style="font-weight:600;font-size:13px;">$${parseFloat(inv.amount).toFixed(2)} — ${inv.invoice_type === 'flat_rate' ? 'One-time' : 'Recurring'}</div>
+            <div style="font-weight:600;font-size:13px;">$${parseFloat(inv.amount).toFixed(2)} · ${inv.invoice_type === 'flat_rate' ? 'One-time' : 'Recurring'}</div>
             <div style="font-size:11px;color:var(--text-2);margin-top:2px;">
               Due: ${inv.due_date || '—'}${inv.paid_date ? ' · Paid: ' + inv.paid_date : ''}
-              ${inv.status === 'overdue' ? `<span style="color:var(--pink);margin-left:6px;">— overdue</span>` : ''}
+              ${inv.status === 'overdue' ? `<span style="color:var(--pink);margin-left:6px;">overdue</span>` : ''}
             </div>
             ${expiryLine}
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <span class="badge badge-${inv.status}">${inv.status}</span>
-            ${inv.status !== 'paid' && inv.stripe_checkout_url ? `<a href="${inv.stripe_checkout_url}" target="_blank" class="btn btn-cyan" style="padding:6px 14px;font-size:12px;" title="Secure Stripe checkout — VardWeb never sees your card details">Pay Now</a>` : ''}
+            ${inv.status !== 'paid' && inv.stripe_checkout_url ? `<a href="${inv.stripe_checkout_url}" target="_blank" class="btn btn-cyan" style="padding:6px 14px;font-size:12px;" title="Secure Stripe checkout. VardWeb never sees your card details">Pay Now</a>` : ''}
           </div>
         </div>`;
       }).join('');
@@ -514,14 +514,14 @@
         const msg = document.getElementById('contractMsg');
         const { error } = await sb.rpc('accept_contract', { p_lease_id: lease.id });
         if (error) {
-          msg.textContent = '⚠ Could not save — please contact VardWeb at support@vardweb.com.';
+          msg.textContent = '⚠ Could not save. Please contact VardWeb at support@vardweb.com.';
           msg.style.color = 'var(--pink)';
           acceptBtn.textContent = 'Accept & Confirm';
           acceptBtn.disabled = false;
           acceptBtn.style.opacity = '1';
           acceptBtn.style.cursor = 'pointer';
         } else {
-          msg.innerHTML = '✓ Contract accepted — thank you! Your acceptance has been recorded.';
+          msg.innerHTML = '✓ Contract accepted. Thank you! Your acceptance has been recorded.';
           msg.style.color = '#22c55e';
           msg.style.fontWeight = '600';
           setTimeout(() => loadBilling(), 2200);
@@ -547,7 +547,7 @@
     /* Domain card */
     if (domain) {
       const owned = domain.transfer_status === 'transferred' || domain.owned_by === 'client';
-      const badge = owned ? `<span class="badge badge-yours">You Own This Domain</span>` : `<span class="badge badge-transfer">Managed by VardWeb — Transfer Pending</span>`;
+      const badge = owned ? `<span class="badge badge-yours">You Own This Domain</span>` : `<span class="badge badge-transfer">Managed by VardWeb · Transfer Pending</span>`;
       const expiry = domain.expiry_date ? new Date(domain.expiry_date) : null;
       const daysLeft = expiry ? Math.ceil((expiry - new Date()) / 86400000) : null;
 
@@ -559,7 +559,7 @@
         <div class="info-row"><span class="info-label">Registrar <button class="help-tip" data-help="registrar"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">${domain.registrar || '—'}</span></div>
         <div class="help-panel" id="help-registrar">The company where your domain was purchased and registered. Think of it as the place that holds the rights to your domain name.</div>
         <div class="info-row"><span class="info-label">DNS Provider <button class="help-tip" data-help="dns"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span><span class="info-value">${domain.dns_provider || '—'}</span></div>
-        <div class="help-panel" id="help-dns">The service that points your domain to your website's actual server. VardWeb manages this — you don't need to do anything here.</div>
+        <div class="help-panel" id="help-dns">The service that points your domain to your website's actual server. VardWeb manages this. You don't need to do anything here.</div>
         <div class="info-row"><span class="info-label">Renews</span><span class="info-value">${domain.expiry_date ? domain.expiry_date + (daysLeft !== null ? ` (${daysLeft} days away)` : '') : '—'} <button class="help-tip" data-help="renew"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></span></div>
         <div class="help-panel" id="help-renew">If this date passes without renewal, your domain goes offline. VardWeb monitors renewals on your behalf when auto-renew is enabled.</div>
 
@@ -569,7 +569,7 @@
             Provide Your Domain Credentials <button class="help-tip" data-help="cred-why"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
-          <div class="help-panel" id="help-cred-why" style="border-radius:0;border-left:none;border-bottom:1px solid var(--border);padding:10px 18px;">Sharing your registrar login lets VardWeb manage DNS settings, renewals, and any technical changes on your behalf — so you never have to log in yourself. Your password is encrypted and only visible to you and VardWeb.</div>
+          <div class="help-panel" id="help-cred-why" style="border-radius:0;border-left:none;border-bottom:1px solid var(--border);padding:10px 18px;">Sharing your registrar login lets VardWeb manage DNS settings, renewals, and any technical changes on your behalf, so you never have to log in yourself. Your password is encrypted and only visible to you and VardWeb.</div>
           <div class="accordion-body" id="credAccordionBody">
             <div class="field-group">
               <label>Registrar Login URL <button class="help-tip" data-help="reg-url"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
@@ -582,7 +582,7 @@
             </div>
             <div class="field-group">
               <label>Password <button class="help-tip" data-help="reg-pw"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
-              <div class="help-panel" id="help-reg-pw">Your password is encrypted using AES-256-GCM before it is saved — the same standard used by enterprise security systems. VardWeb never stores your password in plain text.</div>
+              <div class="help-panel" id="help-reg-pw">Your password is encrypted using AES-256-GCM before it is saved, the same standard used by enterprise security systems. VardWeb never stores your password in plain text.</div>
               <div class="cred-row">
                 <input type="password" id="reg-pw" placeholder="••••••••" />
                 <button class="icon-btn" id="toggleRegPw">👁</button>
@@ -609,7 +609,7 @@
       html += `<div class="card">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
           <span style="font-size:14px;font-weight:700;">${activeSite.domain_name}</span>
-          <span class="badge badge-transfer">Details pending — VardWeb is updating this record</span>
+          <span class="badge badge-transfer">Details pending: VardWeb is updating this record</span>
         </div>
         <div style="font-size:12px;color:var(--text-2);line-height:1.7;">
           Full registrar and DNS details will appear here once VardWeb has finished adding your domain information.
@@ -644,7 +644,7 @@
                       style="font-size:12px;color:var(--pink);border-color:rgba(255,45,120,0.2);">✕</button>
             </span>
           </div>
-          <div class="help-panel" id="help-access-type-${h.id}">Access type shows how VardWeb connects to your hosting. "Team Invite" means they have their own login. "Shared Login" means you shared your credentials. "API Key" is a technical access code — no password sharing needed.</div>
+          <div class="help-panel" id="help-access-type-${h.id}">Access type shows how VardWeb connects to your hosting. "Team Invite" means they have their own login. "Shared Login" means you shared your credentials. "API Key" is a technical access code. No password sharing needed.</div>
           <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">Login</span><span>${h.login_email || '—'}</span></div>
           <div class="info-row" style="font-size:12px;"><span class="info-label" style="font-size:12px;">Password</span>
             <span style="display:flex;align-items:center;gap:6px;">
@@ -667,7 +667,7 @@
         </div>
         <div class="accordion-body" id="addHostingBody">
           <div class="note-box" style="margin-bottom:14px;">Sharing your hosting login lets VardWeb manage your site on your behalf. Your password is encrypted before being saved. <button class="help-tip" data-help="host-why"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button>
-          <div class="help-panel" id="help-host-why">Hosting is where your website's files live. If VardWeb has access, they can deploy updates, fix issues, and keep your site running — without calling you every time.</div></div>
+          <div class="help-panel" id="help-host-why">Hosting is where your website's files live. If VardWeb has access, they can deploy updates, fix issues, and keep your site running without calling you every time.</div></div>
           <div class="field-group"><label>Provider Name <button class="help-tip" data-help="host-name"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
           <div class="help-panel" id="help-host-name">The service your website is hosted on (e.g. Cloudflare, Netlify, SiteGround, cPanel). If unsure, ask VardWeb.</div>
           <input type="text" id="nh-name" placeholder="e.g. Cloudflare, Netlify, cPanel" /></div>
@@ -680,7 +680,7 @@
           <div class="field-group"><label>Login Email / Username</label><input type="email" id="nh-email" placeholder="your@email.com" /></div>
           <div class="field-group">
             <label>Password or Key <button class="help-tip" data-help="host-pw"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
-            <div class="help-panel" id="help-host-pw">Your password is encrypted using AES-256-GCM before being saved — never stored in plain text.</div>
+            <div class="help-panel" id="help-host-pw">Your password is encrypted using AES-256-GCM before being saved, never stored in plain text.</div>
             <div class="cred-row">
               <input type="password" id="nh-pw" placeholder="••••••••" />
               <button class="icon-btn" id="toggleNewHostPw">👁</button>
@@ -768,7 +768,7 @@
         const plain  = card.dataset.plain || '';
         const header = card.querySelector('.provider-header');
 
-        // Move read-view nodes into a fragment — preserves their event listeners
+        // Move read-view nodes into a fragment: preserves their event listeners
         const frag = document.createDocumentFragment();
         while (header.nextSibling) frag.appendChild(header.nextSibling);
         card._readFragment = frag;
@@ -803,7 +803,7 @@
             credentials_submitted_by: 'client',
             credentials_submitted_at: new Date().toISOString(),
           }).eq('id', btn.dataset.hid).eq('site_id', activeSite.id);
-          if (error) { saveBtn.textContent = '⚠ Error — try again'; saveBtn.style.background = 'var(--pink)'; saveBtn.disabled = false; }
+          if (error) { saveBtn.textContent = '⚠ Error, try again'; saveBtn.style.background = 'var(--pink)'; saveBtn.disabled = false; }
           else { saveBtn.textContent = 'Saved ✓'; setTimeout(() => loadDomain(), 1000); }
         });
       });
@@ -817,7 +817,7 @@
         btn.textContent = '…'; btn.disabled = true;
         const { error } = await sb.from('hosting_access')
           .delete().eq('id', btn.dataset.hid).eq('site_id', activeSite.id);
-        if (error) { btn.textContent = '✕'; btn.disabled = false; alert('Delete failed — please try again.'); }
+        if (error) { btn.textContent = '✕'; btn.disabled = false; alert('Delete failed. Please try again.'); }
         else { card.remove(); }
       });
     });

@@ -22,7 +22,7 @@
       --text-1:  #eef0f8;
       --text-2:  rgba(200,212,232,0.62);
 
-      /* Domain & Hosting accent — matches hosting-services.html */
+      /* Domain & Hosting accent: matches hosting-services.html */
       --host-green:      #34D399;
       --host-green-deep: #059669;
       --host-green-pale: #A7F3D0;
@@ -519,7 +519,7 @@
     .co-toggle input:checked ~ .co-toggle-thumb { transform: translateX(17px); }
     .co-toggle input:focus-visible ~ .co-toggle-track { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
 
-    /* Mobile reflow for cart cards — relocates existing elements only, no new data/copy */
+    /* Mobile reflow for cart cards: relocates existing elements only, no new data/copy */
     @media (max-width: 600px) {
       .co-item, .co-bcard { min-width: 0; }
       .co-item-icon { width: 76px; height: 76px; font-size: 14px; }
@@ -527,7 +527,7 @@
       .co-bcard-title-br { display: inline; }
 
       /* Standalone .co-item header: icon | text meta, with the price stack as its
-         own row between term and note, then a full-width note+remove bar below —
+         own row between term and note, then a full-width note+remove bar below;
          bridges the intermediate wrapper divs with display:contents so their
          children can share one grid. minmax(0,1fr) + min-width:0 keep everything
          shrinkable so the card never overflows its container at narrow widths. */
@@ -627,7 +627,7 @@
     .co-bundle-price-row .co-price-was { font-size: 11px; }
     .co-bundle-price-row .co-price-now { font-size: 14px; }
 
-    /* Icon CTA — exact copy of domain-search.html's .dx-card-cta */
+    /* Icon CTA: exact copy of domain-search.html's .dx-card-cta */
     .dx-card-cta {
       flex-shrink: 0; width: 42px; height: 42px; padding: 0; border-radius: 9px;
       background: #fff; border: 2.5px solid #000; color: #06251b;
@@ -665,6 +665,7 @@
     .co-search-close-btn { align-self: flex-start; margin-top: 4px; }
     .co-search-loading, .co-search-empty { font-size: 12.5px; color: var(--text-2); margin-top: 14px; }
     @keyframes hostSkeletonSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    @media (prefers-reduced-motion: reduce) { .co-search-skel-bar { animation: none; } }
     .co-search-skel-row { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--raised); border-radius: 8px; }
     .co-search-skel-bar {
       border-radius: 6px;
@@ -1035,7 +1036,7 @@
         </div>
 
         <div id="checkout-return-notice" hidden>
-          <p>Thanks — we're finishing up your order. You'll receive a confirmation email shortly.</p>
+          <p>Thanks, we're finishing up your order. You'll receive a confirmation email shortly.</p>
         </div>
 
         <div id="checkout-content" hidden>
@@ -1081,7 +1082,7 @@
                   </div>
                   <p class="order-summary-note">Subtotal does not include applicable taxes and fees.</p>
                   <div class="order-summary-savings" id="order-summary-savings" hidden>
-                    <img src="/brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" class="order-summary-savings-icon" />
+                    <img src="/brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" class="order-summary-savings-icon" loading="lazy" />
                     <span>Nice! You saved <strong id="order-summary-savings-amount">C$0.00</strong> on your order.</span>
                   </div>
                   <button type="button" class="cart-checkout-btn" id="proceed-to-billing-btn"><span class="cco-label">Ready for Checkout</span><span class="cco-arrow" aria-hidden="true">→</span></button>
@@ -1364,12 +1365,12 @@
       return base + Math.max((years || 1) - 1, 0) * renewalPricePerYear(base);
     }
 
-    // ── Canadian sales tax (GST/HST only — PST/QST intentionally excluded) ──
+    // ── Canadian sales tax (GST/HST only; PST/QST intentionally excluded) ──
     // VardWeb is a voluntary GST/HST registrant (under the $30k small-supplier
     // threshold but already holds a GST/HST number, so charging GST/HST is
     // required going forward). PST/QST is NOT charged: BC exempts pure web
     // design without software, and SK/MB/QC's service-line rules are unclear
-    // without an accountant's sign-off — see the tax research plan for detail.
+    // without an accountant's sign-off. See the tax research plan for detail.
     // HST provinces (NB/NL/NS/ON/PE) already are one single combined rate;
     // everywhere else is plain 5% GST. Keep in sync with the matching table
     // in supabase/functions/create-domain-checkout/index.ts.
@@ -1383,7 +1384,7 @@
     }
     var TERM_OPTIONS = [1, 2, 3, 5, 10];
     // Unrestricted TLDs use the site's default package sizes (TERM_OPTIONS).
-    // A TLD with a minYears/maxYears (see tld-catalog.js — researched
+    // A TLD with a minYears/maxYears (see tld-catalog.js; researched
     // per-registry, not assumptions) instead gets every consecutive year in
     // its real range, since filtering TERM_OPTIONS down would silently skip
     // valid years (e.g. .cn's max-5 would show 1,2,3,5 and skip 4).
@@ -1398,7 +1399,7 @@
     }
     // Pulls an out-of-range years value (e.g. the site-wide years:1 default
     // landing on a TLD that actually requires a 2-year minimum, like .ai) back
-    // into that TLD's valid range — used for display and again right before
+    // into that TLD's valid range, used for display and again right before
     // submit, so what's shown always matches what's actually charged.
     function clampYearsForTld(years, tld) {
       var opts = getYearOptionsForTld(tld);
@@ -1577,7 +1578,7 @@
     async function ensureProfileRow(userId) {
       try {
         await clientSb.from('user_profiles').upsert({ id: userId, role: 'client' }, { onConflict: 'id' });
-      } catch (e) { /* non-fatal — profile row is a nice-to-have for nav/CRM, not required for checkout */ }
+      } catch (e) { /* non-fatal: profile row is a nice-to-have for nav/CRM, not required for checkout */ }
     }
 
     function saveBillingInfoBestEffort(userId, fd) {
@@ -1594,7 +1595,7 @@
         clientSb.from('client_billing_info').upsert(row, { onConflict: 'id' }).then(function (res) {
           if (res && res.error) console.error('billing info save failed:', res.error);
         }).catch(function (err) { console.error('billing info save failed:', err); });
-      } catch (e) { /* non-fatal — saved billing is a nice-to-have, must never block checkout */ }
+      } catch (e) { /* non-fatal: saved billing is a nice-to-have, must never block checkout */ }
     }
 
     function showCheckoutGate() {
@@ -1772,7 +1773,7 @@
     }
 
     // Real savings from year-1-at-cost pricing vs. the standard renewal-markup rate
-    // (constant per item regardless of chosen term — only Year 1 differs from the renewal rate).
+    // (constant per item regardless of chosen term; only Year 1 differs from the renewal rate).
     function calcSavings(cart) {
       var savings = 0;
       cart.forEach(function (i) {
@@ -1802,7 +1803,7 @@
         var itemWas = renewalPricePerYear(item.price || 0);
         var metaHtml;
         if (item.premium) {
-          metaHtml = '<div class="co-item-onetime-note">Premium Domain Purchase — One-Time Fee</div>';
+          metaHtml = '<div class="co-item-onetime-note">Premium Domain Purchase: One-Time Fee</div>';
         } else {
           var termOptionsHtml = getYearOptionsForTld(item.tld).map(function (y) {
             return '<option value="' + y + '"' + (displayYears === y ? ' selected' : '') + '>' + y + ' Year' + (y > 1 ? 's' : '') + '</option>';
@@ -1924,11 +1925,11 @@
       // A bundle's linked primary (item.primaryForBundle, stamped by
       // domain-search.html's dv-bundle-cta handler when the bundle was
       // added) always renders directly above its Bundle card, not at its
-      // own array position — this page only ever displays the shared cart,
+      // own array position. This page only ever displays the shared cart,
       // so a bundle added elsewhere must still render correctly here.
       var primaryByBundleId = {};
       domainItems.forEach(function (i) { if (i.primaryForBundle) primaryByBundleId[i.primaryForBundle] = i; });
-      // Which bundleIds actually still have a companion group present — lets
+      // Which bundleIds actually still have a companion group present: lets
       // a primaryForBundle reference that no longer points at anything (a
       // stale/orphaned item, however it came to be) fall through and render
       // as a normal standalone card instead of silently vanishing while
@@ -2080,7 +2081,7 @@
     var coSearchForm = document.getElementById('co-search-form');
     var coSearchResultsEl = document.getElementById('co-search-results');
     var ALT_TLD_SHORTLIST = ['.co', '.net', '.shop', '.io', '.org', '.online', '.store', '.info'];
-    // Fallback name variants (matches domain-search.html's "verdict box" pattern) — guarantees
+    // Fallback name variants (matches domain-search.html's "verdict box" pattern); guarantees
     // we can usually surface real alternatives even when every shortlist TLD is taken.
     var VARIANT_PREFIXES = ['get', 'my'];
     var VARIANT_SUFFIXES = ['hq', 'app', 'hub'];
@@ -2177,7 +2178,7 @@
         coSearchResultsEl.innerHTML =
           '<div class="co-search-results">' +
             '<p class="co-search-taken-msg">Sorry, <span class="co-search-highlight">' + escapeHtml(primary.domain + primary.tld) + '</span> is taken.</p>' +
-            (rowsHtml ? '<p class="co-search-how-about">How about one of these?</p>' + rowsHtml : '<p class="co-search-empty">No available alternatives came back — try a different name.</p>') +
+            (rowsHtml ? '<p class="co-search-how-about">How about one of these?</p>' + rowsHtml : '<p class="co-search-empty">No available alternatives came back. Try a different name.</p>') +
             closeBtnHtml +
           '</div>';
       }
@@ -2194,7 +2195,7 @@
       var tld = m ? m[2].toLowerCase() : '.com';
       if (!base) { input.focus(); return; }
       if (!isTldSupported(tld)) {
-        coSearchResultsEl.innerHTML = '<p class="co-search-empty">' + escapeHtml(tld) + ' isn\'t a supported ending — try another.</p>';
+        coSearchResultsEl.innerHTML = '<p class="co-search-empty">' + escapeHtml(tld) + ' isn\'t a supported ending. Try another.</p>';
         return;
       }
 
@@ -2332,7 +2333,7 @@
         .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
         .then(function (r) {
           if (!r.ok || r.json.error || !r.json.client_secret) throw new Error(r.json.error || 'Checkout failed');
-          if (!stripeClient) throw new Error('Payment could not load — please refresh and try again.');
+          if (!stripeClient) throw new Error('Payment could not load. Please refresh and try again.');
           return stripeClient.initEmbeddedCheckout({
             clientSecret: r.json.client_secret,
           }).then(function (checkout) {
@@ -2345,7 +2346,7 @@
         })
         .catch(function (err) {
           setRegistrantSubmitLoading(false);
-          registrantError.textContent = err.message || 'Something went wrong starting checkout — please try again.';
+          registrantError.textContent = err.message || 'Something went wrong starting checkout. Please try again.';
           registrantError.hidden = false;
         });
     });
@@ -2359,7 +2360,7 @@
     (async function boot() {
       // A `?order=` param means Stripe redirected back here after an
       // off-iframe step (e.g. a 3DS authentication popup) rather than
-      // completing entirely inside the mounted Embedded Checkout — the
+      // completing entirely inside the mounted Embedded Checkout; the
       // webhook has already (or will shortly) finalize the order, so just
       // reassure the buyer instead of re-showing a stale cart.
       if (new URLSearchParams(window.location.search).get('order')) {
@@ -2414,6 +2415,14 @@
         box.style.left = left + 'px';
         box.style.top = top + 'px';
       }
+      var pendingPositionFrame = null;
+      function scheduleReposition() {
+        if (pendingPositionFrame) return;
+        pendingPositionFrame = requestAnimationFrame(function () {
+          pendingPositionFrame = null;
+          if (openTrigger) position(openTrigger);
+        });
+      }
       function show(trigger) {
         openTrigger = trigger;
         box.textContent = trigger.getAttribute('data-tooltip') || '';
@@ -2449,8 +2458,8 @@
         if (t && !canHover) { e.stopPropagation(); if (openTrigger === t) hide(); else show(t); return; }
         hide();
       });
-      window.addEventListener('scroll', function () { if (!openTrigger) return; if (canHover) position(openTrigger); else hide(); }, true);
-      window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
+      window.addEventListener('scroll', function () { if (!openTrigger) return; if (canHover) scheduleReposition(); else hide(); }, { passive: true });
+      window.addEventListener('resize', function () { if (openTrigger) scheduleReposition(); });
     })();
   </script>
 </body>

@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   VardWeb — Contact form "New Project Inquiry" notification email builder.
+   VardWeb: Contact form "New Project Inquiry" notification email builder.
 
    Exposes window.buildInquiryEmailHtml(data), where:
      data = {
@@ -17,7 +17,7 @@
 (function () {
 
   // Duplicated from contact.html's own TIER_COLORS (drives the on-page
-  // #mini-tier-box preview) — keep both in sync if a tier is ever renamed/added.
+  // #mini-tier-box preview). Keep both in sync if a tier is ever renamed/added.
   var TIER_COLORS = {
     Bronze: '#CD7F32', Silver: '#C2D0E8', Gold: '#FFD700', Custom: '#A855F7',
     Jack: '#00E5FF', Queen: '#A855F7', King: '#FFD700', Ace: '#FF3B3B',
@@ -176,7 +176,7 @@
 + '<body lang="en" dir="ltr" style="margin:0;padding:0;background-color:#070910;">'
 
 + '<div lang="en" dir="ltr" style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;font-size:1px;line-height:1px;color:#070910;">'
-+   'New inquiry from ' + name + (data.tier ? ' — ' + escapeHtml(data.tier) + ' tier' : '')
++   'New inquiry from ' + name + (data.tier ? ' · ' + escapeHtml(data.tier) + ' tier' : '')
 + '</div>'
 + '<div style="display:none;max-height:0;overflow:hidden;">&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;&#8199;</div>'
 
@@ -189,7 +189,7 @@
 + '<tr><td align="center" style="padding:0 0 32px;">'
 +   '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
 +     '<td bgcolor="#ffffff" style="background-color:#ffffff;border-radius:8px;padding:6px 14px;">'
-+       '<img src="https://lvxlshberdazzmjbrjdu.supabase.co/storage/v1/object/public/Assets/VardWeb.png" width="132" alt="VardWeb — web design studio" style="display:block;border:0;outline:none;text-decoration:none;height:auto;border-radius:2px;">'
++       '<img src="https://lvxlshberdazzmjbrjdu.supabase.co/storage/v1/object/public/Assets/VardWeb.png" width="132" alt="VardWeb, web design studio" style="display:block;border:0;outline:none;text-decoration:none;height:auto;border-radius:2px;">'
 +     '</td>'
 +   '</tr></table>'
 + '</td></tr>'
@@ -223,7 +223,7 @@
 
 +   '<tr><td class="vw-px" style="padding:20px 40px 32px;">'
 +     '<p style="margin:0;font-family:\'Inter\',-apple-system,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;font-size:12px;line-height:1.7;color:#9AA3B8;">'
-+       'Automated notification from the VardWeb contact form. Reply directly to this email to respond to ' + name + ' — Reply-To is already set to their address. &middot; &copy; 2026 VardWeb. All rights reserved.'
++       'Automated notification from the VardWeb contact form. Reply directly to this email to respond to ' + name + '. Reply-To is already set to their address. &middot; &copy; 2026 VardWeb. All rights reserved.'
 +     '</p>'
 +   '</td></tr>'
 

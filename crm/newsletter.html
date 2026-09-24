@@ -79,7 +79,7 @@
     <div class="field-row">
       <label for="bodyTextarea">Body (HTML)</label>
       <textarea id="bodyTextarea" rows="16" placeholder="&lt;p&gt;Hey there,&lt;/p&gt;&#10;&lt;p&gt;Write the post update here...&lt;/p&gt;"></textarea>
-      <p class="note">Raw HTML, wrapped automatically in the VardWeb branded email shell (logo, colors, footer, unsubscribe link) when sent. No rich-text editor — write plain tags like &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;ul&gt;/&lt;li&gt;.</p>
+      <p class="note">Raw HTML, wrapped automatically in the VardWeb branded email shell (logo, colors, footer, unsubscribe link) when sent. No rich-text editor. Write plain tags like &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;ul&gt;/&lt;li&gt;.</p>
     </div>
     <div class="action-row">
       <button class="btn btn-ghost" id="previewBtn">Preview</button>
@@ -147,11 +147,11 @@
     const html = window.buildNewsletterBroadcastHtml({ subject, bodyHtml });
 
     try {
-      // Fetch a fresh session right before sending — the page may have been
+      // Fetch a fresh session right before sending; the page may have been
       // open long enough for the token captured at load time to expire.
       const { data: { session: freshSession } } = await sb.auth.getSession();
       if (!freshSession) {
-        statusMsg.textContent = 'Your session expired — please refresh and log in again.';
+        statusMsg.textContent = 'Your session expired. Please refresh and log in again.';
         statusMsg.className = 'status-msg error';
         sendBtn.disabled = false;
         sendBtn.textContent = 'Send Broadcast';

@@ -5,7 +5,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 /*
  * Supabase Edge Function: create-domain-checkout
  *
- * Public — no auth required (walk-up buyers have no account, matches
+ * Public: no auth required (walk-up buyers have no account, matches
  * create-checkout being publicly callable). Accepts POST
  * { items: [{domain, tld, price}, ...], registrant: {...}, buyer_email }.
  *
@@ -14,14 +14,14 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
  * the buyer abandons checkout. metadata.order_id on the session is what
  * stripe-domain-webhook uses to find this row again on payment success.
  *
- * One Stripe line item per cart domain — price is exactly what
+ * One Stripe line item per cart domain: price is exactly what
  * check-domain-availability returned (Openprovider wholesale, 0% markup
  * at signup per the standing pricing decision). No client-side price is
  * trusted beyond validating it's a positive number.
  *
  * Deploy:
  *   supabase functions deploy create-domain-checkout
- *   (reuses STRIPE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY —
+ *   (reuses STRIPE_SECRET_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
  *   all already set for create-checkout / other functions)
  */
 
@@ -43,7 +43,7 @@ function multiYearCents(baseDollars: number, years: number): number {
   return Math.round(totalDollars * 100);
 }
 
-// Canadian sales tax (GST/HST only — PST/QST intentionally excluded).
+// Canadian sales tax (GST/HST only; PST/QST intentionally excluded).
 // VardWeb is a voluntary GST/HST registrant (under the $30k small-supplier
 // threshold but already holds a GST/HST number, so charging GST/HST is
 // required going forward). PST/QST is NOT charged: BC exempts pure web
@@ -74,7 +74,7 @@ serve(async (req) => {
       });
     }
     const VALID_YEARS = [1, 2, 3, 5, 10];
-    // Per-registry term limits — mirrors tld-catalog.js's maxYears/minYears fields
+    // Per-registry term limits: mirrors tld-catalog.js's maxYears/minYears fields
     // (researched against Openprovider's own published per-TLD registration-period
     // docs). Keep both copies in sync; this one is what actually blocks an
     // over/under-term purchase before Stripe is ever charged.
@@ -131,7 +131,7 @@ serve(async (req) => {
     );
 
     const lineItemCentsList = items.map((item: { domain: string; tld: string; price: number; years?: number; type?: string }) => {
-      // 'broker' is a flat Domain Broker Service fee, not a domain — priced and
+      // 'broker' is a flat Domain Broker Service fee, not a domain; priced and
       // (in the webhook) registered like an addon, but kept as its own type so
       // its Stripe line-item label and domain_orders.items stay self-documenting
       // rather than showing up as "Domain Protection".
@@ -146,7 +146,7 @@ serve(async (req) => {
         isPremium,
         years,
         // `price` is the annual rate check-domain-availability returned (Year 1, at cost).
-        // Year 2+ is a flat +20% renewal markup — see multiYearCents() above. Still a
+        // Year 2+ is a flat +20% renewal markup; see multiYearCents() above. Still a
         // client-trusted approximation, not a real multi-year registrar quote (Openprovider's
         // /domains/check only ever returns a single-year price).
         amountCents: isAddon ? Math.round(item.price * 100) : multiYearCents(item.price, years),
@@ -182,12 +182,12 @@ serve(async (req) => {
         currency: 'cad',
         product_data: {
           name: li.isBroker
-            ? `Domain Broker Service — ${li.domain}`
+            ? `Domain Broker Service: ${li.domain}`
             : li.isAddon
-              ? `Domain Protection — ${li.domain}`
+              ? `Domain Protection: ${li.domain}`
               : li.isPremium
-                ? `Premium domain purchase — ${li.domain}`
-                : `Domain registration — ${li.domain} (${li.years} yr)`,
+                ? `Premium domain purchase: ${li.domain}`
+                : `Domain registration: ${li.domain} (${li.years} yr)`,
         },
         unit_amount: li.amountCents,
       },
@@ -208,7 +208,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       ui_mode: 'embedded',
       // 'if_required' keeps the buyer inside the mounted Embedded Checkout with
-      // Stripe's built-in in-page success state — the whole reason this uses
+      // Stripe's built-in in-page success state; the whole reason this uses
       // embedded mode over a hosted redirect. Stripe only navigates to
       // return_url when it truly can't stay in-page (e.g. a redirect-based
       // payment method or off-session 3DS); return_url stays required either way.
@@ -219,7 +219,7 @@ serve(async (req) => {
       customer_email: buyer_email,
       return_url: `${req.headers.get('origin') || 'https://vardweb.com'}/checkout.html?order={CHECKOUT_SESSION_ID}`,
       metadata: { order_id: order.id },
-      // @ts-ignore branding_settings isn't in the stripe@14 type defs yet — added to the
+      // @ts-ignore branding_settings isn't in the stripe@14 type defs yet; added to the
       // Checkout Sessions API in the 2025-09-30.clover version, requested below per-call
       // so the account-wide pinned apiVersion (2023-10-16) stays untouched everywhere else.
       branding_settings: {
