@@ -3,13 +3,13 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 /*
  * Supabase Edge Function: send-transactional-email
  *
- * Public — no admin check (same public model EmailJS's exposed public key
+ * Public: no admin check (same public model EmailJS's exposed public key
  * had; matches create-checkout/subscribe-newsletter's existing pattern).
  *
  * Generic single-recipient email relay used by both contact.html's inquiry
  * notification and blog.html's welcome-confirmation email. The caller
  * builds the full HTML client-side (buildInquiryEmailHtml / the fetched
- * blog-newsletter-welcome.html template) — this function only relays it to
+ * blog-newsletter-welcome.html template); this function only relays it to
  * Resend, it never reassembles a template itself.
  *
  * Accepts POST { to, subject, html, from, replyTo? }.

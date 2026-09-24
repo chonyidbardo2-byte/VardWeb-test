@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>E-Commerce — VardWeb</title>
-  <meta name="description" content="Custom e-commerce platforms built and maintained by VardWeb — a flat monthly rate, no per-sale cut, no app-store shopping list, and no tier ceiling to outgrow." />
+  <meta name="description" content="Custom e-commerce platforms built and maintained by VardWeb. A flat monthly rate, no per-sale cut, no app-store shopping list, and no tier ceiling to outgrow." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
       --text-1:  #eef0f8;
       --text-2:  rgba(200,212,232,0.62);
 
-      /* E-Commerce accent — matches the card on services.html */
+      /* E-Commerce accent: matches the card on services.html */
       --ecom-red:      #EF4444;
       --ecom-red-deep: #DC2626;
       --ecom-red-pale: #FCA5A5;
@@ -356,7 +356,7 @@
     .browser-body { overflow: hidden; }
     .browser-mock img { display: block; width: 100%; height: auto; }
 
-    /* ── Comet/particle decorative layer — top-left origin, ~45° fall ── */
+    /* ── Comet/particle decorative layer: top-left origin, ~45° fall ── */
     #ecom-hero-comets { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
     .comet {
       position: absolute;
@@ -381,7 +381,7 @@
     @keyframes comet-fall-3 { 0%{opacity:0;transform:rotate(-40deg) translateY(0);} 8%{opacity:.95;} 80%{opacity:.9;}  86%{opacity:0;} 100%{opacity:0;transform:rotate(-40deg) translateY(1014px);} }
     @keyframes comet-fall-4 { 0%{opacity:0;transform:rotate(-47deg) translateY(0);} 8%{opacity:.85;} 80%{opacity:.8;}  86%{opacity:0;} 100%{opacity:0;transform:rotate(-47deg) translateY(1290px);} }
 
-    /* Miss comets — same top-left origin family as 1-4, but a shallower angle +
+    /* Miss comets: same top-left origin family as 1-4, but a shallower angle +
        longer travel so each clears the box horizontally before it has fallen far
        enough to reach the box's vertical range, then exits off the right edge
        still in flight (opacity held near-full through to the very end, no early
@@ -394,55 +394,55 @@
     @keyframes comet-fall-6 { 0%{opacity:0;transform:rotate(-58deg) translateY(0);} 8%{opacity:.85;} 92%{opacity:.8;}  100%{opacity:0;transform:rotate(-58deg) translateY(1780px);} }
     @keyframes comet-fall-7 { 0%{opacity:0;transform:rotate(-66deg) translateY(0);} 8%{opacity:.9;}  92%{opacity:.85;} 100%{opacity:0;transform:rotate(-66deg) translateY(1580px);} }
 
-    /* Side-hit comets — same ~45deg diagonal family as 1-4 (comet-8 reuses
+    /* Side-hit comets: same ~45deg diagonal family as 1-4 (comet-8 reuses
        comet-3's exact -40deg, comet-9 reuses comet-1's exact -44deg), but
        launched from much LOWER on the page instead of the top. Whether a
        comet's real first-overlap lands on the box's TOP or LEFT edge depends
-       on which threshold — reaching box.top in y, or box.left in x — binds
+       on which threshold (reaching box.top in y, or box.left in x) binds
        LAST. At a shallow ~45deg angle from a top-of-page origin (like 1-4),
        the box is horizontally close but vertically far, so x binds almost
-       immediately and y binds last — hence hitting the top. Starting instead
+       immediately and y binds last, hence hitting the top. Starting instead
        from ~30-45% down the page shrinks the remaining vertical distance to
        box.top enough that y now binds FIRST, flipping which edge takes the
-       real contact to the LEFT edge — same family angle, just a lower launch
+       real contact to the LEFT edge, same family angle, just a lower launch
        point. Durations unchanged from before (matching comet-3/comet-1
-       exactly). Desktop/tablet only (hidden at the 480px breakpoint below —
+       exactly). Desktop/tablet only (hidden at the 480px breakpoint below;
        mobile's box spans nearly the full width, leaving no room for a side
        approach to read clearly). */
     /* Origin moved off-screen on the LEFT (negative %) instead of moving top
-       toward 0 — top still needs to stay deep enough down the page for the
+       toward 0. Top still needs to stay deep enough down the page for the
        left-edge-hit geometry above to hold, but nothing requires THAT axis
        to be the one that's off-screen. A negative left clips the comet via
        the container's overflow:hidden the same way 1-4's negative top does,
        so it flies INTO frame instead of fading into existence mid-page. As a
        bonus, pushing origin_x further left also increases (box.left-origin_x)
-       — the exact quantity that needs to be large relative to (box.top-
-       origin_y) for the left-edge-hit condition — so this needs LESS vertical
+: the exact quantity that needs to be large relative to (box.top-
+       origin_y) for the left-edge-hit condition, so this needs LESS vertical
        margin than last round's design, not more. */
-    /* top is ALSO a calc(Xpx - Yvw) here, not a plain % — contact_y (where
+    /* top is ALSO a calc(Xpx - Yvw) here, not a plain %: contact_y (where
        along the box's left edge the real hit lands) is driven by origin_x's
        physical distance to box.left, which itself grows with viewport width
-       (box.left scales with width, being a centered fixed-max-width box) —
+       (box.left scales with width, being a centered fixed-max-width box),
        so a fixed-% top drifts into the box's LOWER half at wider viewports
        even though it read fine at the reference width (confirmed via real
        measurement: comet-8/9 both landed lower-half at 1600px despite a
        plain % top that looked correct at 1440px). Solving top as a linear
        function of viewport width keeps the real contact_y point CONSTANT
-       across widths — which, as a side effect, also keeps the left-edge-hit
+       across widths, which, as a side effect, also keeps the left-edge-hit
        safety margin constant (both land solidly in the upper half at every
        width, not just one). */
     .comet-8  { top: calc(1205px - 69.12vw); left: -8%;  animation-name: comet-fall-8;  animation-duration: 3.5s; animation-delay: 13.36s; }
     .comet-9  { top: calc(1338.6px - 62.13vw); left: -10%; animation-name: comet-fall-9;  animation-duration: 4.5s; animation-delay: 8.12s; }
     /* translateY solved for ~300px/s (mid-range of 1-4's own ~253-336px/s
        spread) at each comet's duration, instead of for a target contact
-       fraction — matches the family's brisk, slightly-varied pace instead of
+       fraction, matches the family's brisk, slightly-varied pace instead of
        crawling. Real contact now lands earlier in the cycle (~57%/~44% of
        duration) well inside the opacity hold window, comfortably before any
-       fade-out. Still a calc(Xvw - Ypx) expression, not a fixed px distance —
+       fade-out. Still a calc(Xvw - Ypx) expression, not a fixed px distance:
        box.left scales with viewport width (≈0.5·vw − 452px) while these
        comets' %-based left origin doesn't scale the same way, so a fixed
        distance silently falls short at wider viewports (confirmed via real
-       measurement last round — the "comet already gone when it explodes"
+       measurement last round; the "comet already gone when it explodes"
        bug). The calc keeps both the target speed AND the contact fraction
        consistent across viewport widths. */
     @keyframes comet-fall-8  { 0%{opacity:0;transform:rotate(-40deg) translateY(0);} 8%{opacity:.95;} 65%{opacity:.9;} 78%{opacity:0;} 100%{opacity:0;transform:rotate(-40deg) translateY(calc(159.3vw - 1242.5px));} }
@@ -450,9 +450,9 @@
 
     /* Four independent bursts, one per comet. Position is set live by JS (see
        comet-collision script near the markup) the instant that comet's leading
-       edge actually touches the mockup box — no more pre-baked % coordinates,
+       edge actually touches the mockup box. No more pre-baked % coordinates,
        which needed correcting twice because they silently drift out of sync. */
-    /* Style variants — rotation + a combined spread/size scale, applied as a
+    /* Style variants: rotation + a combined spread/size scale, applied as a
        rigid wrapping transform around the JS-computed impact point (so the
        anchor stays exact regardless of variant). Color is intentionally the
        same gold/orange for every burst. */
@@ -471,7 +471,7 @@
 
     /* Ported from the reference Explosion component: a central blurred glow bar
        (the "highlight") plus small circular dots scattering outward/upward, away
-       from the box's top edge the comet just struck — same anatomy as beams
+       from the box's top edge the comet just struck, same anatomy as beams
        hitting a floor and debris flying up away from it. */
     .burst-glow {
       position: absolute; top: 50%; left: 50%;
@@ -482,7 +482,7 @@
       opacity: 0;
       /* Counter-rotates against the parent .comet-burst's --burst-rot (set by the
          style-wide/style-tight variants) so the highlight always lies flat along
-         the box's top edge, regardless of variant — only the dot scatter rotates. */
+         the box's top edge, regardless of variant. Only the dot scatter rotates. */
       transform: translate(-50%,-50%) rotate(calc(var(--burst-rot) * -1)) scaleX(0.3);
     }
     .comet-burst.is-hit .burst-glow {
@@ -494,7 +494,7 @@
       100% { opacity: 0; transform: translate(-50%,-50%) rotate(calc(var(--burst-rot) * -1)) scaleX(1.5); }
     }
     /* style-side skips the counter-rotation every other variant uses (which
-       would otherwise re-flatten the bar back to horizontal) — letting it
+       would otherwise re-flatten the bar back to horizontal), letting it
        inherit the group's -90deg rotation turns the normally-horizontal bar
        vertical, flush against the box's left edge. */
     .comet-burst.style-side.is-hit .burst-glow {
@@ -549,10 +549,10 @@
       .comet, .burst-glow, .burst-piece { animation: none !important; opacity: 0 !important; }
     }
 
-    /* ── "Deployments made easy" — exact-layout replica of the reference bento,
+    /* ── "Deployments made easy": exact-layout replica of the reference bento,
        recolored to the page's red/gold theme. 2 unequal columns × 2 rows; row 1
        (One click deploy / Intuitive workflow) is shorter, row 2 runs taller since
-       its cards carry larger visuals — matches the reference's proportions. ── */
+       its cards carry larger visuals. Matches the reference's proportions. ── */
     .deploy-bento { display: flex; flex-direction: column; gap: 20px; }
     /* Each row is its own independent 2-column grid so row 2's ratio can be
        reversed from row 1's while every card keeps its left/right position. */
@@ -575,14 +575,14 @@
     .deploy-card-text { padding: 22px 22px 18px; }
     /* Fixed (not auto) so the card rises close to .deploy-card-text instead of
        being pushed to the bottom of the flex column with a large empty gap
-       above it — must stay above .pfc-bump's -52px bleed (round 5) so the
+       above it. Must stay above .pfc-bump's -52px bleed (round 5) so the
        bump doesn't collide with the text above. Desktop only; the mobile
        override below (max-width:860px) is untouched. */
     .deploy-card-workflow .deploy-card-visual { margin-top: 64px; }
     .deploy-card-copy .deploy-card-visual { margin-top: auto; }
     .deploy-card-edge .deploy-card-visual { margin-top: auto; }
     .deploy-card-visual > img { display: block; width: 100%; height: auto; }
-    /* Sharp top-right/bottom-left, rounded top-left/bottom-right — mirrors the
+    /* Sharp top-right/bottom-left, rounded top-left/bottom-right: mirrors the
        inner .pfc-slide card shape (scoped to this one bento cell only, not the
        shared .deploy-card base rule that Simple Migration/Hosting/Example
        Template also use). */
@@ -598,7 +598,7 @@
       opacity: 0; transition: opacity 1s ease;
     }
     .deploy-card-globe canvas:active { cursor: grabbing; }
-    /* Ping markers — positioned via JS each frame (translate transform),
+    /* Ping markers: positioned via JS each frame (translate transform),
        computed from the same phi/theta rotating the globe itself, so they
        track rotation/drag/occlusion in lockstep with the rendered dots. */
     .globe-ping {
@@ -624,7 +624,7 @@
       .globe-ping-ring { animation: none; opacity: 0; }
     }
     /* Storefront preview bleeds past the visual box's own right/bottom edge,
-       clipped by the card's overflow:hidden + border-radius — same "oversized
+       clipped by the card's overflow:hidden + border-radius, same "oversized
        element bled off the corner" technique as .deploy-card-globe above. */
     .deploy-card-preview { position: relative; overflow: hidden; height: 300px; }
     .deploy-card-preview .browser-mock {
@@ -646,12 +646,12 @@
       --tile: calc((100cqw - 2 * var(--gap)) / 3);
       cursor: grab;
       touch-action: pan-y;
-      /* Hover buffer — without this, overflow:hidden (needed to window-clip
+      /* Hover buffer: without this, overflow:hidden (needed to window-clip
          the horizontally-scrolling strip) also slices off .deploy-mini-box's
          hover/active lift + shadow, since they'd otherwise sit flush against
          this clip edge. Sized from the hover box-shadow below (0 10px 24px
          -6px): DO NOT reduce without re-checking that shadow stays uncut.
-         This genuinely grows the row — a negative margin on the track to
+         This genuinely grows the row. A negative margin on the track to
          "cancel" it back out would put the tiles flush against the clip
          edge again, undoing the fix. The row's own margin-top/bottom:auto
          (below) already absorbs the extra height by shrinking the
@@ -665,7 +665,7 @@
       -webkit-user-drag: none;
     }
     /* Scroll position driven entirely by JS (translateX each frame) so it can
-       be paused mid-frame for dragging — see the script near the platform-
+       be paused mid-frame for dragging. See the script near the platform-
        support carousel. Same architecture as index.html's .industry-marquee. */
     .deploy-mini-track {
       display: flex;
@@ -686,7 +686,7 @@
     }
     .deploy-mini-box:active { transform: translateY(-1px) translateZ(0); }
     /* Touch devices never get the :hover lift above, so their only feedback
-       would otherwise be this light press — give them the same lift+shadow
+       would otherwise be this light press. Give them the same lift+shadow
        hover gives a mouse instead. Placed after the base :active rule so it
        wins by source order (equal specificity) under hover:none. */
     @media (hover: none) {
@@ -697,18 +697,18 @@
       .deploy-card-deploy, .deploy-card-workflow, .deploy-card-edge, .deploy-card-copy { min-height: 0; }
       /* Without a tall min-height forcing extra flex space, margin-top:auto on
          .deploy-card-visual collapses to 0 here, leaving no clearance for the
-         .pfc-bump's upward bleed — it would overlap the intro text above it. */
+         .pfc-bump's upward bleed. It would overlap the intro text above it. */
       .deploy-card-workflow .deploy-card-visual { margin-top: 44px; }
       /* Same collapse hits .deploy-mini-row's auto/auto margins (no free space
          to split once min-height:0 removes the desktop's forced extra height),
-         so swap to a fixed margin matching the card's own 24px padding —
-         keeps the top gap and the gap down to the h3 equal on mobile too. */
+         so swap to a fixed margin matching the card's own 24px padding.
+         Keeps the top gap and the gap down to the h3 equal on mobile too. */
       .deploy-card-deploy .deploy-mini-row { margin-top: 0; margin-bottom: 24px; }
-      /* Fit 2 tiles across instead of desktop's 3 — the shared formula makes
+      /* Fit 2 tiles across instead of desktop's 3: the shared formula makes
          tiles too cramped on a phone-width card (~90px at 390px viewport). */
       .deploy-mini-row { --tile: calc((100cqw - 2 * var(--gap)) / 2); }
       /* Desktop deliberately bleeds the mock past the card's right/bottom edge
-         at a fixed height:300px crop — .browser-mock stays position:absolute
+         at a fixed height:300px crop; .browser-mock stays position:absolute
          (unchanged, inherited from the base rule) on mobile too, so the same
          bleed-and-clip technique applies. Only the crop height changes, since
          300px was tuned for desktop's wider column; at mobile's narrower width
@@ -718,7 +718,7 @@
       .deploy-card-preview { height: 165px; }
     }
 
-    /* ── Platform Support carousel — one platform card at a time inside the
+    /* ── Platform Support carousel: one platform card at a time inside the
        deploy-card-workflow visual slot, paged with prev/next arrows beside the
        heading on each slide. All slides are stacked in the same grid cell
        (grid-area:1/1) so the track auto-sizes to the tallest slide and the
@@ -775,7 +775,7 @@
     .pfc-btn:focus-visible { outline: 2px solid rgba(239,68,68,0.55); outline-offset: 2px; }
     .pfc-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-2); letter-spacing: 0.04em; min-width: 42px; text-align: center; }
 
-    /* ── Porting-pitch grid — horizontal merged cards, 2 per row ── */
+    /* ── Porting-pitch grid: horizontal merged cards, 2 per row ── */
     .pitch-intro { max-width: 720px; margin: 0 auto 40px; text-align: center; font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
     .pitch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     @media (max-width: 760px) { .pitch-grid { grid-template-columns: 1fr; } }
@@ -799,7 +799,7 @@
     .pitch-vardweb .pitch-text { color: var(--text-1); font-weight: 500; }
     .pitch-arrow { flex-shrink: 0; color: rgba(239,68,68,0.55); }
 
-    /* ── Feature manifest grid — manifest-card style ported from the research
+    /* ── Feature manifest grid: manifest-card style ported from the research
        artifact (eyebrow category label + checklist), re-themed to red ── */
     .feat-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
     @media (max-width: 640px) { .feat-grid { max-width: 88%; margin: 0 auto; } }
@@ -974,6 +974,7 @@
       27%  { transform: translateX(160%) skewX(-15deg); }
       100% { transform: translateX(160%) skewX(-15deg); }
     }
+    @media (prefers-reduced-motion: reduce) { .cheaper-pill::after { animation: none; } }
     .pricing-price {
       font-family: 'JetBrains Mono', monospace;
       font-size: 38px; font-weight: 800;
@@ -1354,13 +1355,13 @@
       .ecom-hero-services-menu { width: 100%; max-width: 260px; }
       .ecom-hero-services-trigger { width: 100%; justify-content: center; }
       .ecom-hero-actions .ecom-hero-btn-gradient { width: 100%; max-width: 260px; justify-content: center; }
-      /* Shallower, mostly-vertical fall on narrow viewports — the desktop ~40-50°
+      /* Shallower, mostly-vertical fall on narrow viewports: the desktop ~40-50°
          angle carries comets sideways past the (much narrower) mockup box before
          they've fallen far enough to reach it. Fall distance/position unchanged
          (same top-left origin as desktop), only the rotation angle (constant at
          0%/100%) and the opacity fade window differ, since the shallow angle
          reaches the box's vertical position earlier in the animation's own
-         timeline (~50-60% here vs ~77-79% on desktop) — durations below are also
+         timeline (~50-60% here vs ~77-79% on desktop). Durations below are also
          tuned separately per breakpoint for the same reason. */
       .comet-1 { animation-duration: 4.8s; }
       .comet-2 { animation-duration: 6.9s; }
@@ -1373,12 +1374,12 @@
 
       /* Miss comets stay steep/horizontal (unlike the hit-comets above, which
          were flattened to near-vertical specifically to avoid overshooting the
-         narrow mobile box) — mobile's box spans nearly the full width, so a
+         narrow mobile box). Mobile's box spans nearly the full width, so a
          short, fairly horizontal path clears above it and exits off-screen
          right well before descending anywhere near the box's depth. */
       /* left overridden back down for comet-5 (desktop uses a wider 18% to keep
          clear of comet-6's path) and pushed further out for comet-7 (more
-         separation from comet-6) — mobile's box geometry means the two
+         separation from comet-6). Mobile's box geometry means the two
          breakpoints need different spacing to avoid the same paths overlapping. */
       .comet-5 { left: 10%; animation-duration: 3s;   animation-delay: 3.9s; }
       .comet-6 { animation-duration: 3.6s; animation-delay: 7.85s; }
@@ -1387,7 +1388,7 @@
       @keyframes comet-fall-6 { 0%{opacity:0;transform:rotate(-54deg) translateY(0);} 8%{opacity:.85;} 92%{opacity:.8;}  100%{opacity:0;transform:rotate(-54deg) translateY(560px);} }
       @keyframes comet-fall-7 { 0%{opacity:0;transform:rotate(-62deg) translateY(0);} 8%{opacity:.9;}  92%{opacity:.85;} 100%{opacity:0;transform:rotate(-62deg) translateY(430px);} }
 
-      /* Side-hit comets are desktop/tablet only — mobile's box leaves no real
+      /* Side-hit comets are desktop/tablet only: mobile's box leaves no real
          gap on its left to approach through, so a side strike can't read
          clearly here. */
       .comet-8, .comet-9, .comet-burst-8, .comet-burst-9 { display: none; }
@@ -1601,32 +1602,32 @@
             <p class="sr-only">Platforms we migrate from: WordPress, Shopify, WooCommerce, Squarespace, BigCommerce, Wix, Magento, OpenCart, React, Vue, Angular, Laravel, PHP.</p>
             <div class="deploy-mini-row" aria-hidden="true">
               <div class="deploy-mini-track">
-                <div class="deploy-mini-box"><img src="brand_assets/icons/WordPress-Logo.webp" alt="" style="transform:scale(1.15);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Shopify-Logo.webp" alt="" style="transform:scale(1.8);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/WooCommerce-Logo.webp" alt=""></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Squarespace-Logo.webp" alt="" style="transform:scale(1.3);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/BigCommerce-Logo.webp" alt=""></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Wix-Logo.webp" alt="" style="transform:scale(0.78);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Magento-Logo.webp" alt=""></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Opencart-Logo.webp" alt="" style="transform:scale(1.8) translateY(10%);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/React-Logo.webp" alt="" style="transform:scale(0.78);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Vue-Logo.webp" alt="" style="transform:scale(0.95);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Angular-Logo.webp" alt="" style="transform:scale(1.8);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Laravel-Logo.webp" alt="" style="transform:scale(2.0);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/PHP-Logo.webp" alt="" style="transform:scale(1.4);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/WordPress-Logo.webp" alt="" style="transform:scale(1.15);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Shopify-Logo.webp" alt="" style="transform:scale(1.8);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/WooCommerce-Logo.webp" alt=""></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Squarespace-Logo.webp" alt="" style="transform:scale(1.3);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/BigCommerce-Logo.webp" alt=""></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Wix-Logo.webp" alt="" style="transform:scale(0.78);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Magento-Logo.webp" alt=""></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Opencart-Logo.webp" alt="" style="transform:scale(1.8) translateY(10%);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/React-Logo.webp" alt="" style="transform:scale(0.78);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Vue-Logo.webp" alt="" style="transform:scale(0.95);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Angular-Logo.webp" alt="" style="transform:scale(1.8);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/Laravel-Logo.webp" alt="" style="transform:scale(2.0);"></div>
-                <div class="deploy-mini-box"><img src="brand_assets/icons/PHP-Logo.webp" alt="" style="transform:scale(1.4);"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WordPress-Logo.webp" alt="" style="transform:scale(1.15);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Shopify-Logo.webp" alt="" style="transform:scale(1.8);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WooCommerce-Logo.webp" alt="" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Squarespace-Logo.webp" alt="" style="transform:scale(1.3);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/BigCommerce-Logo.webp" alt="" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Wix-Logo.webp" alt="" style="transform:scale(0.78);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Magento-Logo.webp" alt="" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Opencart-Logo.webp" alt="" style="transform:scale(1.8) translateY(10%);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/React-Logo.webp" alt="" style="transform:scale(0.78);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Vue-Logo.webp" alt="" style="transform:scale(0.95);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Angular-Logo.webp" alt="" style="transform:scale(1.8);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Laravel-Logo.webp" alt="" style="transform:scale(2.0);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/PHP-Logo.webp" alt="" style="transform:scale(1.4);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WordPress-Logo.webp" alt="" style="transform:scale(1.15);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Shopify-Logo.webp" alt="" style="transform:scale(1.8);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/WooCommerce-Logo.webp" alt="" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Squarespace-Logo.webp" alt="" style="transform:scale(1.3);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/BigCommerce-Logo.webp" alt="" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Wix-Logo.webp" alt="" style="transform:scale(0.78);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Magento-Logo.webp" alt="" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Opencart-Logo.webp" alt="" style="transform:scale(1.8) translateY(10%);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/React-Logo.webp" alt="" style="transform:scale(0.78);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Vue-Logo.webp" alt="" style="transform:scale(0.95);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Angular-Logo.webp" alt="" style="transform:scale(1.8);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/Laravel-Logo.webp" alt="" style="transform:scale(2.0);" loading="lazy"></div>
+                <div class="deploy-mini-box"><img src="brand_assets/icons/PHP-Logo.webp" alt="" style="transform:scale(1.4);" loading="lazy"></div>
               </div>
             </div>
             <div class="deploy-card-text">
@@ -1643,7 +1644,7 @@
               <div class="pfc" role="group" aria-roledescription="carousel" aria-label="Supported platforms">
                 <div class="pfc-viewport">
                   <div class="pfc-slide is-active" aria-hidden="false">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/WordPress-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/WordPress-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">WordPress</h4>
                       <div class="pfc-controls">
@@ -1659,7 +1660,7 @@
                     <p class="pfc-desc">We migrate your posts, pages, and media library with zero data loss and support for every major theme structure. Have a current XML export and admin access ready for the smoothest handoff.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Shopify-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Shopify-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Shopify</h4>
                       <div class="pfc-controls">
@@ -1675,7 +1676,7 @@
                     <p class="pfc-desc">We rebuild your storefront from the ground up, porting products, collections, and customers via Shopify's own export tools. Hold off canceling paid apps until your new site's DNS has fully propagated.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/WooCommerce-icon.webp" alt="" style="transform:scale(1.18);"></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/WooCommerce-icon.webp" alt="" style="transform:scale(1.18);" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">WooCommerce</h4>
                       <div class="pfc-controls">
@@ -1691,7 +1692,7 @@
                     <p class="pfc-desc">Your full product catalog, orders, and customer records port over cleanly, no data left behind. Export your product CSV and hold off on new orders during the swap for a clean cutover.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Squarespace-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Squarespace-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Squarespace</h4>
                       <div class="pfc-controls">
@@ -1707,7 +1708,7 @@
                     <p class="pfc-desc">Since Squarespace keeps no database export, we hand-rebuild your pages and content library from a full site audit. A recent export of your product and blog data speeds the process along.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/BigCommerce-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/BigCommerce-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">BigCommerce</h4>
                       <div class="pfc-controls">
@@ -1723,7 +1724,7 @@
                     <p class="pfc-desc">We pull your catalog, customers, and order history through BigCommerce's REST APIs and CSV exports, no manual re-entry needed. A store-level API key with read access gets the sync started.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Wix-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Wix-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Wix</h4>
                       <div class="pfc-controls">
@@ -1736,10 +1737,10 @@
                         </button>
                       </div>
                     </div>
-                    <p class="pfc-desc">Like Squarespace, Wix is a closed platform — we recreate your design and content pixel-for-pixel from a full crawl. Gather your media library and copy ahead of time so nothing gets lost.</p>
+                    <p class="pfc-desc">Like Squarespace, Wix is a closed platform. We recreate your design and content pixel-for-pixel from a full crawl. Gather your media library and copy ahead of time so nothing gets lost.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Magento-icon.webp" alt="" style="transform:scale(1.18);"></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Magento-icon.webp" alt="" style="transform:scale(1.18);" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Magento</h4>
                       <div class="pfc-controls">
@@ -1755,7 +1756,7 @@
                     <p class="pfc-desc">We migrate Magento's catalog, customer, and order data through its native export tools, preserving every SKU and attribute. A staging login lets us test the full port before your live cutover.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Opencart-icon.webp" alt="" style="transform:scale(1.18);"></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Opencart-icon.webp" alt="" style="transform:scale(1.18);" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">OpenCart</h4>
                       <div class="pfc-controls">
@@ -1771,7 +1772,7 @@
                     <p class="pfc-desc">Your catalog, categories, and order history port directly from OpenCart's database export. Disable extensions you no longer use beforehand to keep the migration lean and fast.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/React-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/React-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">React</h4>
                       <div class="pfc-controls">
@@ -1787,7 +1788,7 @@
                     <p class="pfc-desc">We inherit your existing component structure and API layer, modernizing only what needs it. Repo access and your environment variables are all we need to get started.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Vue-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Vue-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Vue</h4>
                       <div class="pfc-controls">
@@ -1803,7 +1804,7 @@
                     <p class="pfc-desc">We build directly on top of your existing Vue codebase, keeping component logic intact where it holds up. A clean repo handoff with documented endpoints is all we need to begin.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Angular-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Angular-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Angular</h4>
                       <div class="pfc-controls">
@@ -1819,7 +1820,7 @@
                     <p class="pfc-desc">Already on Angular? We extend or refactor your existing app instead of starting from zero. Share your repo and CI/CD setup so we can plug in without breaking your deploy pipeline.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Laravel-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/Laravel-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">Laravel</h4>
                       <div class="pfc-controls">
@@ -1835,7 +1836,7 @@
                     <p class="pfc-desc">We build on your existing models and migrations rather than rebuilding from scratch. A full repo and a redacted .env template are all we need for a smooth handoff.</p>
                   </div>
                   <div class="pfc-slide" aria-hidden="true">
-                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/PHP-icon.webp" alt=""></div>
+                    <div class="pfc-bump" aria-hidden="true"><img src="brand_assets/icons/PHP-icon.webp" alt="" loading="lazy"></div>
                     <div class="pfc-header">
                       <h4 class="pfc-name">PHP</h4>
                       <div class="pfc-controls">
@@ -2130,30 +2131,30 @@
         <div class="addon-card-grid">
           <div class="addon-card reveal-fade" style="transition-delay:0s">
             <div class="addon-card-content">
-              <div class="addon-card-icon" style="--icon-right:-5%; --icon-top:65%; --icon-transform:translateY(-35%); --icon-w:230px; --icon-h:230px; --icon-rotate:2deg; --icon-right-mobile:-15%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:190px; --icon-h-mobile:190px; --icon-rotate-mobile:3deg;"><img src="brand_assets/icons/E-Commerce-Online-Retail-isometric-icon.webp" alt="" loading="lazy" /></div>
+              <div class="addon-card-icon" style="--icon-right:-9%; --icon-top:65%; --icon-transform:translateY(-52%); --icon-w:300px; --icon-h:300px; --icon-rotate:2deg; --icon-right-mobile:-22%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(20%); --icon-w-mobile:200px; --icon-h-mobile:200px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-22%; --icon-top-mobile-375:53.3%; --icon-transform-mobile-375:translateY(-5%); --icon-w-mobile-375:220px; --icon-h-mobile-375:220px; --icon-rotate-mobile-375:2.8deg; --icon-right-mobile-425:-20%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-16%); --icon-w-mobile-425:220px; --icon-h-mobile-425:220px; --icon-rotate-mobile-425:2.6deg;"><img src="brand_assets/icons/E-Commerce-Online-Retail-isometric-icon.webp" alt="" loading="lazy" /></div>
               <div>
                 <h4 class="addon-card-title">Store Migration · One-time</h4>
-                <p class="addon-card-desc">Already selling on Shopify, WooCommerce, or BigCommerce? We migrate your full catalog, order history, and customer data into your new platform.<br>No re-entry, no data loss.</p>
+                <p class="addon-card-desc">Already selling on Shopify, WooCommerce, or BigCommerce?<br>We migrate your full catalog, order history, and customer data into your new platform.<br>No re-entry, no data loss.</p>
               </div>
               <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=Store%20Migration&amp;serviceColor=%23EF4444&amp;serviceDesc=Migrate%20an%20existing%20Shopify%2FWooCommerce%2FBigCommerce%20store%20into%20a%20custom%20VardWeb%20platform." class="btn addon-card-cta">Request a migration quote</a>
             </div>
           </div>
           <div class="addon-card reveal-fade" style="transition-delay:0.06s">
             <div class="addon-card-content">
-              <div class="addon-card-icon" style="--icon-right:-7%; --icon-top:65%; --icon-transform:translateY(-41%); --icon-w:220px; --icon-h:220px; --icon-rotate:3deg; --icon-right-mobile:-18%; --icon-top-mobile:52%; --icon-transform-mobile:translateY(31%); --icon-w-mobile:180px; --icon-h-mobile:180px; --icon-rotate-mobile:3deg;"><img src="brand_assets/icons/idx-roadmap-rocket.webp" alt="" loading="lazy" /></div>
+              <div class="addon-card-icon" style="--icon-right:-2%; --icon-top:65%; --icon-transform:translateY(-50%); --icon-w:200px; --icon-h:200px; --icon-rotate:3deg; --icon-right-mobile:-8%; --icon-top-mobile:52%; --icon-transform-mobile:translateY(30%); --icon-w-mobile:120px; --icon-h-mobile:120px; --icon-rotate-mobile:3deg; --icon-right-mobile-375:-8%; --icon-top-mobile-375:54.9%; --icon-transform-mobile-375:translateY(4%); --icon-w-mobile-375:150px; --icon-h-mobile-375:150px; --icon-rotate-mobile-375:3deg; --icon-right-mobile-425:-6%; --icon-top-mobile-425:57.7%; --icon-transform-mobile-425:translateY(-11%); --icon-w-mobile-425:160px; --icon-h-mobile-425:160px; --icon-rotate-mobile-425:3deg;"><img src="brand_assets/icons/idx-roadmap-rocket.webp" alt="" loading="lazy" /></div>
               <div>
                 <h4 class="addon-card-title">Expedited Launch</h4>
-                <p class="addon-card-desc">Need to be live before a specific date — a launch event, a seasonal window, a funding deadline?<br>We can compress the build timeline for an added rush fee.</p>
+                <p class="addon-card-desc">Need to be live before a specific date? A launch event, a seasonal window, a funding deadline?<br>We can compress the build timeline for an added rush fee.</p>
               </div>
               <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=Expedited%20Launch&amp;serviceColor=%23EF4444&amp;serviceDesc=Compress%20the%20build%20timeline%20for%20an%20added%20rush%20fee." class="btn addon-card-cta">Ask about a rush build</a>
             </div>
           </div>
           <div class="addon-card reveal-fade" style="transition-delay:0.12s">
             <div class="addon-card-content">
-              <div class="addon-card-icon" style="--icon-right:-4%; --icon-top:65%; --icon-transform:translateY(-38%); --icon-w:230px; --icon-h:230px; --icon-rotate:3deg; --icon-right-mobile:-13%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(23%); --icon-w-mobile:200px; --icon-h-mobile:200px; --icon-rotate-mobile:3deg;"><img src="brand_assets/icons/idx-integrations.webp" alt="" loading="lazy" /></div>
+              <div class="addon-card-icon" style="--icon-right:-7%; --icon-top:65%; --icon-transform:translateY(-50%); --icon-w:230px; --icon-h:230px; --icon-rotate:11deg; --icon-right-mobile:-18%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(20%); --icon-w-mobile:160px; --icon-h-mobile:160px; --icon-rotate-mobile:8deg; --icon-right-mobile-375:-16%; --icon-top-mobile-375:53.3%; --icon-transform-mobile-375:translateY(4%); --icon-w-mobile-375:170px; --icon-h-mobile-375:170px; --icon-rotate-mobile-375:8deg; --icon-right-mobile-425:-16%; --icon-top-mobile-425:56.6%; --icon-transform-mobile-425:translateY(-16%); --icon-w-mobile-425:170px; --icon-h-mobile-425:170px; --icon-rotate-mobile-425:8deg;"><img src="brand_assets/icons/idx-integrations.webp" alt="" loading="lazy" /></div>
               <div>
                 <h4 class="addon-card-title">Custom Integrations</h4>
-                <p class="addon-card-desc">ERP, accounting software, a proprietary fulfillment system, a legacy CRM — if your business runs on something specific, we build the connection into your storefront.</p>
+                <p class="addon-card-desc">ERP, accounting software, a proprietary fulfillment system, a legacy CRM?<br>If your business runs on something specific, we build the connection into your storefront.</p>
               </div>
               <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;service=Custom%20Integration&amp;serviceColor=%23EF4444&amp;serviceDesc=Connect%20a%20third-party%20ERP%2C%20accounting%2C%20fulfillment%2C%20or%20CRM%20system%20to%20the%20storefront." class="btn addon-card-cta">Discuss an integration →</a>
             </div>
@@ -2170,7 +2171,7 @@
         <div class="section-head reveal-fade">
           <p class="sec-tag">// Investment</p>
           <h2>Choose your <span class="ecom-heading-grad">tier</span></h2>
-          <p>From your first product listing to a full omnichannel operation — every plan is custom-coded, never templated. Prices are starting points; final scope is confirmed at discovery.</p>
+          <p>From your first product listing to a full omnichannel operation. Every plan is custom-coded, never templated. Prices are starting points; final scope is confirmed at discovery.</p>
         </div>
 
         <!-- Monthly / Yearly toggle -->
@@ -2200,7 +2201,7 @@
             <ul class="pricing-features">
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Brand new online store, built from scratch</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Mobile-first responsive design</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants (size, color, bundles) — up to 100 products</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants (size, color, bundles): up to 100 products</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Guest + one-page checkout with abandoned-cart recovery emails</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Card payments, Apple Pay &amp; Google Pay, PayPal</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Real-time stock sync &amp; low-stock alerts</li>
@@ -2368,11 +2369,11 @@
               <span class="price-suffix">/mo + tax</span>
             </div>
             <p class="pricing-pages">Up to 500 products · ~1-3 week delivery</p>
-            <p class="pricing-desc">For stores ready to scale past a single channel — deeper automation, a marketplace listing, and the operational tooling to keep growth from becoming chaos.</p>
+            <p class="pricing-desc">For stores ready to scale past a single channel: deeper automation, a marketplace listing, and the operational tooling to keep growth from becoming chaos.</p>
             <ul class="pricing-features">
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Brand new online store, built from scratch</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Mobile-first responsive design</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants — up to 500 products</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants: up to 500 products</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Guest + one-page checkout, multi-touch cart recovery (email + SMS)</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Full payment stack: cards, Apple/Google Pay, PayPal, Amazon Pay, Buy-Now-Pay-Later</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Real-time stock sync, low-stock alerts + back-in-stock notifications</li>
@@ -2473,11 +2474,11 @@
               <span class="price-suffix">/mo + tax</span>
             </div>
             <p class="pricing-pages">Up to 2,000 products · ~1-4 week delivery</p>
-            <p class="pricing-desc">Full-scale, multi-channel commerce — automated cross-channel recovery, unlimited integrations, and the compliance/reporting depth a growing operation needs.</p>
+            <p class="pricing-desc">Full-scale, multi-channel commerce: automated cross-channel recovery, unlimited integrations, and the compliance/reporting depth a growing operation needs.</p>
             <ul class="pricing-features">
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Brand new online store, built from scratch</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Mobile-first responsive design</li>
-              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants — up to 2,000 products</li>
+              <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Catalog with variants: up to 2,000 products</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Fully automated cross-channel cart recovery, up to 20 touchpoints</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Full payment stack + multi-currency display</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Real-time stock sync across channels + supplier &amp; PO tracking</li>
@@ -2577,7 +2578,7 @@
               <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">Bespoke</span></span></span>
             </div>
             <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
-            <p class="pricing-desc">For catalogs, operations, or compliance requirements that don't fit a fixed tier — engineered around your exact business, not a template.</p>
+            <p class="pricing-desc">For catalogs, operations, or compliance requirements that don't fit a fixed tier. Engineered around your exact business, not a template.</p>
             <ul class="pricing-features">
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Bespoke online store, engineered from scratch around your exact catalog and operations</li>
               <li><svg class="pricing-feat-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>Unlimited products &amp; variants, bespoke catalog architecture built for your scale</li>
@@ -2689,7 +2690,7 @@
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">You own your domain and everything your store generates — every customer record, every order, every dollar of data. VardWeb owns and maintains the underlying code, which is what your flat monthly rate covers: the build, the hosting, the updates, and the support. You're never locked out of your own business data, even though the platform itself is ours to run.</div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">You own your domain and everything your store generates: every customer record, every order, every dollar of data. VardWeb owns and maintains the underlying code, which is what your flat monthly rate covers: the build, the hosting, the updates, and the support. You're never locked out of your own business data, even though the platform itself is ours to run.</div></div>
           </div>
           <div class="ecom-faq-item reveal-fade" style="transition-delay:0.05s">
             <button class="ecom-faq-trigger" aria-expanded="false">
@@ -2700,18 +2701,18 @@
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Timeline depends on catalog size and tier — a Jack-tier store with a smaller catalog moves faster than an Ace-tier build with marketplace integrations and automated marketing flows. We'll give you a firm timeline after a short discovery call. Need to launch by a specific date? Ask about our Expedited Launch add-on above.</div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Timeline depends on catalog size and tier. A Jack-tier store with a smaller catalog moves faster than an Ace-tier build with marketplace integrations and automated marketing flows. We'll give you a firm timeline after a short discovery call. Need to launch by a specific date? Ask about our Expedited Launch add-on above.</div></div>
           </div>
           <div class="ecom-faq-item reveal-fade" style="transition-delay:0.1s">
             <button class="ecom-faq-trigger" aria-expanded="false">
               <div class="ecom-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
-              <span class="ecom-faq-question">I already sell on Shopify / WooCommerce / BigCommerce — can you move my store over?</span>
+              <span class="ecom-faq-question">I already sell on Shopify / WooCommerce / BigCommerce. Can you move my store over?</span>
               <div class="ecom-faq-toggle" aria-hidden="true">
                 <svg class="ecom-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Yes. Store Migration is a one-time add-on where we bring your full catalog, order history, and customer data into your new VardWeb platform — nothing re-entered by hand, nothing lost in the switch. See the Add-ons above for details.</div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Yes. Store Migration is a one-time add-on where we bring your full catalog, order history, and customer data into your new VardWeb platform, nothing re-entered by hand, nothing lost in the switch. See the Add-ons above for details.</div></div>
           </div>
           <div class="ecom-faq-item reveal-fade" style="transition-delay:0.15s">
             <button class="ecom-faq-trigger" aria-expanded="false">
@@ -2722,7 +2723,7 @@
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">You upgrade. Every tier runs on the same platform, so moving from Queen to King, for example, isn't a re-platform or a rebuild — it's a capacity increase. That's the entire point of building it ourselves instead of putting you on a shelf platform: there's no ceiling that forces you to start over.</div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">You upgrade. Every tier runs on the same platform, so moving from Queen to King, for example, isn't a re-platform or a rebuild. It's a capacity increase. That's the entire point of building it ourselves instead of putting you on a shelf platform: there's no ceiling that forces you to start over.</div></div>
           </div>
           <div class="ecom-faq-item reveal-fade" style="transition-delay:0.2s">
             <button class="ecom-faq-trigger" aria-expanded="false">
@@ -2733,7 +2734,7 @@
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Any time. Reach out and we'll adjust your plan to the tier that fits where your business is now — up or down.</div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Any time. Reach out and we'll adjust your plan to the tier that fits where your business is now, up or down.</div></div>
           </div>
           <div class="ecom-faq-item reveal-fade" style="transition-delay:0.25s">
             <button class="ecom-faq-trigger" aria-expanded="false">
@@ -2744,7 +2745,7 @@
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Both. The platform (catalog, checkout, payments, inventory, marketing automation, admin, and reporting) and the storefront design that sits on top of it are built together as one custom project — not a theme applied to a template.</div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">Both. The platform (catalog, checkout, payments, inventory, marketing automation, admin, and reporting) and the storefront design that sits on top of it are built together as one custom project, not a theme applied to a template.</div></div>
           </div>
           <div class="ecom-faq-item reveal-fade" style="transition-delay:0.3s">
             <button class="ecom-faq-trigger" aria-expanded="false">
@@ -2766,7 +2767,7 @@
                 <svg class="ecom-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ecom-red)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </div>
             </button>
-            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">There's no published price list, because there's no template to price against — every build is scoped to your catalog, tier, and requirements. Pick the tier that matches your business above, then request a quote and we'll price it from there. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--ecom-red);">See more general FAQs →</a></div></div>
+            <div class="ecom-faq-content"><div class="ecom-faq-content-inner">There's no published price list, because there's no template to price against. Every build is scoped to your catalog, tier, and requirements. Pick the tier that matches your business above, then request a quote and we'll price it from there. <a href="faq.html" class="footer-link" style="display:inline;margin:0;color:var(--ecom-red);">See more general FAQs →</a></div></div>
           </div>
         </div>
       </div>
@@ -2801,7 +2802,7 @@
       <div class="footer-grid">
         <div>
           <div class="logo-nav-wrap" style="display:inline-flex;">
-            <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+            <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" loading="lazy" />
           </div>
           <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
           <div class="footer-social-row">
@@ -2856,13 +2857,13 @@
     <div class="trust-badge-row reveal-fade">
       <a href="about.html" class="trust-badge">
         <span class="trust-badge-icon">
-          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);" loading="lazy">
         </span>
         <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
       </a>
       <a href="privacy.html#gdpr-pipeda" class="trust-badge">
         <span class="trust-badge-icon">
-          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" loading="lazy">
         </span>
         <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
       </a>
@@ -2895,6 +2896,7 @@
 
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
+  <script src="/perf-utils.js"></script>
   <script type="module" src="/nav-auth.js"></script>
 
   <script>
@@ -2917,7 +2919,7 @@
     })();
   </script>
 
-  <!-- ── Platform Support carousel — pages through one platform card at a time.
+  <!-- ── Platform Support carousel: pages through one platform card at a time.
        Each slide carries its own copy of the prev/next buttons + counter
        (beside its heading), so every slide's controls drive the same shared
        index. Inactive slides' buttons get tabindex=-1 so keyboard users can't
@@ -2964,7 +2966,15 @@
         var track = row.querySelector('.deploy-mini-track');
         if (!track) return;
 
-        var halfWidth = track.scrollWidth / 2;
+        // Exact repeat period = distance from tile 0 to its duplicate (tile n/2).
+        // NOT scrollWidth/2, the track has one fewer gap than tiles, so half
+        // its width is short by gap/2, which snapped the strip ~5px every wrap.
+        var boxes = track.querySelectorAll('.deploy-mini-box');
+        function measure() {
+          if (boxes.length < 2) return track.scrollWidth / 2;
+          return boxes[boxes.length / 2].getBoundingClientRect().left - boxes[0].getBoundingClientRect().left;
+        }
+        var period = measure();
         var offset = 0;
         var isDragging = false;
         var isHovering = false;
@@ -2973,9 +2983,9 @@
         var lastT = null;
 
         function wrapOffset() {
-          if (halfWidth <= 0) return;
-          while (offset <= -halfWidth) offset += halfWidth;
-          while (offset > 0) offset -= halfWidth;
+          if (period <= 0) return;
+          while (offset <= -period) offset += period;
+          while (offset > 0) offset -= period;
         }
         function render() {
           track.style.transform = 'translateX(' + offset + 'px)';
@@ -2985,7 +2995,7 @@
           var dt = (t - lastT) / 1000;
           lastT = t;
           if (!reduceMotion && !isDragging && !isHovering) {
-            offset -= (halfWidth / 32) * dt;
+            offset -= (period / 32) * dt;
             wrapOffset();
             render();
           }
@@ -3020,12 +3030,24 @@
         row.addEventListener('pointerup', endDrag);
         row.addEventListener('pointercancel', endDrag);
 
-        window.addEventListener('resize', function () { halfWidth = track.scrollWidth / 2; });
+        // Re-measure whenever the card changes width (breakpoint flip, mobile
+        // URL-bar resize, late-loading styles), scaling offset so the strip
+        // keeps its relative position instead of popping.
+        function remeasure() {
+          var next = measure();
+          if (next <= 0 || next === period) return;
+          if (period > 0) offset = offset * (next / period);
+          period = next;
+          wrapOffset();
+          render();
+        }
+        if (window.ResizeObserver) new ResizeObserver(remeasure).observe(row);
+        else window.addEventListener('resize', remeasure);
       });
     })();
   </script>
 
-  <!-- ── Comet/box collision detection — live geometry, not baked-in coordinates.
+  <!-- ── Comet/box collision detection: live geometry, not baked-in coordinates.
        Each frame, checks every comet's actual bounding rect against the mockup
        box's rect; the instant they intersect, the burst is positioned at that
        comet's real leading corner and fired. Self-correcting by construction, so
@@ -3088,7 +3110,7 @@
         });
       });
 
-      // Hero "Explore the Page" popover — reparents to <body> so position:fixed isn't
+      // Hero "Explore the Page" popover: reparents to <body> so position:fixed isn't
       // clipped by the hero's overflow:hidden, flips up/down based on viewport space.
       document.querySelectorAll('.ecom-hero-services-menu').forEach(function (wrap) {
         var svcTrigger = wrap.querySelector('.ecom-hero-services-trigger');
@@ -3121,7 +3143,7 @@
         });
         document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
-        window.addEventListener('scroll', closeSvc, true);
+        window.addEventListener('scroll', closeSvc, { passive: true });
         window.addEventListener('resize', closeSvc);
       });
 
@@ -3152,7 +3174,7 @@
     });
   </script>
 
-  <!-- ── CTA shader background — ambient WebGL noise/glow wash behind the closing
+  <!-- ── CTA shader background: ambient WebGL noise/glow wash behind the closing
        CTA, in the page's red e-commerce theme. Same technique as .host-cta-shader
        on hosting-services.html (simplex noise → color blend → vignette → grain),
        recolored to --ecom-red / --ecom-red-deep / --ecom-red-pale. ── -->
@@ -3300,15 +3322,20 @@
       if (reduceMotion) {
         draw(0);
       } else {
-        (function render(ts) {
+        var raf;
+        function render(ts) {
           draw(ts * 0.001 * SPEED);
-          requestAnimationFrame(render);
-        })(0);
+          raf = requestAnimationFrame(render);
+        }
+        window.PerfUtils.gatedLoop(canvas, {
+          start: function () { raf = requestAnimationFrame(render); },
+          stop: function () { cancelAnimationFrame(raf); }
+        });
       }
     })();
   </script>
 
-  <!-- ── "Hosting over the Edge" globe — cobe canvas globe, red-themed markers,
+  <!-- ── "Hosting over the Edge" globe: cobe canvas globe, red-themed markers,
        auto-spins and is draggable. Loaded as an ES module from a CDN since this
        project has no build step / npm install. ── -->
   <script type="module">
@@ -3350,6 +3377,7 @@
 
       var phi = 0;
       var globe = null;
+      var gated = false;
 
       var markers = [
         { id: 'london', location: [51.51, -0.13], size: 0.06 },
@@ -3431,6 +3459,7 @@
           markers: markers,
           opacity: 0.95,
           onRender: function (state) {
+            if (!gated) return;
             if (!reduceMotion && !dragging) phi += SPEED;
             var rPhi = phi + settledPhi + dragOffset.phi;
             var rTheta = 0.24 + settledTheta + dragOffset.theta;
@@ -3456,6 +3485,15 @@
         });
         ro.observe(canvas);
       }
+
+      // cobe drives its own internal RAF loop tightly coupled to drag state
+      // and can't be paused via a single external RAF id; gate the per-frame
+      // rotation/ping math in onRender instead (WebGL draw call itself still
+      // runs, but the JS-side state update is skipped while off-screen/hidden).
+      window.PerfUtils.gatedLoop(canvas, {
+        start: function () { gated = true; },
+        stop: function () { gated = false; }
+      });
     })();
   </script>
 
@@ -3512,7 +3550,7 @@
       var track = slot.querySelector('.price-slot-track');
       if (!track) return;
 
-      /* Cancel any in-flight animation — its finish() becomes a no-op */
+      /* Cancel any in-flight animation: its finish() becomes a no-op */
       if (track._anim) track._anim.done = true;
 
       /* Snap track to a single clean element: keep only the last .price-slot-val
@@ -3681,7 +3719,7 @@
           var tierName = TIER_LABELS[activeTier.getAttribute('data-tier')];
           trigger.classList.add('selected');
           trigger.setAttribute('aria-pressed', 'true');
-          trigger.setAttribute('data-addon-label', baseLabel + ' — ' + activeService.getAttribute('data-service') + ' — ' + tierName + ' Tier');
+          trigger.setAttribute('data-addon-label', baseLabel + ': ' + activeService.getAttribute('data-service') + ', ' + tierName + ' Tier');
           if (summary) {
             summary.hidden = false;
             summary.textContent = activeService.getAttribute('data-service') + ' · ' + tierName;
@@ -3710,8 +3748,8 @@
   </script>
 
   <script>
-  /* ── Variable add-on accordion (SMM/CM): pick a service, then — only if that
-     service has a matching .sem-chip-row-group — a tier within it, before the
+  /* ── Variable add-on accordion (SMM/CM): pick a service, then (only if that
+     service has a matching .sem-chip-row-group) a tier within it, before the
      add-on counts as selected. Generic over any [data-addon-variable] trigger,
      keyed by aria-controls, so a future card's panel works by copying markup. ── */
   (function () {
@@ -3762,14 +3800,14 @@
 
         if (complete) {
           var serviceName = activeService.getAttribute('data-service');
-          var label = baseLabel + ' — ' + serviceName;
+          var label = baseLabel + ': ' + serviceName;
           var summaryText = serviceName;
           if (activeTier) {
             var tierKey = activeTier.getAttribute('data-tier');
             var tierName = TIER_LABELS[tierKey] || activeTier.textContent;
             var suffix = group.getAttribute('data-tier-suffix');
             if (suffix === null) suffix = 'Tier';
-            label += ' — ' + tierName + (suffix ? ' ' + suffix : '');
+            label += ', ' + tierName + (suffix ? ' ' + suffix : '');
             summaryText += ' · ' + tierName;
           }
           trigger.classList.add('selected');

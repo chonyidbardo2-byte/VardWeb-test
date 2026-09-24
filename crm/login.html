@@ -385,7 +385,7 @@
       }
     }
 
-    /* Banner mode overrides — all must live after base element styles in cascade */
+    /* Banner mode overrides: all must live after base element styles in cascade */
     @media (max-width: 1023px) and (min-width: 451px) {
       html, body { overflow-y: auto; overflow-x: hidden; }
       .left-top {
@@ -437,7 +437,7 @@
       overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
     }
 
-    /* ── WCAG 2.2.2 — Respect reduced-motion preference ── */
+    /* ── WCAG 2.2.2: Respect reduced-motion preference ── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -461,7 +461,7 @@
       <div class="chars-wrap">
         <div class="chars-stage" id="charsStage">
 
-          <!-- Purple tall rect — z:1 (back) -->
+          <!-- Purple tall rect: z:1 (back) -->
           <div class="char" id="charPurple"
                style="left:198px;width:180px;height:400px;background:#6C3FF5;border-radius:10px 10px 0 0;z-index:1;">
             <div class="char-eyes" id="purpleEyes" style="gap:32px;">
@@ -474,7 +474,7 @@
             </div>
           </div>
 
-          <!-- Black tall rect — z:2 (middle) -->
+          <!-- Black tall rect: z:2 (middle) -->
           <div class="char" id="charBlack"
                style="left:368px;width:120px;height:310px;background:#2D2D2D;border-radius:8px 8px 0 0;z-index:2;">
             <div class="char-eyes" id="blackEyes" style="gap:24px;">
@@ -487,7 +487,7 @@
             </div>
           </div>
 
-          <!-- Orange semicircle — z:3 (front left) -->
+          <!-- Orange semicircle: z:3 (front left) -->
           <div class="char" id="charOrange"
                style="left:128px;width:240px;height:200px;background:#FF9B6B;border-radius:120px 120px 0 0;z-index:3;">
             <div class="char-eyes fast" id="orangeEyes" style="gap:32px;">
@@ -496,7 +496,7 @@
             </div>
           </div>
 
-          <!-- Yellow rounded rect — z:4 (front right) -->
+          <!-- Yellow rounded rect: z:4 (front right) -->
           <div class="char" id="charYellow"
                style="left:438px;width:140px;height:230px;background:#E8D754;border-radius:70px 70px 0 0;z-index:4;">
             <div class="char-eyes fast" id="yellowEyes" style="gap:24px;">
@@ -509,7 +509,7 @@
         </div>
       </div>
 
-      <!-- Banner pill links — visible only at 451–1023px -->
+      <!-- Banner pill links: visible only at 451–1023px -->
       <div class="banner-footer">
         <a href="/privacy.html">Privacy Policy</a>
         <a href="/terms.html">Terms of Service</a>
@@ -526,7 +526,7 @@
     <!-- ── Right: Login Form ── -->
     <div class="right-panel" id="main-content" tabindex="-1">
 
-      <!-- Cloud character header — visible only at ≤ 450px -->
+      <!-- Cloud character header: visible only at ≤ 450px -->
       <div class="cloud-mobile-hdr" id="cloudMobileHdr">
         <div class="cloud-inner">
           <div class="cloud-char-frame" id="cloudCharFrame">
@@ -653,7 +653,7 @@
     const url  = cfg.url  || 'https://placeholder.supabase.co';
     const key  = cfg.anonKey || 'placeholder';
 
-    /* Role-keyed clients — admin and client sessions are completely independent in localStorage */
+    /* Role-keyed clients: admin and client sessions are completely independent in localStorage */
     const adminSb  = createClient(url, key, { auth: { storageKey: 'vw-admin-auth'  } });
     const clientSb = createClient(url, key, { auth: { storageKey: 'vw-client-auth' } });
     /* Temp client used only during the login handshake, then cleared */
@@ -671,7 +671,7 @@
     }
 
     /* ═══════════════════════════════════════════
-       CHARACTER ANIMATION — Vanilla JS port of
+       CHARACTER ANIMATION: Vanilla JS port of
        the animated-characters-login-page React component
     ═══════════════════════════════════════════ */
 
@@ -730,7 +730,7 @@
       };
     }
 
-    /* Calculate pupil offset — tracked from eyeEl center, or forced */
+    /* Calculate pupil offset: tracked from eyeEl center, or forced */
     function pupilOffset(eyeEl, maxDist, forceX, forceY) {
       if (forceX !== undefined) return { x: forceX, y: forceY };
       const r     = eyeEl.getBoundingClientRect();
@@ -949,7 +949,7 @@
     function scaleBannerChars() {
       const w = window.innerWidth;
 
-      // Cloud mobile (≤ 450px) — clear everything
+      // Cloud mobile (≤ 450px): clear everything
       if (w <= 450) {
         charsStage.style.transform = '';
         charsStage.style.transformOrigin = '';
@@ -958,7 +958,7 @@
         return;
       }
 
-      // Banner mode (451–1023px) — scale to fit full viewport width
+      // Banner mode (451–1023px): scale to fit full viewport width
       if (w <= 1023) {
         const scale = Math.min(1, (w - 48) / 550);
         const visualH = Math.round(400 * scale);
@@ -970,7 +970,7 @@
         return;
       }
 
-      // Desktop mode (≥ 1024px) — scale to fit left panel (50% viewport, 48px padding each side)
+      // Desktop mode (≥ 1024px): scale to fit left panel (50% viewport, 48px padding each side)
       // 606 = 2 × 303, where 303 is yellow's right edge (578) minus stage centre (275)
       // translateX(-78px) aligns visual midpoint (stage x=353) with chars-wrap centre (ToS pill axis)
       const available = (w / 2) - 96;
@@ -987,7 +987,7 @@
     window.addEventListener('resize', scaleBannerChars);
 
     /* ══════════════════════════════════════
-       CLOUD MOBILE CHARACTER — ≤ 450px eyes
+       CLOUD MOBILE CHARACTER: ≤ 450px eyes
     ══════════════════════════════════════ */
     const mEyeL   = document.getElementById('mEyeL');
     const mEyeR   = document.getElementById('mEyeR');
@@ -1118,7 +1118,7 @@
         const { data: profile } = await tempSb.from('user_profiles').select('role').eq('id', data.user.id).single();
         if (!profile) {
           // A valid, authenticated account with no profile row (e.g. first
-          // login right after confirming via the email link) — create one
+          // login right after confirming via the email link); create one
           // now so later pages don't treat "no profile" as "not logged in".
           try { await tempSb.from('user_profiles').upsert({ id: data.user.id, role: 'client' }, { onConflict: 'id' }); } catch (e) {}
         }

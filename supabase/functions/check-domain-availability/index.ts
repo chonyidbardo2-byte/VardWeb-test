@@ -3,7 +3,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 /*
  * Supabase Edge Function: check-domain-availability
  *
- * Public — no auth required (matches create-checkout / subscribe-newsletter
+ * Public: no auth required (matches create-checkout / subscribe-newsletter
  * being publicly callable). Accepts POST { domains: [{ name, tld }, ...] }
  * where `tld` includes the leading dot (e.g. ".com"), matching the
  * host-hero TLD pill convention on hosting-services.html.
@@ -15,16 +15,16 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
  * good for ~1hr, cached here in a module-level variable across warm
  * invocations to avoid re-authenticating every call. OPENPROVIDER_PASSWORD
  * accepts either the plaintext RCP login password or the password hash
- * generated on the RCP contact-details page — confirmed empirically
+ * generated on the RCP contact-details page, confirmed empirically
  * against the sandbox account on 2026-08-24; a prior version of this
  * comment claimed hash-only was required, which was never actually
  * verified and turned out to be wrong (that "password vs hash" distinction
  * is a legacy XML/SOAP API detail, not a v1beta one).
  *
  * OPENPROVIDER_API_BASE defaults to production; point it at
- * https://api.sandbox.openprovider.nl (no custom port — the previously
+ * https://api.sandbox.openprovider.nl (no custom port; the previously
  * documented http://...:8480 form is unreachable/stale) to test against
- * Openprovider's sandbox before production credentials/KYC are ready — no
+ * Openprovider's sandbox before production credentials/KYC are ready. No
  * code change needed to switch, just the secret.
  *
  * Deploy:
@@ -113,11 +113,11 @@ serve(async (req) => {
     }
 
     // Openprovider returns `domain` as a flat string (e.g. "test4.london") per
-    // result, but NOT reliably in request order — confirmed empirically: mixing
+    // result, but NOT reliably in request order: confirmed empirically: mixing
     // TLDs in one request can come back with results shuffled, silently
     // misattributing availability/price to the wrong domain if matched by
     // index. Match each result back to its request by that flat `domain`
-    // string instead (exact, case-insensitive) — safe here since every TLD
+    // string instead (exact, case-insensitive); safe here since every TLD
     // this site checks is single-label (.com, .ca, .io, etc), so `name + tld`
     // reconstructs the flat string unambiguously.
     const keyToIndex: Record<string, number> = {};
@@ -133,7 +133,7 @@ serve(async (req) => {
         domain: domains[idx].name.trim().toLowerCase(),
         tld: domains[idx].tld,
         available: r.status === 'free',
-        // `||` (not `??`) on purpose — Openprovider sometimes returns a literal
+        // `||` (not `??`) on purpose: Openprovider sometimes returns a literal
         // 0 in the first field of a premium listing (price not populated there),
         // which `??` would lock onto instead of falling through to a field that
         // actually has the real price. A genuine $0 domain price isn't a case

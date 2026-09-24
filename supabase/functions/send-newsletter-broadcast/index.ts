@@ -5,13 +5,13 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
  * Supabase Edge Function: send-newsletter-broadcast
  *
  * Admin-only. Accepts POST { subject, html } with an Authorization header
- * carrying the CALLER'S SESSION JWT (not the anon key — crm/newsletter.html
+ * carrying the CALLER'S SESSION JWT (not the anon key; crm/newsletter.html
  * must send session.access_token here, unlike subscribe-newsletter/
  * create-checkout which are intentionally public with no auth check).
  *
  * Sending a broadcast is irreversible and goes to the whole subscriber
  * list, so the caller's admin role is verified server-side before anything
- * else happens — never trust a client-supplied "I'm an admin" claim.
+ * else happens; never trust a client-supplied "I'm an admin" claim.
  *
  * Deploy:
  *   supabase functions deploy send-newsletter-broadcast
@@ -44,7 +44,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // getClaims() (not getUser()) — this project signs sessions with
+    // getClaims() (not getUser()): this project signs sessions with
     // asymmetric ES256 keys, and getUser() has known verification bugs
     // with asymmetric-signed JWTs inside Edge Functions (supabase/supabase
     // #42244, #42810). getClaims() verifies locally against the project's
@@ -91,7 +91,7 @@ serve(async (req) => {
         subject,
         html,
         reply_to: 'newsletter@vardweb.com',
-        name: `Blog broadcast — ${new Date().toISOString().slice(0, 10)}`,
+        name: `Blog broadcast: ${new Date().toISOString().slice(0, 10)}`,
         send: true,
       }),
     });

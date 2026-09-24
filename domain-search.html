@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Domain Search Results — VardWeb</title>
-  <meta name="description" content="Check real-time availability and pricing for your domain name, plus related endings and bundle deals — no markup at signup, a flat disclosed 20% at renewal." />
+  <meta name="description" content="Check real-time availability and pricing for your domain name, plus related endings and bundle deals. No markup at signup, a flat disclosed 20% at renewal." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
       --text-1:  #eef0f8;
       --text-2:  rgba(200,212,232,0.62);
 
-      /* Domain & Hosting accent — matches the card on services.html */
+      /* Domain & Hosting accent: matches the card on services.html */
       --host-green:      #34D399;
       --host-green-deep: #059669;
       --host-green-pale: #A7F3D0;
@@ -354,7 +354,7 @@
     /* ── Live typeahead suggestions ── */
     #host-search-blur {
       /* position:fixed (not absolute) so it isn't clipped by #host-hero's
-         overflow:hidden — a fixed element's containing block is the viewport
+         overflow:hidden; a fixed element's containing block is the viewport
          unless an ancestor uses transform/filter, neither of which #host-hero
          has, so this covers the whole page, not just the hero box. */
       position: fixed; inset: 0; z-index: 250;
@@ -366,7 +366,7 @@
     #host-search-blur.is-active { opacity: 1; pointer-events: auto; }
 
     .host-suggest-panel {
-      /* position:fixed for the same reason as #host-search-blur — a fixed
+      /* position:fixed for the same reason as #host-search-blur; a fixed
          element's containing block is the viewport, not #host-hero, so it
          isn't clipped by the hero's overflow:hidden. left/top/width are set
          inline by JS (positionSuggestPanel) since fixed-position percentages
@@ -426,6 +426,7 @@
     }
     .host-suggest-cursor.is-static { animation: none; opacity: 1; }
     @keyframes host-suggest-blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .host-suggest-cursor { animation: none; } }
 
     @media (max-width: 700px) {
       .host-suggest-panel { grid-template-columns: 1fr; }
@@ -449,21 +450,21 @@
     }
 
     /* Adapted from a React/Framer-Motion heart icon (AnimateIcons/Hugeicons)
-       into plain SVG/CSS — pathLength="1" on the <path> normalizes
+       into plain SVG/CSS; pathLength="1" on the <path> normalizes
        stroke-dasharray/dashoffset to a 0-1 range regardless of actual path
        length, so the "draw the outline in" effect needs no JS length calc. */
-    /* Outline (stroke="currentColor", on the parent svg) is always rendered —
+    /* Outline (stroke="currentColor", on the parent svg) is always rendered:
        "off" is a real empty heart, matching every other heart icon on the
        site, not a blank button. Only the fill (black when favorited/open)
        transitions, so there's no redraw flicker between the hover preview
-       and the persistent open state — both land on the same end look. */
+       and the persistent open state; both land on the same end look. */
     #fav-view-toggle svg path {
       stroke-dasharray: 1; stroke-dashoffset: 0; /* resting: fully-drawn, unfilled outline */
       fill: currentColor; fill-opacity: 0;
       transition: fill-opacity 0.2s ease-in-out; /* clean revert on mouse-leave only */
     }
     /* Hover (while closed): a CSS transition can't reproduce a "snap-to-0-
-       then-ease-to-1" keyframe, so this is a real @keyframes animation —
+       then-ease-to-1" keyframe, so this is a real @keyframes animation:
        outline redraws from scratch, then the fill fades in, then a bounce. */
     @keyframes favHeartDraw {
       0% { stroke-dashoffset: 1; fill-opacity: 0; }
@@ -561,7 +562,7 @@
       box-shadow: 0 4px 14px -4px rgba(0,0,0,0.4);
     }
     /* Base .tt-icon-trigger (line ~731) is tuned for dark backgrounds (light
-       border/text) — fine as-is on a selected pill's dark fill, but unreadable
+       border/text). Fine as-is on a selected pill's dark fill, but unreadable
        on this panel's white default pill background, so override only that case. */
     .filter-pill:not(.selected) .tt-icon-trigger { border-color: rgba(0,0,0,0.25); color: rgba(20,22,28,0.55); }
     .filter-pill:not(.selected) .tt-icon-trigger:hover { border-color: rgba(0,0,0,0.45); color: #14161c; }
@@ -624,7 +625,7 @@
     .host-result-fav-empty-icon { display: inline-flex; vertical-align: -3px; }
     .host-result-fav-empty-icon svg { width: 14px; height: 14px; }
 
-    /* Flat divider-row style — this list can run to dozens of rows across pages,
+    /* Flat divider-row style: this list can run to dozens of rows across pages,
        so it deliberately skips the card-style bg/border/shadow/hover-lift treatment
        used elsewhere on the page to keep per-row paint weight low. */
     .host-result-card-group { border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -634,13 +635,13 @@
       padding: 18px 6px 22px;
     }
     .host-result-card[data-available="false"] { opacity: 0.5; }
-    /* Subtle "this row is clickable" cue — desktop/mouse only, since touch has no hover. */
+    /* Subtle "this row is clickable" cue: desktop/mouse only, since touch has no hover. */
     @media (hover: hover) and (pointer: fine) {
       .host-result-card { cursor: pointer; transition: background 0.15s ease; }
       .host-result-card:hover { background: rgba(255,255,255,0.025); }
     }
 
-    /* Expand chevron — reveals the per-domain detail panel below the row */
+    /* Expand chevron: reveals the per-domain detail panel below the row */
     .host-result-expand-btn {
       flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
       background: none; border: 1px solid rgba(255,255,255,0.14); color: var(--text-2);
@@ -652,7 +653,7 @@
     .host-result-expand-btn:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
     .host-result-expand-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
 
-    /* Per-row detail panel — 0fr/1fr grid accordion, padding on the nested .hrd-pad
+    /* Per-row detail panel: 0fr/1fr grid accordion, padding on the nested .hrd-pad
        (not the direct grid child) so the collapsed state reaches true 0 height. */
     .host-result-detail { display: grid; grid-template-rows: 0fr; overflow: hidden; transition: grid-template-rows 0.3s cubic-bezier(0.34,1.56,0.64,1); }
     .host-result-detail-inner { overflow: hidden; min-height: 0; }
@@ -674,7 +675,7 @@
     .hrd-highlight-head b { font-size: 12.5px; font-weight: 700; color: var(--text-1); }
     .hrd-highlight > span { font-size: 12px; color: var(--text-2); line-height: 1.6; }
 
-    /* Bundle upsell mode — shown when a row's domain is added to the cart */
+    /* Bundle upsell mode: shown when a row's domain is added to the cart */
     .hrd-bundle-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px 20px; }
     .hrd-bundle-info { display: flex; flex-direction: column; gap: 6px; }
     .hrd-bundle-domain { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px; }
@@ -711,7 +712,7 @@
     .host-result-left { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; }
     .host-result-text { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 
-    /* More Like This / About This Name — same pill shape in both states, since
+    /* More Like This / About This Name: same pill shape in both states, since
        the button always shows an icon + label (see the delegated click handler,
        which swaps the icon/label and toggles detailEl's data-mode back and forth). */
     .host-result-mlt-btn {
@@ -764,7 +765,7 @@
     }
     .host-result-added-badge:focus-visible { outline: 2px solid var(--host-green); outline-offset: 2px; }
     .host-result-added-badge svg { flex-shrink: 0; }
-    /* Same shape as .host-result-added-badge, different color/text — sits
+    /* Same shape as .host-result-added-badge, different color/text: sits
        beside the "Taken" cta for unavailable domains. */
     .host-result-broker-badge {
       display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
@@ -797,14 +798,14 @@
     .host-result-cta:focus-visible { outline: 2px solid var(--host-green-pale); outline-offset: 2px; }
     /* Icon-only variant for available rows (the reference's cart+add glyph) */
     .host-result-cta.is-icon { width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; }
-    /* Premium "Buy it now" price button — same shape as .host-result-cta, inverted colors: black by default, green with black text on hover/press. */
+    /* Premium "Buy it now" price button: same shape as .host-result-cta, inverted colors: black by default, green with black text on hover/press. */
     .host-result-cta.host-result-price-btn { background: #000; border-color: #000; color: #fff; }
     @media (hover: hover) and (pointer: fine) {
       .host-result-cta.host-result-price-btn:hover { background: var(--host-green); color: #06251b; }
     }
     .host-result-cta.host-result-price-btn:active { background: var(--host-green); color: #06251b; }
 
-    /* Match the grid list's width to the other results sections (1020px) —
+    /* Match the grid list's width to the other results sections (1020px):
        overrides .host-search-results' own 820px, which is shared with
        hosting-services.html and so isn't edited directly. */
     #domain-grid-results { max-width: 1400px; }
@@ -812,7 +813,7 @@
     .host-result-cta:disabled { background: rgba(255,255,255,0.08); color: rgba(200,212,232,0.4); cursor: default; }
     .host-result-cta.added { background: var(--host-green); }
 
-    /* Circular "?" tooltip trigger — distinct from the dashed-underline .tt-trigger text style */
+    /* Circular "?" tooltip trigger: distinct from the dashed-underline .tt-trigger text style */
     .tt-icon-trigger {
       flex-shrink: 0; width: 15px; height: 15px; border-radius: 50%;
       background: none; border: 1px solid rgba(255,255,255,0.28); color: rgba(200,212,232,0.6);
@@ -828,7 +829,7 @@
     @media (max-width: 640px) {
       /* .host-result-left/.host-result-right "dissolve" via display:contents so
          their children (heart, domain text, price note, toggles, cta) can each be
-         placed independently in a 3-col grid — heart pinned left, cta pinned
+         placed independently in a 3-col grid: heart pinned left, cta pinned
          right, everything else stacked in the middle column, regardless of the
          middle content's height. */
       .host-result-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 12px; row-gap: 6px; }
@@ -869,7 +870,7 @@
       padding: 32px 30px;
       min-width: 0; /* grid/flex items default to min-width:auto, which refuses to
         shrink below content size and overflows the (correctly-sized) parent at
-        narrow viewports — this resets that floor so the box actually tracks its
+        narrow viewports; this resets that floor so the box actually tracks its
         grid track's width down to 320px. */
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25);
       transform: translateZ(0); backface-visibility: hidden;
@@ -886,7 +887,7 @@
     .dv-box:not(.dv-premium-box) .dv-cta { margin-top: auto; }
     /* Great Alternative's CTA is its own last child (no trailing why-list to pin
        above), so the auto margin above would drag it to the bottom of the
-       grid-stretched box — sit it right after the price group instead, and let
+       grid-stretched box; sit it right after the price group instead, and let
        the price group itself absorb the free space so the pair sits together
        at the bottom, level with "Hire a Broker" in the primary box. */
     #dv-alt-cta { margin-top: 0; }
@@ -895,7 +896,7 @@
        row that this box doesn't; nudge the chip row down by that same amount so
        both boxes' chip rows land on the same line. margin-bottom is trimmed by
        the same amount added to margin-top so this box's natural content height
-       is unchanged — otherwise it becomes the tallest box, growing the shared
+       is unchanged; otherwise it becomes the tallest box, growing the shared
        grid row height and pushing the primary box's own auto-margin CTA down
        as a side effect (confirmed live: without the margin-bottom offset, the
        primary "Hire a Broker" button shifted down 26px even though nothing in
@@ -914,7 +915,7 @@
        below sit right under the row with the same tight gap as the row's own
        was/now spacing (rendered gap = margin-bottom + 5px, a structural
        offset between .dv-price-row (flex) and .dv-price-note (inline-flex);
-       verified live). No cross-box height concern here — .dv-grid is single-
+       verified live). No cross-box height concern here; .dv-grid is single-
        column on mobile so each box sizes to its own content independently. */
     @media (max-width: 369px) {
       .dv-box--alt .dv-price-row { gap: 4px; margin-bottom: -1px; }
@@ -966,7 +967,7 @@
       box-shadow: none;
     }
     /* Fixed min-height (sized for the taller 3-fact primary case) so both boxes'
-       why-sections reserve identical vertical space regardless of fact count —
+       why-sections reserve identical vertical space regardless of fact count;
        otherwise the CTA above it (margin-top:auto) lands at different Y positions
        between the two sibling boxes even though the boxes themselves are equal height. */
     .dv-why { border-top: 1px solid rgba(255,255,255,0.08); margin-top: 22px; padding-top: 18px; min-height: 156px; }
@@ -1016,7 +1017,7 @@
     .dv-panel.is-open .dv-panel-chevron { transform: rotate(180deg); }
     /* Absolutely positioned (not in normal flow) so expanding this panel
        overlays the sidebar below it instead of growing .dv-premium-sidebar/
-       .dv-premium-box — the box's own footprint must stay fixed regardless
+       .dv-premium-box; the box's own footprint must stay fixed regardless
        of accordion state. */
     .dv-panel-body {
       display: grid; grid-template-rows: 0fr; overflow: hidden;
@@ -1030,7 +1031,7 @@
       background: var(--surface); border: 1px solid rgba(255,255,255,0.07);
       box-shadow: 0 16px 40px -12px rgba(0,0,0,0.5), 0 4px 14px rgba(0,0,0,0.3);
     }
-    /* Padding lives on a nested div, not the direct grid child — an element's own
+    /* Padding lives on a nested div, not the direct grid child; an element's own
        padding always counts toward its minimum size even under overflow:hidden,
        which otherwise only suppresses the *content* min-size contribution, so
        padding here would stop the 0fr row from ever fully collapsing. */
@@ -1052,7 +1053,7 @@
     .dv-premium-notice .pm-trigger:focus-visible { outline: 2px solid #A855F7; outline-offset: 2px; border-radius: 2px; }
     .hrd-premium-notice { margin-top: 0; }
 
-    /* ── Broker box (Taken state) — sits where price-row normally would, before the CTA ── */
+    /* ── Broker box (Taken state): sits where price-row normally would, before the CTA ── */
     .dv-broker { margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
     .dv-broker-row { display: flex; align-items: center; gap: 10px; }
     .dv-broker-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.14); flex-shrink: 0; }
@@ -1096,15 +1097,15 @@
     .dx-card-price { font-size: 13px; color: var(--text-1); font-weight: 600; display: flex; align-items: baseline; gap: 6px; }
     .dx-card-price .was { font-size: 12px; color: var(--text-2); text-decoration: line-through; font-weight: 400; }
     .dx-card-price-note { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-2); display: flex; align-items: center; gap: 5px; }
-    /* Compact "Domain Taken" broker row, standing in for the price on dx-cards —
+    /* Compact "Domain Taken" broker row, standing in for the price on dx-cards:
        same copy/tooltip as the verdict box's .dv-broker-row, scaled down. */
     .dx-card-broker { display: flex; align-items: center; gap: 8px; }
     .dx-card-broker-avatar { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.14); flex-shrink: 0; }
     .dx-card-broker-copy { display: flex; flex-direction: column; gap: 1px; }
     .dx-card-broker-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-2); font-family: 'JetBrains Mono', monospace; }
     .dx-card-broker-fee { font-size: 12.5px; font-weight: 700; color: var(--text-1); display: inline-flex; align-items: center; gap: 4px; }
-    /* Matches .host-result-cta.is-icon's solid-fill style exactly. Flat, no lift —
-       the only feedback is the white/green toggle on click (add/remove from cart). The
+    /* Matches .host-result-cta.is-icon's solid-fill style exactly. Flat, no lift.
+       The only feedback is the white/green toggle on click (add/remove from cart). The
        broker/taken variant is the exception: it gets its own hover raise + green preview
        below, since clicking it navigates to #faq-broker rather than toggling a cart item. */
     .dx-card-cta {
@@ -1278,7 +1279,7 @@
     .cart-item-desc { grid-column: 1; grid-row: 2; font-size: 11.5px; color: var(--text-2); }
     .cart-item-term { grid-column: 1; grid-row: 3; align-self: center; font-size: 11.5px; color: var(--text-2); }
     /* Exact style copy of checkout.html's .co-item-term select (colors, border,
-       chevron, font, radius) — narrowed to roughly half its 120px min-width to
+       chevron, font, radius), narrowed to roughly half its 120px min-width to
        fit this drawer's tighter row. */
     .cart-item-term-select {
       display: block; min-width: 65px;
@@ -1367,7 +1368,7 @@
     }
 
     /* Scrolls internally so #broker-modal itself always sizes to its full
-       rendered content — keeps .bm-close and ::before's gradient anchored to
+       rendered content: keeps .bm-close and ::before's gradient anchored to
        the real card bounds instead of a clipped, pre-overflow box. */
     .bm-scroll { max-height: calc(100vh - 48px - 64px); overflow-y: auto; position: relative; z-index: 1; }
 
@@ -1423,7 +1424,7 @@
       #broker-modal-cta.dv-cta { width: 100%; }
     }
 
-    /* ── Premium domain "Learn More" modal — same open/close pattern as
+    /* ── Premium domain "Learn More" modal: same open/close pattern as
        #broker-modal, wider and laid out as 3 columns instead of a step list. ── */
     #premium-modal-backdrop {
       position: fixed; inset: 0; z-index: 420;
@@ -1445,7 +1446,7 @@
     body.pm-open { overflow: hidden; }
 
     /* Scrolls internally so #premium-modal itself always sizes to its full
-       rendered content — keeps .pm-close and ::before's gradient anchored to
+       rendered content: keeps .pm-close and ::before's gradient anchored to
        the real card bounds instead of a clipped, pre-overflow box. */
     .pm-scroll { max-height: calc(100vh - 48px - 64px); overflow-y: auto; position: relative; z-index: 1; }
 
@@ -1515,7 +1516,7 @@
     .ic-scroll {
       max-height: calc(100vh - 48px - 64px); overflow-y: auto; position: relative; z-index: 1;
       /* Extends the box into the modal's own 32px right padding via a
-         negative margin, then adds the same amount back as padding — content
+         negative margin, then adds the same amount back as padding; content
          position is unchanged, but the scrollbar (rendered at the box's own
          right edge) lands centered in that gutter instead of flush against
          the inputs. */
@@ -1553,7 +1554,7 @@
       .ic-scroll { margin-right: -10px; padding-right: 10px; } /* half of the 20px right padding at this width */
     }
 
-    /* Auth step (sign in / create account) reused inside the modal — same
+    /* Auth step (sign in / create account) reused inside the modal: same
        field styling as checkout.html's page-level #auth-gate, without its
        decorative canvas/bg-lines since this lives inside a small dialog. */
     #instant-checkout-modal .btn-primary {
@@ -1612,7 +1613,7 @@
     .auth-legal a:hover { color: var(--host-green-pale); }
     .auth-continue-email-btn { width: 100%; justify-content: center; margin-bottom: 18px; }
 
-    /* Registrant/buyer-info form reused inside the modal — same styling as
+    /* Registrant/buyer-info form reused inside the modal: same styling as
        checkout.html's billing form. */
     .co-section-title {
       font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--host-green);
@@ -1771,7 +1772,7 @@
     .compare-table .ck { color: #33D17A; }
     .compare-table .xk { color: rgba(200,212,232,0.28); }
 
-    /* Row-label tooltip triggers — scoped to the label text itself, not the whole cell */
+    /* Row-label tooltip triggers: scoped to the label text itself, not the whole cell */
     .compare-table tbody .tt-label.tt-trigger {
       cursor: help;
       border-bottom: 1px dashed rgba(255,255,255,0.3);
@@ -1952,12 +1953,12 @@
       .dv-cta { width: 100%; }
       /* .host-result-cta-group's "Hire Broker" + "Taken" buttons sit in a grid
          column sized to their combined max-content width, which never shrinks
-         — at narrow widths this pushes the whole page wider than the viewport
+; at narrow widths this pushes the whole page wider than the viewport
          (body's overflow-x:hidden then clips/shifts everything). Stacking them
          removes the combined-width requirement. */
       .host-result-cta-group { flex-direction: column; align-items: flex-end; gap: 6px; }
     }
-    /* Stacking alone isn't always enough at the very narrowest phones — the
+    /* Stacking alone isn't always enough at the very narrowest phones; the
        "Hire Broker" badge's own width can still exceed the room left over
        once the domain text column claims its share. Trim its padding/type
        size a bit more for extra margin (content-width, not viewport-width,
@@ -2423,7 +2424,7 @@
       <p class="bm-subhead">Here's how this works:</p>
       <ol class="bm-steps">
         <li class="bm-step">
-          <span class="bm-step-icon"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" class="bm-step-avatar" /></span>
+          <span class="bm-step-icon"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" class="bm-step-avatar" loading="lazy" /></span>
           <div class="bm-step-copy"><b>You get a dedicated domain broker.</b><p>When you purchase the service, a dedicated broker will help you formulate a strategy and budget to try to acquire your domain.</p></div>
         </li>
         <li class="bm-step">
@@ -2440,7 +2441,7 @@
           <span class="bm-fee-label">Broker Service Fee</span>
           <span class="bm-fee-value">C$50<button type="button" class="tt-icon-trigger" data-tooltip="Pricing
 
-A C$50 service fee is charged now when you check out — this covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.
+A C$50 service fee is charged now when you check out. This covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.
 
 If the seller agrees to sell, you'll separately pay the negotiated sale price plus a 15% commission at that time, and we'll securely transfer the domain to you." aria-label="Pricing details">?</button></span>
           <span class="bm-fee-caption">plus commission</span>
@@ -2473,12 +2474,12 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
             </div>
             <div class="pm-price-row">
               <span class="pm-price-label">Year 1 Registration</span>
-              <span class="pm-price-value-row"><span class="pm-price-value" id="pm-price-reg">—</span><button type="button" class="tt-icon-trigger" data-tooltip="Year 1 Registration is already included in the One-Time Acquisition price above — you will not be charged for it separately." aria-label="Year 1 registration details">?</button></span>
+              <span class="pm-price-value-row"><span class="pm-price-value" id="pm-price-reg">—</span><button type="button" class="tt-icon-trigger" data-tooltip="Year 1 Registration is already included in the One-Time Acquisition price above. You will not be charged for it separately." aria-label="Year 1 registration details">?</button></span>
               <span class="pm-price-caption">no markup</span>
             </div>
             <div class="pm-price-row">
               <span class="pm-price-label">Year 2+ Renewal</span>
-              <span class="pm-price-value-row"><span class="pm-price-value" id="pm-price-renewal">—</span><button type="button" class="tt-icon-trigger" data-tooltip="This is the ongoing yearly rate starting Year 2 — the one-time acquisition fee above already covers Year 1." aria-label="Year 2 and beyond renewal details">?</button></span>
+              <span class="pm-price-value-row"><span class="pm-price-value" id="pm-price-renewal">—</span><button type="button" class="tt-icon-trigger" data-tooltip="This is the ongoing yearly rate starting Year 2. The one-time acquisition fee above already covers Year 1." aria-label="Year 2 and beyond renewal details">?</button></span>
               <span class="pm-price-caption">+20% flat, no surprises.</span>
             </div>
             <p style="font-size:11.5px;">C$0.28 ICANN fees and applicable taxes may apply<br class="pm-icann-br"> at checkout.</p>
@@ -3033,7 +3034,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">What is a domain name, and do I actually need one?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">A domain is the human-readable address people type to find your site, instead of the long string of numbers a server actually uses. DNS quietly translates one into the other every time someone visits. Owning your own domain (rather than a subdomain or a social profile) is what makes a business look established, and it's the foundation everything else — your website, your hosting, your brand — gets built on.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">A domain is the human-readable address people type to find your site, instead of the long string of numbers a server actually uses. DNS quietly translates one into the other every time someone visits. Owning your own domain (rather than a subdomain or a social profile) is what makes a business look established, and it's the foundation everything else (your website, your hosting, your brand) gets built on.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.05s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3041,7 +3042,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">How do I check if a domain name is available?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Type it into the search bar at the top of this page — we'll tell you instantly if it's open, taken, or available on a different ending. If it's already registered, you can look up the current owner yourself through a public WHOIS lookup, or let our premium domain sourcing service handle the outreach for you.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Type it into the search bar at the top of this page. We'll tell you instantly if it's open, taken, or available on a different ending. If it's already registered, you can look up the current owner yourself through a public WHOIS lookup, or let our premium domain sourcing service handle the outreach for you.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.1s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3049,7 +3050,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">How long can I register a domain for?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Most people register a year at a time, but you can lock in 2, 3, 5, or even 10 years at checkout — an easy way to stop thinking about renewal altogether. Some premium domains and country-specific endings have shorter maximum terms, set by their registry, not by us.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Most people register a year at a time, but you can lock in 2, 3, 5, or even 10 years at checkout, an easy way to stop thinking about renewal altogether. Some premium domains and country-specific endings have shorter maximum terms, set by their registry, not by us.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.15s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3073,7 +3074,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">What happens if I don't renew my domain?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">It expires, and after a short grace period set by the domain's registry (not us), it becomes available for anyone else to register — taking your site and any mail tied to it down with it. Auto-renewal is on by default for exactly this reason; turn it off only if you're letting the domain go on purpose.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">It expires, and after a short grace period set by the domain's registry (not us), it becomes available for anyone else to register, taking your site and any mail tied to it down with it. Auto-renewal is on by default for exactly this reason; turn it off only if you're letting the domain go on purpose.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.3s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3081,7 +3082,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">What actually protects my domain once it's live?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">WHOIS privacy, DNSSEC, and DMARC email security come standard on every domain we manage — those protect the domain, its DNS, and mail sent from it, no matter who hosts the site. SSL and DDoS protection run on our network, so they apply automatically if VardWeb is also hosting your site or your DNS is proxied through us; point the domain at an outside host instead, and those two come from whatever that host provides. None of it is ever sold back to you as an add-on.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">WHOIS privacy, DNSSEC, and DMARC email security come standard on every domain we manage. Those protect the domain, its DNS, and mail sent from it, no matter who hosts the site. SSL and DDoS protection run on our network, so they apply automatically if VardWeb is also hosting your site or your DNS is proxied through us; point the domain at an outside host instead, and those two come from whatever that host provides. None of it is ever sold back to you as an add-on.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.35s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3089,7 +3090,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">Should I add Full Domain Protection at checkout?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">It's optional, not required — WHOIS privacy and DNSSEC are already free on every domain. Full Domain Protection is an extra layer on top: it blocks unauthorized changes outright and requires 2-factor approval before anything critical, like a transfer or deletion, can go through. It's C$1.05/mo the first year and C$1.65/mo after — the one add-on most customers keep.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">It's optional, not required. WHOIS privacy and DNSSEC are already free on every domain. Full Domain Protection is an extra layer on top: it blocks unauthorized changes outright and requires 2-factor approval before anything critical, like a transfer or deletion, can go through. It's C$1.05/mo the first year and C$1.65/mo after, the one add-on most customers keep.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.4s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3097,7 +3098,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">Do I need hosting to buy a domain?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">No — a domain and hosting are two separate things. You can register a domain now and point it wherever you like later, whether that's a host you already use, a site builder, or nothing at all for the moment. The domain is yours either way.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">No. A domain and hosting are two separate things. You can register a domain now and point it wherever you like later, whether that's a host you already use, a site builder, or nothing at all for the moment. The domain is yours either way.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.45s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3105,7 +3106,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">Is a domain included free if I'm building a site with VardWeb?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Domain hosting and delegation are bundled free into every VardWeb site-build package — Bronze, Silver, Gold, or Custom. You still pay standard registration if it's a new domain, but the setup work connecting it to your new site costs nothing extra. <a href="web-design.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See what's included in each tier →</a></div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Domain hosting and delegation are bundled free into every VardWeb site-build package: Bronze, Silver, Gold, or Custom. You still pay standard registration if it's a new domain, but the setup work connecting it to your new site costs nothing extra. <a href="web-design.html" class="footer-link" style="display:inline;margin:0;color:var(--host-green);">See what's included in each tier →</a></div></div>
           </div>
           <div class="host-faq-item reveal-fade" style="transition-delay:0.5s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3113,7 +3114,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">Can I transfer a domain I already own?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Yes — as long as it's at least 60 days past its last registration or transfer (an ICANN-wide rule, not ours). Unlock it at your current registrar, grab the auth code, and send it our way. See the transfer-in steps above for the full process.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Yes, as long as it's at least 60 days past its last registration or transfer (an ICANN-wide rule, not ours). Unlock it at your current registrar, grab the auth code, and send it our way. See the transfer-in steps above for the full process.</div></div>
           </div>
           <div class="host-faq-item reveal-fade" id="faq-broker" style="transition-delay:0.55s">
             <button class="host-faq-trigger" aria-expanded="false">
@@ -3129,7 +3130,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               <span class="host-faq-question">Why register through VardWeb instead of a big-box registrar?</span>
               <div class="host-faq-toggle" aria-hidden="true"><svg class="host-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="host-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--host-green)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
             </button>
-            <div class="host-faq-content"><div class="host-faq-content-inner">Because the pricing is honest and the extras aren't an upsell ladder. No teaser rate that jumps 3-4x at renewal — just a flat, disclosed 20% from year two on. WHOIS privacy, DNSSEC, and DDoS protection come standard instead of sitting behind a paywall. And unlike a registrar that only sells domains, we can also build and host the site that goes on it, so the whole thing comes from one place if you want it to.</div></div>
+            <div class="host-faq-content"><div class="host-faq-content-inner">Because the pricing is honest and the extras aren't an upsell ladder. No teaser rate that jumps 3-4x at renewal. Just a flat, disclosed 20% from year two on. WHOIS privacy, DNSSEC, and DDoS protection come standard instead of sitting behind a paywall. And unlike a registrar that only sells domains, we can also build and host the site that goes on it, so the whole thing comes from one place if you want it to.</div></div>
           </div>
         </div>
       </div>
@@ -3164,7 +3165,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       <div class="footer-grid">
         <div>
           <div class="logo-nav-wrap" style="display:inline-flex;">
-            <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+            <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" loading="lazy" />
           </div>
           <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
           <div class="footer-social-row">
@@ -3219,13 +3220,13 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
     <div class="trust-badge-row reveal-fade">
       <a href="about.html" class="trust-badge">
         <span class="trust-badge-icon">
-          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);" loading="lazy">
         </span>
         <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
       </a>
       <a href="privacy.html#gdpr-pipeda" class="trust-badge">
         <span class="trust-badge-icon">
-          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" loading="lazy">
         </span>
         <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
       </a>
@@ -3342,6 +3343,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
   <script src="/supabase-config.js"></script>
   <script src="/tld-catalog.js"></script>
   <script src="/nav-mobile.js"></script>
+  <script src="/perf-utils.js"></script>
   <script type="module" src="/nav-auth.js"></script>
   <script src="https://js.stripe.com/v3/"></script>
   <script type="module">
@@ -3372,7 +3374,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         });
       });
 
-      // Domain search — V2 self-serve: live Openprovider availability check + cart.
+      // Domain search: V2 self-serve: live Openprovider availability check + cart.
       // V1 concierge path (contact.html redirect) stays reachable via the
       // "Talk to a human instead" link added next to the results panel.
       var domainInput = document.getElementById('domain-input');
@@ -3382,7 +3384,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         domainInput.addEventListener('blur', function () { searchInputWrap.classList.remove('is-focused'); });
       }
 
-      // TLD badge — shows/syncs the TLD suffix as it's typed into #domain-input.
+      // TLD badge: shows/syncs the TLD suffix as it's typed into #domain-input.
       var tldBadge = document.getElementById('tld-badge');
       var tldBadgeText = document.getElementById('tld-badge-text');
       var tldBadgeClear = document.getElementById('tld-badge-clear');
@@ -3418,6 +3420,14 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         suggestPanel.style.left = rect.left + 'px';
         suggestPanel.style.top = (rect.bottom + 8) + 'px';
         suggestPanel.style.width = rect.width + 'px';
+      }
+      var pendingSuggestFrame = null;
+      function scheduleSuggestPosition() {
+        if (pendingSuggestFrame) return;
+        pendingSuggestFrame = requestAnimationFrame(function () {
+          pendingSuggestFrame = null;
+          if (!suggestPanel.hidden) positionSuggestPanel();
+        });
       }
 
       // ── Example-chip typewriter (Basic Search / AI Search cards) ──────
@@ -3502,10 +3512,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           if (base.length >= 3) showSuggestions(base);
         });
         window.addEventListener('resize', function () {
-          if (!suggestPanel.hidden) positionSuggestPanel();
+          if (!suggestPanel.hidden) scheduleSuggestPosition();
         });
         window.addEventListener('scroll', function () {
-          if (!suggestPanel.hidden) positionSuggestPanel();
+          if (!suggestPanel.hidden) scheduleSuggestPosition();
         }, { passive: true });
         suggestList.addEventListener('click', function (e) {
           var row = e.target.closest('.host-suggest-row');
@@ -3525,18 +3535,18 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       function formatPrice(price) {
         return typeof price === 'number' ? 'C$' + price.toFixed(2) + '/yr' : '—';
       }
-      // Bare one-time price, no "/yr" suffix — for premium acquisition fees,
+      // Bare one-time price, no "/yr" suffix, for premium acquisition fees,
       // which are a single upfront cost, unlike formatPrice's annual registrations.
       function formatOneTime(price) {
         return typeof price === 'number' ? 'C$' + price.toFixed(2) : '—';
       }
-      // Like formatPrice, but for a cart line's real total — which for a
+      // Like formatPrice, but for a cart line's real total, which for a
       // min-year-restricted TLD (e.g. .ai) is already a multi-year sum, not a
       // per-year rate, so labeling it "/yr" would be misleading.
       function formatMultiPrice(value, years) {
         return typeof value === 'number' ? 'C$' + value.toFixed(2) + (years > 1 ? '/' + years + 'yr' : '/yr') : '—';
       }
-      // Approximate standard per-year registration cost by TLD — used to show
+      // Approximate standard per-year registration cost by TLD, used to show
       // a premium domain's informational base-registration figure (the actual
       // one-time premium fee is unrelated and shown separately). Hoisted up
       // here (rather than left near renderGrid further down) because
@@ -3559,7 +3569,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         return base + Math.max((years || 1) - 1, 0) * renewalPricePerYear(base);
       }
 
-      // ── Term/years selection — per-TLD limited (see tld-catalog.js's
+      // ── Term/years selection: per-TLD limited (see tld-catalog.js's
       // maxYears/minYears, researched against Openprovider's own per-TLD docs) ──
       var TERM_OPTIONS = [1, 2, 3, 5, 10];
       // Unrestricted TLDs use the site's default package sizes (TERM_OPTIONS).
@@ -3581,7 +3591,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         if (years < opts[0]) return opts[0];
         return opts[opts.length - 1];
       }
-      // Short explainer for the "?" tooltip next to a restricted term-select —
+      // Short explainer for the "?" tooltip next to a restricted term-select:
       // empty string means this TLD has no min/max, so no tooltip is shown.
       // nowTotal/wasTotal/years (already computed by the caller) let a
       // min-year TLD's tooltip cite the exact same numbers shown on-screen,
@@ -3592,7 +3602,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         if (entry.minYears) {
           var msg = tld + ' domains require a minimum of ' + entry.minYears + ' years to register.';
           if (typeof nowTotal === 'number' && years > 1) {
-            msg += '\n\nRest assured, your first-year discount isn\'t lost — it carries through into this total: year one bills at cost and each year after at the standard rate, coming to ' + formatMultiPrice(nowTotal, years) + ' across all ' + years + ' years (versus ' + formatMultiPrice(wasTotal, years) + ' if every year were billed at the standard rate).';
+            msg += '\n\nRest assured, your first-year discount isn\'t lost. It carries through into this total: year one bills at cost and each year after at the standard rate, coming to ' + formatMultiPrice(nowTotal, years) + ' across all ' + years + ' years (versus ' + formatMultiPrice(wasTotal, years) + ' if every year were billed at the standard rate).';
           }
           return msg;
         }
@@ -3600,7 +3610,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         return '';
       }
       // Short "Registration Term" section appended to a TLD's filter-panel
-      // tooltip (TLD_PILL_INFO) — derived from the same minYears/maxYears
+      // tooltip (TLD_PILL_INFO): derived from the same minYears/maxYears
       // data as getYearOptionsForTld/termRestrictionTooltip above, rather
       // than hand-written per TLD, so it can never drift out of sync with
       // tld-catalog.js.
@@ -3629,7 +3639,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         cart.forEach(function (i) { if (i.domain === domain && i.tld === tld && i.type !== 'addon') i.years = years; });
         saveCart(cart);
       }
-      // Only ever matches real domain items here — this page never creates
+      // Only ever matches real domain items here: this page never creates
       // addon-type entries (those are added on checkout.html), so domain+tld
       // identity is unambiguous as long as addons are explicitly excluded
       // (otherwise a domain and its Full Domain Protection addon, which share
@@ -3642,7 +3652,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         var existing = cart.find(function (i) { return i.domain === item.domain && i.tld === item.tld && (i.type || null) === (item.type || null); });
         if (existing) {
           // The dv-bundle-cta handler calls addToCart for the primary domain
-          // unconditionally (no cartHasItem check) — if that domain was
+          // unconditionally (no cartHasItem check); if that domain was
           // already in the cart from an earlier, unrelated action, retroactively
           // link it to the bundle now being added alongside it, so its card
           // still renders paired with the Bundle card instead of staying
@@ -3658,7 +3668,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
       // Accepts an optional pre-generated bundleId so a caller (the
       // dv-bundle-cta handler below) can stamp the SAME id onto the primary
-      // item it's adding alongside these companions — the other call site
+      // item it's adding alongside these companions; the other call site
       // (the grid's hrd-bundle-add-cta) never passes one and keeps
       // generating its own, unchanged.
       function addBundleToCart(items, bundleId) {
@@ -3692,10 +3702,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         saveCart(cart);
       }
       // Every companion cart item actually added under a "Bundle & Save" purchase
-      // for this base — used so removal always clears what's really in the cart,
+      // for this base, used so removal always clears what's really in the cart,
       // not whatever the current live availability check happens to be offering
       // right now (which can drift between visits, e.g. a TLD going from
-      // available to taken, or a transient check failure — see dv-bundle-cta).
+      // available to taken, or a transient check failure; see dv-bundle-cta).
       function cartCompanionsForBase(base) {
         return loadCart().filter(function (i) {
           return i.bundleId && i.domain.length > base.length && i.domain.indexOf(base + '.') === 0;
@@ -3721,7 +3731,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
       function wireFavButtons(scopeEl) {
         // #dv-bundle-fav is styled with the same .dv-fav class but represents
-        // 5 domains at once, not one — it gets its own dedicated wiring
+        // 5 domains at once, not one; it gets its own dedicated wiring
         // (alongside dv-bundle-cta) instead of this generic single-domain path.
         scopeEl.querySelectorAll('.dv-fav:not(#dv-bundle-fav), .dx-fav').forEach(function (btn) {
           var domain = btn.dataset.domain, tld = btn.dataset.tld;
@@ -3730,7 +3740,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
             var nowFav = toggleFavorite(domain, tld);
             // The same domain can be on screen more than once at a time (the
             // verdict box's own heart, plus another in the grid/MLT/bundle
-            // panel below) — reconcile every matching button, not just this
+            // panel below); reconcile every matching button, not just this
             // one, so they never fall out of sync with each other.
             document.querySelectorAll('.dv-fav, .dx-fav').forEach(function (b) {
               if (b.dataset.domain === domain && b.dataset.tld === tld) {
@@ -3740,9 +3750,9 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
             });
             // The bundle's first domain is always the primary's own (qTld),
             // so toggling the primary's heart can change whether "all bundle
-            // domains favorited" is still true — keep that button in sync too.
+            // domains favorited" is still true; keep that button in sync too.
             syncBundleFavBtn();
-            // Keep the Favorites view live — unfavoriting a row while it's
+            // Keep the Favorites view live: unfavoriting a row while it's
             // open (including from inside the view itself) should drop it
             // immediately, not just on the next unrelated re-render.
             if (isFavViewOpen()) renderFavView();
@@ -3944,13 +3954,13 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           if (cartDrawerTitle) cartDrawerTitle.textContent = 'Cart';
           var seenBundles = {};
           // A bundle's linked primary (item.primaryForBundle, stamped at add
-          // time — see the dv-bundle-cta handler) always renders directly
+          // time; see the dv-bundle-cta handler) always renders directly
           // above its Bundle card, not at its own array position, so the two
           // cards this purchase flow produces can never end up separated
           // (e.g. by the primary having already been in the cart beforehand).
           var primaryByBundleId = {};
           domainItems.forEach(function (i) { if (i.primaryForBundle) primaryByBundleId[i.primaryForBundle] = i; });
-          // Which bundleIds actually still have a companion group present —
+          // Which bundleIds actually still have a companion group present:
           // lets a primaryForBundle reference that no longer points at
           // anything (a stale/orphaned item, however it came to be) fall
           // through and render as a normal standalone card instead of
@@ -3990,7 +4000,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         if (cartTotalEl) cartTotalEl.textContent = 'C$' + total.toFixed(2);
         if (cartContinueToCartBtn) cartContinueToCartBtn.disabled = domainItems.length === 0;
 
-        // Reflect cart state on any currently-rendered result cards — swaps the
+        // Reflect cart state on any currently-rendered result cards: swaps the
         // icon and the "Domain Added" badge, not just the aria-label, since the
         // cart can change from the drawer (trash icon) as well as this row's
         // own click, and the row needs to fully revert when that happens.
@@ -4012,7 +4022,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           else if (badge && !inCart) { badge.remove(); clearBundleDismissed(btn.dataset.domain, btn.dataset.tld); }
         });
 
-        // Same reconciliation for the MLT-panel/Explore-section CTA — it only
+        // Same reconciliation for the MLT-panel/Explore-section CTA: it only
         // ever toggled its own "is-added" (green) class from its own click,
         // so removing that domain via the cart drawer's trash icon (or any
         // other path) left it stuck green with nothing actually in the cart.
@@ -4030,7 +4040,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         });
 
         // Reflect cart state on the verdict box's own CTAs (Make It Yours /
-        // Bundle It! / alt-suggestion) — mutates only the label span so the
+        // Bundle It! / alt-suggestion): mutates only the label span so the
         // arrow icon survives and the button can be toggled indefinitely.
         var primaryCtaEl = document.getElementById('dv-primary-cta');
         if (primaryCtaEl && primaryCtaEl.dataset.domain && primaryCtaEl.dataset.premium !== 'true') {
@@ -4049,10 +4059,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         var bundleCtaEl = document.getElementById('dv-bundle-cta');
         if (bundleCtaEl && bundleCtaEl.dataset.base) {
           // Keyed off actual cart contents (cartCompanionsForBase), not the
-          // live tlds snapshot — matches the click handler's own check, so the
+          // live tlds snapshot, matches the click handler's own check, so the
           // label never claims "Bundle It!"/"Added ✓" out of step with what a
           // click would actually do (see dv-bundle-cta remove bug). Deliberately
-          // does NOT also require the primary to be present — dv-primary-cta
+          // does NOT also require the primary to be present; dv-primary-cta
           // already tracks its own domain independently, and requiring both
           // here caused removing just the primary to falsely show the whole
           // bundle as "not added" even though its companions were still in
@@ -4077,14 +4087,14 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
       if (cartHeaderBtn) cartHeaderBtn.addEventListener('click', openCart);
 
-      // ── Favorites view — swaps the verdict area (and the search-result
+      // ── Favorites view: swaps the verdict area (and the search-result
       // sections below it) for a cross-search list of every favorited
       // domain, since "Show Favourites" used to only ever filter the
       // CURRENT search's own grid, and the searched domain is deliberately
-      // excluded from that grid — so a favorited primary domain had nowhere
+      // excluded from that grid, so a favorited primary domain had nowhere
       // to ever reappear. A new search always does a full page navigation
       // (see the domain-search-form submit handler), so this view's open/
-      // closed state needs no persistence — a fresh load always starts closed. ──
+      // closed state needs no persistence; a fresh load always starts closed. ──
       var favViewToggle = document.getElementById('fav-view-toggle');
       var favViewEl = document.getElementById('fav-view');
       var favViewGridEl = document.getElementById('fav-view-grid');
@@ -4112,21 +4122,21 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         if (domainExploreSection) domainExploreSection.hidden = false;
         if (domainGridSection) domainGridSection.hidden = false;
       }
-      // A favorite only stores {domain, tld}, no price — so it needs a fresh
+      // A favorite only stores {domain, tld}, no price, so it needs a fresh
       // live check every time the view opens (or a favorite changes while
       // it's open), using the exact same batch-check infrastructure already
       // built for this (checkDomains). Row markup mirrors renderExplore's
       // dx-card shape, simplified (no Explore-specific highlight/badge-map
-      // special-casing), and reuses its existing wiring functions verbatim —
+      // special-casing), and reuses its existing wiring functions verbatim,
       // so Add-to-Cart/broker CTAs and the remove-favorite heart all just work.
       // checkDomainsBatch drops an entire batch (up to SAFE_BATCH_SIZE
       // domains) on any transient network failure, and checkDomains itself
-      // only retries once before giving up for good — under the live
+      // only retries once before giving up for good, under the live
       // backend's occasional rate-limiting, a whole batch of favorites can
       // fail together, surfacing as "couldn't check" for all of them at
       // once. A favorites list is always small, so it's cheap to keep
-      // retrying — but only the domains that actually came back missing,
-      // not everything — before finally falling back.
+      // retrying, but only the domains that actually came back missing,
+      // not everything, before finally falling back.
       function checkFavsWithRetry(items, attemptsLeft) {
         var list = items.map(function (f) { return { name: f.domain.slice(0, f.domain.length - f.tld.length), tld: f.tld }; });
         return checkDomains(list).then(function (results) {
@@ -4154,26 +4164,26 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           // gridAccum is declared with `var` inside the `if (qBase) {...}`
           // search flow further down, so it's hoisted but still `undefined`
           // if the Favorites view is opened before any search ever ran on
-          // this page load — guard before appending to it.
+          // this page load; guard before appending to it.
           if (typeof gridAccum === 'undefined' || !gridAccum) gridAccum = [];
-          // Merge into the same shared accumulator the live grid uses — it's
+          // Merge into the same shared accumulator the live grid uses; it's
           // just a domain+tld lookup cache, not tied to one search, so this
           // lets the shared More-Like-This/Bundle-upsell panels (opened via
           // each card's own expand/added-badge controls) immediately have
           // each favorite's own checked TLD on hand.
           gridAccum = gridAccum.concat(results);
           // checkDomains results carry r.domain as the bare base name (no
-          // tld — the same convention used everywhere else, e.g. "var
+          // tld; the same convention used everywhere else, e.g. "var
           // domainFull = r.domain + r.tld"), while a favorite's own .domain
-          // is the full string — key by the concatenated full domain so the
+          // is the full string; key by the concatenated full domain so the
           // two actually line up.
           var byKey = {};
           results.forEach(function (r) { byKey[r.domain + r.tld] = r; });
           favViewGridEl.innerHTML = favs.map(function (f) {
             var r = byKey[f.domain];
             if (r) return buildResultCardHtml(r);
-            // A lookup can fail transiently (registry timeout, etc.) — show a
-            // minimal card (same shell, no detail panel/MLT — nothing
+            // A lookup can fail transiently (registry timeout, etc.); show a
+            // minimal card (same shell, no detail panel/MLT; nothing
             // reliable to expand) that still lets you unfavorite or come
             // back later, rather than silently dropping the row.
             var favBase = f.domain.slice(0, f.domain.length - f.tld.length);
@@ -4193,13 +4203,13 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       if (favViewToggle) {
         favViewToggle.addEventListener('click', function () { isFavViewOpen() ? closeFavView() : openFavView(); });
         // Desktop-only hover preview of the heart draw-in/fill/bounce, same
-        // pattern as the filter icon's own hover morph above — mobile has no
+        // pattern as the filter icon's own hover morph above; mobile has no
         // hover event, so the animation there only ever plays via .is-drawn
         // being left on (nothing currently sets that outside hover, matching
         // "click to open" not needing its own separate animation trigger).
         if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
           // Guarded on isFavViewOpen() so hovering an already-open button
-          // never fights with its static filled-black look — same pattern
+          // never fights with its static filled-black look; same pattern
           // filterToggleBtn's own hover handlers already use against
           // filterPanel's open state.
           favViewToggle.addEventListener('mouseenter', function () { if (!isFavViewOpen()) favViewToggle.classList.add('is-drawn'); });
@@ -4223,9 +4233,9 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
       function openBrokerModal(triggerEl) {
         brokerModalLastTrigger = triggerEl || document.activeElement;
-        // Greens the dx-card broker cta while this modal is actually open —
+        // Greens the dx-card broker cta while this modal is actually open:
         // closeBrokerModal reverts it (any such button, not just this one,
-        // so it's robust regardless of which trigger opened the modal) —
+        // so it's robust regardless of which trigger opened the modal),
         // instead of the old toggle-and-never-revert pattern that left it
         // permanently green after the first click.
         if (triggerEl && triggerEl.classList) triggerEl.classList.add('is-added');
@@ -4278,7 +4288,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
       // ── Instant checkout modal (premium domain purchase / broker fee) ──
       // Requires a logged-in Supabase session (window.__vwClientSb/__vwClientSession,
-      // set up by the small <script type="module"> near the tail scripts) — buyer
+      // set up by the small <script type="module"> near the tail scripts); buyer
       // residency/registrant data must be tied to a real account.
       var icBackdrop = document.getElementById('instant-checkout-backdrop');
       var icModal = document.getElementById('instant-checkout-modal');
@@ -4321,13 +4331,13 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         var valueEl = document.getElementById('ic-summary-value');
         var captionEl = document.getElementById('ic-summary-caption');
         if (icPendingItem.kind === 'broker') {
-          labelEl.textContent = 'Domain Broker Service — ' + icPendingItem.domain;
+          labelEl.textContent = 'Domain Broker Service: ' + icPendingItem.domain;
           valueEl.textContent = 'C$50';
           captionEl.textContent = '+ 15% commission if a sale closes';
         } else {
           labelEl.textContent = icPendingItem.domain;
           valueEl.textContent = formatOneTime(icPendingItem.price);
-          captionEl.textContent = 'One-time premium acquisition — includes Year 1 registration.';
+          captionEl.textContent = 'One-time premium acquisition, includes Year 1 registration.';
         }
       }
 
@@ -4577,7 +4587,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           window.__vwClientSb.from('client_billing_info').upsert(row, { onConflict: 'id' }).then(function (res) {
             if (res && res.error) console.error('billing info save failed:', res.error);
           }).catch(function (err) { console.error('billing info save failed:', err); });
-        } catch (e) { /* non-fatal — saved billing is a nice-to-have, must never block checkout */ }
+        } catch (e) { /* non-fatal: saved billing is a nice-to-have, must never block checkout */ }
       }
 
       icRegistrantForm.addEventListener('submit', function (e) {
@@ -4611,7 +4621,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           .then(function (res) { return res.json().then(function (json) { return { ok: res.ok, json: json }; }); })
           .then(function (r) {
             if (!r.ok || r.json.error || !r.json.client_secret) throw new Error(r.json.error || 'Checkout failed');
-            if (!icStripeClient) throw new Error('Payment could not load — please refresh and try again.');
+            if (!icStripeClient) throw new Error('Payment could not load. Please refresh and try again.');
             return icStripeClient.initEmbeddedCheckout({ clientSecret: r.json.client_secret }).then(function (checkout) {
               icActiveEmbeddedCheckout = checkout;
               document.getElementById('ic-payment-element').innerHTML = '';
@@ -4622,7 +4632,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           })
           .catch(function (err) {
             setIcSubmitLoading(false);
-            icRegistrantError.textContent = err.message || 'Something went wrong starting checkout — please try again.';
+            icRegistrantError.textContent = err.message || 'Something went wrong starting checkout. Please try again.';
             icRegistrantError.hidden = false;
           });
       });
@@ -4638,7 +4648,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       window.openInstantCheckout = openInstantCheckout;
       window.closeInstantCheckout = closeInstantCheckout;
 
-      // ── Premium domain "Learn More" modal: open/close, focus trap — same
+      // ── Premium domain "Learn More" modal: open/close, focus trap: same
       // pattern as the broker modal above, plus filling in this domain's
       // pricing breakdown on open. ──
       var premiumModal = document.getElementById('premium-modal');
@@ -4704,10 +4714,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       var filterToggleBtn = document.getElementById('tld-filter-toggle');
 
       // Sliders icon tick animation (ported from a Framer Motion component the
-      // client supplied — no React/motion here, so it's hand-rolled with rAF).
+      // client supplied; no React/motion here, so it's hand-rolled with rAF).
       // CSS transitions on <line> x1/x2 don't work: those aren't part of the
       // CSS SVG-geometry property set (only cx/cy/r/x/y/width/height are), so
-      // browsers silently ignore them — confirmed by testing before writing
+      // browsers silently ignore them; confirmed by testing before writing
       // this. Animating the actual attributes via rAF is the reliable path.
       var FILTER_ICON_NORMAL = {
         'fi-l1a': { x2: 14 }, 'fi-l1b': { x1: 10 },
@@ -4795,7 +4805,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
       // ── Checkout: "Continue to Cart" hands off to the dedicated checkout
       // page (sign-in gate, term selection, addons, Stripe handoff all live
-      // there now — this drawer only manages what's in the cart). ─────────
+      // there now; this drawer only manages what's in the cart). ─────────
       var _sbCfg = window.SUPABASE_CONFIG || {};
       if (cartContinueToCartBtn) {
         cartContinueToCartBtn.addEventListener('click', function () {
@@ -4823,7 +4833,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       // ── Batched availability checks (MAX_DOMAINS_PER_REQUEST = 20 server-side) ──
       // Some TLDs (.ai in particular) are slow enough at the registry level that
       // batching them with others can stall the whole batch's response for a long
-      // time. A hard client-side timeout keeps the page responsive either way —
+      // time. A hard client-side timeout keeps the page responsive either way;
       // a timed-out batch just renders as if those endings came back empty.
       function withTimeout(promise, ms) {
         return new Promise(function (resolve) {
@@ -4845,16 +4855,16 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         return withTimeout(req, 8000);
       }
       // .ai in particular is slow enough at the registry that it can stall an
-      // entire shared batch — isolate it (and any future slow TLD) into its own
+      // entire shared batch; isolate it (and any future slow TLD) into its own
       // single-item request so a timeout there never costs its batch-mates.
       var SLOW_TLDS = ['.ai'];
       // check-domain-availability's own stated cap is 20/request, but empirically
       // Openprovider's /domains/check hangs outright (no error, just times out)
-      // once a single call asks for 8+ domains — 5 leaves real headroom under
+      // once a single call asks for 8+ domains; 5 leaves real headroom under
       // the observed 7-domain breaking point.
       var SAFE_BATCH_SIZE = 5;
       // Small batches run in a limited pool (not full Promise.all, not fully
-      // sequential) — a few in flight at once keeps the wait reasonable without
+      // sequential); a few in flight at once keeps the wait reasonable without
       // reproducing the concurrent-auth-race 502s a full burst triggers.
       function runPooled(items, worker, concurrency) {
         return new Promise(function (resolve) {
@@ -4873,7 +4883,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           pump();
         });
       }
-      // onBatchDone, if given, fires with each batch's results as it lands —
+      // onBatchDone, if given, fires with each batch's results as it lands:
       // checking dozens of domains against a live registry a handful at a time
       // takes real seconds, so the grid renders progressively instead of
       // sitting on a skeleton until the very last (slowest) batch returns.
@@ -4887,7 +4897,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           return checkDomainsBatch(batch).then(function (results) {
             // An empty result for a non-empty request is unambiguous failure
             // (a real answer always has one entry per domain asked, even for
-            // taken ones) — worth one retry since most failures here are
+            // taken ones); worth one retry since most failures here are
             // transient (a slow TLD, a brief 502), not permanent.
             return (!results.length && batch.length) ? checkDomainsBatch(batch) : results;
           }).then(function (results) {
@@ -4933,8 +4943,8 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
 
       // ── Tetris loading animation (ported from a React/TS component to plain JS;
-      // a bot plays real tetris — piece bag, heuristic placement, line-clear flash,
-      // top-out flood — the frame-generation algorithm itself is unchanged). ──
+      // a bot plays real tetris: piece bag, heuristic placement, line-clear flash,
+      // top-out flood; the frame-generation algorithm itself is unchanged). ──
       (function () {
         var SHAPES = [
           { id: 1, rot: [[[0, 1], [1, 1], [2, 1], [3, 1]], [[2, 0], [2, 1], [2, 2], [2, 3]]] },
@@ -5126,6 +5136,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
           var last = performance.now();
           var owed = 0;
+          var rafId;
           function tick(now) {
             owed += now - last;
             last = now;
@@ -5137,12 +5148,19 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               if (frameIndex >= frames.length) { ended = true; break; }
             }
             paint(Math.min(frameIndex, frames.length - 1));
-            if (!ended) { requestAnimationFrame(tick); return; }
+            if (!ended) { rafId = requestAnimationFrame(tick); return; }
             frames = generateTetrisFrames(columns, rows);
             frameIndex = 0;
-            requestAnimationFrame(tick);
+            rafId = requestAnimationFrame(tick);
           }
-          requestAnimationFrame(tick);
+          if (window.PerfUtils) {
+            PerfUtils.gatedLoop(container, {
+              start: function () { rafId = requestAnimationFrame(tick); },
+              stop: function () { cancelAnimationFrame(rafId); }
+            });
+          } else {
+            rafId = requestAnimationFrame(tick);
+          }
         }
 
         document.querySelectorAll('[data-tetris-loader]').forEach(function (el) {
@@ -5150,10 +5168,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         });
 
         /* ---------------------------------------------------------------- */
-        /*     dot-grid loader (#fav-view-loading) — adapted from a React    */
+        /*     dot-grid loader (#fav-view-loading): adapted from a React    */
         /*     shadcn component (dot-loader.tsx) into plain vanilla JS: a    */
         /*     7x7 grid of dots, toggled active per a fixed frame sequence   */
-        /*     on an interval. No React/build step needed — the original    */
+        /*     on an interval. No React/build step needed; the original    */
         /*     component's own logic was already framework-light.           */
         /* ---------------------------------------------------------------- */
         function mountDotLoader(container, frames, opts) {
@@ -5176,7 +5194,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               var isActive = frame.indexOf(i2) !== -1;
               d.classList.toggle('active', isActive);
               // Columns 0 and 6 are the two static paddles ("pillars"); every
-              // other active dot is the ball bouncing between them —
+              // other active dot is the ball bouncing between them;
               // confirmed by frequency analysis of all 16 frames (col 0/6
               // dots repeat across most frames, every other active dot
               // appears in only 1-2 frames, tracing a path).
@@ -5188,7 +5206,16 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           if (reduced) { paint(frames[Math.floor(frames.length / 2)] || []); return; }
           var idx = 0;
           paint(frames[0] || []);
-          setInterval(function () { idx = (idx + 1) % frames.length; paint(frames[idx] || []); }, duration);
+          var intervalId;
+          function fn() { idx = (idx + 1) % frames.length; paint(frames[idx] || []); }
+          if (window.PerfUtils) {
+            PerfUtils.gatedLoop(container, {
+              start: function () { intervalId = setInterval(fn, duration); },
+              stop: function () { clearInterval(intervalId); }
+            });
+          } else {
+            intervalId = setInterval(fn, duration);
+          }
         }
         var FAV_DOT_FRAMES = [
           [14, 7, 0, 8, 6, 13, 20],
@@ -5284,7 +5311,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         /**
          * Plays a full game of snake and returns it as animation frames. The
          * snake takes the shortest path to each apple, but only steps where the
-         * open space left in front of it is bigger than its own body — so it
+         * open space left in front of it is bigger than its own body, so it
          * does not box itself in. Every call plays a different game.
          */
         function generateSnakeFrames(width) {
@@ -5324,7 +5351,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               if (d < best) { best = d; move = nb2; }
             }
 
-            // No safe step towards the apple — head for the roomiest square instead.
+            // No safe step towards the apple; head for the roomiest square instead.
             if (move < 0) {
               var room = -1;
               for (var i3 = 0; i3 < open.length; i3++) {
@@ -5422,10 +5449,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         });
       })();
 
-      // Real, derivable qualities only — no fabricated "searched N times" style stats.
+      // Real, derivable qualities only: no fabricated "searched N times" style stats.
       var DOMAIN_KEYWORD_LIST = ['shop', 'store', 'app', 'web', 'tech', 'hub', 'pro', 'online', 'digital', 'media', 'group', 'studio', 'cloud', 'market', 'zone', 'network', 'systems', 'agency', 'works', 'space'];
       // A plain deterministic read on the string itself (digit presence, vowel
-      // ratio, longest consonant run) — not a dictionary lookup, so it's a soft
+      // ratio, longest consonant run); not a dictionary lookup, so it's a soft
       // descriptive line rather than a verified claim.
       function isEasyToRemember(base) {
         var lower = base.toLowerCase();
@@ -5449,7 +5476,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         facts.push(base.length <= 15
           ? '"' + base + '" is 15 characters or less.'
           : '"' + base + '" is ' + base.length + ' characters long.');
-        if (result && result.available && !result.premium) facts.push('Available right now — exact-match names like this don’t stay open long.');
+        if (result && result.available && !result.premium) facts.push('Available right now. Exact-match names like this don’t stay open long.');
         return facts;
       }
 
@@ -5466,7 +5493,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       // The TLD filter panel's pills only populate inside the `if (qBase)` block
       // below (they need a search in progress to filter). Any entry point that
       // requests the panel open (e.g. hosting-services.html's "+ View More")
-      // without a real query — or a future one that forgets to pass one — would
+      // without a real query (or a future one that forgets to pass one) would
       // otherwise land on a panel with zero pills. Fall back to a placeholder
       // base so the panel always has something real to show and filter.
       if (!qBase && qp.get('openTldFilter') === '1') {
@@ -5485,7 +5512,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       var gridLoadingEl = document.getElementById('domain-grid-loading');
       var gridResultsEl = document.getElementById('domain-grid-results');
 
-      // Best-effort, zero-dependency signal only (timezone/locale) — not real
+      // Best-effort, zero-dependency signal only (timezone/locale); not real
       // geolocation, and never presented to the user as fact. Just used to
       // decide whether .ca (a Canadian-presence-restricted registry TLD) is a
       // sensible bundle upsell for this visitor.
@@ -5502,19 +5529,19 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
 
       var BUNDLE_TLDS = isLikelyCanadian() ? ['.ca', '.com', '.net', '.store', '.online'] : ['.com', '.net', '.store', '.online'];
-      // Backfill pool — if the searched TLD is itself one of BUNDLE_TLDS, we pull
+      // Backfill pool: if the searched TLD is itself one of BUNDLE_TLDS, we pull
       // the next unused entry from here so the bundle still recommends 5 endings
       // instead of silently dropping to 4.
       var BUNDLE_TLDS_BACKUP = ['.xyz', '.info', '.co', '.shop'];
       // 5 candidates so exploreCandidates.slice(0,4) always yields exactly 4 cards,
       // even when the searched TLD itself is one of these 5. .ai is deliberately
-      // excluded — it's in SLOW_TLDS and routinely blows its own timeout, which
+      // excluded: it's in SLOW_TLDS and routinely blows its own timeout, which
       // silently drops it from results (that's what was causing only 3 cards).
       var EXPLORE_TLDS = ['.net', '.org', '.io', '.co', '.app'];
       // Sourced from TLD_CATALOG (tld-catalog.js) minus anything flagged `restricted`
       // (sponsored/eligibility-gated extensions like .gov/.mil/.arpa/.edu/.int/.bank
       // that Openprovider won't sell to the general public). Each entry here is its
-      // own registry round-trip — SAFE_BATCH_SIZE below groups them to stay under
+      // own registry round-trip; SAFE_BATCH_SIZE below groups them to stay under
       // Openprovider's per-call limits, so a longer list means real, felt load time,
       // just spread progressively across pages instead of blocking the first paint.
       var GRID_TLDS = TLD_CATALOG.filter(function (t) { return !t.restricted; }).map(function (t) { return t.tld; });
@@ -5525,7 +5552,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       var VARIANT_SUFFIXES = ['hq', 'app', 'hub'];
       var VARIANT_TLDS = ['.com', '.co'];
 
-      // A handful of tightly-similar name variants for "Great Alternative" —
+      // A handful of tightly-similar name variants for "Great Alternative":
       // checked against the searched TLD first, so the ideal case is the same
       // ending with a near-identical spelling (plural, a doubled vowel, or a
       // common near-homophone swap), not an unrelated get-/my- prefixed name
@@ -5548,7 +5575,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         return out.slice(0, 8);
       }
 
-      // On-demand backfill pool — used only when a TLD filter (selectedTlds)
+      // On-demand backfill pool: used only when a TLD filter (selectedTlds)
       // narrows the grid down to too few rows for that TLD (the exact-match
       // check above only ever produces ONE row per non-.com/.co TLD). Combined
       // as prefix+base and base+suffix, checked specifically against whichever
@@ -5585,7 +5612,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
                 '<div class="dv-box-top"><span class="dv-badge dv-badge--premium">' + diamondIcon() + 'Premium Domain</span>' + favBtn + '</div>' +
                 '<div class="dv-domain dv-domain--premium">' + escapeHtml(qBase) + '<span class="tld">' + escapeHtml(qTld) + '</span></div>' +
                 '<div class="dv-price-row"><span class="dv-price-now">' + formatOneTime(primary.price) + '</span></div>' +
-                '<p class="dv-price-note">This domain is privately held — pricing reflects a one-time premium acquisition, not standard registration.</p>' +
+                '<p class="dv-price-note">This domain is privately held. Pricing reflects a one-time premium acquisition, not standard registration.</p>' +
                 '<button type="button" class="btn dv-cta" id="dv-primary-cta" data-domain="' + escapeHtml(domainFull) + '" data-tld="' + escapeHtml(qTld) + '" data-price="' + (primary.price || 0) + '" data-premium="true"><span class="dv-cta-label">Make It Yours</span><span class="dv-cta-arrow" aria-hidden="true">→</span></button>' +
               '</div>' +
               '<div class="dv-premium-sidebar">' +
@@ -5597,7 +5624,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
                   '<button type="button" class="dv-panel-trigger" aria-expanded="false"><span class="dv-panel-icon">' + shieldIcon() + '</span><span class="dv-panel-label">Why VardWeb?</span><span class="dv-panel-chevron">' + chevronIcon() + '</span></button>' +
                   '<div class="dv-panel-body"><div class="dv-panel-body-inner"><div class="dv-panel-body-pad"><ul class="dv-why-list">' +
                     '<li>' + checkIcon() + '<span>24/7 support from VardWeb.</span></li>' +
-                    '<li>' + checkIcon() + '<span>One flat rate at renewal — 20% over wholesale. Transparent from day one.</span></li>' +
+                    '<li>' + checkIcon() + '<span>One flat rate at renewal: 20% over wholesale. Transparent from day one.</span></li>' +
                     '<li>' + checkIcon() + '<span>Every domain includes free WHOIS Privacy, forever**</span></li>' +
                   '</ul></div></div></div>' +
                 '</div>' +
@@ -5623,10 +5650,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           var brokerHtml =
             '<div class="dv-broker">' +
               '<div class="dv-broker-row">' +
-                '<img src="brand_assets/ProfilePicture_VardWeb.png" alt="" class="dv-broker-avatar" />' +
+                '<img src="brand_assets/ProfilePicture_VardWeb.png" alt="" class="dv-broker-avatar" loading="lazy" />' +
                 '<div class="dv-broker-copy"><span class="dv-broker-label">Broker Service Fee</span><span class="dv-broker-fee">C$50' +
                   '<button type="button" class="tt-icon-trigger" data-tooltip="' +
-                    escapeHtml('Pricing\n\nA C$50 service fee is charged now when you check out — this covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.\n\nIf the seller agrees to sell, you\'ll separately pay the negotiated sale price plus a 15% commission at that time, and we\'ll securely transfer the domain to you.') +
+                    escapeHtml('Pricing\n\nA C$50 service fee is charged now when you check out. This covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.\n\nIf the seller agrees to sell, you\'ll separately pay the negotiated sale price plus a 15% commission at that time, and we\'ll securely transfer the domain to you.') +
                   '" aria-label="Pricing details">?</button>' +
                 '</span></div>' +
               '</div>' +
@@ -5721,7 +5748,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
             var base = bundleCta.dataset.base;
             var existingCompanions = cartCompanionsForBase(base);
             // Deliberately independent of whether the primary is also
-            // present — see the matching note on the render-sync block above
+            // present; see the matching note on the render-sync block above
             // (dv-bundle-cta's own bAllIn) for why requiring both broke
             // "remove primary only" and caused orphaned re-adds.
             var alreadyBundled = existingCompanions.length > 0;
@@ -5732,7 +5759,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               removeFromCartByKey(base + qTld, qTld);
             } else {
               // Same bundleId stamped on both the primary (via primaryForBundle,
-              // not its own bundleId — keeps it excluded from
+              // not its own bundleId; keeps it excluded from
               // cartCompanionsForBase, so the remove flow above is unaffected)
               // and the companions, so renderCart() can always render the
               // primary's own card directly above its Bundle card, regardless
@@ -5779,7 +5806,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         renderCart();
       }
 
-      var EXPLORE_HIGHLIGHT_TLDS = []; // opt-in editorial highlight list — empty by default, no fabricated "best in class" claims
+      var EXPLORE_HIGHLIGHT_TLDS = []; // opt-in editorial highlight list: empty by default, no fabricated "best in class" claims
       var TLD_BADGE_MAP = {
         '.ca': { text: 'LOVED BY LOCALS', cls: 'tld-ca' },
         '.com': { text: 'POPULAR', cls: 'tld-com' },
@@ -5810,10 +5837,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
                 '" aria-label="Pricing details">?</button>' +
               '</p>'
             : '<div class="dx-card-broker">' +
-                '<img src="brand_assets/ProfilePicture_VardWeb.png" alt="" class="dx-card-broker-avatar" />' +
+                '<img src="brand_assets/ProfilePicture_VardWeb.png" alt="" class="dx-card-broker-avatar" loading="lazy" />' +
                 '<div class="dx-card-broker-copy"><span class="dx-card-broker-label">Broker Service Fee</span><span class="dx-card-broker-fee">C$50' +
                   '<button type="button" class="tt-icon-trigger" data-tooltip="' +
-                    escapeHtml('Pricing\n\nA C$50 service fee is charged now when you check out — this covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.\n\nIf the seller agrees to sell, you\'ll separately pay the negotiated sale price plus a 15% commission at that time, and we\'ll securely transfer the domain to you.') +
+                    escapeHtml('Pricing\n\nA C$50 service fee is charged now when you check out. This covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.\n\nIf the seller agrees to sell, you\'ll separately pay the negotiated sale price plus a 15% commission at that time, and we\'ll securely transfer the domain to you.') +
                   '" aria-label="Pricing details">?</button>' +
                 '</span></div>' +
               '</div>';
@@ -5863,7 +5890,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         return typeof price === 'number' ? '~C$' + renewalPricePerYear(price).toFixed(2) + '/yr' : 'the standard rate';
       }
 
-      // Visible crossed-out renewal price — same 20% markup math as
+      // Visible crossed-out renewal price: same 20% markup math as
       // formatRenewalEstimate, but formatted to match formatPrice's bare
       // "C$X.XX/yr" style so it reads as a matched was/now pair.
       function formatWasPrice(price) {
@@ -5874,20 +5901,20 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       var ICANN_FEE_CAD = 'C$0.28';
 
       // Registrant-eligibility restrictions imposed by the registry itself (not an
-      // Openprovider/VardWeb policy) — surfaced via the "Restrictions apply" badge
+      // Openprovider/VardWeb policy); surfaced via the "Restrictions apply" badge
       // below. Verified against each registry's current rules; TLDs not listed here
-      // (.com, .io, .co, etc.) have no such restriction. `**label—**` becomes bold
+      // (.com, .io, .co, etc.) have no such restriction. `**label:**` becomes bold
       // in the shared tooltip renderer (see the tt-icon-trigger script further down).
       var TLD_RESTRICTIONS = {
-        '.ca': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Preferred language—**Registrant contact\'s preferred language.\n\n**Canadian presence—**Best description of the registrant contact\'s relationship to Canada: citizen, permanent resident, corporation, educational institution, etc.',
-        '.eu': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**EU/EEA connection—**Registrant must be an EU citizen (any residence), a resident of the EU or EEA, or an organization established in the EU or EEA.',
-        '.jp': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Japan presence—**Registrant or administrative contact must have a permanent postal address in Japan.',
-        '.cn': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Real-name verification—**Registrant must submit valid identification (passport or ID card) for registry verification before the domain can be activated.',
-        '.fr': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**EU/EEA connection—**Registrant must be a resident of, or have a registered office in, the EU, Switzerland, Norway, Iceland, or Liechtenstein.',
-        '.it': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**EEA connection—**Registrant must have citizenship, residence, or a registered office in the EEA, the UK, Switzerland, San Marino, or Vatican City.',
-        '.kr': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Korea presence—**Registrant must be a South Korean citizen or resident, or have a registered company or branch office in South Korea.',
-        '.ru': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Identity verification—**As of September 2026, all registrants (including foreign individuals and companies) must verify identity through Russia\'s ESIA/Gosuslugi platform; the process for foreign entities is still being finalized by the registry.',
-        '.in': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Mandatory KYC—**Registrant must complete identity verification within 7 days of registration or the domain may be suspended.\n\n**No WHOIS privacy—**The registry does not permit proxy/privacy services; registrant name, city, and state are publicly visible.'
+        '.ca': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Preferred language:** Registrant contact\'s preferred language.\n\n**Canadian presence:** Best description of the registrant contact\'s relationship to Canada: citizen, permanent resident, corporation, educational institution, etc.',
+        '.eu': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**EU/EEA connection:** Registrant must be an EU citizen (any residence), a resident of the EU or EEA, or an organization established in the EU or EEA.',
+        '.jp': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Japan presence:** Registrant or administrative contact must have a permanent postal address in Japan.',
+        '.cn': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Real-name verification:** Registrant must submit valid identification (passport or ID card) for registry verification before the domain can be activated.',
+        '.fr': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**EU/EEA connection:** Registrant must be a resident of, or have a registered office in, the EU, Switzerland, Norway, Iceland, or Liechtenstein.',
+        '.it': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**EEA connection:** Registrant must have citizenship, residence, or a registered office in the EEA, the UK, Switzerland, San Marino, or Vatican City.',
+        '.kr': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Korea presence:** Registrant must be a South Korean citizen or resident, or have a registered company or branch office in South Korea.',
+        '.ru': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Identity verification:** As of September 2026, all registrants (including foreign individuals and companies) must verify identity through Russia\'s ESIA/Gosuslugi platform; the process for foreign entities is still being finalized by the registry.',
+        '.in': '**Registration Restrictions**\n\nRegistration restrictions set by the registry include:\n\n**Mandatory KYC:** Registrant must complete identity verification within 7 days of registration or the domain may be suspended.\n\n**No WHOIS privacy:** The registry does not permit proxy/privacy services; registrant name, city, and state are publicly visible.'
       };
 
       // Groups the TLD filter panel's pills under short category headers.
@@ -5909,34 +5936,34 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       ];
 
       // Per-TLD pill tooltip copy. Each entry: bold "Overview of <tld>" header,
-      // then 3 blank-line-separated **Label:** sentences — reuses the same
+      // then 3 blank-line-separated **Label:** sentences; reuses the same
       // \n\n paragraph-break + **bold** mechanism already shipped for
       // TLD_RESTRICTIONS above, so no renderer changes needed, just content.
       var TLD_PILL_INFO = {
         '.com': '**Overview of .com**\n\n**Global Recognition:** It is the largest and most widely trusted domain extension in the world.\n\n**User Habits:** Most people type ".com" by default when searching for a website.\n\n**Versatility:** Used by all types of groups, from massive online stores to personal blogs.',
         '.net': '**Overview of .net**\n\n**Original Purpose:** Built for network and infrastructure companies, still favored by telecom and ISPs.\n\n**Fallback Familiarity:** The go-to second choice when a business\'s ideal .com is already taken.\n\n**Tech Credibility:** Long history gives it a technical, established feel newer extensions haven\'t earned yet.',
-        '.org': '**Overview of .org**\n\n**Trust Signal:** Widely read as "non-commercial" — nonprofits, communities, and open-source projects default to it.\n\n**Credibility Boost:** Visitors often assume a mission-driven or public-interest angle behind the site.\n\n**Long Track Record:** One of the original 1985 extensions, so nothing about it reads as untested.',
+        '.org': '**Overview of .org**\n\n**Trust Signal:** Widely read as "non-commercial": nonprofits, communities, and open-source projects default to it.\n\n**Credibility Boost:** Visitors often assume a mission-driven or public-interest angle behind the site.\n\n**Long Track Record:** One of the original 1985 extensions, so nothing about it reads as untested.',
         '.info': '**Overview of .info**\n\n**Content Clarity:** Signals an informational resource before a visitor even clicks through.\n\n**Availability:** Names taken on .com are frequently still open here.\n\n**Low Barrier:** Cheap and unrestricted, a common pick for reference sites and guides.',
-        '.biz': '**Overview of .biz**\n\n**Direct Intent:** The extension itself states the purpose — this is a business, plainly.\n\n**Overflow Option:** Created specifically to relieve .com congestion, so it\'s built for exactly this use case.\n\n**Budget-Friendly:** Typically less expensive than a comparable .com for the same name.',
-        '.xyz': '**Overview of .xyz**\n\n**Startup Standard:** A common pick for crypto, dev tools, and early-stage tech projects.\n\n**Price Point:** Usually one of the cheapest extensions available — useful for testing a brand cheaply.\n\n**High-Profile Adoption:** Backed by real usage from major tech names, not just a novelty extension.',
+        '.biz': '**Overview of .biz**\n\n**Direct Intent:** The extension itself states the purpose. This is a business, plainly.\n\n**Overflow Option:** Created specifically to relieve .com congestion, so it\'s built for exactly this use case.\n\n**Budget-Friendly:** Typically less expensive than a comparable .com for the same name.',
+        '.xyz': '**Overview of .xyz**\n\n**Startup Standard:** A common pick for crypto, dev tools, and early-stage tech projects.\n\n**Price Point:** Usually one of the cheapest extensions available, useful for testing a brand cheaply.\n\n**High-Profile Adoption:** Backed by real usage from major tech names, not just a novelty extension.',
         '.tech': '**Overview of .tech**\n\n**Category Signal:** Says "technology company" before your tagline has to.\n\n**Engineering Appeal:** Popular with software, hardware, and engineering-focused brands.\n\n**Modern Feel:** A newer extension, so it reads as current rather than legacy.',
         '.app': '**Overview of .app**\n\n**Built-In Security:** Google requires HTTPS on every .app domain, so visitors get a secure connection by default.\n\n**Developer Recognition:** Immediately understood by anyone in software as "this is an application."\n\n**Clean Branding:** Short, purpose-specific, and rarely confused with an unrelated business.',
-        '.dev': '**Overview of .dev**\n\n**Audience Match:** Speaks directly to developers, engineers, and technical hiring audiences.\n\n**Security by Default:** Same Google-enforced HTTPS requirement as .app — no insecure version exists.\n\n**Portfolio Favorite:** A common choice for developer portfolios, docs sites, and dev tools.',
+        '.dev': '**Overview of .dev**\n\n**Audience Match:** Speaks directly to developers, engineers, and technical hiring audiences.\n\n**Security by Default:** Same Google-enforced HTTPS requirement as .app. No insecure version exists.\n\n**Portfolio Favorite:** A common choice for developer portfolios, docs sites, and dev tools.',
         '.cloud': '**Overview of .cloud**\n\n**Industry Fit:** An immediate match for SaaS, hosting, and infrastructure businesses.\n\n**Category Growth:** Adoption has tracked the broader shift of business software moving to the cloud.\n\n**Descriptive Branding:** Tells a technical buyer what you do without extra explanation.',
         '.online': '**Overview of .online**\n\n**Universal Fit:** Works for almost any type of site without implying a specific industry.\n\n**Availability:** A large, largely unclaimed namespace compared to older extensions.\n\n**Storefront Use:** Common among web-based businesses wanting a plain, descriptive presence.',
         '.site': '**Overview of .site**\n\n**Simplicity:** About as neutral and self-explanatory as a domain extension gets.\n\n**Landing Page Favorite:** Popular for portfolios, single-page sites, and quick launches.\n\n**Low Cost:** Generally inexpensive, useful for side projects and early-stage ideas.',
         '.shop': '**Overview of .shop**\n\n**Purpose-Built:** Google\'s own registry, designed specifically to signal e-commerce at a glance.\n\n**Search Clarity:** Search engines read intent straight from the extension before a page even loads.\n\n**Immediate Availability:** Skips the crowded, often-taken landscape of e-commerce ".com" names.',
-        '.store': '**Overview of .store**\n\n**Retail Signal:** Unambiguous — visitors know they\'ve landed somewhere selling something.\n\n**Brand Fit:** Popular with retail brands and merchandise lines wanting a literal name.\n\n**Alternative to .shop:** A second option in the same category if your preferred .shop name is gone.',
-        '.pro': '**Overview of .pro**\n\n**Credential Signal:** Built for licensed professionals — accountants, lawyers, consultants.\n\n**Client Trust:** Implies a formal, vetted standing that generic extensions don\'t carry.\n\n**Niche Focus:** Less crowded than .com in the professional-services space.',
+        '.store': '**Overview of .store**\n\n**Retail Signal:** Unambiguous. Visitors know they\'ve landed somewhere selling something.\n\n**Brand Fit:** Popular with retail brands and merchandise lines wanting a literal name.\n\n**Alternative to .shop:** A second option in the same category if your preferred .shop name is gone.',
+        '.pro': '**Overview of .pro**\n\n**Credential Signal:** Built for licensed professionals: accountants, lawyers, consultants.\n\n**Client Trust:** Implies a formal, vetted standing that generic extensions don\'t carry.\n\n**Niche Focus:** Less crowded than .com in the professional-services space.',
         '.agency': '**Overview of .agency**\n\n**Category Match:** An exact fit for marketing, design, and talent agencies.\n\n**Client-Facing Clarity:** Immediately tells a prospective client what kind of business this is.\n\n**Availability:** A newer extension with far less competition for good names than .com.',
         '.studio': '**Overview of .studio**\n\n**Creative Signal:** Common among design, photography, and production businesses.\n\n**Boutique Feel:** Suggests a smaller, specialized operation rather than a mass-market brand.\n\n**Descriptive Fit:** Works literally for any business that calls its workspace a "studio."',
         '.design': '**Overview of .design**\n\n**Field Alignment:** An exact match for UX, graphic design, and creative portfolios.\n\n**Visual Credibility:** Signals design-mindedness before a visitor sees any actual work.\n\n**Portfolio Standard:** Common among individual designers building a personal brand.',
         '.blog': '**Overview of .blog**\n\n**Immediate Clarity:** Tells visitors exactly what kind of content to expect.\n\n**Content Focus:** A natural fit for writers, publishers, and personal platforms.\n\n**Distinct from Social:** Signals an owned platform rather than a profile on someone else\'s.',
         '.co': '**Overview of .co**\n\n**Global Shorthand:** Widely read as a stylish, modern alternative to .com, not just "Colombia."\n\n**Startup Association:** Adopted early by tech startups, giving it a founder-friendly reputation.\n\n**Short and Memorable:** Two letters, easy to say out loud, easy to type.',
-        '.ai': '**Overview of .ai**\n\n**Industry Signal:** Instantly tells visitors you\'re building in artificial intelligence, no explanation needed.\n\n**Adoption Wave:** The default choice for AI startups since the boom began — competitors are already on it.\n\n**Scarcity:** A small registry now running largely on this demand, so strong short names move fast.',
+        '.ai': '**Overview of .ai**\n\n**Industry Signal:** Instantly tells visitors you\'re building in artificial intelligence, no explanation needed.\n\n**Adoption Wave:** The default choice for AI startups since the boom began. Competitors are already on it.\n\n**Scarcity:** A small registry now running largely on this demand, so strong short names move fast.',
         '.io': '**Overview of .io**\n\n**Developer Association:** Deeply tied to tech and software communities, especially SaaS and dev tools.\n\n**Global Adoption:** Used internationally as shorthand for "input/output," regardless of its territorial origin.\n\n**Startup Standard:** A common first choice for product-led tech companies.',
-        '.tv': '**Overview of .tv**\n\n**Media Signal:** Immediately reads as video, streaming, or broadcast content.\n\n**Memorable Branding:** Short and recognizable, easy to build a media brand around.\n\n**Cross-Industry Use:** Adopted well beyond traditional TV — streamers, podcasts, and creators use it too.',
-        '.me': '**Overview of .me**\n\n**Personal Branding:** A natural fit for individuals, portfolios, and personal projects.\n\n**Memorable Framing:** The extension reads as part of the sentence — "about.me," for example.\n\n**Availability:** Personal names are often still open here even when .com is long gone.',
+        '.tv': '**Overview of .tv**\n\n**Media Signal:** Immediately reads as video, streaming, or broadcast content.\n\n**Memorable Branding:** Short and recognizable, easy to build a media brand around.\n\n**Cross-Industry Use:** Adopted well beyond traditional TV: streamers, podcasts, and creators use it too.',
+        '.me': '**Overview of .me**\n\n**Personal Branding:** A natural fit for individuals, portfolios, and personal projects.\n\n**Memorable Framing:** The extension reads as part of the sentence: "about.me," for example.\n\n**Availability:** Personal names are often still open here even when .com is long gone.',
         '.cc': '**Overview of .cc**\n\n**Short and Clean:** Two letters, easy to type, easy to remember.\n\n**Flexible Use:** Not tied to any obvious meaning, so it fits almost any brand.\n\n**Alternative Option:** A fallback worth checking when common extensions for a name are taken.',
         '.de': '**Overview of .de**\n\n**Local Trust:** Germany\'s national extension, read locally as a sign of a genuine domestic business.\n\n**Market Size:** Access to one of Europe\'s largest and most valuable e-commerce markets.\n\n**Long Standing:** One of the world\'s most-registered ccTLDs, with decades of established use.',
         '.uk': '**Overview of .uk**\n\n**Local Trust:** Immediately signals a UK-based business to UK customers.\n\n**Search Relevance:** Search engines commonly favor local extensions for local search intent.\n\n**Market Access:** A direct line into one of Europe\'s largest English-speaking markets.',
@@ -5955,15 +5982,15 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         '.kr': '**Overview of .kr**\n\n**Local Trust:** South Korea\'s national extension, carrying weight with Korean consumers.\n\n**Market Access:** A meaningful signal for brands genuinely operating in the Korean market.\n\n**Registry Standards:** Local-presence rules keep the namespace tied to real businesses.',
         '.tw': '**Overview of .tw**\n\n**Local Trust:** Taiwan\'s national extension, read locally as an established Taiwanese presence.\n\n**Open Registration:** Fully open since 2006, no residency requirement despite the local read.\n\n**Regional Relevance:** A practical choice for brands targeting the Taiwanese or wider Chinese-language market.',
         '.asia': '**Overview of .asia**\n\n**Regional Identity:** Signals a pan-Asian presence rather than one specific country.\n\n**Cross-Border Reach:** Useful for businesses operating across multiple Asian markets under one brand.\n\n**Distinct Positioning:** Sets a brand apart from the more common single-country ccTLDs in the region.',
-        '.ca': '**Overview of .ca**\n\n**Local Trust:** Canada\'s national extension — instant, unmistakable credibility with Canadian customers.\n\n**Registry Standards:** CIRA\'s Canadian-presence requirement keeps the namespace genuinely local, not speculative.\n\n**Market Fit:** A strong default for any business actually operating in Canada.',
+        '.ca': '**Overview of .ca**\n\n**Local Trust:** Canada\'s national extension: instant, unmistakable credibility with Canadian customers.\n\n**Registry Standards:** CIRA\'s Canadian-presence requirement keeps the namespace genuinely local, not speculative.\n\n**Market Fit:** A strong default for any business actually operating in Canada.',
         '.mx': '**Overview of .mx**\n\n**Local Trust:** Mexico\'s national extension, signaling a real presence to Mexican consumers.\n\n**Market Access:** A direct line into one of Latin America\'s largest digital economies.\n\n**Open Registration:** No residency or citizenship requirement despite the strong local read.'
       };
 
       // Builds one .host-result-card-group's HTML from a single
       // checkDomains-shaped result ({domain, tld, available, premium, price}
-      // — domain is the bare base, no tld). Shared by renderGrid (the live
+      // domain is the bare base, no tld). Shared by renderGrid (the live
       // search grid) and renderFavView (the cross-search Favorites view) so
-      // both get the exact same info-dense, upsell-capable card — same
+      // both get the exact same info-dense, upsell-capable card; same
       // MLT/expand/badge/restriction machinery either way, not a simplified
       // stand-in.
       function buildResultCardHtml(r) {
@@ -6033,7 +6060,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         '</div>';
       }
       // Wires the handlers buildResultCardHtml's cards need, scoped to
-      // whichever container they were just rendered into — shared by
+      // whichever container they were just rendered into; shared by
       // renderGrid and renderFavView.
       function wireResultCards(container) {
         wirePremiumModalTriggers(container);
@@ -6069,7 +6096,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
         // Batch-streamed registry checks, the "View all TLDs" toggle, and
         // pagination all call this function again while the user may already
-        // have a row's detail panel open — rebuilding gridResultsEl wholesale
+        // have a row's detail panel open; rebuilding gridResultsEl wholesale
         // would otherwise silently collapse it (looks like a random close
         // with no interaction). Snapshot open rows by their stable domain+tld
         // key (not the throwaway per-render random id) and restore them below.
@@ -6078,7 +6105,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           openRows[el.dataset.domain + '|' + el.dataset.tld] = el.dataset.mode || 'about';
         });
         // Also auto-open the bundle panel for any in-cart domain that hasn't
-        // been explicitly dismissed — covers first load (old DOM was empty,
+        // been explicitly dismissed; covers first load (old DOM was empty,
         // so the snapshot above found nothing) as well as every later
         // re-render, so the panel survives a page reload just like the badge does.
         results.forEach(function (r) {
@@ -6123,7 +6150,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
 
       // Reused verbatim from #domain-everything's own icon+copy, so no new claims
-      // are invented for this panel — see domain-search.html's de-expand-item list.
+      // are invented for this panel; see domain-search.html's de-expand-item list.
       function renderResultDetail(detailEl) {
         var domainFull = detailEl.dataset.domain;
         var base = detailEl.dataset.base;
@@ -6151,7 +6178,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
               '<div class="hrd-box-title"><span class="hrd-box-title-icon">' + shieldIcon() + '</span>Why VardWeb?</div>' +
               '<ul class="hrd-why-list">' +
                 '<li>' + checkIcon() + '<span>24/7 support from VardWeb.</span></li>' +
-                '<li>' + checkIcon() + '<span>One flat rate at renewal — 20% over wholesale. Transparent from day one.</span></li>' +
+                '<li>' + checkIcon() + '<span>One flat rate at renewal: 20% over wholesale. Transparent from day one.</span></li>' +
                 '<li>' + checkIcon() + '<span>Every domain includes free WHOIS Privacy, forever**</span></li>' +
               '</ul>' +
             '</div>' +
@@ -6168,7 +6195,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         wirePremiumModalTriggers(detailEl);
       }
 
-      // Real, already-fetched data only — filters the same gridAccum batch every
+      // Real, already-fetched data only: filters the same gridAccum batch every
       // row came from, rather than firing a new per-row registry lookup. Only
       // same-base/different-TLD alternatives are shown (no fabricated name
       // suggestions, unlike GoDaddy's reference "More Like This" card row).
@@ -6193,10 +6220,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
                 '" aria-label="Pricing details">?</button>' +
               '</p>'
             : '<div class="dx-card-broker">' +
-                '<img src="brand_assets/ProfilePicture_VardWeb.png" alt="" class="dx-card-broker-avatar" />' +
+                '<img src="brand_assets/ProfilePicture_VardWeb.png" alt="" class="dx-card-broker-avatar" loading="lazy" />' +
                 '<div class="dx-card-broker-copy"><span class="dx-card-broker-label">Broker Service Fee</span><span class="dx-card-broker-fee">C$50' +
                   '<button type="button" class="tt-icon-trigger" data-tooltip="' +
-                    escapeHtml('Pricing\n\nA C$50 service fee is charged now when you check out — this covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.\n\nIf the seller agrees to sell, you\'ll separately pay the negotiated sale price plus a 15% commission at that time, and we\'ll securely transfer the domain to you.') +
+                    escapeHtml('Pricing\n\nA C$50 service fee is charged now when you check out. This covers a dedicated broker who will contact the current domain owner and negotiate on your behalf.\n\nIf the seller agrees to sell, you\'ll separately pay the negotiated sale price plus a 15% commission at that time, and we\'ll securely transfer the domain to you.') +
                   '" aria-label="Pricing details">?</button>' +
                 '</span></div>' +
               '</div>';
@@ -6213,7 +6240,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
 
       // Checks the rest of our full TLD library (GRID_TLDS) on demand for this
-      // base name before ever declaring "no other endings" — the background
+      // base name before ever declaring "no other endings"; the background
       // Full Grid stream may not have reached every TLD yet, so an empty result
       // from gridAccum alone doesn't mean the name is actually exhausted.
       function renderMoreLikeThis(detailEl) {
@@ -6257,11 +6284,11 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         }
       }
 
-      // Shown automatically when a row's own domain is added to the cart —
+      // Shown automatically when a row's own domain is added to the cart:
       // pitches the same base name on up to 4 other already-checked, available
       // endings. Reuses gridAccum (the same batch every row came from) rather
       // than firing a new per-row registry lookup, same idea as More Like
-      // This — and, like More Like This, backfills with an on-demand fetch
+      // This, and, like More Like This, backfills with an on-demand fetch
       // when gridAccum doesn't have anything for this base yet (e.g. a
       // Favorites-view card whose own MLT panel hasn't been opened), rather
       // than only ever working when the live search grid happened to already
@@ -6378,11 +6405,11 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         }
       }
 
-      // Single source of truth for "show this row's detail panel in mode X" —
+      // Single source of truth for "show this row's detail panel in mode X":
       // used by both the whole-card/chevron click and the mlt-button click, so
       // there's exactly one place that builds content and flips visibility.
       // Each mode has its OWN permanent sub-container (.hrd-about / .hrd-mlt),
-      // built lazily once and then just shown/hidden — never overwritten by the
+      // built lazily once and then just shown/hidden; never overwritten by the
       // other mode, which is what caused the earlier stale-content bug.
       function showDetailMode(detailEl, mode) {
         var aboutEl = detailEl.querySelector('.hrd-about');
@@ -6409,7 +6436,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }
 
       // Closes every other row's open dropdown when a new one opens, so the
-      // page doesn't accumulate multiple expanded cards — except rows in
+      // page doesn't accumulate multiple expanded cards; except rows in
       // 'bundle' mode (auto-opened by adding to cart), which are only ever
       // closeable via their own .hrd-bundle-dismiss-btn, same as today.
       function closeOtherOpenDetails(exceptGroup) {
@@ -6423,12 +6450,12 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         });
       }
 
-      // Any click landing inside a card-group — its own body OR any inner
-      // button (fav, cta, tooltip, MLT toggle, etc.) — first closes every
+      // Any click landing inside a card-group: its own body OR any inner
+      // button (fav, cta, tooltip, MLT toggle, etc.); first closes every
       // OTHER open card (bundle-mode/added-to-cart ones excepted, per
       // closeOtherOpenDetails itself). Registered before the more specific
       // handlers below so it always runs first for the same click. Without
-      // this, only a direct card-body click ever closed other cards — the
+      // this, only a direct card-body click ever closed other cards; the
       // per-button handlers below never called it, so e.g. opening one row's
       // "More Like This" while another row was already open left both open
       // at once.
@@ -6441,7 +6468,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
       // Whole-card click (anywhere except the row's other interactive controls)
       // opens/closes the shared detail panel, always in "about" mode when opening
-      // from closed — same panel the chevron controls, so only one panel is ever open.
+      // from closed; same panel the chevron controls, so only one panel is ever open.
       document.addEventListener('click', function (e) {
         var card = e.target.closest('.host-result-card');
         if (!card) return;
@@ -6462,7 +6489,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         if (expandBtn) expandBtn.setAttribute('aria-expanded', String(!wasOpen));
       });
 
-      // More Like This / About This Name — a genuine back-and-forth toggle.
+      // More Like This / About This Name: a genuine back-and-forth toggle.
       // Every click switches the shared panel's content and keeps it open;
       // there's no permanent "used" state, so it can be flipped repeatedly.
       document.addEventListener('click', function (e) {
@@ -6479,7 +6506,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         if (expandBtn) expandBtn.setAttribute('aria-expanded', 'true');
       });
 
-      // "Domain Added" badge — reopens the bundle panel if it's closed. Only
+      // "Domain Added" badge: reopens the bundle panel if it's closed. Only
       // ever opens (never closes), matching the rule that only the dismiss
       // button can close bundle mode; also clears the dismissed flag so the
       // panel stays open across a future reload too.
@@ -6517,15 +6544,15 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       var gridCurrentPage = 1;
 
       if (qBase) {
-        // The searched TLD is always first — it's the ending the user actually
+        // The searched TLD is always first: it's the ending the user actually
         // looked up, so bundling it back in (rather than excluding it) is the
         // useful upsell. The rest of the pool (BUNDLE_TLDS, then the backup
         // pool, then EXPLORE_TLDS as a third tier, deduped) is fetched in full
-        // rather than capped at 5 up front — a taken/premium result anywhere
+        // rather than capped at 5 up front; a taken/premium result anywhere
         // in the pool would otherwise shrink the box below 5 with no way to
         // backfill after the fact. EXPLORE_TLDS costs nothing extra to include
         // here since it's already fetched in this same batch for the separate
-        // "Explore more endings" section below — see the bundleUsedTlds
+        // "Explore more endings" section below; see the bundleUsedTlds
         // subtraction after bundleResults is computed, which keeps a TLD from
         // ever appearing in both sections at once.
         var bundleCandidates = [qTld];
@@ -6533,7 +6560,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           if (t !== qTld && bundleCandidates.indexOf(t) === -1) bundleCandidates.push(t);
         });
         var exploreCandidates = EXPLORE_TLDS.filter(function (t) { return t !== qTld; }).slice(0, 4);
-        // BUNDLE_TLDS and EXPLORE_TLDS overlap (both include .net) — dedupe into
+        // BUNDLE_TLDS and EXPLORE_TLDS overlap (both include .net); dedupe into
         // one request per unique TLD, then look results up by tld string rather
         // than by position, since duplicate domain+tld pairs in one request can
         // make the server's index-based response mapping unreliable.
@@ -6544,7 +6571,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         var qTldSupported = isTldSupported(qTld);
         var primaryPlusExtras = [{ name: qBase, tld: qTld }].concat(extraTlds.map(function (t) { return { name: qBase, tld: t }; }));
         // An unsupported/restricted ending (e.g. .gov) has no point being sent to
-        // the registry — strip every entry for it out of the batch entirely so
+        // the registry; strip every entry for it out of the batch entirely so
         // the "Domain Unavailable" verdict below is rendered from the synthetic
         // fallback object, not a failed/undefined lookup.
         if (!qTldSupported) {
@@ -6552,7 +6579,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         }
 
         // "Great Alternative" candidates, only used if the primary search turns out
-        // taken — smallest change first (a plain plural), then the site's existing
+        // taken; smallest change first (a plain plural), then the site's existing
         // get/my-prefix + hq/app/hub-suffix pool (the same naming trick the full
         // grid's "variants" toggle already uses, see VARIANT_PREFIXES/SUFFIXES below).
         // Checked eagerly, alongside primaryPlusExtras, so the verdict box never has
@@ -6568,11 +6595,11 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           var byTld = {};
           results.forEach(function (r) { byTld[r.tld] = r; });
           var primary = byTld[qTld] || { available: false, price: null, premium: false, domain: qBase, tld: qTld, unsupported: !qTldSupported };
-          // Dev-only override so the premium layout can be previewed on demand —
+          // Dev-only override so the premium layout can be previewed on demand:
           // premium status is registrar-specific, so arbitrary test domains won't
           // reliably come back premium from the live Openprovider check.
           if (qp.get('debugPremium') === '1') primary = { available: true, premium: true, price: 2499, domain: qBase, tld: qTld };
-          // A bundle purchase is always a fixed 1-year term (see renderCartDrawerBundle) —
+          // A bundle purchase is always a fixed 1-year term (see renderCartDrawerBundle);
           // exclude any TLD whose registry requires more than that (e.g. .ai's 2-year
           // minimum), which would otherwise silently produce an unpurchasable combination.
           var bundleResults = bundleCandidates.map(function (t) { return byTld[t]; }).filter(function (r) {
@@ -6582,7 +6609,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           }).slice(0, 5);
           // Since bundleCandidates now also draws from EXPLORE_TLDS, subtract
           // whatever the bundle actually used so the same TLD never shows up
-          // in both the Bundle box and the Explore section at once — Explore's
+          // in both the Bundle box and the Explore section at once; Explore's
           // own backfill-if-short logic below fills any resulting gap.
           var bundleUsedTlds = {};
           bundleResults.forEach(function (r) { bundleUsedTlds[r.tld] = true; });
@@ -6604,10 +6631,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
           } else {
             // A transient per-TLD registry lookup failure/timeout can leave
             // Explore short of 4 cards (taken domains are NOT filtered out
-            // here — only genuinely failed lookups are) — backfill from the
+            // here; only genuinely failed lookups are), backfill from the
             // full GRID_TLDS catalog rather than rendering a sparse grid
             // with gaps. GRID_TLDS (not a small curated list) is used
-            // specifically so backfill never runs out of fresh candidates —
+            // specifically so backfill never runs out of fresh candidates;
             // a curated pool this small overlaps almost entirely with
             // BUNDLE_TLDS/BUNDLE_TLDS_BACKUP, which are already fetched in
             // this same primary batch, leaving too few truly-unfetched
@@ -6639,10 +6666,10 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
         var gridAccum = [];
 
-        // TLD filter sidebar — pills built from the same GRID_TLDS list that's
+        // TLD filter sidebar: pills built from the same GRID_TLDS list that's
         // actually being checked below, so every pill corresponds to a TLD
         // gridAccum can actually contain. Purely a client-side post-filter over
-        // already-fetched results — no extra registry calls.
+        // already-fetched results; no extra registry calls.
         var selectedTlds = new Set();
         var gridSortMode = 'recommended';
         var pillScroll = document.getElementById('tld-filter-pill-scroll');
@@ -6666,7 +6693,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
             if (!wrap) return;
             var t = wrap.dataset.tld;
             if (selectedTlds.has(t)) selectedTlds.delete(t); else selectedTlds.add(t);
-            // A TLD (e.g. .ca) can appear in more than one category — keep every
+            // A TLD (e.g. .ca) can appear in more than one category; keep every
             // pill sharing that data-tld in sync, not just the one clicked.
             pillScroll.querySelectorAll('.filter-pill[data-tld="' + t + '"]').forEach(function (p) {
               p.classList.toggle('selected', selectedTlds.has(t));
@@ -6697,7 +6724,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         // from SUGGESTION_WORDS, checked specifically against whichever TLD(s)
         // are filtered to, until that TLD has a full page of rows or the word
         // pool runs out. Reuses the same checkDomains/SAFE_BATCH_SIZE path as
-        // everything else — no new network mechanism.
+        // everything else; no new network mechanism.
         var BACKFILL_TARGET = GRID_PAGE_SIZE;
         var backfillWordIndex = {};
         var backfillInFlight = {};
@@ -6749,7 +6776,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
             });
             gridResultsEl.innerHTML = stillTrying
               ? '<div class="host-result-error">Looking for more options&hellip;</div>'
-              : '<div class="host-result-error">No endings match the selected filters — try clearing some.</div>';
+              : '<div class="host-result-error">No endings match the selected filters. Try clearing some.</div>';
             renderGridPagination(1);
             return;
           }
@@ -6765,7 +6792,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         }).then(function () {
           gridLoadingEl.hidden = true;
           if (!gridAccum.length) {
-            gridResultsEl.innerHTML = '<div class="host-result-error">No results came back — try a different name.</div>';
+            gridResultsEl.innerHTML = '<div class="host-result-error">No results came back. Try a different name.</div>';
           }
         });
       } else {
@@ -6773,7 +6800,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         dvLoading.hidden = true;
       }
 
-      // "Everything You Need" — See More toggle
+      // "Everything You Need": See More toggle
       var deSeeMoreBtn = document.getElementById('de-see-more-btn');
       var deExpand = document.getElementById('de-expand');
       var deSeeMoreLabel = document.getElementById('de-see-more-label');
@@ -6855,6 +6882,15 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
         box.classList.toggle('tt-below', below);
       }
 
+      var pendingPositionFrame = null;
+      function scheduleReposition() {
+        if (pendingPositionFrame) return;
+        pendingPositionFrame = requestAnimationFrame(function () {
+          pendingPositionFrame = null;
+          if (openTrigger) position(openTrigger);
+        });
+      }
+
       function escapeTooltipHtml(s) {
         return String(s).replace(/[&<>"']/g, function (c) {
           return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -6863,7 +6899,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
 
       function show(trigger) {
         openTrigger = trigger;
-        // **text** becomes <strong>text</strong> — lets restriction/pricing
+        // **text** becomes <strong>text</strong>: lets restriction/pricing
         // tooltips bold key labels; escaped first since content here is always
         // developer-authored (never user input), so this is safe as innerHTML.
         box.innerHTML = escapeTooltipHtml(trigger.getAttribute('data-tooltip') || '')
@@ -6923,9 +6959,9 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       }, true);
       window.addEventListener('scroll', function () {
         if (!openTrigger) return;
-        if (canHover) { position(openTrigger); } else { hide(); }
-      }, true);
-      window.addEventListener('resize', function () { if (openTrigger) position(openTrigger); });
+        if (canHover) { scheduleReposition(); } else { hide(); }
+      }, { passive: true });
+      window.addEventListener('resize', function () { if (openTrigger) scheduleReposition(); });
     })();
   </script>
 
@@ -6962,7 +6998,7 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
   })();
   </script>
 
-  <!-- ── CTA shader background — ambient WebGL noise/glow wash behind the closing
+  <!-- ── CTA shader background: ambient WebGL noise/glow wash behind the closing
        CTA, in the page's green domain/hosting theme. Same technique as the
        .smm-cta-shader IIFE on smm.html (simplex noise → color blend → vignette
        → grain), recolored to --host-green / --host-green-deep / --host-green-pale. ── -->
@@ -7110,10 +7146,19 @@ If the seller agrees to sell, you'll separately pay the negotiated sale price pl
       if (reduceMotion) {
         draw(0);
       } else {
-        (function render(ts) {
+        var rafId;
+        function render(ts) {
           draw(ts * 0.001 * SPEED);
-          requestAnimationFrame(render);
-        })(0);
+          rafId = requestAnimationFrame(render);
+        }
+        if (window.PerfUtils) {
+          PerfUtils.gatedLoop(canvas, {
+            start: function () { rafId = requestAnimationFrame(render); },
+            stop: function () { cancelAnimationFrame(rafId); }
+          });
+        } else {
+          rafId = requestAnimationFrame(render);
+        }
       }
     })();
   </script>

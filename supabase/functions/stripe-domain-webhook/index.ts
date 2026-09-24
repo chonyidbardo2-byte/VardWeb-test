@@ -5,7 +5,7 @@ import Stripe from 'https://esm.sh/stripe@14?target=deno';
 /*
  * Supabase Edge Function: stripe-domain-webhook
  *
- * Server-to-server — no CORS, no Supabase-issued JWT. Auth is Stripe's own
+ * Server-to-server: no CORS, no Supabase-issued JWT. Auth is Stripe's own
  * signature (STRIPE_WEBHOOK_SECRET), so this MUST be deployed with
  * --no-verify-jwt or the platform gateway rejects every call before this
  * code ever runs (same requirement as resend-webhook).
@@ -14,15 +14,15 @@ import Stripe from 'https://esm.sh/stripe@14?target=deno';
  *   1. Look up domain_orders by metadata.order_id, mark 'paid'.
  *   2. Register each cart domain via Openprovider: create/reuse a customer
  *      handle from the order's stored `registrant`, then create the domain
- *      with default (parking) nameservers — Cloudflare DNS management is a
+ *      with default (parking) nameservers; Cloudflare DNS management is a
  *      client-exclusive benefit per the standing architecture decision, not
  *      bundled into a bare walk-up domain purchase.
  *   3. Record per-domain outcome in openprovider_results; the order becomes
  *      'completed' only if every domain registered, else 'failed' (with
- *      the per-item error preserved) — that failure state is the surface
+ *      the per-item error preserved); that failure state is the surface
  *      crm/domain-orders.html exists to catch, since payment already
  *      succeeded by this point and can't just be silently dropped.
- *   4. Best-effort confirmation email via send-transactional-email — never
+ *   4. Best-effort confirmation email via send-transactional-email; never
  *      fails the webhook response.
  *
  * ⚠️ UNVERIFIED AGAINST A LIVE CALL: the customer/domain request shapes
@@ -31,16 +31,16 @@ import Stripe from 'https://esm.sh/stripe@14?target=deno';
  * fixed as of 2026-08-24 (root cause was OPENPROVIDER_API_BASE pointing
  * at a stale/unreachable sandbox URL, compounded by the password field
  * needing the plaintext RCP password rather than the hash this build
- * assumed — see check-domain-availability/index.ts for the corrected
+ * assumed; see check-domain-availability/index.ts for the corrected
  * details) and check-domain-availability now gets real 200s from
  * sandbox. This file's customer-create/domain-register calls are still
- * untested against a live account, though — run one real purchase
+ * untested against a live account, though; run one real purchase
  * through here the moment that's safe to do, and correct field
  * names/response paths against the actual response before trusting this
  * with real customer money. In particular: splitAddress()/splitPhone()
  * below are best-effort parses of single free-text form fields into
  * Openprovider's separate street/number and
- * country_code/area_code/subscriber_number fields — genuinely approximate.
+ * country_code/area_code/subscriber_number fields: genuinely approximate.
  *
  * Deploy:
  *   supabase functions deploy stripe-domain-webhook --no-verify-jwt
@@ -100,7 +100,7 @@ async function getOrCreateCustomerHandle(apiBase: string, token: string, registr
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       // Openprovider's v1beta REST schema uses snake_case here (confirmed against
-      // their published openapi spec) — NOT the camelCase firstName/lastName this
+      // their published openapi spec); NOT the camelCase firstName/lastName this
       // used to send, which Openprovider silently dropped and reported back as
       // "Empty first name!" on every real customer-create call.
       name: { first_name: firstName, last_name: lastName, full_name: String(registrant.name).trim() },
@@ -187,7 +187,7 @@ serve(async (req) => {
 
     for (const item of order.items as Array<{ domain: string; tld: string; years?: number; type?: string }>) {
       // Addon line items (e.g. Full Domain Protection) and broker service fees
-      // aren't real domains — Openprovider has nothing to register for them,
+      // aren't real domains; Openprovider has nothing to register for them,
       // so skip straight to a recorded no-op rather than sending a bogus
       // domain-create call. A broker item's `domain` is only the reference
       // domain the request was about, never one being registered here.
@@ -216,7 +216,7 @@ serve(async (req) => {
     updated_at: new Date().toISOString(),
   }).eq('id', orderId);
 
-  // Best-effort confirmation email — must NOT fail the webhook response,
+  // Best-effort confirmation email: must NOT fail the webhook response,
   // Stripe retries on non-2xx and we don't want a Resend hiccup to cause
   // duplicate Openprovider registration attempts on retry.
   try {
@@ -225,7 +225,7 @@ serve(async (req) => {
     let subject: string;
     let html: string;
     if (domainResults.length === 0 && brokerResult) {
-      // Broker-fee-only order — nothing was registered, so don't call it a "domain purchase."
+      // Broker-fee-only order: nothing was registered, so don't call it a "domain purchase."
       subject = 'Your Domain Broker Service request is confirmed';
       html = `<p>Your Domain Broker Service request for <b>${brokerResult.domain}</b> is confirmed. A dedicated broker will be in touch shortly.</p>`;
     } else if (allOk) {
@@ -234,7 +234,7 @@ serve(async (req) => {
         (brokerResult ? `<p>Your Domain Broker Service request for <b>${brokerResult.domain}</b> is also confirmed.</p>` : '');
     } else {
       subject = 'Your domain purchase needs attention';
-      html = `<p>Your payment went through, but one or more domains needs attention on our end — we'll follow up shortly.</p><ul>${domainResults.map(r => `<li>${r.domain}: ${r.ok ? 'registered' : 'needs follow-up'}</li>`).join('')}</ul>`;
+      html = `<p>Your payment went through, but one or more domains needs attention on our end. We'll follow up shortly.</p><ul>${domainResults.map(r => `<li>${r.domain}: ${r.ok ? 'registered' : 'needs follow-up'}</li>`).join('')}</ul>`;
     }
     await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/send-transactional-email`, {
       method: 'POST',

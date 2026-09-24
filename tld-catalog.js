@@ -1,4 +1,4 @@
-// Shared TLD reference data — loaded by domain-search.html and hosting-services.html.
+// Shared TLD reference data: loaded by domain-search.html and hosting-services.html.
 // `restricted: true` marks sponsored/eligibility-gated TLDs (.gov/.mil/.arpa/.edu/.int/.bank)
 // that Openprovider won't sell to the general public; these are excluded from any live
 // availability-check list built from this catalog. Everything else is fair game to check.
@@ -6,10 +6,10 @@
 // `maxYears`/`minYears`: per-registry registration-term limits, researched directly
 // against Openprovider's own published per-TLD registration-period documentation
 // (openprovider.com/domains/tlds/<tld>, plus registry-authoritative sources for the
-// two TLDs Openprovider doesn't publish a page for) — NOT assumptions. Absence of
+// two TLDs Openprovider doesn't publish a page for), NOT assumptions. Absence of
 // either field means the site's own default range (1/2/3/5/10 years) applies as-is.
 // Keep supabase/functions/create-domain-checkout/index.ts's TLD_MAX_YEARS/TLD_MIN_YEARS
-// in sync with any change here — that server-side copy is what actually blocks an
+// in sync with any change here; that server-side copy is what actually blocks an
 // over-term purchase before Stripe is ever charged.
 var TLD_CATALOG = [
   { tld: '.com', type: 'gTLD', desc: 'Commercial; the universal standard for business websites.' },
@@ -22,7 +22,7 @@ var TLD_CATALOG = [
   { tld: '.biz', type: 'gTLD', desc: 'Business alternative, created to alleviate .com overcrowding.' },
   { tld: '.mil', type: 'sTLD', desc: 'Restricted entirely to the United States Military.', restricted: true },
   { tld: '.int', type: 'sTLD', desc: 'International organizations established by treaty (e.g., UN, NATO).', restricted: true },
-  { tld: '.cn', type: 'ccTLD', desc: 'China — highest-volume ccTLD.', maxYears: 5 },
+  { tld: '.cn', type: 'ccTLD', desc: 'China: highest-volume ccTLD.', maxYears: 5 },
   { tld: '.de', type: 'ccTLD', desc: 'Germany.', maxYears: 1 },
   { tld: '.uk', type: 'ccTLD', desc: 'United Kingdom.' },
   { tld: '.ru', type: 'ccTLD', desc: 'Russia.', maxYears: 1 },
@@ -33,9 +33,9 @@ var TLD_CATALOG = [
   { tld: '.ca', type: 'ccTLD', desc: 'Canada.' },
   { tld: '.jp', type: 'ccTLD', desc: 'Japan.', maxYears: 2 },
   { tld: '.in', type: 'ccTLD', desc: 'India.' },
-  { tld: '.co', type: 'ccTLD', desc: 'Colombia — massively used globally as a .com alternative.', maxYears: 5 },
-  { tld: '.ai', type: 'ccTLD', desc: 'Anguilla — the definitive standard for artificial intelligence companies.', minYears: 2 },
-  { tld: '.io', type: 'ccTLD', desc: 'British Indian Ocean Territory — broadly adopted by SaaS/tech companies.' },
+  { tld: '.co', type: 'ccTLD', desc: 'Colombia: massively used globally as a .com alternative.', maxYears: 5 },
+  { tld: '.ai', type: 'ccTLD', desc: 'Anguilla: the definitive standard for artificial intelligence companies.', minYears: 2 },
+  { tld: '.io', type: 'ccTLD', desc: 'British Indian Ocean Territory: broadly adopted by SaaS/tech companies.' },
   { tld: '.ch', type: 'ccTLD', desc: 'Switzerland.', maxYears: 1 },
   { tld: '.se', type: 'ccTLD', desc: 'Sweden.' },
   { tld: '.pl', type: 'ccTLD', desc: 'Poland.', maxYears: 3 },
@@ -43,8 +43,8 @@ var TLD_CATALOG = [
   { tld: '.kr', type: 'ccTLD', desc: 'South Korea.' },
   { tld: '.tw', type: 'ccTLD', desc: 'Taiwan.' },
   { tld: '.mx', type: 'ccTLD', desc: 'Mexico.', maxYears: 3 },
-  { tld: '.tv', type: 'ccTLD', desc: 'Tuvalu — widely used for media and video-streaming platforms.' },
-  { tld: '.me', type: 'ccTLD', desc: 'Montenegro — frequently used for personal branding/blogs.' },
+  { tld: '.tv', type: 'ccTLD', desc: 'Tuvalu: widely used for media and video-streaming platforms.' },
+  { tld: '.me', type: 'ccTLD', desc: 'Montenegro: frequently used for personal branding/blogs.' },
   { tld: '.cc', type: 'ccTLD', desc: 'Cocos Islands.' },
   { tld: '.xyz', type: 'gTLD', desc: 'Heavily used for web3, tech experimentation, and general projects.' },
   { tld: '.online', type: 'gTLD', desc: 'A universal, multi-purpose alternative for web storefronts.' },

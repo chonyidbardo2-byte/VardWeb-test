@@ -85,7 +85,7 @@
       overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
     }
 
-    /* ── WCAG 2.2.2 — Respect reduced-motion preference ── */
+    /* ── WCAG 2.2.2: Respect reduced-motion preference ── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -172,8 +172,8 @@
       <input type="text" id="inv-due" placeholder="YYYY-MM-DD" />
     </div>
     <div class="field-group">
-      <label>Valid For (days) <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.6;font-size:10px;">— optional, for trial/preview access</span></label>
-      <input type="number" id="inv-valid-days" min="1" placeholder="e.g. 30 — client loses access after this many days" />
+      <label>Valid For (days) <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.6;font-size:10px;">optional, for trial/preview access</span></label>
+      <input type="number" id="inv-valid-days" min="1" placeholder="e.g. 30. Client loses access after this many days" />
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" id="cancelInv">Cancel</button>
@@ -350,7 +350,7 @@
       if (error || !checkout_url) throw new Error(error || 'No URL returned');
 
       await sb.from('invoices').update({ stripe_checkout_url: checkout_url }).eq('id', invoiceId);
-      document.getElementById('stripeStatus').textContent = 'Link ready — copy and send to client:';
+      document.getElementById('stripeStatus').textContent = 'Link ready. Copy and send to client:';
       document.getElementById('stripeUrl').textContent = checkout_url;
       document.getElementById('stripeUrl').style.display = 'block';
       document.getElementById('copyStripeUrl').style.display = 'inline-flex';

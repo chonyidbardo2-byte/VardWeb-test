@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Design Services — VardWeb</title>
-  <meta name="description" content="Custom web design services by VardWeb — hand-coded, pixel-precise, conversion-focused. Bronze, Silver, Gold, and Custom tiers." />
+  <meta name="description" content="Custom web design services by VardWeb. Hand-coded, pixel-precise, conversion-focused. Bronze, Silver, Gold, and Custom tiers." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="/gsap.min.js"></script>
 
   <script type="importmap">
   {
@@ -489,6 +488,12 @@
         transition-duration: 0.001ms !important;
         scroll-behavior: auto !important;
       }
+      .animate-footer-heartbeat,
+      .cheaper-pill::after,
+      .feature-card:hover .feature-card-more svg,
+      .feature-card.is-scroll-active .feature-card-more svg {
+        animation: none;
+      }
     }
 
     ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
@@ -588,7 +593,7 @@
     }
     .pricing-card > * { position: relative; z-index: 1; }
 
-    /* ── Corner image — top-right, card clips naturally ── */
+    /* ── Corner image: top-right, card clips naturally ── */
     .pricing-img-wrap {
       position: absolute; right: 21px; top: 0;
       width: 150px; height: 150px;
@@ -848,6 +853,74 @@
       border-color: #4ade80;
       background: rgba(22,163,74,0.16);
     }
+
+    /* ── Compute rows (Passion = included feature, Pro = add-on) ── */
+    /* Plain inline flow so the "?" always follows the last word when the label wraps */
+    .compute-label { min-width: 0; }
+    .compute-nowrap { white-space: nowrap; }
+    .compute-label .tt-icon-trigger { display: inline-flex; vertical-align: baseline; margin-left: 7px; position: relative; top: -2.5px; }
+    .compute-feature { flex: 1; min-width: 0; }
+    .compute-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .compute-expand {
+      width: 22px; height: 22px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px; padding: 0; cursor: pointer;
+      border: 1px solid var(--tier-border, rgba(255,255,255,0.25));
+      background: rgba(255,255,255,0.03);
+      color: var(--tier-color, #00E5FF);
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .compute-expand svg { width: 13px; height: 13px; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    .compute-expand[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .compute-expand:hover { background: var(--tier-btn-hover2, rgba(255,255,255,0.08)); transform: translateY(-1px); }
+    .compute-expand:focus-visible { outline: 2px solid var(--tier-color, #00E5FF); outline-offset: 2px; }
+    .compute-expand:active { transform: translateY(0); }
+    .compute-expand--end { margin-left: auto; margin-top: -1px; }
+    .pricing-features li.compute-row { flex-wrap: wrap; row-gap: 0; }
+    .compute-row > .addon-sem-panel { flex-basis: 100%; }
+    .compute-list { list-style: none; padding: 8px 0 2px; margin: 0; }
+    .pricing-features .compute-list li,
+    .pricing-addons-list .compute-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 12.5px; line-height: 1.5;
+      color: rgba(200,212,232,0.68);
+      padding: 3px 0; border: none; min-height: 0;
+    }
+    /* Check slot matches the icon above it so checks centre under it:
+       16px = .feat-icon (Passion), 22px = .addon-toggle (Pro) */
+    .compute-check-slot { display: flex; justify-content: center; flex-shrink: 0; width: 16px; padding-top: 2px; }
+    .compute-list--addon .compute-check-slot { width: 22px; }
+    .compute-list .compute-check { width: 13px; height: 13px; color: #4ade80; }
+    .compute-lead { color: var(--text-1); }
+    .compute-panel-inner { padding: 0 0 10px; }
+    @media (min-width: 861px) {
+      .compute-list--feat { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; }
+    }
+
+    /* Circular "?" tooltip trigger (ported from domain-search.html) */
+    .tt-icon-trigger {
+      flex-shrink: 0; width: 15px; height: 15px; border-radius: 50%;
+      background: none; border: 1px solid rgba(255,255,255,0.28); color: rgba(200,212,232,0.6);
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center; cursor: help; padding: 0;
+      transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+    }
+    .tt-icon-trigger:hover { border-color: var(--tier-color, rgba(255,255,255,0.55)); color: var(--tier-color, var(--text-1)); }
+    .tt-icon-trigger:focus-visible { outline: 2px solid var(--tier-color, #00E5FF); outline-offset: 2px; }
+    .tt-icon-trigger:active { transform: scale(0.92); }
+    .tt-box {
+      position: fixed; z-index: 500; max-width: 35ch;
+      background: #0a0a0a;
+      border: 1px solid #3a3a3a; border-radius: 10px;
+      padding: 10px 13px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
+      color: #fff; white-space: pre-line;
+      box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
+      opacity: 0; transform: translateY(4px) scale(0.97);
+      pointer-events: none;
+      transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
 
     .pricing-cta {
       display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -1260,6 +1333,7 @@
 
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
+  <script src="/perf-utils.js"></script>
   <script type="module" src="/nav-auth.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -1306,7 +1380,7 @@
         });
         document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
-        window.addEventListener('scroll', closeSvc, true);
+        window.addEventListener('scroll', closeSvc, { passive: true });
         window.addEventListener('resize', closeSvc);
       });
     });
@@ -1474,7 +1548,7 @@
       <span class="grad-cyan-purple">Just a click away</span>
     </h1>
     <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 40px;">
-      We engineer every website from scratch — no templates, no page builders, no compromises. Built to load fast, rank on Google, and convert the visitors that matter most to your business.
+      We engineer every website from scratch. No templates, no page builders, no compromises. Built to load fast, rank on Google, and convert the visitors that matter most to your business.
     </p>
   </div>
 
@@ -1558,7 +1632,7 @@
       </svg>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
         <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Built from scratch</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Every line of code is written for your brand — no bloated templates, no borrowed themes. A site that's truly yours from the ground up.</p>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Every line of code is written for your brand. No bloated templates, no borrowed themes. A site that's truly yours from the ground up.</p>
       </div>
     </div>
     <!-- Card 2: Mobile-first responsive design -->
@@ -1582,7 +1656,7 @@
       </svg>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
         <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Domain & hosting</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">We handle domain setup, DNS delegation, and hosting configuration — so your site goes live without the technical headache.</p>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">We handle domain setup, DNS delegation, and hosting configuration, so your site goes live without the technical headache.</p>
       </div>
     </div>
     <!-- Card 4: 24/7 Maintenance & Support -->
@@ -1594,7 +1668,7 @@
       </svg>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
         <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">24/7 support</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Round-the-clock maintenance and dedicated client support — if something breaks or needs updating, we're already on it.</p>
+        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Round-the-clock maintenance and dedicated client support. If something breaks or needs updating, we're already on it.</p>
       </div>
     </div>
   </div>
@@ -1696,7 +1770,7 @@
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════
-     MERGING COMPLETE — SEO, CRM, TCI, CMS STUDIES
+     MERGING COMPLETE: SEO, CRM, TCI, CMS STUDIES
 ══════════════════════════════════════ -->
 <section id="what-you-get" style="padding:40px 28px 40px;">
   <div style="max-width:1200px;margin:0 auto;">
@@ -1744,7 +1818,7 @@
                 <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>1.7%</span>
               </div>
             </div>
-            <div class="wyg-metric-sub" style="margin-top:14px;">Organic search leads close at nearly 9× the rate of cold outbound — SEO turns discovery into revenue, automatically.</div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Organic search leads close at nearly 9× the rate of cold outbound. SEO turns discovery into revenue, automatically.</div>
           </div>
           <div class="wyg-metric">
             <div class="wyg-metric-label" style="margin-bottom:18px;">Website Traffic Share</div>
@@ -1759,7 +1833,7 @@
                 <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>15%</span>
               </div>
             </div>
-            <div class="wyg-metric-sub" style="margin-top:14px;">Without SEO, paid ads cover just 15% of traffic — and stop delivering the moment you stop paying.</div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Without SEO, paid ads cover just 15% of traffic, and stop delivering the moment you stop paying.</div>
           </div>
         </div>
       </div>
@@ -1773,7 +1847,7 @@
           <div class="wyg-quote">
             <div>
               <h3>Customer Relationship Management</h3>
-              <p style="margin-top:12px;">Every click, form submission, and customer interaction is captured instantly inside your own database—no third-party syncing delays, data loss, or expensive per-user licensing fees.</p>
+              <p style="margin-top:12px;">Every click, form submission, and customer interaction is captured instantly inside your own database, no third-party syncing delays, data loss, or expensive per-user licensing fees.</p>
             </div>
             <div class="wyg-figcaption">
               <span class="wyg-name">Custom CRM</span>
@@ -1810,7 +1884,7 @@
                 <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>22%</span>
               </div>
             </div>
-            <div class="wyg-metric-sub" style="margin-top:14px;">Manual follow-up misses 78% of leads. Automated CRM contacts 80% within 24 hours — while you focus on closing.</div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Manual follow-up misses 78% of leads. Automated CRM contacts 80% within 24 hours, while you focus on closing.</div>
           </div>
         </div>
       </div>
@@ -1824,7 +1898,7 @@
           <div class="wyg-quote">
             <div>
               <h3>Technical Conversion Infrastructure</h3>
-              <p style="margin-top:12px;">TCI turns your website into an always-on revenue engine — capturing every enquiry, routing it to the right team member in seconds, and running automated multi-step follow-up until a conversion is booked. No manual chasing. No leads left cold.</p>
+              <p style="margin-top:12px;">TCI turns your website into an always-on revenue engine, capturing every enquiry, routing it to the right team member in seconds, and running automated multi-step follow-up until a conversion is booked. No manual chasing. No leads left cold.</p>
             </div>
             <div class="wyg-figcaption">
               <span class="wyg-name">Custom TCI</span>
@@ -1846,7 +1920,7 @@
                 <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>22%</span>
               </div>
             </div>
-            <div class="wyg-metric-sub" style="margin-top:14px;">78% of buyers choose the first vendor to reach them — TCI responds in seconds, before competitors see the notification.</div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">78% of buyers choose the first vendor to reach them. TCI responds in seconds, before competitors see the notification.</div>
           </div>
           <div class="wyg-metric">
             <div class="wyg-metric-label" style="margin-bottom:18px;">Multi-Touch Follow-Up Rate</div>
@@ -1897,7 +1971,7 @@
                 <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+10%</span>
               </div>
             </div>
-            <div class="wyg-metric-sub" style="margin-top:14px;">Sites updated through a CMS generate 67% more leads monthly. Static sites grow at 10% — and require a developer for every single change.</div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Sites updated through a CMS generate 67% more leads monthly. Static sites grow at 10%, and require a developer for every single change.</div>
           </div>
           <div class="wyg-metric">
             <div class="wyg-metric-label" style="margin-bottom:18px;">Website Visitors</div>
@@ -1952,17 +2026,19 @@
     </div>
 
     <!-- Card container -->
-    <div style="border-radius:16px;border:1px solid var(--border);background:var(--raised);padding:40px 36px;box-shadow:0 0 40px rgba(0,229,255,0.04),0 4px 24px rgba(0,0,0,0.3);">
+    <div class="fp-card" style="border-radius:16px;border:1px solid var(--border);background:var(--raised);padding:40px 36px;box-shadow:0 0 40px rgba(0,229,255,0.04),0 4px 24px rgba(0,0,0,0.3);">
 
       <!-- Feature grid -->
-      <div id="fp-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:40px 36px;">
+      <div id="fp-grid" style="display:grid;grid-template-columns:repeat(3,minmax(0,max-content));justify-content:space-evenly;gap:40px 0;">
 
         <!-- 1. Visual Design -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:center;">
-          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+          <div class="fp-head">
+            <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+            </div>
+            <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GA4<br>(Google Analytics 4)</h3>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GA4</br>(Google Analytics 4)</h3>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Event-based interaction tracking</li>
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Custom conversion goals &amp; funnels</li>
@@ -1972,11 +2048,13 @@
         </div>
 
         <!-- 2. Performance -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:center;">
-          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+          <div class="fp-head">
+            <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GSC<br>(Google Search Console)</h3>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GSC</br>(Google Search Console)</h3>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Index coverage &amp; crawl error monitoring</li>
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Keyword click-through rate reporting</li>
@@ -1986,11 +2064,13 @@
         </div>
 
         <!-- 3. SEO & AI Search -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:center;">
-          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+          <div class="fp-head">
+            <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GS<br>(Google Shopping)</h3>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GS</br>(Google Shopping)</h3>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Structured product feed creation</li>
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Shopping ad eligibility from launch</li>
@@ -2000,11 +2080,13 @@
         </div>
 
         <!-- 4. Analytics -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:center;">
-          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+          <div class="fp-head">
+            <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GPR<br>(Google Product Ratings)</h3>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GPR</br>(Google Product Ratings)</h3>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Star ratings visible in Shopping ads</li>
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Review aggregation from approved sources</li>
@@ -2014,11 +2096,13 @@
         </div>
 
         <!-- 5. CRM & Forms -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:center;">
-          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+          <div class="fp-head">
+            <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            </div>
+            <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GMC<br>(Google Merchant Center)</h3>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GMC</br>(Google Merchant Center)</h3>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Full product catalog upload &amp; verification</li>
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Shipping &amp; tax rules configured</li>
@@ -2028,11 +2112,13 @@
         </div>
 
         <!-- 6. Support & Hosting -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:center;">
-          <div style="margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+          <div class="fp-head">
+            <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GA & S<br>(Google Ads & Sense)</h3>
           </div>
-          <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GA & S</br>(Google Ads & Sense)</h3>
           <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Auto &amp; manual ad unit placement</li>
             <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Ad sizing optimized for viewability</li>
@@ -2048,12 +2134,19 @@
 </section>
 
 <style>
-@media (max-width:860px) { #fp-grid { grid-template-columns: repeat(2,1fr) !important; } }
-@media (max-width:640px) { #fp-grid { grid-template-columns: 1fr !important; } }
-#fp-grid .fp-item h3 { text-align: center; width: 100%; }
-#fp-grid ul { width: fit-content !important; margin: 0 auto; align-items: stretch; }
-#fp-grid ul li { display:flex; align-items:center; gap:8px; }
-#fp-grid ul li::before { content:''; flex-shrink:0; width:4px; height:4px; border-radius:50%; background:rgba(236,72,153,0.45); margin-top:0; }
+@media (max-width:860px) { #fp-grid { grid-template-columns: repeat(2,minmax(0,max-content)) !important; } }
+@media (max-width:640px) { #fp-grid { grid-template-columns: minmax(0,max-content) !important; justify-content: center !important; } }
+#fp-grid .fp-head { align-self:flex-start; margin-left:12px; display:flex; flex-direction:column; align-items:center; }
+#fp-grid .fp-item h3 { text-align: center; }
+/* Mobile: every head block is as wide as the longest heading line (24 mono chars) so icons share one vertical line */
+@media (max-width:640px) {
+  .fp-card { padding-left: 20px !important; padding-right: 20px !important; }
+  #fp-grid .fp-head { font-family:'JetBrains Mono',monospace; font-size:14px; width: calc(24 * (1ch - 0.02em)); }
+  #fp-grid .fp-item h3 { white-space: nowrap; }
+}
+#fp-grid ul { width: 100%; align-items: stretch; }
+#fp-grid ul li { display:flex; align-items:flex-start; gap:8px; }
+#fp-grid ul li::before { content:''; flex-shrink:0; width:4px; height:4px; border-radius:50%; background:rgba(236,72,153,0.45); margin-top:9px; }
 @media (max-width:860px) { .cap-hero-img { margin: 0 auto; } }
 .cap-hdr-row { gap:32px; }
 @media (min-width:861px) { .cap-hdr-row { justify-content:flex-start; gap:260px; } .cap-hdr-row > div:first-child { max-width:480px; } }
@@ -2074,8 +2167,8 @@
 (function () {
   var items = document.querySelectorAll('.fp-item');
   var ease  = 'cubic-bezier(0.22,1,0.36,1)';
-  var obs   = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  function reveal() {
     items.forEach(function (el, i) {
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
       el.style.transitionDelay = (i * 120) + 'ms';
@@ -2090,10 +2183,9 @@
         el.removeEventListener('transitionend', cleanup);
       });
     });
-    obs.disconnect();
-  }, { threshold: 0.15 });
+  }
   var grid = document.getElementById('fp-grid');
-  if (grid) obs.observe(grid);
+  if (grid) sharedObs15.watch(grid, reveal, { once: true });
 })();
 </script>
 
@@ -2123,7 +2215,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
         </div>
         <h3 style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;margin:0;">Buying Intent Visibility</h3>
-        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">We ensure your store appears when buyers ask AI tools questions like "Where can I buy this near me?" or "Best store selling this" — capturing demand at the source.</p>
+        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">We ensure your store appears when buyers ask AI tools questions like "Where can I buy this near me?" or "Best store selling this", capturing demand at the source.</p>
 
         <!-- Inner: Strategy Session meeting card -->
         <div class="ai-inner-card">
@@ -2192,7 +2284,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 008.5 14.063l-6.135-1.582a.5.5 0 010-.962L8.5 9.936A2 2 0 009.937 8.5l1.582-6.135a.5.5 0 01.963 0L14.063 8.5A2 2 0 0015.5 9.937l6.135 1.581a.5.5 0 010 .964L15.5 14.063a2 2 0 00-1.437 1.437l-1.582 6.135a.5.5 0 01-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>
         </div>
         <h3 style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;margin:0;">AI Recommendation Reach</h3>
-        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">Your store appears directly in AI-generated recommendations, attracting visitors who are already ready to buy — building trust faster than traditional traffic alone.</p>
+        <p style="font-size:13px;line-height:1.65;color:var(--text-2);margin:0;">Your store appears directly in AI-generated recommendations, attracting visitors who are already ready to buy, building trust faster than traditional traffic alone.</p>
 
         <!-- Inner: AI prompt interface -->
         <div class="ai-inner-card ai-prompt-slide" style="display:flex;flex-direction:column;justify-content:space-between;">
@@ -2287,8 +2379,8 @@
 (function () {
   var cards = document.querySelectorAll('#ai-svc-grid .ai-feat-card');
   var ease  = 'cubic-bezier(0.22,1,0.36,1)';
-  var obs   = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  function reveal() {
     cards.forEach(function (el, i) {
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
       el.style.transitionDelay = (i * 120) + 'ms';
@@ -2303,10 +2395,9 @@
         el.removeEventListener('transitionend', cleanup);
       });
     });
-    obs.disconnect();
-  }, { threshold: 0.15 });
+  }
   var grid = document.getElementById('ai-svc-grid');
-  if (grid) obs.observe(grid);
+  if (grid) sharedObs15.watch(grid, reveal, { once: true });
 })();
 </script>
 
@@ -2329,7 +2420,7 @@
       <div class="feature-card">
         <span class="stat-bubble">↑ 180% CTR avg.</span>
         <div class="feature-card-img">
-          <img src="brand_assets/icons/wd-sem-icon.webp" alt="Discovery Call" width="96" height="96" style="object-fit:contain;">
+          <img src="brand_assets/icons/wd-sem-icon.webp" alt="Discovery Call" width="96" height="96" style="object-fit:contain;" loading="lazy">
         </div>
         <div>
           <h4>SEM - Search Engine Marketing</h4>
@@ -2342,7 +2433,7 @@
       <div class="feature-card">
         <span class="stat-bubble">↑ 78% engagement avg.</span>
         <div class="feature-card-img">
-          <img src="brand_assets/icons/wd-smm-icon.webp" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;transform:scale(1.15);transform-origin:center;">
+          <img src="brand_assets/icons/wd-smm-icon.webp" alt="Wireframe & Concept" width="96" height="96" style="object-fit:contain;transform:scale(1.15);transform-origin:center;" loading="lazy">
         </div>
         <div>
           <h4>SMM - Social Media Marketing</h4>
@@ -2355,7 +2446,7 @@
       <div class="feature-card">
         <span class="stat-bubble">↑ 500% lead gen avg.</span>
         <div class="feature-card-img">
-          <img src="brand_assets/icons/wd-cm-icon.webp" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;">
+          <img src="brand_assets/icons/wd-cm-icon.webp" alt="QA, Launch & Handoff" width="96" height="96" style="object-fit:contain;" loading="lazy">
         </div>
         <div>
           <h4>CM - Content Marketing</h4>
@@ -2379,10 +2470,10 @@
     <div style="text-align:center;max-width:580px;margin:0 auto 36px;">
       <p class="sec-tag">// Investment</p>
       <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Choose your tier
+        Choose your <span class="grad-cyan-purple">tier</span>
       </h2>
       <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
-        From first steps to full transformation — every package is custom-coded, never templated. Prices are starting points; final scope is confirmed at discovery.
+        From first steps to full transformation. Every package is custom-coded, never templated. Prices are starting points; final scope is confirmed at discovery.
       </p>
     </div>
 
@@ -2414,7 +2505,7 @@
         </div>
         <p class="pricing-pages">1–10 pages · ~1-2 week delivery</p>
         <p class="pricing-desc">
-          Perfect if you know exactly what your business is and just need the world to know it too. One clean, fast, fully-equipped site — no fluff, no filler. Covers the technical stuff most agencies quietly skip, and ships with everything a modern business needs on day one. Great for launches, local businesses, and anyone who's been putting this off long enough.
+          Perfect if you know exactly what your business is and just need the world to know it too. One clean, fast, fully-equipped site. No fluff, no filler. Covers the technical stuff most agencies quietly skip, and ships with everything a modern business needs on day one. Great for launches, local businesses, and anyone who's been putting this off long enough.
         </p>
         <ul class="pricing-features">
           <li>
@@ -2477,6 +2568,30 @@
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
           </li>
+          <li class="compute-row">
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <div class="compute-feature">
+              <div class="compute-head">
+                <span class="compute-label">Passion <span class="compute-nowrap">Compute<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-bronze" aria-label="Show Passion Compute details">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="addon-sem-panel" id="compute-free-bronze">
+              <div>
+                <ul class="compute-list compute-list--feat">
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited API requests</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>50,000 monthly active users</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>500 MB database size</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Shared CPU • 500 MB RAM</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB cached egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>1 GB file storage</li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
         <div class="pricing-addons">
           <p class="pricing-addons-label">Available Add-ons</p>
@@ -2486,7 +2601,10 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+              <span class="compute-label">SEM (Search Engine <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SEM&quot;?**&#10;&#10;Paid ads that put you in front of people already searching for what you sell, across Google Search, Shopping, YouTube and Amazon. Pick a service and tier; we build, tune and report on every campaign." aria-label="What is SEM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-bronze" aria-label="Show SEM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
             </li>
             <li class="addon-sem-panel-row">
               <div class="addon-sem-panel" id="sem-panel-bronze">
@@ -2519,7 +2637,10 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span>SMM (Social Media Marketing)<span class="addon-sem-summary" hidden></span></span>
+              <span class="compute-label">SMM (Social Media <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SMM&quot;?**&#10;&#10;Turn social into a sales channel: a live social feed on your site, a ready-to-post brand kit, or managed Meta &amp; Instagram ad campaigns that turn scrollers into leads." aria-label="What is SMM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-bronze" aria-label="Show SMM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
             </li>
             <li class="addon-sem-panel-row">
               <div class="addon-sem-panel" id="smm-panel-bronze">
@@ -2557,7 +2678,10 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span>CM (Content Marketing)<span class="addon-sem-summary" hidden></span></span>
+              <span class="compute-label">CM (Content <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;CM&quot;?**&#10;&#10;Search-optimized blog posts and in-depth pillar guides written for your audience. Buy one piece, or keep a monthly retainer that builds authority and keeps your site ranking." aria-label="What is CM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-bronze" aria-label="Show CM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
             </li>
             <li class="addon-sem-panel-row">
               <div class="addon-sem-panel" id="cm-panel-bronze">
@@ -2599,21 +2723,47 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed." aria-label="What is a PWA?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              Google Play Application
+              <span class="compute-label">Google Play <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;Google Play Application&quot;?**&#10;&#10;Your business as an Android app on the Google Play Store, so customers can find you, install you and come back in one tap." aria-label="What is a Google Play Application?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              App Store Application
+              <span class="compute-label">App Store <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is an &quot;App Store Application&quot;?**&#10;&#10;Your business as an iPhone and iPad app on Apple&#39;s App Store, where iOS users already discover, buy from and stay loyal to brands." aria-label="What is an App Store Application?">?</button></span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle addon-compute-trigger" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-bronze" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span class="compute-label">Pro Compute <span class="compute-nowrap">(C$75/mo)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-bronze" aria-label="Show Pro Compute details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="compute-pro-bronze">
+                <div>
+                  <div class="compute-panel-inner">
+                    <ul class="compute-list compute-list--addon">
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Unlimited API requests,</span> forever</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100,000 monthly active users,</span> then C$0.00975 per MAU</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">8 GB disk size per project,</span> then C$0.375 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB egress,</span> then C$0.27 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB cached egress,</span> then C$0.09 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100 GB file storage,</span> then C$0.064 per GB</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
@@ -2638,7 +2788,7 @@
         </div>
         <p class="pricing-pages">10-20 pages · ~1-3 week delivery</p>
         <p class="pricing-desc">
-          Built for businesses that are clearly going somewhere and need a site that can keep up. More pages, more imagery, more revision cycles — because "almost there" shouldn't be the final answer. A natural fit when you've got multiple offerings, a growing audience, or a team that will definitely have opinions once they see the first draft.
+          Built for businesses that are clearly going somewhere and need a site that can keep up. More pages, more imagery, more revision cycles, because "almost there" shouldn't be the final answer. A natural fit when you've got multiple offerings, a growing audience, or a team that will definitely have opinions once they see the first draft.
         </p>
         <ul class="pricing-features">
           <li>
@@ -2701,6 +2851,30 @@
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
           </li>
+          <li class="compute-row">
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <div class="compute-feature">
+              <div class="compute-head">
+                <span class="compute-label">Passion <span class="compute-nowrap">Compute<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-silver" aria-label="Show Passion Compute details">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="addon-sem-panel" id="compute-free-silver">
+              <div>
+                <ul class="compute-list compute-list--feat">
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited API requests</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>50,000 monthly active users</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>500 MB database size</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Shared CPU • 500 MB RAM</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB cached egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>1 GB file storage</li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
         <div class="pricing-addons">
           <p class="pricing-addons-label">Available Add-ons</p>
@@ -2710,7 +2884,10 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+              <span class="compute-label">SEM (Search Engine <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SEM&quot;?**&#10;&#10;Paid ads that put you in front of people already searching for what you sell, across Google Search, Shopping, YouTube and Amazon. Pick a service and tier; we build, tune and report on every campaign." aria-label="What is SEM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-silver" aria-label="Show SEM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
             </li>
             <li class="addon-sem-panel-row">
               <div class="addon-sem-panel" id="sem-panel-silver">
@@ -2732,45 +2909,144 @@
                       <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
                       <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
                       <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                      <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
                     </div>
                   </div>
                 </div>
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+              <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-silver" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SMM (Social Media Marketing)
+              <span class="compute-label">SMM (Social Media <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SMM&quot;?**&#10;&#10;Turn social into a sales channel: a live social feed on your site, a ready-to-post brand kit, or managed Meta &amp; Instagram ad campaigns that turn scrollers into leads." aria-label="What is SMM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-silver" aria-label="Show SMM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="smm-panel-silver">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Live Social Feed Widget">Live Social Feed Widget</button>
+                      <button type="button" class="sem-chip" data-service="Social Brand Kit">Social Brand Kit</button>
+                      <button type="button" class="sem-chip" data-service="Meta &amp; Instagram Ads">Meta &amp; Instagram Ads</button>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Social Brand Kit" data-tier-suffix="" hidden>
+                      <p class="sem-panel-heading">Choose a kit</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="essentials" style="--tier-color:#F472B6">Essentials</button>
+                        <button type="button" class="sem-chip" data-tier="full-kit" style="--tier-color:#FFD700">Full Kit</button>
+                      </div>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Meta &amp; Instagram Ads" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                        <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                        <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                        <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+              <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-silver" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              CM (Content Marketing)
+              <span class="compute-label">CM (Content <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;CM&quot;?**&#10;&#10;Search-optimized blog posts and in-depth pillar guides written for your audience. Buy one piece, or keep a monthly retainer that builds authority and keeps your site ranking." aria-label="What is CM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-silver" aria-label="Show CM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="cm-panel-silver">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Single Post">Single Post</button>
+                      <button type="button" class="sem-chip" data-service="Single Pillar">Single Pillar</button>
+                      <button type="button" class="sem-chip" data-service="Post Retainer">Post Retainer</button>
+                      <button type="button" class="sem-chip" data-service="Pillar Retainer">Pillar Retainer</button>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Post Retainer" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Pillar Retainer" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed." aria-label="What is a PWA?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              Google Play Application
+              <span class="compute-label">Google Play <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;Google Play Application&quot;?**&#10;&#10;Your business as an Android app on the Google Play Store, so customers can find you, install you and come back in one tap." aria-label="What is a Google Play Application?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              App Store Application
+              <span class="compute-label">App Store <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is an &quot;App Store Application&quot;?**&#10;&#10;Your business as an iPhone and iPad app on Apple&#39;s App Store, where iOS users already discover, buy from and stay loyal to brands." aria-label="What is an App Store Application?">?</button></span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle addon-compute-trigger" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-silver" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span class="compute-label">Pro Compute <span class="compute-nowrap">(C$75/mo)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-silver" aria-label="Show Pro Compute details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="compute-pro-silver">
+                <div>
+                  <div class="compute-panel-inner">
+                    <ul class="compute-list compute-list--addon">
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Unlimited API requests,</span> forever</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100,000 monthly active users,</span> then C$0.00975 per MAU</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">8 GB disk size per project,</span> then C$0.375 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB egress,</span> then C$0.27 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB cached egress,</span> then C$0.09 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100 GB file storage,</span> then C$0.064 per GB</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
@@ -2795,7 +3071,7 @@
         </div>
         <p class="pricing-pages">20-30 pages · ~1-4 week delivery</p>
         <p class="pricing-desc">
-          The full toolkit for businesses with serious ambitions and real complexity. Whether you're launching an app, running multiple brands, or just refuse to be boxed in — this tier handles it. Works well when "just a website" would undersell what you actually do.
+          The full toolkit for businesses with serious ambitions and real complexity. Whether you're launching an app, running multiple brands, or just refuse to be boxed in, this tier handles it. Works well when "just a website" would undersell what you actually do.
         </p>
         <ul class="pricing-features">
           <li>
@@ -2858,6 +3134,30 @@
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline">(xyz@yourcompany.com)</span></span>
           </li>
+          <li class="compute-row">
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <div class="compute-feature">
+              <div class="compute-head">
+                <span class="compute-label">Passion <span class="compute-nowrap">Compute<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-gold" aria-label="Show Passion Compute details">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="addon-sem-panel" id="compute-free-gold">
+              <div>
+                <ul class="compute-list compute-list--feat">
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited API requests</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>50,000 monthly active users</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>500 MB database size</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Shared CPU • 500 MB RAM</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB cached egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>1 GB file storage</li>
+                </ul>
+              </div>
+            </div>
+          </li>
         </ul>
         <div class="pricing-addons">
           <p class="pricing-addons-label">Available Add-ons</p>
@@ -2867,7 +3167,10 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+              <span class="compute-label">SEM (Search Engine <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SEM&quot;?**&#10;&#10;Paid ads that put you in front of people already searching for what you sell, across Google Search, Shopping, YouTube and Amazon. Pick a service and tier; we build, tune and report on every campaign." aria-label="What is SEM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-gold" aria-label="Show SEM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
             </li>
             <li class="addon-sem-panel-row">
               <div class="addon-sem-panel" id="sem-panel-gold">
@@ -2889,45 +3192,144 @@
                       <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
                       <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
                       <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                      <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
                     </div>
                   </div>
                 </div>
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+              <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-gold" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SMM (Social Media Marketing)
+              <span class="compute-label">SMM (Social Media <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SMM&quot;?**&#10;&#10;Turn social into a sales channel: a live social feed on your site, a ready-to-post brand kit, or managed Meta &amp; Instagram ad campaigns that turn scrollers into leads." aria-label="What is SMM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-gold" aria-label="Show SMM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="smm-panel-gold">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Live Social Feed Widget">Live Social Feed Widget</button>
+                      <button type="button" class="sem-chip" data-service="Social Brand Kit">Social Brand Kit</button>
+                      <button type="button" class="sem-chip" data-service="Meta &amp; Instagram Ads">Meta &amp; Instagram Ads</button>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Social Brand Kit" data-tier-suffix="" hidden>
+                      <p class="sem-panel-heading">Choose a kit</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="essentials" style="--tier-color:#F472B6">Essentials</button>
+                        <button type="button" class="sem-chip" data-tier="full-kit" style="--tier-color:#FFD700">Full Kit</button>
+                      </div>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Meta &amp; Instagram Ads" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                        <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                        <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                        <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+              <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-gold" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              CM (Content Marketing)
+              <span class="compute-label">CM (Content <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;CM&quot;?**&#10;&#10;Search-optimized blog posts and in-depth pillar guides written for your audience. Buy one piece, or keep a monthly retainer that builds authority and keeps your site ranking." aria-label="What is CM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-gold" aria-label="Show CM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="cm-panel-gold">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Single Post">Single Post</button>
+                      <button type="button" class="sem-chip" data-service="Single Pillar">Single Pillar</button>
+                      <button type="button" class="sem-chip" data-service="Post Retainer">Post Retainer</button>
+                      <button type="button" class="sem-chip" data-service="Pillar Retainer">Pillar Retainer</button>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Post Retainer" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Pillar Retainer" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed." aria-label="What is a PWA?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              Google Play Application
+              <span class="compute-label">Google Play <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;Google Play Application&quot;?**&#10;&#10;Your business as an Android app on the Google Play Store, so customers can find you, install you and come back in one tap." aria-label="What is a Google Play Application?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              App Store Application
+              <span class="compute-label">App Store <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is an &quot;App Store Application&quot;?**&#10;&#10;Your business as an iPhone and iPad app on Apple&#39;s App Store, where iOS users already discover, buy from and stay loyal to brands." aria-label="What is an App Store Application?">?</button></span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle addon-compute-trigger" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-gold" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span class="compute-label">Pro Compute <span class="compute-nowrap">(C$75/mo)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-gold" aria-label="Show Pro Compute details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="compute-pro-gold">
+                <div>
+                  <div class="compute-panel-inner">
+                    <ul class="compute-list compute-list--addon">
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Unlimited API requests,</span> forever</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100,000 monthly active users,</span> then C$0.00975 per MAU</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">8 GB disk size per project,</span> then C$0.375 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB egress,</span> then C$0.27 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB cached egress,</span> then C$0.09 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100 GB file storage,</span> then C$0.064 per GB</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
@@ -2951,68 +3353,92 @@
         </div>
         <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
         <p class="pricing-desc">
-          For when the brief genuinely doesn't fit anywhere else. Fully scoped around your specific needs — no tier ceiling, no feature wishlist left on the table. If you read the other tiers and thought "sort of, but..." — this is probably the one.
+          For when the brief genuinely doesn't fit anywhere else. Fully scoped around your specific needs. No tier ceiling, no feature wishlist left on the table. If you read the other tiers and thought "sort of, but...", this is probably the one.
         </p>
         <ul class="pricing-features">
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Brand new website, built from scratch —</span> <span class="block md:inline">no templates, no shortcuts, no apologies.</span></span>
+            <span><span class="block md:inline">Brand new website, built from scratch.</span> <span class="block md:inline">No templates, no shortcuts, no apologies.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Pixel-perfect across every screen — phones,</span> <span class="block md:inline">tablets, ultrawide monitors, that one client</span> <span class="block md:inline">with a weird resolution...</span></span>
+            <span><span class="block md:inline">Pixel-perfect across every screen: phones,</span> <span class="block md:inline">tablets, ultrawide monitors, that one client</span> <span class="block md:inline">with a weird resolution...</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Custom SEO, CRM, TCI &amp;</span> <span class="block md:inline">Whitelist-CMS built-in — the full</span> <span class="block md:inline">acronym arsenal, deployed.</span></span>
+            <span><span class="block md:inline">Custom SEO, CRM, TCI &amp;</span> <span class="block md:inline">Whitelist-CMS built-in. The full</span> <span class="block md:inline">acronym arsenal, deployed.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Complete Google stack: GA4, GSC, GS,</span> <span class="block md:inline">GPR, AS &amp; GMC — every dashboard wired,</span> <span class="block md:inline">every signal captured.</span></span>
+            <span><span class="block md:inline">Complete Google stack: GA4, GSC, GS,</span> <span class="block md:inline">GPR, AS &amp; GMC. Every dashboard wired,</span> <span class="block md:inline">every signal captured.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">AI Search Visibility &amp; Conversion optimization —</span> <span class="block md:inline">because ranking on Google AND ChatGPT</span> <span class="block md:inline">matters now.</span></span>
+            <span><span class="block md:inline">AI Search Visibility &amp; Conversion optimization,</span> <span class="block md:inline">because ranking on Google AND ChatGPT</span> <span class="block md:inline">matters now.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Every CTA, form, and lead funnel —</span> <span class="block md:inline">engineered to convert, not just look nice.</span></span>
+            <span><span class="block md:inline">Every CTA, form, and lead funnel,</span> <span class="block md:inline">engineered to convert, not just look nice.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Dedicated thank-you &amp; confirmation pages —</span> <span class="block md:inline">even the post-conversion experience</span> <span class="block md:inline">gets the full treatment.</span></span>
+            <span><span class="block md:inline">Dedicated thank-you &amp; confirmation pages.</span> <span class="block md:inline">Even the post-conversion experience</span> <span class="block md:inline">gets the full treatment.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Domain hosting &amp; full DNS delegation —</span> <span class="block md:inline">handled, managed, never your problem.</span></span>
+            <span><span class="block md:inline">Domain hosting &amp; full DNS delegation:</span> <span class="block md:inline">handled, managed, never your problem.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Emergency technical fixes within 4, 8 or 12 hours;</span> <span class="block md:inline">general support requests within 24 hours —</span> <span class="block md:inline">we don’t sleep so your site doesn’t have to either.</span></span>
+            <span><span class="block md:inline">Emergency technical fixes within 4, 8 or 12 hours;</span> <span class="block md:inline">general support requests within 24 hours.</span> <span class="block md:inline">We don’t sleep so your site doesn’t have to either.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Revision requests negotiated at scope —</span> <span class="block md:inline">Limited to under 1 hour of</span> <span class="block md:inline">execution time each request.</span></span>
+            <span><span class="block md:inline">Revision requests negotiated at scope.</span> <span class="block md:inline">Limited to under 1 hour of</span> <span class="block md:inline">execution time each request.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Active Growth &amp; Optimization Partnership —</span> <span class="block md:inline">we’re not just building your site, we’re growing it.</span></span>
+            <span><span class="block md:inline">Active Growth &amp; Optimization Partnership.</span> <span class="block md:inline">We’re not just building your site, we’re growing it.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Curated stock imagery —</span> <span class="block md:inline">premium, vibrant, aesthetically pleasing.</span></span>
+            <span><span class="block md:inline">Curated stock imagery:</span> <span class="block md:inline">premium, vibrant, aesthetically pleasing.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Unique logo concepts —</span> <span class="block md:inline">elegant, modern and authentic.</span></span>
+            <span><span class="block md:inline">Unique logo concepts:</span> <span class="block md:inline">elegant, modern and authentic.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Curated Website Favicon —</span> <span class="block md:inline">Users will be glad to pick this tab out of the 45 open ones.</span></span>
+            <span><span class="block md:inline">Curated Website Favicon.</span> <span class="block md:inline">Users will be glad to pick this tab out of the 45 open ones.</span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span><span class="block md:inline">Custom email addresses —</span> <span class="block md:inline">equip every person, every department,</span> <span class="block md:inline">every alias (xyz@yourcompany.com)</span></span>
+            <span><span class="block md:inline">Custom email addresses.</span> <span class="block md:inline">Equip every person, every department,</span> <span class="block md:inline">every alias (xyz@yourcompany.com)</span></span>
+          </li>
+          <li class="compute-row">
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <div class="compute-feature">
+              <div class="compute-head">
+                <span class="compute-label">Passion <span class="compute-nowrap">Compute<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-custom" aria-label="Show Passion Compute details">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="addon-sem-panel" id="compute-free-custom">
+              <div>
+                <ul class="compute-list compute-list--feat">
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited API requests</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>50,000 monthly active users</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>500 MB database size</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Shared CPU • 500 MB RAM</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB cached egress</li>
+                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>1 GB file storage</li>
+                </ul>
+              </div>
+            </div>
           </li>
         </ul>
         <div class="pricing-addons">
@@ -3023,7 +3449,10 @@
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span>SEM (Search Engine Marketing)<span class="addon-sem-summary" hidden></span></span>
+              <span class="compute-label">SEM (Search Engine <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SEM&quot;?**&#10;&#10;Paid ads that put you in front of people already searching for what you sell, across Google Search, Shopping, YouTube and Amazon. Pick a service and tier; we build, tune and report on every campaign." aria-label="What is SEM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-custom" aria-label="Show SEM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
             </li>
             <li class="addon-sem-panel-row">
               <div class="addon-sem-panel" id="sem-panel-custom">
@@ -3045,45 +3474,144 @@
                       <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
                       <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
                       <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                      <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
                     </div>
                   </div>
                 </div>
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="SMM (Social Media Marketing)" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+              <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-custom" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              SMM (Social Media Marketing)
+              <span class="compute-label">SMM (Social Media <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SMM&quot;?**&#10;&#10;Turn social into a sales channel: a live social feed on your site, a ready-to-post brand kit, or managed Meta &amp; Instagram ad campaigns that turn scrollers into leads." aria-label="What is SMM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-custom" aria-label="Show SMM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="smm-panel-custom">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Live Social Feed Widget">Live Social Feed Widget</button>
+                      <button type="button" class="sem-chip" data-service="Social Brand Kit">Social Brand Kit</button>
+                      <button type="button" class="sem-chip" data-service="Meta &amp; Instagram Ads">Meta &amp; Instagram Ads</button>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Social Brand Kit" data-tier-suffix="" hidden>
+                      <p class="sem-panel-heading">Choose a kit</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="essentials" style="--tier-color:#F472B6">Essentials</button>
+                        <button type="button" class="sem-chip" data-tier="full-kit" style="--tier-color:#FFD700">Full Kit</button>
+                      </div>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Meta &amp; Instagram Ads" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
+                        <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
+                        <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
+                        <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="CM (Content Marketing)" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+              <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-custom" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              CM (Content Marketing)
+              <span class="compute-label">CM (Content <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;CM&quot;?**&#10;&#10;Search-optimized blog posts and in-depth pillar guides written for your audience. Buy one piece, or keep a monthly retainer that builds authority and keeps your site ranking." aria-label="What is CM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-custom" aria-label="Show CM options">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="cm-panel-custom">
+                <div>
+                  <div class="sem-panel-inner">
+                    <p class="sem-panel-heading">Choose a service</p>
+                    <div class="sem-chip-row">
+                      <button type="button" class="sem-chip" data-service="Single Post">Single Post</button>
+                      <button type="button" class="sem-chip" data-service="Single Pillar">Single Pillar</button>
+                      <button type="button" class="sem-chip" data-service="Post Retainer">Post Retainer</button>
+                      <button type="button" class="sem-chip" data-service="Pillar Retainer">Pillar Retainer</button>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Post Retainer" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                    <div class="sem-chip-row-group" data-for-service="Pillar Retainer" hidden>
+                      <p class="sem-panel-heading">Choose a tier</p>
+                      <div class="sem-chip-row">
+                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
+                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
+                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
+                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
+                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="PWA (Progressive Web App)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline">App)</span></span>
+              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed." aria-label="What is a PWA?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="Google Play Application" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              Google Play Application
+              <span class="compute-label">Google Play <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;Google Play Application&quot;?**&#10;&#10;Your business as an Android app on the Google Play Store, so customers can find you, install you and come back in one tap." aria-label="What is a Google Play Application?">?</button></span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-addon-label="App Store Application" aria-pressed="false" aria-label="Toggle App Store Application add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              App Store Application
+              <span class="compute-label">App Store <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is an &quot;App Store Application&quot;?**&#10;&#10;Your business as an iPhone and iPad app on Apple&#39;s App Store, where iOS users already discover, buy from and stay loyal to brands." aria-label="What is an App Store Application?">?</button></span></span>
+            </li>
+            <li>
+              <button type="button" class="addon-toggle addon-compute-trigger" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-custom" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
+                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              </button>
+              <span class="compute-label">Pro Compute <span class="compute-nowrap">(C$75/mo)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-custom" aria-label="Show Pro Compute details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+            </li>
+            <li class="addon-sem-panel-row">
+              <div class="addon-sem-panel" id="compute-pro-custom">
+                <div>
+                  <div class="compute-panel-inner">
+                    <ul class="compute-list compute-list--addon">
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Unlimited API requests,</span> forever</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100,000 monthly active users,</span> then C$0.00975 per MAU</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">8 GB disk size per project,</span> then C$0.375 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB egress,</span> then C$0.27 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB cached egress,</span> then C$0.09 per GB</span></li>
+                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100 GB file storage,</span> then C$0.064 per GB</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
@@ -3117,7 +3645,7 @@
         </h2>
 
         <p class="wd-cta-sub">
-          Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together — no commitment required.
+          Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together. No commitment required.
         </p>
 
         <div class="wd-cta-row">
@@ -3141,7 +3669,7 @@
     <div class="footer-grid">
       <div>
         <div class="logo-nav-wrap" style="display:inline-flex;">
-          <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" />
+          <img src="brand_assets/VardWeb.png" alt="VardWeb" style="height:30px;width:auto;display:block;" loading="lazy" />
         </div>
         <p class="footer-brand-tagline">High-performance websites for businesses serious about growth. Design, development, and results.</p>
         <div class="footer-social-row">
@@ -3196,13 +3724,13 @@
     <div class="trust-badge-row">
       <a href="about.html" class="trust-badge">
         <span class="trust-badge-icon">
-          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);">
+          <img src="brand_assets/icons/MadeInCanada.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.35);" loading="lazy">
         </span>
         <span class="trust-badge-text"><span>Made in</span><span>Canada</span></span>
       </a>
       <a href="privacy.html#gdpr-pipeda" class="trust-badge">
         <span class="trust-badge-icon">
-          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+          <img src="brand_assets/icons/GDPRcompliance.webp" width="32" height="32" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" loading="lazy">
         </span>
         <span class="trust-badge-text"><span>GDPR</span><span>Compliant</span></span>
       </a>
@@ -3283,7 +3811,7 @@
     var track = slot.querySelector('.price-slot-track');
     if (!track) return;
 
-    /* Cancel any in-flight animation — its finish() becomes a no-op */
+    /* Cancel any in-flight animation: its finish() becomes a no-op */
     if (track._anim) track._anim.done = true;
 
     /* Snap track to a single clean element: keep only the last .price-slot-val
@@ -3396,12 +3924,10 @@
     requestAnimationFrame(step);
   }
   if ('IntersectionObserver' in window) {
-    var obs = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { animateCountUp(e.target); obs.unobserve(e.target); }
-      });
-    }, { threshold: 0.3 });
-    document.querySelectorAll('.wyg-metric-value[data-end]').forEach(function (el) { obs.observe(el); });
+    var sharedObs30 = window.__sharedObs30 = window.__sharedObs30 || PerfUtils.sharedObserver(0.3);
+    document.querySelectorAll('.wyg-metric-value[data-end]').forEach(function (el) {
+      sharedObs30.watch(el, function (e) { animateCountUp(e.target); }, { once: true });
+    });
   } else {
     document.querySelectorAll('.wyg-metric-value[data-end]').forEach(animateCountUp);
   }
@@ -3410,16 +3936,14 @@
 
 <script>
 (function () {
-  var capObs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) return;
-      capObs.unobserve(entry.target);
+  var sharedObs20 = window.__sharedObs20 = window.__sharedObs20 || PerfUtils.sharedObserver(0.2);
+  document.querySelectorAll('.cap-hero-img').forEach(function (el) {
+    sharedObs20.watch(el, function (entry) {
       var capImg = entry.target.querySelector('img');
       if (capImg) capImg.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease';
       entry.target.classList.add('is-visible');
-    });
-  }, { threshold: 0.2 });
-  document.querySelectorAll('.cap-hero-img').forEach(function (el) { capObs.observe(el); });
+    }, { once: true });
+  });
 })();
 </script>
 
@@ -3449,25 +3973,22 @@
     })(start);
   }
 
-  var observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) return;
-      observer.unobserve(entry.target);
-      entry.target.querySelectorAll('[data-count]:not([data-count-done])').forEach(animateSpan);
-    });
-  }, { threshold: 0.2 });
+  var sharedObs20 = window.__sharedObs20 = window.__sharedObs20 || PerfUtils.sharedObserver(0.2);
 
-  document.querySelectorAll('.wyg-metric').forEach(function (card) { observer.observe(card); });
+  document.querySelectorAll('.wyg-metric').forEach(function (card) {
+    sharedObs20.watch(card, function (entry) {
+      entry.target.querySelectorAll('[data-count]:not([data-count-done])').forEach(animateSpan);
+    }, { once: true });
+  });
 })();
 </script>
 
 <script>
 (function () {
   var allCards = Array.from(document.querySelectorAll('.wyg-img-card'));
-  var imgObs = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) return;
-      imgObs.unobserve(entry.target);
+  var sharedObs25 = window.__sharedObs25 = window.__sharedObs25 || PerfUtils.sharedObserver(0.25);
+  allCards.forEach(function (card) {
+    sharedObs25.watch(card, function (entry) {
       var img = entry.target.querySelector('.wyg-img');
       if (!img) return;
       var delay = allCards.indexOf(entry.target) * 80;
@@ -3484,9 +4005,8 @@
           fn();
         }
       }, delay + 1000);
-    });
-  }, { threshold: 0.25 });
-  allCards.forEach(function (card) { imgObs.observe(card); });
+    }, { once: true });
+  });
 })();
 </script>
 
@@ -3498,8 +4018,8 @@
     el.style.opacity = '0';
     el.style.transform = 'translateY(32px)';
   });
-  var obs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  function reveal() {
     items.forEach(function (el, i) {
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
       el.style.transitionDelay = (i * 120) + 'ms';
@@ -3514,10 +4034,9 @@
         el.removeEventListener('transitionend', cleanup);
       });
     });
-    obs.disconnect();
-  }, { threshold: 0.15 });
+  }
   var grid = document.querySelector('.hero-feat-grid');
-  if (grid) obs.observe(grid);
+  if (grid) sharedObs15.watch(grid, reveal, { once: true });
 })();
 
 (function () {
@@ -3527,8 +4046,8 @@
     el.style.opacity = '0';
     el.style.transform = 'translateY(32px)';
   });
-  var obs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  function reveal() {
     items.forEach(function (el, i) {
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
       el.style.transitionDelay = (i * 120) + 'ms';
@@ -3543,10 +4062,9 @@
         el.removeEventListener('transitionend', cleanup);
       });
     });
-    obs.disconnect();
-  }, { threshold: 0.15 });
+  }
   var grid = document.querySelector('.feature-grid');
-  if (grid) obs.observe(grid);
+  if (grid) sharedObs15.watch(grid, reveal, { once: true });
 })();
 
 (function () {
@@ -3556,8 +4074,8 @@
     el.style.opacity = '0';
     el.style.transform = 'translateY(32px)';
   });
-  var obs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  function reveal() {
     items.forEach(function (el, i) {
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
       el.style.transitionDelay = (i * 120) + 'ms';
@@ -3572,10 +4090,9 @@
         el.removeEventListener('transitionend', cleanup);
       });
     });
-    obs.disconnect();
-  }, { threshold: 0.15 });
+  }
   var grid = document.querySelector('#apps .ws-grid');
-  if (grid) obs.observe(grid);
+  if (grid) sharedObs15.watch(grid, reveal, { once: true });
 })();
 </script>
 
@@ -3601,12 +4118,11 @@
   var ease = 'cubic-bezier(0.22,1,0.36,1)';
   el.style.opacity = '0';
   el.style.transform = 'translateY(32px)';
-  var obs = new IntersectionObserver(function (entries) {
-    if (!entries[0].isIntersecting) return;
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  sharedObs15.watch(el, function () {
     el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
     el.style.opacity = '1';
     el.style.transform = 'translateY(0)';
-    obs.disconnect();
     el.addEventListener('transitionend', function cleanup(evt) {
       if (evt.propertyName !== 'transform') return;
       el.style.opacity = '';
@@ -3614,8 +4130,7 @@
       el.style.transition = '';
       el.removeEventListener('transitionend', cleanup);
     });
-  }, { threshold: 0.15 });
-  obs.observe(el);
+  }, { once: true });
 })();
 </script>
 
@@ -3628,7 +4143,7 @@
     cards.forEach(function (card) {
       var ul = card.querySelector('.pricing-features');
       if (ul) ul.style.paddingTop = '';
-      card.querySelectorAll('.pricing-features li').forEach(function (li) {
+      card.querySelectorAll('.pricing-features > li').forEach(function (li) {
         li.style.minHeight = '';
       });
     });
@@ -3650,8 +4165,8 @@
     }
 
     /* Equalize corresponding li heights */
-    var lisA = cardA.querySelectorAll('.pricing-features li');
-    var lisB = cardB.querySelectorAll('.pricing-features li');
+    var lisA = cardA.querySelectorAll('.pricing-features > li');
+    var lisB = cardB.querySelectorAll('.pricing-features > li');
     var count = Math.min(lisA.length, lisB.length);
     for (var i = 0; i < count; i++) {
       var hA = lisA[i].offsetHeight;
@@ -3744,7 +4259,10 @@
     trigger.addEventListener('click', function () {
       var open = !panel.classList.contains('open');
       panel.classList.toggle('open', open);
-      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      // Sync every control for this panel (the + and the arrow)
+      document.querySelectorAll('[aria-controls="' + panel.id + '"]').forEach(function (b) {
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
     });
 
     function selectChip(chips, chip) {
@@ -3761,7 +4279,7 @@
         var tierName = TIER_LABELS[activeTier.getAttribute('data-tier')];
         trigger.classList.add('selected');
         trigger.setAttribute('aria-pressed', 'true');
-        trigger.setAttribute('data-addon-label', baseLabel + ' — ' + activeService.getAttribute('data-service') + ' — ' + tierName + ' Tier');
+        trigger.setAttribute('data-addon-label', baseLabel + ': ' + activeService.getAttribute('data-service') + ', ' + tierName + ' Tier');
         if (summary) {
           summary.hidden = false;
           summary.textContent = activeService.getAttribute('data-service') + ' · ' + tierName;
@@ -3790,8 +4308,8 @@
 </script>
 
 <script>
-/* ── Variable add-on accordion (SMM/CM): pick a service, then — only if that
-   service has a matching .sem-chip-row-group — a tier within it, before the
+/* ── Variable add-on accordion (SMM/CM): pick a service, then (only if that
+   service has a matching .sem-chip-row-group) a tier within it, before the
    add-on counts as selected. Generic over any [data-addon-variable] trigger,
    keyed by aria-controls, so a future card's panel works by copying markup. ── */
 (function () {
@@ -3813,7 +4331,10 @@
     trigger.addEventListener('click', function () {
       var open = !panel.classList.contains('open');
       panel.classList.toggle('open', open);
-      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      // Sync every control for this panel (the + and the arrow)
+      document.querySelectorAll('[aria-controls="' + panel.id + '"]').forEach(function (b) {
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
     });
 
     function selectChip(chips, chip) {
@@ -3842,14 +4363,14 @@
 
       if (complete) {
         var serviceName = activeService.getAttribute('data-service');
-        var label = baseLabel + ' — ' + serviceName;
+        var label = baseLabel + ': ' + serviceName;
         var summaryText = serviceName;
         if (activeTier) {
           var tierKey = activeTier.getAttribute('data-tier');
           var tierName = TIER_LABELS[tierKey] || activeTier.textContent;
           var suffix = group.getAttribute('data-tier-suffix');
           if (suffix === null) suffix = 'Tier';
-          label += ' — ' + tierName + (suffix ? ' ' + suffix : '');
+          label += ', ' + tierName + (suffix ? ' ' + suffix : '');
           summaryText += ' · ' + tierName;
         }
         trigger.classList.add('selected');
@@ -3884,6 +4405,153 @@
       });
     });
   });
+})();
+</script>
+
+<script>
+/* ── Compute rows: Passion Compute (included) just expands; Pro Compute is an
+   add-on whose details panel opens when added and closes when removed. ── */
+(function () {
+  // Keeps every button that controls the panel (arrow + add-on toggle) in sync.
+  function setOpen(panel, open) {
+    panel.classList.toggle('open', open);
+    document.querySelectorAll('[aria-controls="' + panel.id + '"]').forEach(function (b) {
+      b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+
+  document.querySelectorAll('.compute-expand').forEach(function (btn) {
+    var panel = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!panel) return;
+    btn.addEventListener('click', function () {
+      setOpen(panel, !panel.classList.contains('open'));
+    });
+  });
+
+  document.querySelectorAll('.addon-compute-trigger').forEach(function (trigger) {
+    var panel = document.getElementById(trigger.getAttribute('aria-controls'));
+    var card = trigger.closest('.pricing-card');
+    trigger.addEventListener('click', function () {
+      var on = !trigger.classList.contains('selected');
+      trigger.classList.toggle('selected', on);
+      trigger.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (panel) setOpen(panel, on);
+      if (card && card._updateAddonsHref) card._updateAddonsHref();
+    });
+  });
+})();
+</script>
+
+<script>
+/* ── Shared floating tooltip for .tt-icon-trigger (ported from domain-search.html) ── */
+(function () {
+  var TRIGGER_SELECTOR = '.tt-icon-trigger';
+
+  var box = document.createElement('div');
+  box.className = 'tt-box';
+  box.id = 'tt-box-shared';
+  box.setAttribute('role', 'tooltip');
+  document.body.appendChild(box);
+
+  var openTrigger = null;
+  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  function position(trigger) {
+    var r = trigger.getBoundingClientRect();
+    var bw = box.offsetWidth, bh = box.offsetHeight;
+    var left = r.left + r.width / 2 - bw / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - bw - 8));
+    var top = r.top - bh - 6;
+    if (top < 8) top = r.bottom + 6;
+    box.style.left = left + 'px';
+    box.style.top = top + 'px';
+  }
+
+  var pendingPositionFrame = null;
+  function scheduleReposition() {
+    if (pendingPositionFrame) return;
+    pendingPositionFrame = requestAnimationFrame(function () {
+      pendingPositionFrame = null;
+      if (openTrigger) position(openTrigger);
+    });
+  }
+
+  function escapeTooltipHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function show(trigger) {
+    openTrigger = trigger;
+    // **text** becomes <strong>text</strong>; content is developer-authored, escaped first.
+    box.innerHTML = escapeTooltipHtml(trigger.getAttribute('data-tooltip') || '')
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    box.classList.add('is-open');
+    position(trigger);
+    trigger.setAttribute('aria-expanded', 'true');
+    trigger.setAttribute('aria-describedby', 'tt-box-shared');
+  }
+
+  function hide() {
+    if (!openTrigger) return;
+    openTrigger.setAttribute('aria-expanded', 'false');
+    openTrigger.removeAttribute('aria-describedby');
+    openTrigger = null;
+    box.classList.remove('is-open');
+  }
+
+  var HOVER_DELAY = 150;
+  var hoverTimer = null;
+
+  document.addEventListener('mouseover', function (e) {
+    var t = e.target.closest(TRIGGER_SELECTOR);
+    if (!t || !canHover) return;
+    clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(function () {
+      if (t.matches(':hover')) show(t);
+    }, HOVER_DELAY);
+  });
+  document.addEventListener('mouseout', function (e) {
+    var t = e.target.closest(TRIGGER_SELECTOR);
+    if (!t || !canHover) return;
+    clearTimeout(hoverTimer);
+    if (openTrigger === t) hide();
+  });
+  // A tap focuses the button before its click fires; let the click toggle own
+  // touch taps, or focus-show + click-toggle would close it immediately.
+  var pressedTrigger = null;
+  document.addEventListener('pointerdown', function (e) {
+    pressedTrigger = e.target.closest(TRIGGER_SELECTOR);
+  }, true);
+  document.addEventListener('focusin', function (e) {
+    var t = e.target.closest(TRIGGER_SELECTOR);
+    if (t && !(pressedTrigger === t && !canHover)) show(t);
+  });
+  document.addEventListener('focusout', function (e) {
+    var t = e.target.closest(TRIGGER_SELECTOR);
+    if (t && openTrigger === t) hide();
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest(TRIGGER_SELECTOR);
+    if (t && !canHover) {
+      e.stopPropagation();
+      if (openTrigger === t) { hide(); } else { show(t); }
+      return;
+    }
+    if (t) return; // desktop: hover already shows it; don't let the click close it
+    hide();
+  });
+  document.addEventListener('pointerdown', function (e) {
+    if (!openTrigger) return;
+    if (e.target === openTrigger || openTrigger.contains(e.target)) return;
+    hide();
+  }, true);
+  window.addEventListener('scroll', function () {
+    if (!openTrigger) return;
+    if (canHover) { scheduleReposition(); } else { hide(); }
+  }, { passive: true });
+  window.addEventListener('resize', function () { if (openTrigger) scheduleReposition(); });
 })();
 </script>
 
@@ -3931,7 +4599,7 @@
     });
   }
 
-  /* Auto-play via IntersectionObserver — all devices */
+  /* Auto-play via IntersectionObserver: all devices */
   var allCards = Array.from(document.querySelectorAll('.wyg-img-card'));
   var wygRafObs = new IntersectionObserver(function (entries) {
     entries.forEach(function (entry) {
@@ -4114,8 +4782,9 @@
       renderer.render(scene, camera);
     }
 
+    let rafId = null;
     function animate() {
-      requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
       renderFrame();
     }
 
@@ -4140,20 +4809,37 @@
     } else {
       hoverEl.addEventListener('mouseenter', function () { targetSpeed = 2.6; });
       hoverEl.addEventListener('mouseleave', function () { targetSpeed = 0.8; });
-      animate();
     }
+
+    // One-time GL/shader/buffer setup is done above. Only the RAF chain is
+    // start/stop-able from here on (no resource disposal), so scrolling the
+    // CTA in and out of view never re-creates the WebGL context.
+    return {
+      start: function () {
+        if (reduceMotion) return; // static frame already rendered, nothing to (re)start
+        if (rafId == null) rafId = requestAnimationFrame(animate);
+      },
+      stop: function () {
+        if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
+      }
+    };
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     const bg = document.getElementById('wd-cta-bg');
     const card = document.getElementById('wd-cta-card');
     if (!bg || !card) return;
-    const ctaObserver = new IntersectionObserver(function (entries) {
-      if (!entries[0].isIntersecting) return;
-      initWebDesignCtaBackground(bg, card);
-      ctaObserver.disconnect();
-    }, { threshold: 0.01 });
-    ctaObserver.observe(card);
+    let ctaLoop = null;
+    window.PerfUtils.gatedLoop(card, {
+      start: function () {
+        if (!ctaLoop) ctaLoop = initWebDesignCtaBackground(bg, card);
+        ctaLoop.start();
+      },
+      stop: function () {
+        if (ctaLoop) ctaLoop.stop();
+      },
+      threshold: 0.01
+    });
   });
 </script>
 </body>

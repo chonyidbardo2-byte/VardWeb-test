@@ -1,11 +1,11 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   VardWeb — Blog newsletter broadcast email builder.
+   VardWeb: Blog newsletter broadcast email builder.
 
    Exposes window.buildNewsletterBroadcastHtml(data), where:
      data = { subject, bodyHtml }
-       subject  — plain text, escaped before display
-       bodyHtml — admin-authored HTML from crm/newsletter.html's textarea.
-                  Inserted UNESCAPED — this is trusted admin content, same
+       subject: plain text, escaped before display
+       bodyHtml: admin-authored HTML from crm/newsletter.html's textarea.
+                  Inserted UNESCAPED. This is trusted admin content, same
                   trust level as crm/cms-editor.html's content_type:'html'
                   blocks. Do not escape it.
 
@@ -15,7 +15,7 @@
    can never drift from what actually gets sent.
 
    Footer includes the literal, UNRESOLVED {{{RESEND_UNSUBSCRIBE_URL}}}
-   placeholder — Resend resolves this itself when the broadcast is sent.
+   placeholder. Resend resolves this itself when the broadcast is sent.
    Do not touch or interpolate that token.
 ───────────────────────────────────────────────────────────────────────── */
 (function () {
@@ -70,7 +70,7 @@
 + '<tr><td align="center" style="padding:0 0 32px;">'
 +   '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
 +     '<td bgcolor="#ffffff" style="background-color:#ffffff;border-radius:8px;padding:6px 14px;">'
-+       '<img src="https://lvxlshberdazzmjbrjdu.supabase.co/storage/v1/object/public/Assets/VardWeb.png" width="132" alt="VardWeb — web design studio" style="display:block;border:0;outline:none;text-decoration:none;height:auto;border-radius:2px;">'
++       '<img src="https://lvxlshberdazzmjbrjdu.supabase.co/storage/v1/object/public/Assets/VardWeb.png" width="132" alt="VardWeb, web design studio" style="display:block;border:0;outline:none;text-decoration:none;height:auto;border-radius:2px;">'
 +     '</td>'
 +   '</tr></table>'
 + '</td></tr>'
@@ -87,7 +87,7 @@
 +     '<h1 style="margin:0;font-family:\'JetBrains Mono\',Consolas,\'SFMono-Regular\',Menlo,monospace;font-size:24px;line-height:1.3;font-weight:800;letter-spacing:-0.02em;color:#EEF0F8;">' + subject + '</h1>'
 +   '</td></tr>'
 
-  /* Admin-authored body — unescaped, inherits base text styling */
+  /* Admin-authored body: unescaped, inherits base text styling */
 +   '<tr><td class="vw-px" style="padding:20px 40px 0;">'
 +     '<div style="font-family:\'Inter\',-apple-system,\'Segoe UI\',Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.7;color:#9AA3B8;">'
 +       bodyHtml

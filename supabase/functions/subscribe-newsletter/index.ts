@@ -4,11 +4,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 /*
  * Supabase Edge Function: subscribe-newsletter
  *
- * Public — no admin check (anyone can subscribe, same as create-checkout
+ * Public: no admin check (anyone can subscribe, same as create-checkout
  * being publicly callable). Accepts POST { email }.
  *
  * Persists to blog_subscribers first (source of truth), then best-effort
- * creates the matching Resend contact — a Resend failure does NOT fail the
+ * creates the matching Resend contact; a Resend failure does NOT fail the
  * whole request; resend_contact_id just stays null for later retry.
  *
  * Deploy:
@@ -66,7 +66,7 @@ serve(async (req) => {
       });
     }
 
-    // Best-effort Resend sync — must NOT fail the whole request.
+    // Best-effort Resend sync: must NOT fail the whole request.
     let resendContactId = row.resend_contact_id || null;
     try {
       const resendRes = await fetch('https://api.resend.com/contacts', {

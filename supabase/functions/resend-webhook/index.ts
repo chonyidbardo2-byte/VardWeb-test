@@ -5,7 +5,7 @@ import { Webhook } from 'https://esm.sh/svix';
 /*
  * Supabase Edge Function: resend-webhook
  *
- * Receives Resend webhook events. Server-to-server — no browser caller, no
+ * Receives Resend webhook events. Server-to-server: no browser caller, no
  * CORS, no Supabase-issued JWT. Auth is the svix signature instead, so this
  * MUST be deployed with --no-verify-jwt or the platform gateway rejects
  * every call before this code ever runs.
@@ -19,7 +19,7 @@ import { Webhook } from 'https://esm.sh/svix';
  * The exact contact.updated payload shape (event.data.email /
  * event.data.unsubscribed) is inferred from the contact-object shape this
  * codebase already posts to POST /contacts in subscribe-newsletter, not
- * confirmed against a literal Resend doc example — the raw payload is
+ * confirmed against a literal Resend doc example; the raw payload is
  * logged below so a real test event can confirm/correct the field names.
  *
  * Deploy:

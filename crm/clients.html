@@ -229,7 +229,7 @@
       overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
     }
 
-    /* ── WCAG 2.2.2 — Respect reduced-motion preference ── */
+    /* ── WCAG 2.2.2: Respect reduced-motion preference ── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.001ms !important;
@@ -358,7 +358,7 @@
 
     <div class="tab-panel" id="panel-social">
       <div class="section-title">Social Links</div>
-      <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Saving a link updates the database instantly. For it to appear on the live site, the client's HTML must have the CMS snippet in <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">&lt;head&gt;</code> and relevant elements tagged with <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">data-social-url="platform"</code> or <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">data-social-handle="platform"</code> — a one-time setup during site build. After that, changes here sync automatically.</p>
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:16px;">Saving a link updates the database instantly. For it to appear on the live site, the client's HTML must have the CMS snippet in <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">&lt;head&gt;</code> and relevant elements tagged with <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">data-social-url="platform"</code> or <code style="background:var(--raised);padding:1px 5px;border-radius:3px;font-size:11px;">data-social-handle="platform"</code>, a one-time setup during site build. After that, changes here sync automatically.</p>
       <div id="socialContent"><div class="empty">Loading…</div></div>
     </div>
 
@@ -758,7 +758,7 @@
   /* ── Embed script generator ── */
   function generateEmbedScript(groupKey, domains) {
     const primary = domains.find(d => d.is_primary)?.domain || domains[0]?.domain || 'site';
-    return `/* VardWeb Region Redirect — ${primary} */\n(function(){\n  var G=${JSON.stringify({group:groupKey,domains})};\n  var SK='vw_rr_'+G.group;\n  if(sessionStorage.getItem(SK))return;\n  var host=location.hostname.replace(/^www\\./,'');\n  fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(geo){\n    var country=geo.country_code;\n    var pref=G.domains.find(function(d){return d.region_code===country&&d.domain!==host;});\n    if(!pref)return;\n    var cur=G.domains.find(function(d){return d.domain===host;});\n    var diffC=pref.currency_code&&pref.currency_code!==(cur&&cur.currency_code||'');\n    var diffL=pref.locale_code&&pref.locale_code!==(cur&&cur.locale_code||'');\n    var why=[diffC?'prices in '+pref.currency_code:'',diffL?'local language support':''].filter(Boolean).join(' and ');\n    var b=document.createElement('div');\n    b.setAttribute('data-vw-banner','');\n    b.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);max-width:480px;width:90%;background:#111827;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999999;font-family:system-ui,sans-serif;display:flex;flex-direction:column;gap:10px;';\n    b.innerHTML='<div style="font-size:13px;font-weight:600;color:#f9fafb;">Visiting from '+pref.region_label+'?</div><div style="font-size:12px;color:#9ca3af;line-height:1.5;">We have a dedicated site for '+pref.region_label+(why?' with '+why:'')+'.</div><div style="display:flex;gap:8px;"><a href="https://'+pref.domain+'" style="flex:1;text-align:center;padding:8px;background:#0ea5e9;color:#fff;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;">Visit '+pref.domain+'</a><button onclick=\"sessionStorage.setItem(\\''+SK+'\\',\\'1\\');document.querySelector(\\'[data-vw-banner]\\').remove();\" style="flex:1;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:8px;cursor:pointer;font-size:12px;">Stay Here</button></div>';\n    document.body.appendChild(b);\n  }).catch(function(){});\n})();`;
+    return `/* VardWeb Region Redirect: ${primary} */\n(function(){\n  var G=${JSON.stringify({group:groupKey,domains})};\n  var SK='vw_rr_'+G.group;\n  if(sessionStorage.getItem(SK))return;\n  var host=location.hostname.replace(/^www\\./,'');\n  fetch('https://ipapi.co/json/').then(function(r){return r.json();}).then(function(geo){\n    var country=geo.country_code;\n    var pref=G.domains.find(function(d){return d.region_code===country&&d.domain!==host;});\n    if(!pref)return;\n    var cur=G.domains.find(function(d){return d.domain===host;});\n    var diffC=pref.currency_code&&pref.currency_code!==(cur&&cur.currency_code||'');\n    var diffL=pref.locale_code&&pref.locale_code!==(cur&&cur.locale_code||'');\n    var why=[diffC?'prices in '+pref.currency_code:'',diffL?'local language support':''].filter(Boolean).join(' and ');\n    var b=document.createElement('div');\n    b.setAttribute('data-vw-banner','');\n    b.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);max-width:480px;width:90%;background:#111827;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999999;font-family:system-ui,sans-serif;display:flex;flex-direction:column;gap:10px;';\n    b.innerHTML='<div style="font-size:13px;font-weight:600;color:#f9fafb;">Visiting from '+pref.region_label+'?</div><div style="font-size:12px;color:#9ca3af;line-height:1.5;">We have a dedicated site for '+pref.region_label+(why?' with '+why:'')+'.</div><div style="display:flex;gap:8px;"><a href="https://'+pref.domain+'" style="flex:1;text-align:center;padding:8px;background:#0ea5e9;color:#fff;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;">Visit '+pref.domain+'</a><button onclick=\"sessionStorage.setItem(\\''+SK+'\\',\\'1\\');document.querySelector(\\'[data-vw-banner]\\').remove();\" style="flex:1;padding:8px;background:transparent;border:1px solid rgba(255,255,255,0.1);color:#9ca3af;border-radius:8px;cursor:pointer;font-size:12px;">Stay Here</button></div>';\n    document.body.appendChild(b);\n  }).catch(function(){});\n})();`;
   }
 
   /* Domain & Hosting */
@@ -796,8 +796,8 @@
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <span style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-2);white-space:nowrap;min-width:90px;">Content Mode</span>
           <select id="contentModeSelect" style="flex:1;padding:6px 10px;font-size:12px;">
-            <option value="shared" ${contentMode==='shared'?'selected':''}>Shared — one CMS for all domains</option>
-            <option value="separate" ${contentMode==='separate'?'selected':''}>Separate — each domain has its own CMS</option>
+            <option value="shared" ${contentMode==='shared'?'selected':''}>Shared: one CMS for all domains</option>
+            <option value="separate" ${contentMode==='separate'?'selected':''}>Separate: each domain has its own CMS</option>
           </select>
           <button class="btn btn-ghost btn-sm" id="contentModeSave" style="white-space:nowrap;">Save</button>
         </div>
@@ -841,7 +841,7 @@
     if (!domains?.length) {
       html += '<div class="empty">No domain record. Use "+ Add Domain Alias" above or contact VardWeb to add one.</div>';
     } else {
-      const statusMap = { client: ['badge-active','Client Owned'], vardweb: ['badge-pending','VardWeb — Transfer Pending'], transferred: ['badge-active','Transferred'] };
+      const statusMap = { client: ['badge-active','Client Owned'], vardweb: ['badge-pending','VardWeb · Transfer Pending'], transferred: ['badge-active','Transferred'] };
       const transferSteps = ['Purchased','Payment Received','Transfer Initiated','Transferred'];
       const decryptedPasswords = [];
 
@@ -873,7 +873,7 @@
           <div class="timeline">${transferSteps.map((s,j) => `<div class="tl-step"><div class="tl-dot${j<=stepIdx?' done':''}"></div><div class="tl-label">${s}</div></div>`).join('')}</div>` : ''}
           <div class="divider" style="margin:14px 0;"></div>
           <div class="info-card-title">Registrar Credentials <button class="help-tip" data-help="regcred-${i}"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></div>
-          <div class="help-panel" id="help-regcred-${i}">These credentials allow VardWeb to log in to the registrar to manage DNS, renewals, and transfers. Stored encrypted — Supabase never sees the plaintext.</div>
+          <div class="help-panel" id="help-regcred-${i}">These credentials allow VardWeb to log in to the registrar to manage DNS, renewals, and transfers. Stored encrypted. Supabase never sees the plaintext.</div>
           <div class="info-row"><span class="info-label">Login Email</span><span class="info-value">${domain.registrar_login_email || '—'}</span></div>
           <div class="info-row">
             <span class="info-label">Password</span>
@@ -1188,7 +1188,7 @@
         </div>
         <div class="field-group" style="margin-bottom:14px;">
           <label>Custom Head Script <button class="help-tip" data-help="custom-script"><img src="https://uxwing.com/wp-content/themes/uxwing/download/signs-and-symbols/round-information-outline-orange-icon.png" style="width:13px;height:13px;vertical-align:middle;display:inline-block;" /></button></label>
-          <div class="help-panel" id="help-custom-script">Any additional tracking snippet to inject into the site's &lt;head&gt;. Admin-only — not shown to the client. Use for tools like Hotjar, Intercom, etc.</div>
+          <div class="help-panel" id="help-custom-script">Any additional tracking snippet to inject into the site's &lt;head&gt;. Admin-only, not shown to the client. Use for tools like Hotjar, Intercom, etc.</div>
           <textarea id="ana-custom" placeholder="&lt;script&gt;…&lt;/script&gt;">${ana?.custom_head_script || ''}</textarea>
         </div>
         <button class="btn btn-cyan btn-sm" id="saveAnalytics">Save Analytics</button>
@@ -1256,7 +1256,7 @@
                    style="background:none;border:1px solid rgba(255,45,120,0.35);color:var(--pink);font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:600;">
                    Revoke
                  </button>`
-              : `<span style="color:var(--gold);">— Pending client acceptance</span>
+              : `<span style="color:var(--gold);">Pending client acceptance</span>
                  <button class="contract-accept" data-lid="${l.id}"
                    style="background:var(--cyan);border:none;color:#000;font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:600;">
                    Mark Accepted
@@ -1276,7 +1276,7 @@
           .select();
         if (error || !updated?.length) {
           btn.textContent = 'Mark Accepted'; btn.disabled = false;
-          alert('Save failed — the admin RLS policy on the leases table may not be configured yet. Run the SQL from the setup checklist in Supabase.');
+          alert('Save failed. The admin RLS policy on the leases table may not be configured yet. Run the SQL from the setup checklist in Supabase.');
           return;
         }
         await renderLeases(c);
@@ -1292,7 +1292,7 @@
           .select();
         if (error || !updated?.length) {
           btn.textContent = 'Revoke'; btn.disabled = false;
-          alert('Save failed — check Supabase RLS policies on leases.');
+          alert('Save failed. Check Supabase RLS policies on leases.');
           return;
         }
         await renderLeases(c);
