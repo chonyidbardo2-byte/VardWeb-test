@@ -470,7 +470,11 @@
       max-width: 62%;
     }
     @media (max-width: 767px) { .br-desktop { display: none; } }
-    @media (min-width: 768px) { .br-mobile  { display: none; } }
+    /* Per-range mobile caption breaks: 425 set = 414-767, 375 set = 360-413, 320 set = <=359 */
+    .br-m425, .br-m375, .br-m320 { display: none; }
+    @media (min-width: 414px) and (max-width: 767px) { .br-m425 { display: inline; } }
+    @media (min-width: 360px) and (max-width: 413px) { .br-m375 { display: inline; } }
+    @media (max-width: 359px) { .br-m320 { display: inline; } }
     .svc-bullets {
       list-style: none;
       padding: 0; margin: 0;
@@ -598,6 +602,11 @@
       .services-page-grid { grid-template-columns: 1fr; gap: 36px; }
       .svc-card-caption { max-width: 75%; }
       .svc-bullets { max-width: 62%; }
+    }
+    /* 320: illustrations sit below the caption here, so it can use the full panel width */
+    @media (max-width: 359px) {
+      .svc-card-caption { max-width: none; }
+      .svc-card-panel h3 { font-size: 16px; white-space: nowrap; }
     }
 
     /* ── Responsive footer ── */
@@ -763,7 +772,7 @@
           <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email &amp; SMS Marketing</a>
           <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
           <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
@@ -819,7 +828,7 @@
     <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="email-marketing.html" class="mob-link mob-sub">Email Marketing</a>
+    <a href="email-marketing.html" class="mob-link mob-sub">Email &amp; SMS Marketing</a>
     <a href="hosting-services.html"  class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
@@ -891,7 +900,7 @@
             </svg>
           </div>
           <h3>Web Design</h3>
-          <p class="svc-card-caption">"We make sites people actually want to visit,<br class="br-desktop"> not flee<br class="br-mobile"> from in horror."</p>
+          <p class="svc-card-caption">"We make sites people<br class="br-m375 br-m320"> actually<br class="br-m425"> want to visit,<br class="br-desktop"><br class="br-m375 br-m320"> not flee<br class="br-m425"> from in horror."</p>
           <ul class="svc-bullets">
             <li>Custom-coded, pixel-precise layouts</li>
             <li>Mobile-first &amp; responsive across all devices</li>
@@ -922,7 +931,7 @@
             </svg>
           </div>
           <h3>E-Commerce</h3>
-          <p class="svc-card-caption">"A storefront that sells 24/7 without you saying a word. Introvert-approved."</p>
+          <p class="svc-card-caption">"A storefront that sells 24/7<br class="br-m425 br-m375 br-m320"> without you saying a word.<br class="br-m425 br-m375 br-m320"> Introvert-approved."</p>
           <ul class="svc-bullets">
             <li>Full product catalogue &amp; checkout integration</li>
             <li>Payment gateway &amp; inventory management</li>
@@ -954,7 +963,7 @@
             </svg>
           </div>
           <h3>Landing Pages</h3>
-          <p class="svc-card-caption">"One page. One purpose.<br> One conversion rate<br class="br-mobile"> your boss will love."</p>
+          <p class="svc-card-caption">"One page. One purpose.<br> One conversion rate<br class="br-m425 br-m375 br-m320"> your boss will love."</p>
           <ul class="svc-bullets">
             <li>Conversion-focused single-page design</li>
             <li>A/B test-ready structure &amp; CTA hierarchy</li>
@@ -988,7 +997,7 @@
             </svg>
           </div>
           <h3>App Development</h3>
-          <p class="svc-card-caption">"Your idea, our caffeine, everyone's new daily habit."</p>
+          <p class="svc-card-caption">"Your idea, our caffeine,<br class="br-m425 br-m375 br-m320"> everyone's new daily habit."</p>
           <ul class="svc-bullets">
             <li>Progressive Web Apps &amp; native-feel UX</li>
             <li>API integrations &amp; real-time features</li>
@@ -1021,7 +1030,7 @@
             </svg>
           </div>
           <h3>SEM & SEO</h3>
-          <p class="svc-card-caption">"Search Engine Marketing and<br class="br-desktop"> Search Engine Optimization.<br class="br-mobile"> Page 1 or bust."</p>
+          <p class="svc-card-caption">"Search Engine Marketing<br class="br-m375 br-m320"> and<br class="br-desktop"><br class="br-m425"> Search Engine<br class="br-m375 br-m320"> Optimization.<br class="br-m425"> Page 1 or bust."</p>
           <ul class="svc-bullets">
             <li>Google, Amazon &amp; managed ad campaigns</li>
             <li>Flat monthly fee, zero markup on ad spend</li>
@@ -1050,8 +1059,8 @@
               <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.77 3.77z"/>
             </svg>
           </div>
-          <h3>Email Marketing</h3>
-          <p class="svc-card-caption">"Seriously, do NOT click the explore link.<br class="br-desktop"> It is way too good."</p>
+          <h3>Email & SMS Marketing</h3>
+          <p class="svc-card-caption">"Seriously, do NOT click<br class="br-m375 br-m320"> the explore<br class="br-m425"> link.<br class="br-desktop"><br class="br-m375 br-m320"> It is way too good."</p>
           <ul class="svc-bullets">
             <li>DKIM, SPF &amp; DMARC set up for you</li>
             <li>Transactional &amp; broadcast emails land</li>
@@ -1084,7 +1093,7 @@
             </svg>
           </div>
           <h3>Domain &amp; Hosting</h3>
-          <p class="svc-card-caption">"Your site stays online. Even at 3am.<br class="br-desktop"> Yes, we checked."</p>
+          <p class="svc-card-caption">"Your site stays online.<br class="br-m375"> Even<br class="br-m425 br-m320"> at 3am.<br class="br-desktop"><br class="br-m375"> Yes, we checked."</p>
           <ul class="svc-bullets">
             <li>Buy & register domains no markup year one</li>
             <li>99.9%+ uptime, &amp; zero downtime spikes</li>
@@ -1115,7 +1124,7 @@
             </svg>
           </div>
           <h3>Content Creation & CM</h3>
-          <p class="svc-card-caption">"Words that convert. Copy that doesn't sound<br class="br-desktop"> like a<br class="br-mobile"> robot wrote it. (Mostly.)"</p>
+          <p class="svc-card-caption">"Words that convert.<br class="br-m425 br-m375 br-m320"> Copy that doesn't sound<br class="br-desktop"> like<br class="br-m425 br-m375 br-m320"> a robot wrote it. (Mostly.)"</p>
           <ul class="svc-bullets">
             <li>SEO-optimised blog posts &amp; web copy</li>
             <li>[Coming Soon] Image &amp; video generation</li>
@@ -1149,7 +1158,7 @@
             </svg>
           </div>
           <h3>Social Media & SMM</h3>
-          <p class="svc-card-caption">"Scroll-stopping content that makes<br class="br-desktop"> them put down<br class="br-mobile"> their coffee."</p>
+          <p class="svc-card-caption">"Scroll-stopping content<br class="br-m425 br-m375 br-m320"> that makes<br class="br-desktop"> them put down<br class="br-m425 br-m375 br-m320"> their coffee."</p>
           <ul class="svc-bullets">
             <li>Paid Meta & Instagram ad campaigns</li>
             <li>One-time brand kit &amp; templates, banners & guides</li>
@@ -1179,7 +1188,7 @@
             </svg>
           </div>
           <h3>Custom Request</h3>
-          <p class="svc-card-caption">"Got something we haven't thought of yet?<br class="br-desktop"> Even better.<br class="br-mobile"> We like a challenge."</p>
+          <p class="svc-card-caption">"Got something we haven't<br class="br-m425 br-m375 br-m320"> thought of yet?<br class="br-desktop"> Even better.<br class="br-m425 br-m375 br-m320"> We like a challenge."</p>
           <ul class="svc-bullets">
             <li>Anything you can dream, we can build</li>
             <li>Discovery call to scope your exact vision</li>
@@ -1266,7 +1275,7 @@
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
-        <a href="email-marketing.html" class="footer-link">Email Marketing</a>
+        <a href="email-marketing.html" class="footer-link">Email &amp; SMS Marketing</a>
         <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="content-creation.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
