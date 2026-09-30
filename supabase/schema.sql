@@ -183,6 +183,33 @@ CREATE TABLE IF NOT EXISTS domain_orders (
   updated_at            TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- sms_rates — single row (id = 1) holding the live SMS prices shown on
+-- email-marketing.html's #sms-pricing section. Written only by the
+-- sync-sms-rates Edge Function (daily, from Telnyx's public rate feed + the
+-- Bank of Canada USD/CAD rate); prices only ratchet up automatically. Public
+-- read so the page can fetch it with the anon key; there's nothing private in it.
+CREATE TABLE IF NOT EXISTS sms_rates (
+  id               SMALLINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  ca_text          NUMERIC(8,4) NOT NULL,   -- C$ per segment to Canadian numbers
+  us_text          NUMERIC(8,4) NOT NULL,   -- C$ per segment to US numbers
+  mms              NUMERIC(8,4) NOT NULL,   -- C$ per MMS part
+  custom_floor     NUMERIC(8,4) NOT NULL,   -- internal: lowest negotiable rate
+  minimum_monthly  NUMERIC(8,2) NOT NULL,   -- C$ monthly minimum, credited to texts
+  fx_live          NUMERIC(8,4),            -- Bank of Canada USD->CAD at sync time
+  fx_used          NUMERIC(8,4),            -- max(1.45, live x 1.03)
+  worst_costs_usd  JSONB,                   -- per-line worst-case costs behind the prices
+  flagged_carriers JSONB,                   -- outlier carriers billed at cost x rule
+  feed_ok          BOOLEAN DEFAULT TRUE,
+  last_error       TEXT,
+  synced_at        TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed with the verified 27 Sep 2026 figures so the page has real numbers
+-- before the first sync runs.
+INSERT INTO sms_rates (id, ca_text, us_text, mms, custom_floor, minimum_monthly, fx_used)
+VALUES (1, 0.035, 0.025, 0.07, 0.021, 25, 1.45)
+ON CONFLICT (id) DO NOTHING;
+
 -- Must be last — references auth.users (Supabase built-in)
 CREATE TABLE IF NOT EXISTS user_profiles (
   id        UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -256,6 +283,7 @@ ALTER TABLE blog_subscribers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE domain_orders  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_profiles  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE client_billing_info ENABLE ROW LEVEL SECURITY;
+ALTER TABLE sms_rates      ENABLE ROW LEVEL SECURITY;
 
 
 -- ── 4. RLS POLICIES ─────────────────────────────────────────────
@@ -380,3 +408,33 @@ DROP POLICY IF EXISTS "admin_all_billing_info" ON client_billing_info;
 DROP POLICY IF EXISTS "own_billing_info"       ON client_billing_info;
 CREATE POLICY "admin_all_billing_info" ON client_billing_info FOR ALL USING (is_admin());
 CREATE POLICY "own_billing_info"       ON client_billing_info FOR ALL USING (id = auth.uid()) WITH CHECK (id = auth.uid());
+
+-- sms_rates — anyone can read the current prices; only the service-role
+-- sync-sms-rates Edge Function writes (no public write policy).
+DROP POLICY IF EXISTS "public_read_sms_rates" ON sms_rates;
+DROP POLICY IF EXISTS "admin_all_sms_rates"   ON sms_rates;
+CREATE POLICY "public_read_sms_rates" ON sms_rates FOR SELECT USING (true);
+CREATE POLICY "admin_all_sms_rates"   ON sms_rates FOR ALL    USING (is_admin());
+
+
+-- ── 5. SCHEDULED JOBS ───────────────────────────────────────────
+-- Daily SMS rate sync at 09:15 UTC. Needs the pg_cron and pg_net extensions
+-- (Dashboard -> Database -> Extensions) and the shared secret stored in Vault
+-- under the name 'sms_sync_secret', matching the function's SMS_SYNC_SECRET:
+--   SELECT vault.create_secret('<same value as SMS_SYNC_SECRET>', 'sms_sync_secret');
+SELECT cron.unschedule('sync-sms-rates-daily')
+WHERE EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'sync-sms-rates-daily');
+SELECT cron.schedule(
+  'sync-sms-rates-daily',
+  '15 9 * * *',
+  $$
+  SELECT net.http_post(
+    url     := 'https://lvxlshberdazzmjbrjdu.supabase.co/functions/v1/sync-sms-rates',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'x-sync-secret', (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'sms_sync_secret')
+    ),
+    body    := '{}'::jsonb
+  );
+  $$
+);

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Email Marketing — Campaigns That Land in the Inbox — VardWeb</title>
-  <meta name="description" content="Email marketing built around deliverability, segmentation, and revenue-per-send: lifecycle flows, newsletters, and promotional campaigns engineered to convert, from VardWeb." />
+  <title>Email &amp; SMS Marketing — Campaigns That Land in the Inbox — VardWeb</title>
+  <meta name="description" content="Email and SMS marketing built around deliverability, segmentation, and revenue-per-send: lifecycle flows, newsletters, promotional campaigns and pay-per-text SMS from VardWeb." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300&display=swap" rel="stylesheet">
@@ -245,7 +245,7 @@
     .em-kw {
       display: inline-block;
       animation: em-kicker-wave 2.2s ease-in-out infinite;
-      background: linear-gradient(90deg, var(--em-blue-pale) 0%, #ffffff 50%, var(--em-blue-deep) 100%);
+      background: linear-gradient(90deg, var(--em-blue-pale) 0%, var(--em-blue) 50%, var(--em-blue-deep) 100%);
       background-size: 700% 100%;
       background-position: calc(var(--i) / 13 * 100%) 0;
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
@@ -594,6 +594,9 @@
     @media (max-width: 560px) {
       .addon-card-cta { align-self: stretch; justify-content: center; }
     }
+    @media (max-width: 360px) {
+      .addon-card-cta { flex-direction: column; gap: 2px; text-align: center; }
+    }
     .addon-card-icon {
       position: absolute;
       right: var(--icon-right, 6%); top: var(--icon-top, 50%);
@@ -611,6 +614,17 @@
       .addon-card-icon img {
         width: var(--icon-w-mobile, var(--icon-w, 140px));
         height: var(--icon-h-mobile, var(--icon-h, 140px));
+      }
+    }
+    @media (max-width: 360px) {
+      .addon-card-icon {
+        right: var(--icon-right-xs, var(--icon-right-mobile, var(--icon-right, 6%)));
+        top: var(--icon-top-xs, var(--icon-top-mobile, var(--icon-top, 50%)));
+        transform: var(--icon-transform-xs, var(--icon-transform-mobile, var(--icon-transform, translateY(-50%)))) rotate(var(--icon-rotate-xs, var(--icon-rotate-mobile, var(--icon-rotate, 0deg))));
+      }
+      .addon-card-icon img {
+        width: var(--icon-w-xs, var(--icon-w-mobile, var(--icon-w, 140px)));
+        height: var(--icon-h-xs, var(--icon-h-mobile, var(--icon-h, 140px)));
       }
     }
 
@@ -661,7 +675,7 @@
       border: 1px solid #3a3a3a; border-radius: 10px;
       padding: 10px 13px;
       font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.55;
-      color: #fff;
+      color: #fff; white-space: pre-line;
       box-shadow: 0 14px 34px -8px rgba(0,0,0,0.55);
       opacity: 0; transform: translateY(4px) scale(0.97);
       pointer-events: none;
@@ -834,6 +848,274 @@
     .em-cta-content .em-hero-cta-row { justify-content: center; width: 100%; }
     @media (max-width: 640px) {
       .em-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
+    }
+
+    /* ── SMS pricing (after the CTA). Mint accent so texting reads as its own
+       channel next to email's blue; prices come from sms_rates via SMS_RATES. ── */
+    .sms-section {
+      --sms: #3EE0B0; --sms-deep: #0B9D7C; --sms-pale: #BDF6E4;
+      position: relative; padding: 110px 28px 90px; scroll-margin-top: 64px;
+    }
+    .sms-section::before {
+      content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 40% at 18% 14%, rgba(62,224,176,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 35% at 88% 38%, rgba(96,165,250,0.05) 0%, transparent 70%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 320px);
+              mask-image: linear-gradient(to bottom, transparent 0, #000 320px);
+    }
+    .sms-inner { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; }
+    .sms-section .sec-tag { color: var(--sms); }
+    .sms-head { max-width: 680px; margin: 0 auto; text-align: center; }
+    .sms-head .sec-tag { display: flex; justify-content: center; }
+    .sms-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);
+    }
+    .sms-heading-grad {
+      background: linear-gradient(120deg, var(--sms-pale) 0%, var(--sms) 45%, var(--sms-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .sms-sub { font-size: 15.5px; line-height: 1.8; color: var(--text-2); margin: 18px auto 0; max-width: 580px; }
+
+    .sms-grid {
+      display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: 24px; margin-top: 52px; align-items: stretch;
+    }
+    @media (max-width: 860px) { .sms-grid { grid-template-columns: 1fr; } }
+
+    /* Base -> elevated surfaces: price card sits highest, estimator one step down */
+    .sms-card {
+      position: relative; border-radius: 22px; padding: 32px 30px;
+      background: linear-gradient(180deg, rgba(22,27,39,0.92) 0%, rgba(15,18,25,0.92) 100%);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 24px 50px -24px rgba(0,0,0,0.7);
+      min-width: 0;
+    }
+    .sms-price-card {
+      border-color: rgba(62,224,176,0.3);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 30px 60px -26px rgba(0,0,0,0.75),
+                  0 0 44px -14px rgba(62,224,176,0.22);
+      display: flex; flex-direction: column;
+    }
+    .sms-card-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--sms); margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sms-card-label .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sms); box-shadow: 0 0 8px var(--sms); }
+    .sms-price-from { font-family: 'Inter', sans-serif; font-size: 14px; color: var(--text-2); }
+    .sms-price-big {
+      font-family: 'JetBrains Mono', monospace; font-size: clamp(40px, 6vw, 54px); font-weight: 800;
+      letter-spacing: -0.04em; line-height: 1; color: var(--text-1); margin: 6px 0 8px;
+    }
+    .sms-price-big small { font-size: 0.34em; font-weight: 600; letter-spacing: 0; color: var(--text-2); margin-left: 4px; }
+    .sms-price-note { font-size: 13.5px; line-height: 1.6; color: var(--text-2); }
+    .sms-rate-list { list-style: none; margin: 26px 0 28px; padding: 0; border-top: 1px solid rgba(255,255,255,0.07); }
+    .sms-rate-list li {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+      padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+      font-size: 14px; color: rgba(200,212,232,0.78);
+    }
+    .sms-rate-list li strong {
+      font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; color: var(--text-1); white-space: nowrap;
+    }
+    .sms-rate-list li strong .unit { font-size: 11.5px; font-weight: 600; color: var(--text-2); margin-left: 3px; }
+    .sms-cta {
+      margin-top: auto; justify-content: center; width: 100%;
+      padding: 13px 24px; border-radius: 999px; color: #04130e;
+      background: linear-gradient(120deg, var(--sms) 0%, var(--sms-deep) 100%);
+      box-shadow: 0 8px 20px -6px rgba(62,224,176,0.45), 0 10px 28px -8px rgba(11,157,124,0.3);
+      transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased;
+    }
+    .sms-cta:hover {
+      transform: translateY(-2px) translateZ(0);
+      box-shadow: 0 12px 28px -6px rgba(62,224,176,0.55), 0 12px 34px -8px rgba(11,157,124,0.45);
+    }
+    .sms-cta:focus-visible { outline: 2px solid rgba(62,224,176,0.7); outline-offset: 3px; }
+    .sms-cta:active { transform: translateY(0) scale(0.98); }
+
+    .sms-est-title {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 20px; font-weight: 800;
+      letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 4px;
+    }
+    .sms-est-hint { font-size: 13.5px; color: var(--text-2); margin-bottom: 26px; }
+    .sms-control + .sms-control { margin-top: 30px; }
+    .sms-control-head {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 14px;
+      font-size: 13.5px; color: rgba(200,212,232,0.78);
+    }
+    .sms-control-head output {
+      font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: var(--text-1); text-align: right;
+    }
+    .sms-section .email-range {
+      background: linear-gradient(to right,
+        var(--sms) 0%, var(--sms) var(--fill, 0%),
+        rgba(255,255,255,0.1) var(--fill, 0%), rgba(255,255,255,0.1) 100%);
+    }
+    .sms-section .email-range::-moz-range-progress { background: var(--sms); }
+    .sms-section .email-slider-ticks { margin-top: 10px; }
+    .sms-split-range {
+      background: linear-gradient(to right, var(--sms) 0%, var(--sms) var(--fill, 50%), var(--em-blue) var(--fill, 50%), var(--em-blue) 100%) !important;
+    }
+    .sms-split-legend {
+      display: flex; justify-content: space-between; margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600; color: rgba(255,255,255,0.6);
+    }
+    .sms-split-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .sms-split-legend i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+
+    .sms-total {
+      margin-top: 30px; padding: 22px 22px 18px; border-radius: 16px;
+      background: rgba(4,8,12,0.55); border: 1px solid rgba(62,224,176,0.16);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset;
+    }
+    .sms-total-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px 16px; flex-wrap: wrap; }
+    .sms-total-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--sms);
+    }
+    .sms-total-value {
+      font-family: 'JetBrains Mono', monospace; color: var(--text-1); line-height: 1.1;
+      display: inline-flex; align-items: baseline; flex-wrap: wrap; justify-content: flex-end; gap: 0 8px;
+    }
+    .sms-total-eq { font-size: 15px; font-weight: 600; color: rgba(200,212,232,0.72); white-space: nowrap; }
+    .sms-total-result { font-size: clamp(24px, 3.2vw, 30px); font-weight: 800; letter-spacing: -0.03em; white-space: nowrap; }
+    .sms-total-result small { font-size: 0.45em; font-weight: 600; color: var(--text-2); letter-spacing: 0; margin-left: 2px; }
+    @media (max-width: 560px) {
+      .sms-total-row { flex-direction: column; align-items: flex-start; }
+      /* Result drops under the equation, spaced like label -> equation (6px) */
+      .sms-total-value { flex-direction: column; align-items: flex-start; justify-content: flex-start; row-gap: 6px; }
+      .sms-total-eq { font-size: 13.5px; }
+      .sms-total-result { line-height: 1; }
+    }
+    .sms-nowrap { white-space: nowrap; display: inline-flex; align-items: center; gap: 7px; }
+    @media (max-width: 360px) {
+      .sms-hide-xs { display: none; }
+      .sms-rate-list li { align-items: center; }
+      /* Let labels wrap as text so "(MMS) ?" drops to line 2 together */
+      #sms-pricing .sms-rate-list li .sms-row-label { display: block; }
+      #sms-pricing .sms-rate-list li .sms-row-label > .tt-icon-trigger { margin-left: 7px; vertical-align: middle; position: relative; top: -1px; }
+      .sms-rate-list li .sms-nowrap { vertical-align: middle; }
+      #sms-split-out { flex-basis: 100%; margin-left: 0; text-align: left; }
+    }
+    .sms-breakdown { list-style: none; margin: 16px 0 0; padding: 14px 0 0; border-top: 1px dashed rgba(255,255,255,0.1); }
+    .sms-breakdown li {
+      display: flex; justify-content: space-between; gap: 12px; padding: 4px 0;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(200,212,232,0.7);
+    }
+    .sms-breakdown li[hidden] { display: none; }
+
+    .sms-fineprint {
+      margin: 22px auto 0; max-width: 1100px;
+      font-size: 12.5px; line-height: 1.75; color: rgba(200,212,232,0.5);
+    }
+    .sms-fineprint strong { color: rgba(200,212,232,0.75); font-weight: 600; }
+
+    .sms-features { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; margin-top: 64px; }
+    @media (max-width: 960px) { .sms-features { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .sms-features { grid-template-columns: 1fr; } }
+    .sms-feature {
+      border-radius: 18px; padding: 24px 22px;
+      background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.07);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s ease;
+    }
+    @media (hover: hover) {
+      .sms-feature:hover { transform: translateY(-4px); border-color: rgba(62,224,176,0.28); }
+    }
+    .sms-feature-icon {
+      width: 40px; height: 40px; border-radius: 12px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(62,224,176,0.08); border: 1px solid rgba(62,224,176,0.2);
+    }
+    .sms-feature h4 {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800;
+      letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 8px;
+    }
+    .sms-feature p { font-size: 13.5px; line-height: 1.7; color: var(--text-2); }
+
+    /* How it works: numbered steps reuse the .sms-feature card surface */
+    .sms-steps-wrap { margin-top: 72px; }
+    .sms-steps { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; counter-reset: sms-step; }
+    @media (max-width: 960px) { .sms-steps { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .sms-steps { grid-template-columns: 1fr; } }
+    .sms-step-num {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 800;
+      letter-spacing: 0.08em; color: var(--sms);
+      width: 40px; height: 40px; border-radius: 12px; margin-bottom: 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(62,224,176,0.08); border: 1px solid rgba(62,224,176,0.2);
+    }
+
+    .sms-faq { margin-top: 72px; }
+    /* SMS FAQ: same h2 as the email FAQ, mint instead of blue */
+    .sms-faq-title {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900;
+      text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1);
+      margin-bottom: 36px;
+    }
+    .sms-faq .em-faq-item:hover { border-color: rgba(62,224,176,0.22); }
+    .sms-faq .em-faq-item.open { border-color: rgba(62,224,176,0.3); box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 20px rgba(62,224,176,0.04); }
+    .sms-faq .em-faq-trigger:hover { background: rgba(62,224,176,0.03); }
+    .sms-faq .em-faq-item.open .em-faq-trigger { background: rgba(62,224,176,0.05); }
+    .sms-faq .em-faq-trigger:focus-visible { outline-color: rgba(62,224,176,0.4); }
+    .sms-faq .em-faq-trigger-icon,
+    .sms-faq .em-faq-toggle { background: rgba(62,224,176,0.06); border-color: rgba(62,224,176,0.14); }
+    .sms-faq .em-faq-item.open .em-faq-trigger-icon,
+    .sms-faq .em-faq-item.open .em-faq-toggle { background: rgba(62,224,176,0.12); border-color: rgba(62,224,176,0.3); }
+    .sms-faq .em-faq-content-inner::before { background: linear-gradient(to bottom, var(--sms), transparent); }
+    .sms-faq-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800;
+      letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;
+    }
+    .sms-control-head output, .sms-breakdown li span:last-child { white-space: nowrap; }
+    .sms-rate-list li .sms-row-label,
+    .sms-breakdown li .sms-row-label { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+    .sms-fineprint .tt-icon-trigger { vertical-align: middle; position: relative; top: -1px; margin-left: 4px; }
+    .sms-fineprint { text-align: center; }
+    /* Phones: one sentence per line, never split mid-sentence */
+    @media (max-width: 560px) { .sms-fp-line { display: block; white-space: nowrap; } }
+    .sms-line-main { display: inline-flex; align-items: center; flex-wrap: wrap; column-gap: 6px; min-width: 0; }
+    .sms-line-sub { color: rgba(200,212,232,0.5); }
+    .sms-line-text { white-space: nowrap; }
+    /* Phones: label + price share row 1, sub-text runs full width beneath */
+    @media (max-width: 560px) {
+      .sms-breakdown li { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 10px; row-gap: 1px; align-items: center; }
+      .sms-breakdown li .sms-line-main { display: contents; }
+      .sms-breakdown li .sms-row-label { grid-column: 1; grid-row: 1; }
+      .sms-breakdown li .sms-line-amt { grid-column: 2; grid-row: 1; }
+      .sms-breakdown li .sms-line-sub { grid-column: 1 / -1; grid-row: 2; }
+    }
+    @media (max-width: 360px) { .sms-breakdown li { font-size: 10.5px; } }
+    .sms-line-sub:not(:empty)::before { content: '· '; }
+    .sms-line-sub:empty { display: none; }
+    @media (max-width: 560px) {
+      .sms-line-main { flex-direction: column; align-items: flex-start; row-gap: 1px; }
+      .sms-line-sub:not(:empty)::before { content: none; }
+      .sms-breakdown li { align-items: flex-start; padding: 5px 0; }
+    }
+
+    /* Circular "?" tooltip trigger (ported from ecommerce.html), mint on hover.
+       Shares the page's .tt-trigger floating tooltip script. */
+    .tt-icon-trigger {
+      flex-shrink: 0; width: 15px; height: 15px; border-radius: 50%;
+      background: none; border: 1px solid rgba(255,255,255,0.28); color: rgba(200,212,232,0.6);
+      font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center; cursor: help; padding: 0;
+      transition: border-color 0.2s ease, color 0.2s ease, transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .tt-icon-trigger:hover { border-color: var(--sms, rgba(255,255,255,0.55)); color: var(--sms, var(--text-1)); }
+    .tt-icon-trigger:focus-visible { outline: 2px solid var(--sms, var(--em-blue)); outline-offset: 2px; }
+    .tt-icon-trigger:active { transform: scale(0.9); }
+    .sms-control-head { flex-wrap: wrap; row-gap: 4px; }
+    .sms-control-head output { margin-left: auto; }
+    @media (max-width: 560px) {
+      .sms-section { padding: 80px 16px 70px; }
+      .sms-card { padding: 26px 20px; }
+      .sms-total { padding: 18px 16px 14px; }
+      .sms-control-head { font-size: 13px; }
+      .sms-control-head output { font-size: 12.5px; }
+      .sms-breakdown li { font-size: 11px; }
     }
 
     /* Footer (shared site chrome, ported from sem-seo.html) */
@@ -1068,7 +1350,7 @@
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
           <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
           <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
-          <a href="email-marketing.html" class="dropdown-item active" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email Marketing</a>
+          <a href="email-marketing.html" class="dropdown-item active" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email &amp; SMS Marketing</a>
           <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
         </div>
@@ -1123,7 +1405,7 @@
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="hosting-services.html"  class="mob-link mob-sub">Domain &amp; Hosting</a>
     <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
-    <a href="email-marketing.html" class="mob-link mob-sub active">Email Marketing</a>
+    <a href="email-marketing.html" class="mob-link mob-sub active">Email &amp; SMS Marketing</a>
     <a href="smm.html"  class="mob-link mob-sub">Social Media &amp; SMM</a>
     <a href="contact.html"  class="mob-link mob-sub">Custom Request</a>
     </div></div>
@@ -1171,7 +1453,7 @@
     </div>
     <p class="em-hero-kicker">
       <span class="em-kicker-slash">//</span>
-      <span class="em-kw" style="--i:0; animation-delay:0s">E</span><span class="em-kw" style="--i:1; animation-delay:0.07s">m</span><span class="em-kw" style="--i:2; animation-delay:0.14s">a</span><span class="em-kw" style="--i:3; animation-delay:0.21s">i</span><span class="em-kw" style="--i:4; animation-delay:0.28s">l</span>
+      <span class="em-kw" style="--i:0; animation-delay:0.0s">E</span><span class="em-kw" style="--i:1; animation-delay:0.07s">m</span><span class="em-kw" style="--i:2; animation-delay:0.14s">a</span><span class="em-kw" style="--i:3; animation-delay:0.21s">i</span><span class="em-kw" style="--i:4; animation-delay:0.28s">l</span>
       <span class="em-kw" style="--i:5; animation-delay:0.35s">M</span><span class="em-kw" style="--i:6; animation-delay:0.42s">a</span><span class="em-kw" style="--i:7; animation-delay:0.49s">r</span><span class="em-kw" style="--i:8; animation-delay:0.56s">k</span><span class="em-kw" style="--i:9; animation-delay:0.63s">e</span><span class="em-kw" style="--i:10; animation-delay:0.7s">t</span><span class="em-kw" style="--i:11; animation-delay:0.77s">i</span><span class="em-kw" style="--i:12; animation-delay:0.84s">n</span><span class="em-kw" style="--i:13; animation-delay:0.91s">g</span>
     </p>
     <h1 class="em-hero-heading">
@@ -1194,6 +1476,7 @@
           <a href="#email-addons-list" class="dropdown-item" role="menuitem">Add-ons</a>
           <a href="#email-compare" class="dropdown-item" role="menuitem">Comparison Charts</a>
           <a href="#email-faq" class="dropdown-item" role="menuitem">FAQ</a>
+          <a href="#sms-pricing" class="dropdown-item" role="menuitem">SMS pricing</a>
         </div>
       </div>
       <a href="#email-pricing" class="btn em-hero-btn em-hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
@@ -1411,26 +1694,26 @@
       <div class="addon-card-grid reveal-fade">
         <div class="addon-card" data-addon="emails">
           <div class="addon-card-content">
-            <div class="addon-card-icon" style="--icon-right:29%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:180px; --icon-h:180px; --icon-rotate:17deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(14%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
+            <div class="addon-card-icon" style="--icon-right:29%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:180px; --icon-h:180px; --icon-rotate:17deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(14%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg; --icon-right-xs:-5%; --icon-top-xs:50%; --icon-transform-xs:translateY(20%); --icon-w-xs:250px; --icon-h-xs:250px; --icon-rotate-xs:9deg;">
               <img src="brand_assets/icons/Email-isometric-icon-transparent.webp" alt="" loading="lazy" />
             </div>
             <div>
               <h4 class="addon-card-title">Emails</h4>
               <p class="addon-card-desc">Continue sending and receiving emails beyond your quota. VardWeb automatically charges your plan's overage rate for each additional bucket of 1,000 emails. Available to Silver, Gold and Custom subscriptions.</p>
             </div>
-            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta"><span>Request</span> <span>Pay-as-you-go →</span></a>
           </div>
         </div>
         <div class="addon-card" data-addon="automations">
           <div class="addon-card-content">
-            <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:6deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(9%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
+            <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:6deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(9%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg; --icon-right-xs:-5%; --icon-top-xs:50%; --icon-transform-xs:translateY(24%); --icon-w-xs:250px; --icon-h-xs:250px; --icon-rotate-xs:9deg;">
               <img src="brand_assets/icons/Automation-isometric-icon-transparent.webp" alt="" loading="lazy" />
             </div>
             <div>
               <h4 class="addon-card-title">Automations · C$0.0035 / per run</h4>
               <p class="addon-card-desc">Start with 10,000 Automation Runs for free, and scale as you need. VardWeb automatically charges for each run beyond the free limit. Available to Silver, Gold and Custom subscriptions.</p>
             </div>
-            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta">Request Pay-as-you-go</a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta"><span>Request</span> <span>Pay-as-you-go →</span></a>
           </div>
         </div>
       </div>
@@ -1441,14 +1724,14 @@
       <div class="addon-card-grid reveal-fade">
         <div class="addon-card" data-addon="dedicated-ips">
           <div class="addon-card-content">
-            <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:9deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(18%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg;">
+            <div class="addon-card-icon" style="--icon-right:27%; --icon-top:65%; --icon-transform:translateY(-30%); --icon-w:250px; --icon-h:250px; --icon-rotate:9deg; --icon-right-mobile:-5%; --icon-top-mobile:50%; --icon-transform-mobile:translateY(18%); --icon-w-mobile:250px; --icon-h-mobile:250px; --icon-rotate-mobile:9deg; --icon-right-xs:-5%; --icon-top-xs:50%; --icon-transform-xs:translateY(34%); --icon-w-xs:250px; --icon-h-xs:250px; --icon-rotate-xs:9deg;">
               <img src="brand_assets/icons/DedicatedIPs-isometric-icon-transparent.webp" alt="" loading="lazy" />
             </div>
             <div>
               <h4 class="addon-card-title">Dedicated IPs · C$65 / mo</h4>
               <p class="addon-card-desc">Available to customers exceeding 3,000 emails sent per day on the Custom plan. We take great care to maintain good-standing shared IP's, but for some high-volume senders, you can't leave anything up to chance. We will warmup, monitor, and autoscale it based on your utilization so you can focus on one thing, sending.</p>
             </div>
-            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta">Request Dedicated IPs</a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;bookCall=1" class="btn addon-card-cta"><span>Request</span> <span>Dedicated IPs →</span></a>
           </div>
         </div>
       </div>
@@ -1580,7 +1863,7 @@
   <div class="em-faq-inner">
     <p class="sec-tag reveal-fade">// frequently asked</p>
     <h2 class="reveal-fade" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; color: var(--text-1); margin-bottom: 36px; transition-delay:0.05s">
-      Sending Questions, <span class="em-heading-grad">Answered</span>
+      Email Questions, <span class="em-heading-grad">Answered</span>
     </h2>
 
     <div class="em-faq-item reveal-fade" style="transition-delay:0s">
@@ -1719,6 +2002,269 @@
   </div>
 </section>
 
+<div class="divider"></div>
+
+<!-- ── SMS PRICING ──
+     Rates render from SMS_RATES (script below): hardcoded fallback, then
+     replaced by the live sms_rates row the daily sync-sms-rates job keeps
+     current from Telnyx's rate card. Keep any figure in this markup wrapped
+     in a data-sms hook so the two can never drift. -->
+<section class="sms-section" id="sms-pricing">
+  <div class="sms-inner">
+    <div class="sms-head reveal-fade">
+      <p class="sec-tag">// sms marketing</p>
+      <h2 class="sms-heading">Instant Reach,<span class="sms-heading-grad"><br>Priced Per Text.</span></h2>
+      <p class="sms-sub">With most texts opened within minutes, SMS is your fastest route to your customers. Cart reminders, order updates, and promos with zero setup fees and no contracts. Best of all, there are no hidden costs, you only pay for the exact number of texts you send.</p>
+    </div>
+
+    <div class="sms-grid">
+      <div class="sms-card sms-price-card reveal-fade">
+        <p class="sms-card-label"><span class="dot" aria-hidden="true"></span>SMS · pay per text</p>
+        <p class="sms-price-from">Starting from</p>
+        <p class="sms-price-big"><span data-sms="minimum">C$25</span><small>/ mo</small></p>
+        <p class="sms-price-note">Your <span data-sms="minimum">C$25</span> monthly minimum is spent on your texts, not added on top. Any unused amount doesn't carry over.</p>
+        <ul class="sms-rate-list">
+          <li><span class="sms-row-label">Setup fee<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="setup" data-tooltip="" aria-label="More about: Setup fee" aria-expanded="false">?</button></span><strong>C$0</strong></li>
+          <li><span class="sms-row-label">Text to Canada<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="ca" data-tooltip="" aria-label="More about: Text to Canada" aria-expanded="false">?</button></span><strong><span data-sms="ca">3.5¢</span><span class="unit">/ text</span></strong></li>
+          <li><span class="sms-row-label">Text to the US<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="us" data-tooltip="" aria-label="More about: Text to the US" aria-expanded="false">?</button></span><strong><span data-sms="us">2.5¢</span><span class="unit">/ text</span></strong></li>
+          <li><span class="sms-row-label">Picture Message <span class="sms-nowrap">(MMS)<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="mms" data-tooltip="" aria-label="More about: Picture message" aria-expanded="false">?</button></span></span><strong><span data-sms="mms">7¢</span><span class="unit">/ message</span></strong></li>
+        </ul>
+        <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;service=SMS%20Marketing&amp;serviceColor=%233EE0B0&amp;serviceDesc=Add%20pay-per-text%20SMS%20to%20my%20plan." class="btn sms-cta">Get Started <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="sms-card reveal-fade" style="transition-delay:0.06s">
+        <h3 class="sms-est-title">Estimate <span class="sms-hide-xs">your </span>monthly bill</h3>
+        <p class="sms-est-hint">Slide to your expected volume and where your customers live.</p>
+
+        <div class="sms-control">
+          <div class="sms-control-head">
+            <label for="sms-volume">Texts per month</label>
+            <output id="sms-volume-out" for="sms-volume">714</output>
+          </div>
+          <input type="range" class="email-range" id="sms-volume" min="0" max="7" step="1" value="0" aria-label="Texts per month" />
+          <div class="email-slider-ticks" aria-hidden="true">
+            <span id="sms-tick-min" style="left:calc(9px + (100% - 18px) * 0)"><span class="tick-full">714</span><span class="tick-short">714</span></span><span style="left:calc(9px + (100% - 18px) * 0.1429)"><span class="tick-full">1,500</span><span class="tick-short">1.5K</span></span><span style="left:calc(9px + (100% - 18px) * 0.2857)"><span class="tick-full">2,500</span><span class="tick-short">2.5K</span></span><span style="left:calc(9px + (100% - 18px) * 0.4286)"><span class="tick-full">5,000</span><span class="tick-short">5K</span></span><span style="left:calc(9px + (100% - 18px) * 0.5714)"><span class="tick-full">10,000</span><span class="tick-short">10K</span></span><span style="left:calc(9px + (100% - 18px) * 0.7143)"><span class="tick-full">25,000</span><span class="tick-short">25K</span></span><span style="left:calc(9px + (100% - 18px) * 0.8571)"><span class="tick-full">50,000</span><span class="tick-short">50K</span></span><span style="left:calc(9px + (100% - 18px) * 1)"><span class="tick-full">100,000</span><span class="tick-short">100K</span></span>
+          </div>
+        </div>
+
+        <div class="sms-control">
+          <div class="sms-control-head">
+            <label for="sms-split">Where are your customers?</label>
+            <output id="sms-split-out" for="sms-split">100% Canada</output>
+          </div>
+          <input type="range" class="email-range sms-split-range" id="sms-split" min="0" max="100" step="10" value="100" aria-label="Share of texts sent to Canadian numbers" />
+          <div class="sms-split-legend" aria-hidden="true">
+            <span><i style="background:var(--em-blue)"></i>All US</span>
+            <span>All Canada<i style="background:var(--sms)"></i></span>
+          </div>
+        </div>
+
+        <div class="sms-total" aria-live="polite">
+          <div class="sms-total-row">
+            <span class="sms-total-label">SMS</span>
+            <span class="sms-total-value" id="sms-total"><span class="sms-total-eq">500 × C$0.035 =</span><span class="sms-total-result">C$17.50<small>/mo</small></span></span>
+          </div>
+          <ul class="sms-breakdown">
+            <li id="sms-line-min"><span class="sms-line-main"><span class="sms-row-label"><span class="sms-line-text">Monthly minimum</span><button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="line-min" data-tooltip="" aria-label="More about: Monthly minimum" aria-expanded="false">?</button></span><span class="sms-line-sub"></span></span><span class="sms-line-amt"></span></li>
+            <li id="sms-line-past"><span class="sms-line-main"><span class="sms-row-label"><span class="sms-line-text">Past minimum</span><button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="line-past" data-tooltip="" aria-label="More about: Past minimum" aria-expanded="false">?</button></span><span class="sms-line-sub"></span></span><span class="sms-line-amt"></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="sms-fineprint reveal-fade"><span class="sms-fp-line">Prices in CAD before tax.</span> <span class="sms-fp-line">Replies included up to 10% of sends.<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="replies" data-tooltip="" aria-label="More about: Replies" aria-expanded="false">?</button></span> <span class="sms-fp-line">Rates follow carrier fees.<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="carrier" data-tooltip="" aria-label="More about: Carrier fees" aria-expanded="false">?</button></span></p>
+
+    <div class="sms-features">
+      <div class="sms-feature reveal-fade">
+        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+        <h4>Cart &amp; order texts</h4>
+        <p>Abandoned-cart reminders, order confirmations and shipping updates, sent automatically from your store.</p>
+      </div>
+      <div class="sms-feature reveal-fade" style="transition-delay:0.06s">
+        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg></div>
+        <h4>Two-way replies</h4>
+        <p>Customers can text you back. Replies land in your dashboard, and a reply volume of 10% of your sends is included.</p>
+      </div>
+      <div class="sms-feature reveal-fade" style="transition-delay:0.12s">
+        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+        <h4>Consent built in</h4>
+        <p>Opt-in capture, STOP and HELP replies, and quiet hours from 8am to 9pm local time, so you stay within CASL and TCPA.</p>
+      </div>
+      <div class="sms-feature reveal-fade" style="transition-delay:0.18s">
+        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+        <h4>Numbers handled</h4>
+        <p>We set up and verify your sending numbers, a local number for Canada and a toll-free number for the US, at no extra cost.</p>
+      </div>
+    </div>
+
+    <div class="sms-steps-wrap">
+      <h3 class="sms-faq-heading reveal-fade">From sign-up to first text</h3>
+      <ol class="sms-steps" style="list-style:none;margin:0;padding:0">
+        <li class="sms-feature reveal-fade">
+          <div class="sms-step-num" aria-hidden="true">01</div>
+          <h4>We get your numbers</h4>
+          <p>A local Canadian number and a US toll-free number, set up for you.</p>
+        </li>
+        <li class="sms-feature reveal-fade" style="transition-delay:0.06s">
+          <div class="sms-step-num" aria-hidden="true">02</div>
+          <h4>We verify them</h4>
+          <p>Send us your business registration number and a link to your privacy policy. We handle carrier verification from there.</p>
+        </li>
+        <li class="sms-feature reveal-fade" style="transition-delay:0.12s">
+          <div class="sms-step-num" aria-hidden="true">03</div>
+          <h4>Test together</h4>
+          <p>We send test texts to your phone so you see exactly what your customers will get.</p>
+        </li>
+        <li class="sms-feature reveal-fade" style="transition-delay:0.18s">
+          <div class="sms-step-num" aria-hidden="true">04</div>
+          <h4>Go live</h4>
+          <p>Turn on cart, order and promo texts, and grow from a few hundred to thousands of texts a month.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="sms-faq">
+      <h2 class="sms-faq-title reveal-fade">SMS Questions, <span class="sms-heading-grad">Answered</span></h2>
+
+      <div class="em-faq-item reveal-fade">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <span class="em-faq-question">How much does it cost to start texting?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Nothing upfront. There's no setup fee and no number fee. The only fixed amount is the <span data-sms="minimum">C$25</span> monthly minimum, and it's spent on your texts: that covers about <span data-sms="ca-count">700</span> texts to Canada or <span data-sms="us-count">1,000</span> to the US each month. If you send less than <span data-sms="minimum">C$25</span> of texts in a month, the rest of the minimum doesn't carry forward.</p>
+            <p>Send more than that and you simply pay per text. There's no contract, so you can stop at the end of any month.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.06s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <span class="em-faq-question">What counts as one text?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Carriers bill in segments. One text is up to 160 characters of plain text. If a message contains an emoji or certain special symbols, the limit drops to 70 characters.</p>
+            <p>Longer messages are split and billed as two or more texts. Our composer shows the count live as you type, and our templates avoid emoji by default so you don't pay double by accident.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.12s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <span class="em-faq-question">Do I need my customers' permission to text them?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Yes. Canada's CASL and the US TCPA both require clear, opt-in consent before you send marketing texts, and Canadian subscribers also confirm by text after signing up.</p>
+            <p>We build the opt-in checkbox, keep a record of every consent, handle STOP and HELP replies automatically, and hold messages outside 8am to 9pm in the recipient's time zone. To get your numbers verified we'll need your business registration number and a privacy policy on your site.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.18s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+          <span class="em-faq-question">Can my per-text price change?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Only if the carriers raise their own fees. Every text carries a fee set by the mobile networks, and we check those fees daily so the prices on this page are always current.</p>
+            <p>If a change ever affects your rate, you'll get 30 days' notice before it applies to your account.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.24s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+          <span class="em-faq-question">Which number will my texts come from?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Your Canadian customers get texts from a local Canadian number, and your US customers get them from a verified US toll-free number. Each is the most reliable and affordable route for that country.</p>
+            <p>Customers can reply to either number, and their replies land in your dashboard.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.3s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+          <span class="em-faq-question">Can my business name show as the sender?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Not in Canada or the US. Carriers there don't allow name-only senders, so every text comes from a real phone number. That works in your favour: customers can reply, ask questions, or confirm an order.</p>
+            <p>Our templates open each message with your business name, so customers know who it's from and can save your number.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.36s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="em-faq-question">Can I text my whole list at once?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Yes. Large sends are queued automatically and paced to what the carriers accept, so messages aren't dropped or blocked along the way.</p>
+            <p>Each text is held until 8am to 9pm in the recipient's own time zone, and only subscribers who opted in will receive it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="em-faq-item reveal-fade" style="transition-delay:0.42s">
+        <button class="em-faq-trigger" aria-expanded="false">
+          <div class="em-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <span class="em-faq-question">What can I use SMS for?</span>
+          <div class="em-faq-toggle" aria-hidden="true">
+            <svg class="em-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="em-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="em-faq-content">
+          <div class="em-faq-content-inner">
+            <p>Anything time-sensitive: abandoned-cart reminders, order and shipping updates, appointment reminders, flash sales and promos, and one-time verification codes for logins or checkout.</p>
+            <p>Photo messages (MMS) can carry a product photo, GIF or short video clip when a picture sells better than words.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 </main>
 
 <!-- ── FOOTER ── -->
@@ -1762,7 +2308,7 @@
         <a href="contact.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
-        <a href="email-marketing.html" class="footer-link active">Email Marketing</a>
+        <a href="email-marketing.html" class="footer-link active">Email &amp; SMS Marketing</a>
         <a href="hosting-services.html" class="footer-link">Domain &amp; Hosting</a>
         <a href="content-creation.html" class="footer-link">Content Creation &amp; CM</a>
         <a href="smm.html" class="footer-link">Social Media &amp; SMM</a>
@@ -1973,7 +2519,9 @@
       });
     }
 
+    var shownAt = 0;
     function show(trigger) {
+      shownAt = Date.now();
       openTrigger = trigger;
       box.textContent = trigger.getAttribute('data-tooltip') || '';
       box.classList.add('is-open');
@@ -1994,23 +2542,29 @@
     var hoverTimer = null;
 
     triggers.forEach(function (t) {
-      t.addEventListener('mouseenter', function () {
-        clearTimeout(hoverTimer);
-        hoverTimer = setTimeout(function () {
-          if (t.matches(':hover')) show(t);
-        }, HOVER_DELAY);
-      });
-      t.addEventListener('mouseleave', function () {
-        clearTimeout(hoverTimer);
-        if (openTrigger === t) hide();
-      });
+      // Touch browsers fire emulated mouseenter on tap, which would reopen a
+      // tooltip the tap just closed, so hover only applies to real pointers.
+      if (canHover) {
+        t.addEventListener('mouseenter', function () {
+          clearTimeout(hoverTimer);
+          hoverTimer = setTimeout(function () {
+            if (t.matches(':hover')) show(t);
+          }, HOVER_DELAY);
+        });
+        t.addEventListener('mouseleave', function () {
+          clearTimeout(hoverTimer);
+          if (openTrigger === t) hide();
+        });
+      }
       t.addEventListener('focus', function () { show(t); });
       t.addEventListener('blur', function () { if (openTrigger === t) hide(); });
 
       if (!canHover) {
         t.addEventListener('click', function (e) {
           e.stopPropagation();
-          if (openTrigger === t) { hide(); } else { show(t); }
+          // A tap fires focus (which opens it) right before click; don't let
+          // that same tap close it again.
+          if (openTrigger === t && Date.now() - shownAt > 350) { hide(); } else if (openTrigger !== t) { show(t); }
         });
       }
     });
@@ -2205,6 +2759,153 @@
         });
       });
     });
+  })();
+</script>
+
+<script>
+  /* ── SMS pricing + estimator ──
+     SMS_RATES is the fallback (the verified 27 Sep 2026 figures). On load it's
+     replaced by the live sms_rates row, which the daily sync-sms-rates Edge
+     Function recomputes from Telnyx's public rate card and the Bank of Canada
+     FX rate. Every price on the section renders from this one object. */
+  (function () {
+    var section = document.getElementById('sms-pricing');
+    if (!section) return;
+
+    var SMS_RATES = { ca_text: 0.035, us_text: 0.025, mms: 0.07, minimum_monthly: 25 };
+    // Stop 0 = texts the monthly minimum covers at the current mix (set in update())
+    var VOLUMES = [null, 1500, 2500, 5000, 10000, 25000, 50000, 100000];
+    var tickMin = document.getElementById('sms-tick-min');
+
+    var volRange   = document.getElementById('sms-volume');
+    var volOut     = document.getElementById('sms-volume-out');
+    var splitRange = document.getElementById('sms-split');
+    var splitOut   = document.getElementById('sms-split-out');
+    var totalEl    = document.getElementById('sms-total');
+    var lineMin    = document.getElementById('sms-line-min');
+    var linePast   = document.getElementById('sms-line-past');
+
+    function num(n) { return Math.round(n).toLocaleString('en-CA'); }
+    function money(n) {
+      return 'C$' + n.toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function cents(rate) {
+      // 0.035 -> "3.5¢", 0.07 -> "7¢"
+      return String(Math.round(rate * 1000) / 10) + '¢';
+    }
+    function setFill(range, fraction) {
+      range.style.setProperty('--fill', 'calc(9px + (100% - 18px) * ' + fraction + ')');
+    }
+
+    function renderStatic() {
+      section.querySelectorAll('[data-sms]').forEach(function (el) {
+        var key = el.getAttribute('data-sms');
+        if (key === 'ca') el.textContent = cents(SMS_RATES.ca_text);
+        else if (key === 'us') el.textContent = cents(SMS_RATES.us_text);
+        else if (key === 'mms') el.textContent = cents(SMS_RATES.mms);
+        else if (key === 'minimum') el.textContent = 'C$' + num(SMS_RATES.minimum_monthly);
+        else if (key === 'ca-count') el.textContent = num(Math.floor(SMS_RATES.minimum_monthly / SMS_RATES.ca_text / 100) * 100);
+        else if (key === 'us-count') el.textContent = num(Math.floor(SMS_RATES.minimum_monthly / SMS_RATES.us_text / 100) * 100);
+      });
+
+      // "?" tooltip copy, built from the same rates so it can't drift
+      var min = 'C$' + num(SMS_RATES.minimum_monthly);
+      var caCount = num(Math.floor(SMS_RATES.minimum_monthly / SMS_RATES.ca_text / 100) * 100);
+      var usCount = num(Math.floor(SMS_RATES.minimum_monthly / SMS_RATES.us_text / 100) * 100);
+      var perText = 'Charged per text once your ' + min + ' minimum is used up. One text is up to 160 characters, or 70 with an emoji.';
+      var tips = {
+        'setup': 'We set up and verify your sending numbers, a Canadian local number and a US toll-free number, at no charge.',
+        'ca': perText,
+        'us': perText,
+        'mms': 'A text with a photo, GIF or short video clip, billed per message. Off unless you turn it on.',
+        'line-min': 'Covers your first ' + min + ' of texts each month: about ' + caCount + ' to Canada or ' + usCount + " to the US. Any unused amount doesn't carry over.",
+        'replies': "Customer replies are free up to 10% of the texts you send; beyond that they're billed at the text rate. Canadian subscribers get one confirmation text at sign-up, billed as a normal text.",
+        'carrier': "Every text carries a fee set by the mobile networks. We check them daily and give 30 days' notice before any change to your rate."
+      };
+      section.querySelectorAll('[data-sms-tt]').forEach(function (btn) {
+        var tip = tips[btn.getAttribute('data-sms-tt')];
+        if (tip) btn.setAttribute('data-tooltip', tip);
+      });
+    }
+
+    function setLine(li, text, sub, amountText) {
+      li.querySelector('.sms-line-text').textContent = text;
+      li.querySelector('.sms-line-sub').textContent = sub;
+      li.querySelector('.sms-line-amt').textContent = amountText;
+    }
+    function rate(r) { return 'C$' + r.toFixed(3); }
+
+    function update() {
+      var i = parseInt(volRange.value, 10) || 0;
+      var caShare = (parseInt(splitRange.value, 10) || 0) / 100;
+
+      // Blended per-text rate for the chosen mix (exact at the 10% slider steps)
+      var min = SMS_RATES.minimum_monthly;
+      var blended = Math.round((caShare * SMS_RATES.ca_text + (1 - caShare) * SMS_RATES.us_text) * 1e6) / 1e6;
+      var covered = Math.floor(min / blended + 1e-9);
+      var atMin = i === 0;
+      var volume = atMin ? covered : VOLUMES[i];
+      tickMin.children[0].textContent = num(covered);
+      tickMin.children[1].textContent = num(covered);
+      var caTexts = Math.round(volume * caShare);
+      var usTexts = volume - caTexts;
+      var caCost = caTexts * SMS_RATES.ca_text;
+      var usCost = usTexts * SMS_RATES.us_text;
+      var usage = caCost + usCost;
+
+      volOut.textContent = num(volume);
+      setFill(volRange, i / (VOLUMES.length - 1));
+      splitOut.textContent = caShare === 1 ? '100% Canada'
+        : caShare === 0 ? '100% US'
+        : Math.round(caShare * 100) + '% Canada · ' + Math.round((1 - caShare) * 100) + '% US';
+      setFill(splitRange, caShare);
+
+      // Total row: texts x blended rate = usage (the minimum row below shows the fixed C$25)
+      // First stop: the minimum covers "up to" N texts (C$25 buys N.x texts, so show the flat C$25)
+      totalEl.innerHTML = '<span class="sms-total-eq">' + (atMin ? 'up to ' : '') + num(volume) + ' \u00d7 ' + rate(blended) + ' =</span>'
+        + '<span class="sms-total-result">' + money(atMin ? min : usage) + '<small>/mo</small></span>';
+
+      // Minimum is fixed; past it, every text is billed at the blended rate.
+      // No dollar forecast for "past the minimum": only the per-text price.
+      setLine(lineMin, 'Monthly minimum', atMin ? 'all ' + num(covered) + ' texts' : 'first ' + num(covered) + ' of ' + num(volume) + ' texts', money(min));
+
+      var caPct = Math.round(caShare * 100), usPct = 100 - caPct;
+      var mix = caPct === 100 ? '100% Canada' : caPct === 0 ? '100% US' : caPct + '% Canada / ' + usPct + '% US';
+      setLine(linePast, 'Past minimum', mix, rate(blended) + '/text');
+      linePast.querySelector('[data-sms-tt]').setAttribute('data-tooltip',
+        caPct === 100 ? 'Each text after your first ' + num(covered) + ' is billed at ' + cents(SMS_RATES.ca_text) + ' to Canada.'
+        : caPct === 0 ? 'Each text after your first ' + num(covered) + ' is billed at ' + cents(SMS_RATES.us_text) + ' to the US.'
+        : 'Each text after your first ' + num(covered) + ' is billed at this blended rate: ' + caPct + '% of texts at '
+          + cents(SMS_RATES.ca_text) + ' to Canada and ' + usPct + '% at ' + cents(SMS_RATES.us_text) + ' to the US.');
+    }
+
+    volRange.addEventListener('input', update);
+    splitRange.addEventListener('input', update);
+    renderStatic();
+    update();
+
+    // Live rates: public-read row, anon key. Any failure keeps the fallback.
+    var cfg = window.SUPABASE_CONFIG || {};
+    if (!cfg.url || !cfg.anonKey || !window.fetch) return;
+    fetch(cfg.url + '/rest/v1/sms_rates?id=eq.1&select=ca_text,us_text,mms,minimum_monthly', {
+      headers: { apikey: cfg.anonKey, Authorization: 'Bearer ' + cfg.anonKey }
+    })
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (rows) {
+        var row = rows && rows[0];
+        if (!row) return;
+        var next = {
+          ca_text: parseFloat(row.ca_text), us_text: parseFloat(row.us_text),
+          mms: parseFloat(row.mms), minimum_monthly: parseFloat(row.minimum_monthly)
+        };
+        // Never show a live price below the verified fallback (prices only ratchet up).
+        Object.keys(next).forEach(function (k) {
+          if (isFinite(next[k]) && next[k] >= SMS_RATES[k]) SMS_RATES[k] = next[k];
+        });
+        renderStatic();
+        update();
+      })
+      .catch(function () {});
   })();
 </script>
 
