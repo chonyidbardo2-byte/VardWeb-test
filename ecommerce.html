@@ -1047,6 +1047,93 @@
     .pfc-btn:focus-visible { outline: 2px solid rgba(239,68,68,0.55); outline-offset: 2px; }
     .pfc-counter { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-2); letter-spacing: 0.04em; min-width: 42px; text-align: center; }
 
+    /* ── What-You-Get case study rows: ported from web-design.html #what-you-get.
+       Frame re-themed to ecom red; per-row --tier-color identities kept. ── */
+    .wyg-cases { display:flex; flex-direction:column; gap:0; margin-top:0; }
+    .wyg-row {
+      display:grid;
+      grid-template-columns: 2fr 1fr;
+      gap:48px;
+      align-items:center;
+      padding:56px 0;
+      border-bottom: 1px solid rgba(239,68,68,0.08);
+    }
+    .wyg-cases .wyg-row:last-child { border-bottom: none; }
+    .wyg-row--rev { grid-template-columns: 1fr 2fr; }
+    .wyg-row--rev .wyg-content { order: 2; }
+    .wyg-row--rev .wyg-metrics { order: 1; }
+    .wyg-content {
+      display:flex; flex-direction:row; gap:32px; align-items:flex-start;
+      padding-right: 48px;
+      border-right: 1px solid rgba(239,68,68,0.08);
+    }
+    .wyg-row--rev .wyg-content {
+      padding-right: 0;
+      padding-left: 48px;
+      border-right: none;
+      border-left: 1px solid rgba(239,68,68,0.08);
+    }
+    .wyg-img-card {
+      flex-shrink: 0;
+      position: relative;
+      width: 168px;
+      height: 158px;
+      background: var(--raised);
+      border: 1px solid var(--tier-border, rgba(239,68,68,0.25));
+      border-radius: 20px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
+                  0 4px 24px var(--tier-glow, rgba(239,68,68,0.08));
+      overflow: visible;
+    }
+    .wyg-img {
+      width: 168px;
+      height: 158px;
+      max-width: none;
+      border-radius: 16px;
+      object-fit: cover;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.90);
+      opacity: 0.6;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .wyg-img.is-visible {
+      transform: translate(-50%, -50%) scale(1.30) rotate(2deg) translateY(0px);
+      opacity: 1;
+    }
+    .wyg-quote { display:flex; flex-direction:column; gap:16px; justify-content:space-between; flex:1; }
+    .wyg-quote h3 { font-size:clamp(1rem,1.8vw,1.2rem); font-weight:700; color:var(--text-1); line-height:1.35; letter-spacing:-0.02em; }
+    .wyg-quote p { font-size:14px; line-height:1.8; color:var(--text-2); }
+    .wyg-figcaption { display:flex; flex-direction:column; gap:4px; margin-top:8px; }
+    .wyg-figcaption .wyg-name { font-size:14px; font-weight:700; color:var(--tier-color, var(--ecom-red)); }
+    .wyg-figcaption .wyg-role { font-size:12px; color:var(--text-2); line-height:1.5; }
+    .wyg-metrics { display:flex; flex-direction:column; gap:20px; }
+    .wyg-metric {
+      padding:24px 28px; background:var(--raised); border-radius:16px;
+      border:1px solid rgba(255,255,255,0.05);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .wyg-metric-value {
+      font-size:clamp(2rem,3.5vw,2.6rem); font-weight:800; letter-spacing:-0.03em;
+      color:var(--tier-color, var(--ecom-red)); line-height:1;
+    }
+    .wyg-metric-label { font-size:13px; font-weight:600; color:var(--text-1); margin-top:8px; }
+    .wyg-metric-sub { font-size:12px; color:var(--text-2); margin-top:4px; line-height:1.55; }
+    @media (max-width:860px) {
+      .wyg-row, .wyg-row--rev { grid-template-columns:1fr; gap:32px; }
+      .wyg-row--rev .wyg-content { order:1; padding-left:0; border-left:none; }
+      .wyg-row--rev .wyg-metrics { order:2; }
+      .wyg-content { padding-right:0; border-right:none; flex-direction:column; align-items:center; }
+      .wyg-img-card { width: 160px; height: 160px; }
+      .wyg-img { width: 160px; height: 160px; transform: translate(-50%, -50%) scale(0.90); }
+    }
+    @media (max-width:480px) {
+      .wyg-row { padding:40px 0; }
+      .wyg-metric-value { font-size:2rem; }
+    }
+
     /* ── Porting-pitch grid: horizontal merged cards, 2 per row ── */
     .pitch-intro { max-width: 720px; margin: 0 auto 40px; text-align: center; font-size: 15.5px; line-height: 1.8; color: var(--text-2); }
     .pitch-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
@@ -2041,6 +2128,7 @@
                 <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               <div class="dropdown-menu ecom-hero-services-panel" id="ecom-hero-services-panel" role="menu">
+                <a href="#ecom-wyg" class="dropdown-item" role="menuitem">Merging Complete</a>
                 <a href="#ecom-deploy" class="dropdown-item" role="menuitem">How It Works</a>
                 <a href="#ecom-pitch" class="dropdown-item" role="menuitem">Not Off the Shelf</a>
                 <a href="#ecom-features" class="dropdown-item" role="menuitem">What's Included</a>
@@ -2217,6 +2305,359 @@
         </div>
       </div>
     </section>
+
+    <!-- ============ MERGING COMPLETE: SEO, CRM, TCI, CMS (from web-design.html) ============ -->
+<section id="ecom-wyg" style="border-top:1px solid rgba(255,255,255,0.06);" aria-label="SEO, CRM, TCI and CMS built in">
+      <div class="section-inner">
+
+        <div class="section-head reveal-fade">
+          <p class="sec-tag">// Merging Complete</p>
+          <h2>One Store. <span class="ecom-heading-grad" style="display:block;">Everything Included.</span></h2>
+          <p>Instead of paying for four different apps and worrying about data leaks between disjointed systems, you get a single, secure, high-performance store that owns its data, protects its brand, and automates its revenue generation from day one.</p>
+        </div>
+
+    <div class="wyg-cases">
+
+      <!-- ── SEO ── -->
+      <div class="wyg-row" style="--tier-color:#22D3A5;--tier-border:rgba(34,211,165,0.28);--tier-glow:rgba(34,211,165,0.08);">
+        <div class="wyg-content">
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="brand_assets/icons/wd-seo-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
+          <div class="wyg-quote">
+            <div>
+              <h3>Search Engine Optimization</h3>
+              <p style="margin-top:12px;">Your store automatically optimizes itself, spins up high-ranking product and collection pages, and tracks keywords without requiring expensive monthly SEO apps or manual coding.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Custom SEO</span>
+              <span class="wyg-role">Automated Growth Without Effort</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Conversion Rate</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With SEO</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>4.8%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>2.1%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Shoppers who find you through organic search convert at over 2× the rate of paid clicks. SEO turns discovery into sales, automatically.</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Website Traffic Share</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With SEO</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>53%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>15%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Without SEO, paid ads cover just 15% of traffic, and stop delivering the moment you stop paying.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CRM ── -->
+      <div class="wyg-row wyg-row--rev" style="--tier-color:#4F8EF7;--tier-border:rgba(79,142,247,0.28);--tier-glow:rgba(79,142,247,0.08);">
+        <div class="wyg-content">
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="brand_assets/icons/wd-crm-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
+          <div class="wyg-quote">
+            <div>
+              <h3>Customer Relationship Management</h3>
+              <p style="margin-top:12px;">Every order, abandoned cart, and customer profile is captured instantly inside your own database, no third-party syncing delays, data loss, or expensive per-user licensing fees.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Custom CRM</span>
+              <span class="wyg-role">Zero-Leak Customer Retention</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Sales Revenue Growth</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CRM</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>+29%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+10%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">A built-in CRM drives 3× the revenue growth of the industry average by ensuring no customer ever slips through untracked.</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Sale Probability</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CRM</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>70%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>20%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Selling to a past customer is up to 70% likely, versus 20% for a new visitor. CRM keeps every buyer one email away.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TCI ── -->
+      <div class="wyg-row" style="--tier-color:#FF6B35;--tier-border:rgba(255,107,53,0.28);--tier-glow:rgba(255,107,53,0.08);">
+        <div class="wyg-content">
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="brand_assets/icons/wd-tci-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
+          <div class="wyg-quote">
+            <div>
+              <h3>Technical Conversion Infrastructure</h3>
+              <p style="margin-top:12px;">TCI turns your store into an always-on revenue engine, loading every page in about a second, keeping checkout friction-free, and running automated cart recovery until the sale is completed. No manual chasing. No carts left cold.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Custom TCI</span>
+              <span class="wyg-role">Convert Before They Click Away</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Conversion by Load Time</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With TCI</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>3.05%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>0.67%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Stores that load in 1 second convert at 3.05%. At 4 seconds that falls to 0.67%. TCI keeps every page in the fast lane.</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Abandoned Carts Recovered</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With TCI</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>15%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>0%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Around 70% of carts are abandoned before checkout. Automated recovery wins back up to 15% of them. Without it, every one is lost.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CMS ── -->
+      <div class="wyg-row wyg-row--rev" style="--tier-color:#F72585;--tier-border:rgba(247,37,133,0.28);--tier-glow:rgba(247,37,133,0.08);">
+        <div class="wyg-content">
+          <div class="wyg-img-card">
+            <img class="wyg-img" src="brand_assets/icons/wd-cms-illustration.webp" alt="" aria-hidden="true" loading="lazy"/>
+          </div>
+          <div class="wyg-quote">
+            <div>
+              <h3>Custom Content Management System</h3>
+              <p style="margin-top:12px;">You can edit your own products, swap out banners, and publish new collections through a beautifully simple, visual dashboard. You never have to wait for a developer or pay a maintenance fee just to make a quick change.</p>
+            </div>
+            <div class="wyg-figcaption">
+              <span class="wyg-name">Custom CMS</span>
+              <span class="wyg-role">Visual, "Zero-Training" Site Editing</span>
+            </div>
+          </div>
+        </div>
+        <div class="wyg-metrics">
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Indexed Pages</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CMS</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>+434%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+0%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Stores that publish regularly through a CMS earn 434% more indexed pages, giving Google far more ways to find your products.</div>
+          </div>
+          <div class="wyg-metric">
+            <div class="wyg-metric-label" style="margin-bottom:18px;">Website Visitors</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--tier-color);font-family:'JetBrains Mono',monospace;white-space:nowrap;">With CMS</span>
+                <span class="wyg-metric-value" style="font-size:clamp(1.6rem,2.8vw,2rem);" data-count>+55%</span>
+              </div>
+              <div style="height:1px;background:rgba(255,255,255,0.05);"></div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;">
+                <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(200,212,232,0.32);font-family:'JetBrains Mono',monospace;white-space:nowrap;">Without</span>
+                <span style="font-size:clamp(1.6rem,2.8vw,2rem);font-weight:800;color:rgba(200,212,232,0.28);letter-spacing:-0.03em;line-height:1;" data-count>+8%</span>
+              </div>
+            </div>
+            <div class="wyg-metric-sub" style="margin-top:14px;">Fresh content attracts 55% more visitors. Without a CMS, static sites average just 8% annual growth and slide down search rankings every month.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+/* perf-utils.js loads at the end of this page, so wait for it */
+document.addEventListener('DOMContentLoaded', function () {
+  function parse(text) {
+    var m = text.trim().match(/^([+\-]?)(\d+(?:\.\d+)?)(.*)$/);
+    if (!m) return null;
+    var dec = (m[2].split('.')[1] || '').length;
+    return { prefix: m[1], target: parseFloat(m[2]), suffix: m[3], decimals: dec, original: text.trim() };
+  }
+
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function animateSpan(el) {
+    var parsed = parse(el.textContent);
+    if (!parsed) return;
+    el.setAttribute('data-count-done', '');
+    var duration = 2000;
+    var start = performance.now();
+    (function tick(now) {
+      var t = Math.min((now - start) / duration, 1);
+      var val = parsed.target * easeOutCubic(t);
+      el.textContent = parsed.prefix + val.toFixed(parsed.decimals) + parsed.suffix;
+      if (t < 1) { requestAnimationFrame(tick); }
+      else { el.textContent = parsed.original; }
+    })(start);
+  }
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+
+  var sharedObs20 = window.__sharedObs20 = window.__sharedObs20 || PerfUtils.sharedObserver(0.2);
+
+  document.querySelectorAll('.wyg-metric').forEach(function (card) {
+    sharedObs20.watch(card, function (entry) {
+      entry.target.querySelectorAll('[data-count]:not([data-count-done])').forEach(animateSpan);
+    }, { once: true });
+  });
+});
+</script>
+
+<script>
+/* perf-utils.js loads at the end of this page, so wait for it */
+document.addEventListener('DOMContentLoaded', function () {
+  var allCards = Array.from(document.querySelectorAll('.wyg-img-card'));
+  var sharedObs25 = window.__sharedObs25 = window.__sharedObs25 || PerfUtils.sharedObserver(0.25);
+  allCards.forEach(function (card) {
+    sharedObs25.watch(card, function (entry) {
+      var img = entry.target.querySelector('.wyg-img');
+      if (!img) return;
+      var delay = allCards.indexOf(entry.target) * 80;
+      img.style.transition = 'transform 1s cubic-bezier(0.22,1,0.36,1), opacity 0.8s ease';
+      img.style.transitionDelay = delay + 'ms';
+      img.classList.add('is-visible');
+      setTimeout(function () {
+        img.style.transition = '';
+        img.style.transitionDelay = '';
+        img._floatReady = true;
+        if (typeof img._beginFloat === 'function') {
+          var fn = img._beginFloat;
+          img._beginFloat = null;
+          fn();
+        }
+      }, delay + 1000);
+    }, { once: true });
+  });
+});
+</script>
+
+<script>
+/* ── wyg-img rAF float: auto-play on scroll for all devices ── */
+(function () {
+  var T = 2000;
+  var stateMap = new WeakMap();
+
+  function getState(el) {
+    if (!stateMap.has(el)) stateMap.set(el, { rid: null, tid: null, onEnd: null });
+    return stateMap.get(el);
+  }
+
+  function startFloat(img, s) {
+    clearTimeout(s.tid);
+    if (s.rid) { cancelAnimationFrame(s.rid); s.rid = null; }
+    if (s.onEnd) { img.removeEventListener('transitionend', s.onEnd); s.onEnd = null; }
+
+    function begin() {
+      var start = performance.now();
+      (function loop(now) {
+        var phase = Math.sin(((now - start) / T) * Math.PI * 2);
+        img.style.transform = 'translate(-50%,-50%) scale(1.30) rotate(2deg) translateY(' + (phase * 4).toFixed(3) + 'px)';
+        s.rid = requestAnimationFrame(loop);
+      }(performance.now()));
+    }
+
+    if (img._floatReady) {
+      begin();
+    } else {
+      img._beginFloat = begin;
+    }
+  }
+
+  function stopFloat(img, s) {
+    clearTimeout(s.tid);
+    img._beginFloat = null;
+    if (s.rid) { cancelAnimationFrame(s.rid); s.rid = null; }
+    img.style.transform = 'translate(-50%,-50%) scale(1.30) rotate(2deg) translateY(0px)';
+    requestAnimationFrame(function () {
+      if (!s.rid) {
+        img.style.transform = '';
+      }
+    });
+  }
+
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  /* Auto-play via IntersectionObserver: all devices */
+  var allCards = Array.from(document.querySelectorAll('.wyg-img-card'));
+  var wygRafObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var card = entry.target;
+      var img = card.querySelector('.wyg-img');
+      if (!img) return;
+      var s = getState(card);
+      if (entry.isIntersecting) {
+        if (!s.rid) startFloat(img, s);
+      } else {
+        stopFloat(img, s);
+      }
+    });
+  }, { threshold: 0, rootMargin: '-10% 0px -10% 0px' });
+  allCards.forEach(function (card) { wygRafObs.observe(card); });
+})();
+</script>
 
     <!-- ============ DEPLOYMENTS-STYLE FORMAT ============ -->
     <section id="ecom-deploy" style="border-top:1px solid rgba(255,255,255,0.06);">
@@ -2669,7 +3110,7 @@
               <li><strong>Apple Pay &amp; Google Pay</strong><br>One-tap mobile checkout</li>
               <li><strong>PayPal, Amazon Pay &amp; Venmo</strong><br>As familiar fallbacks</li>
               <li><strong>Buy-Now-Pay-Later</strong><br>Klarna/Afterpay, expected in fashion &amp; home goods</li>
-              <li><strong>Multi-currency display</strong><br>For cross-border buyers</li>
+              <li><strong>Local & multi-currency</strong><br>True multi-currency on Gold</li>
             </ul>
           </div>
           <div class="feat-card reveal-fade" style="transition-delay:0.15s">
@@ -3084,7 +3525,7 @@
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Google Implementation GA4, GSC,</span> <span class="block md:inline">GS, GPR, AS, GMC <span class="compute-nowrap">Setup<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;The complete Google stack set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup">?</button></span></span></span>
+                <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, <span class="compute-nowrap">GMC, GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile. GMC: Merchant Center, including Shopping listings and Product Ratings. GAds: Google Ads conversion tracking with Enhanced Conversions. Set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3451,7 +3892,7 @@
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Google Implementation GA4, GSC,</span> <span class="block md:inline">GS, GPR, AS, GMC <span class="compute-nowrap">Setup<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;The complete Google stack set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup">?</button></span></span></span>
+                <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, <span class="compute-nowrap">GMC, GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile. GMC: Merchant Center, including Shopping listings and Product Ratings. GAds: Google Ads conversion tracking with Enhanced Conversions. Set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3818,7 +4259,7 @@
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Google Implementation GA4, GSC,</span> <span class="block md:inline">GS, GPR, AS, GMC <span class="compute-nowrap">Setup<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;The complete Google stack set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup">?</button></span></span></span>
+                <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, <span class="compute-nowrap">GMC, GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile. GMC: Merchant Center, including Shopping listings and Product Ratings. GAds: Google Ads conversion tracking with Enhanced Conversions. Set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4184,7 +4625,7 @@
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label">Google Implementation GA4, GSC, GS, GPR, AS, GMC <span class="compute-nowrap">Setup<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;The complete Google stack set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Implementation GA4, GSC, GS, GPR, AS, GMC Setup">?</button></span></span>
+                <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, <span class="compute-nowrap">GMC, GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile. GMC: Merchant Center, including Shopping listings and Product Ratings. GAds: Google Ads conversion tracking with Enhanced Conversions. Set up end to end, so every product view, cart and sale shows up where it should." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
