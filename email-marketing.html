@@ -70,6 +70,7 @@
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       background: rgba(7,9,16,0.78);
       backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      transform: translateZ(0); /* own layer: avoids Chrome backdrop-filter black-line flicker over repainting content */
       border-bottom: 1px solid rgba(0,229,255,0.07);
       height: 64px;
       display: flex; align-items: center;
@@ -318,6 +319,8 @@
     }
     .em-hero-services-panel.drop-down { transform: translateY(-6px); }
     .em-hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    /* Email page (blue) / SMS page (green) split inside the View Details menu */
+    .em-hero-dd-sep { height: 1px; margin: 6px 10px; background: linear-gradient(90deg, transparent, #60A5FA 15%, #60A5FA 45%, #3EE0B0 55%, #3EE0B0 85%, transparent); }
     .em-hero-btn-gradient:hover {
       background: linear-gradient(120deg, #86bbfb 0%, #2a5ce8 100%);
       box-shadow: 0 10px 28px -6px rgba(96,165,250,0.55), 0 12px 34px -8px rgba(29,78,216,0.45);
@@ -850,6 +853,265 @@
       .em-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
     }
 
+    /* ── SMS hero: Glyph Portal (© 2026 Christian Katzmann, MIT, https://ktzm.dk).
+       Ported from the supplied React component to vanilla JS: a scroll-driven
+       camera flies through one letter of the word into the green field. The pin
+       sticks under the fixed 64px nav, so heights are measured below it. ── */
+    #sms-portal{--gp-paper:#fff;--gp-ink:#0c1212;--gp-field:#0b3b2a;--gp-foreground:#fbfbfa;--gp-top:64px;position:relative;isolation:isolate;background:var(--gp-paper);color:var(--gp-ink);font-family:'Plus Jakarta Sans',Arial,sans-serif;container-type:inline-size;}
+    #sms-portal>[data-gp-viewport]{position:absolute;inset:0 auto auto 0;height:calc(100vh - var(--gp-top));height:calc(100svh - var(--gp-top));width:0;pointer-events:none;visibility:hidden;}
+    #sms-portal [data-gp-pin]{position:relative;height:var(--gp-height,calc(100svh - var(--gp-top)));overflow:clip;isolation:isolate;container-type:size;}
+    #sms-portal [data-gp-field]{position:absolute;inset:0;background:var(--gp-field);opacity:0;pointer-events:none;}
+    #sms-portal[data-gp-ready] [data-gp-field]{opacity:1;}
+    #sms-portal [data-gp-art]{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;}
+    #sms-portal [data-gp-marks]{fill:none;stroke:var(--gp-ink);opacity:.6;}
+    #sms-portal [data-gp-choices]{position:absolute;inset:0;visibility:hidden;pointer-events:none;}
+    #sms-portal[data-gp-choosing=true] [data-gp-choices]{visibility:visible;}
+    #sms-portal [data-gp-letter]{box-sizing:border-box;position:absolute;border:0;padding:0;margin:0;background:transparent;cursor:pointer;pointer-events:auto;touch-action:pan-y;}
+    #sms-portal [data-gp-letter]:disabled{pointer-events:none;}
+    #sms-portal [data-gp-letter]:focus-visible{outline:2px solid var(--gp-field);outline-offset:5px;}
+    #sms-portal [data-gp-touch-picker]{display:none!important;}
+    #sms-portal [data-gp-fallback]{position:absolute;inset:0;display:none;place-items:center;font-size:min(calc(100cqw / var(--gp-characters)),38cqh);line-height:1;color:var(--gp-field);}
+    #sms-portal[data-gp-ready] [data-gp-fallback]{visibility:hidden;}
+    #sms-portal [data-gp-caption]{position:absolute;inset:auto 8% 9%;display:flex;align-items:center;justify-content:space-between;gap:1rem;font:12px/1.4 Arial,sans-serif;opacity:var(--gp-caption,1);pointer-events:var(--gp-caption-hit,auto);}
+    #sms-portal [data-gp-caption]{font-family:inherit;}
+    #sms-portal [data-gp-front]{position:absolute;inset:0;opacity:var(--gp-caption,1);pointer-events:none;}
+    #sms-portal [data-gp-front] a,#sms-portal [data-gp-front] button{pointer-events:var(--gp-caption-hit,auto);}
+    #sms-portal[data-gp-kbd=caption] [data-gp-front]{opacity:1;}
+    #sms-portal [data-gp-hint]{max-width:30ch;color:var(--gp-ink);}
+    #sms-portal [data-gp-enter]{display:inline-flex;align-items:center;gap:16px;min-height:44px;color:inherit;font:inherit;text-decoration:none;letter-spacing:inherit;}
+    #sms-portal[data-gp-kbd=caption] [data-gp-caption]{opacity:1;pointer-events:auto;}
+    #sms-portal [data-gp-content]{box-sizing:border-box;position:relative;min-height:var(--gp-height,calc(100svh - var(--gp-top)));padding:clamp(32px,7%,100px);display:grid;align-content:center;color:var(--gp-foreground);background:var(--gp-field);overflow-wrap:anywhere;}
+    #sms-portal[data-gp-motion=on] [data-gp-pin]{position:sticky;top:var(--gp-top);}
+    #sms-portal[data-gp-motion=off] [data-gp-hint]{display:none;}
+    #sms-portal[data-gp-motion=on] [data-gp-content]{margin-top:calc((var(--gp-length) - 1) * var(--gp-height));background:transparent;opacity:var(--gp-reveal,0);pointer-events:none;}
+    #sms-portal[data-gp-motion=on][data-gp-entered=true] [data-gp-content]{pointer-events:auto;}
+    /* Keyboard focus flags come from JS (data-gp-kbd), not :has(): a :has() on the section made every
+       chat bubble or click restyle and repaint the whole portal under the nav's backdrop blur */
+    #sms-portal[data-gp-motion=on][data-gp-kbd=content] [data-gp-field]{clip-path:none!important;}
+    #sms-portal[data-gp-motion=on][data-gp-kbd=content] [data-gp-content]{opacity:1;pointer-events:auto;}
+    #sms-portal[data-gp-kbd=content] [data-gp-caption],#sms-portal[data-gp-kbd=content] [data-gp-marks]{opacity:0;}
+    @media(prefers-reduced-motion:reduce){#sms-portal [data-gp-pin]{position:relative!important;} #sms-portal [data-gp-content]{margin-top:0!important;opacity:1!important;background:var(--gp-field)!important;min-height:0;padding-block:64px;} #sms-portal [data-gp-caption]{opacity:1!important;}}
+    @media(prefers-reduced-motion:reduce){#sms-portal [data-gp-hint]{display:none;}}
+
+    /* Opening frame + inside copy (from the component's demo) */
+    #sms-portal [data-gp-caption]{inset:calc(var(--gp-word-bottom,50%) + 82px) 24px auto;justify-content:center;}
+    #sms-portal [data-gp-hint]{display:none;}
+    #sms-portal [data-gp-enter]{min-height:46px;padding:0 20px;gap:28px;background:#142b22;border:1px solid #10261d;border-radius:10px;color:#fff;font-size:13px;font-weight:600;box-shadow:0 1px 2px #10261d1a;transition:background .18s,box-shadow .18s,transform .25s cubic-bezier(0.34,1.56,0.64,1);}
+    #sms-portal [data-gp-enter]:hover{background:#204434;box-shadow:0 3px 8px #10261d18;}
+    #sms-portal [data-gp-enter]:active{transform:scale(.97);}
+    #sms-portal [data-gp-enter]:focus-visible{outline:2px solid #176247;outline-offset:4px;}
+    #sms-portal [data-sublime-header]{position:absolute;inset:clamp(24px,4.5cqw,48px) clamp(24px,5cqw,64px) auto;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+    #sms-portal [data-sublime-logo]{font-size:19px;font-weight:600;letter-spacing:-.065em;color:#18251e;}
+    #sms-portal [data-sublime-category]{font-size:12px;line-height:1.5;color:#71766f;}
+    #sms-portal [data-sublime-eyebrow]{position:absolute;inset:auto 24px calc(100% - var(--gp-word-top,35%) + 32px);margin:0;text-align:center;font-size:13px;font-weight:400;line-height:1.5;letter-spacing:.005em;color:#71766f;}
+    #sms-portal [data-sublime-support]{position:absolute;inset:calc(var(--gp-word-bottom,50%) + 32px) 24px auto;margin:0;text-align:center;font-size:16px;font-weight:400;line-height:1.5;color:#646a63;}
+    #sms-portal [data-sublime-scroll]{position:absolute;inset:auto 24px 7%;text-align:center;color:#7c817b;font-size:11px;letter-spacing:.01em;}
+    @media(any-pointer:coarse){#sms-portal [data-sublime-scroll]{bottom:13%;}}
+    @container(max-width:450px){#sms-portal [data-sublime-category]{max-width:12ch;text-align:right;}#sms-portal [data-sublime-eyebrow]{font-size:12px;}#sms-portal [data-sublime-support]{font-size:14px;}#sms-portal [data-gp-caption]{top:calc(var(--gp-word-bottom,50%) + 76px);}}
+    @container(max-height:479px){#sms-portal [data-sublime-header]{top:18px;}#sms-portal [data-sublime-support]{top:calc(var(--gp-word-bottom,50%) + 16px);}#sms-portal [data-gp-caption]{top:calc(var(--gp-word-bottom,50%) + 60px);}#sms-portal [data-sublime-scroll]{display:none;}}
+    #sms-portal [data-gp-content]{padding:5.5rem clamp(1.25rem,5cqw,5rem) 4rem;font-family:inherit;}
+    /* Wider screens: the heading + cards fill exactly the "Step inside" landing view, centred, so the chat demo starts just below the fold */
+    @media (min-width:768px){#sms-portal [data-gp-content]{padding-top:2.5rem;}#sms-portal [data-slipstream-copy]{min-height:calc(var(--gp-height,100svh) - 2.5rem + 16px);}}
+    #sms-portal [data-slipstream-copy]{position:relative;z-index:1;display:flex;width:min(100%,80rem);margin:auto;flex-direction:column;align-items:flex-start;justify-content:center;min-height:calc(var(--gp-height,100svh) - 5.5rem + 16px);gap:clamp(2rem,5svh,3.5rem);}
+    #sms-portal [data-slipstream-copy] h2{max-width:48rem;margin:0;color:inherit;font-family:'Plus Jakarta Sans',Arial,sans-serif;text-transform:none;font-size:clamp(1.75rem,1.1rem + 2.1cqw,2.25rem);font-weight:400;line-height:1.25;letter-spacing:-.02em;text-wrap:balance;}
+
+    /* Feature cards inside the green: paper surface lifted off the field */
+    #sms-portal .sms-portal-cards{display:grid;width:100%;grid-template-columns:1fr;gap:16px;}
+    @container(min-width:560px){#sms-portal .sms-portal-cards{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    /* 4 across only when each card is wide enough to keep its text to 3 lines */
+    @container(min-width:1400px){#sms-portal .sms-portal-cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;}}
+    @container(max-width:400px){#sms-portal .sms-portal-card{padding:20px 16px;}}
+    #sms-portal .sms-portal-card{
+      position:relative;border-radius:18px;padding:24px 22px;
+      background:transparent;border:1px solid rgba(255,255,255,.7);color:#fff;
+      transform:translateZ(0);backface-visibility:hidden;-webkit-font-smoothing:antialiased;
+      transition:transform .35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @media (hover:hover){
+      #sms-portal .sms-portal-card:hover{transform:translateY(-4px) translateZ(0);}
+    }
+    #sms-portal .sms-portal-card-icon{display:block;margin-bottom:16px;line-height:0;}
+    #sms-portal .sms-portal-card-icon svg{width:30px;height:30px;stroke-width:1.75;}
+    #sms-portal .sms-portal-card h3{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:16px;font-weight:800;letter-spacing:-.01em;line-height:1.3;color:#fff;margin:0 0 8px;}
+    #sms-portal .sms-portal-card p{margin:0;font-family:'Inter',Arial,sans-serif;font-size:13.5px;line-height:1.7;color:rgba(255,255,255,.9);overflow-wrap:normal;}
+
+    /* Same as .divider, in SMS mint instead of email blue */
+    .sms-cta-divider { background: linear-gradient(90deg, transparent, rgba(62,224,176,0.6), transparent); }
+    /* Category text only wraps between these chunks ("Cut through" / "the noise") */
+    .sms-nowrap-chunk { white-space: nowrap; }
+    /* em-cta -> hero line sits on the white edge, so it runs fully opaque mint */
+    .sms-edge-divider { background: linear-gradient(90deg, transparent, #3EE0B0 20%, #3EE0B0 80%, transparent); }
+    /* Between the pricing fine print and the SMS FAQ, centred in the gap */
+    .sms-faq-divider { margin: 64px auto; }
+    @media (max-width: 767px) { .sms-faq-divider { margin: 48px auto; } }
+
+    /* ── SMS chat demo, inside the portal content: transparent, sits on the shared green field ── */
+    .sms-chat{--sms:#3EE0B0;--sms-deep:#0B9D7C;--sms-pale:#BDF6E4;position:relative;z-index:1;margin-top:24px;}
+    /* White version of the section divider, between the cards and the chat mockups */
+    .sms-white-divider{background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);margin:0 auto 48px;}
+    @media (max-width:767px){.sms-chat{margin-top:36px;}.sms-white-divider{margin-bottom:36px;}}
+    /* Header reuses the stats title/sub; lighter gradient + sub so they read on the green */
+    .sms-chat-head{margin-bottom:40px;text-align:center;}
+    #sms-portal .sms-chat-heading{font-family:'Plus Jakarta Sans',sans-serif;}
+    .sms-chat-heading .sms-heading-grad{background:linear-gradient(120deg,#BDF6E4 0%,#3EE0B0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+    .sms-chat .sms-chat-sub{color:rgba(255,255,255,.75);}
+    .sms-chat-inner{max-width:1200px;margin:0 auto;}
+    .sms-chat-nav{display:flex;align-items:center;justify-content:center;gap:4px;margin:0 0 12px;}
+    .sms-chat-arrow,.sms-chat-dot{appearance:none;border:0;background:none;padding:0;margin:0;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;}
+    .sms-chat-arrow{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:.8;transition:opacity .2s ease,transform .25s cubic-bezier(.34,1.56,.64,1);}
+    .sms-chat-arrow:hover{opacity:1;transform:scale(1.1);}
+    .sms-chat-arrow:active{transform:scale(.92);}
+    .sms-chat-dot{position:relative;width:24px;height:32px;}
+    /* Dots: fixed 8px circles; the current scenario is white, the rest light mint */
+    .sms-chat-dot::before{content:'';position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#A5F3D9;opacity:1;transition:background-color .25s ease,opacity .2s ease;}
+    .sms-chat-dot[aria-current="true"]::before{background:#fff;}
+    .sms-chat-dot:hover::before{opacity:.75;}
+    .sms-chat-dot[aria-current="true"]:hover::before{opacity:1;}
+    .sms-chat-dot:active::before{opacity:.6;}
+    .sms-chat-arrow:focus-visible,.sms-chat-dot:focus-visible{outline:2px solid #3EE0B0;outline-offset:2px;border-radius:999px;}
+    .sms-chat--static .sms-chat-nav{display:none;}
+    @media (min-width:1024px){.sms-chat-nav{display:none;}}
+    .sms-chat-track{display:grid;grid-template-columns:auto;justify-content:center;}
+    .sms-chat-slide{grid-area:1 / 1;display:flex;flex-direction:column;align-items:center;opacity:0;visibility:hidden;transition:opacity .5s ease,visibility 0s linear .5s;}
+    .sms-chat-slide.is-active{opacity:1;visibility:visible;transition:opacity .5s ease;}
+    .sms-chat-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.01em;line-height:1.2;color:#fff;text-align:center;margin:0 0 20px;text-transform:none;}
+    @media (min-width:1024px){
+      .sms-chat-track{grid-template-columns:repeat(3,auto);gap:32px;}
+      .sms-chat-slide{grid-area:auto;opacity:1;visibility:visible;}
+    }
+    /* Clipping wrapper crops the phone's lower half, as in the original */
+    .sms-chat-clip{position:relative;width:300px;height:360px;overflow:hidden;}
+    @media (min-width:640px) and (max-width:1023px),(min-width:1200px){.sms-chat-clip{width:350px;height:420px;}}
+    /* Phone fades into whatever is behind it */
+    .sms-chat-clip{contain:layout paint;will-change:transform;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 72px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 72px),transparent);}
+    .sms-phone{
+      position:absolute;inset:0 0 -24px;display:flex;flex-direction:column;
+      background:#f6f7f6;border:10px solid #0c1212;border-bottom-width:0;border-radius:46px 46px 0 0;
+      box-shadow:0 0 0 1px rgba(255,255,255,.08),0 30px 60px -20px rgba(0,0,0,.55);
+      font-family:'Inter',sans-serif;
+    }
+    /* Symmetric 1fr/auto/1fr grid keeps the island on the true centre line, whatever the side widths */
+    .sms-phone-status{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:12px 22px 4px;font-size:12px;font-weight:600;color:#0c1212;}
+    .sms-phone-status > :first-child{justify-self:start;}
+    .sms-phone-island{width:84px;height:24px;border-radius:999px;background:#0c1212;}
+    .sms-phone-right{display:flex;align-items:center;gap:5px;justify-self:end;}
+    .sms-phone-icons{display:flex;gap:3px;align-items:flex-end;}
+    .sms-phone-batt{position:relative;width:22px;height:11px;border:1.5px solid #0c1212;border-radius:3.5px;box-sizing:border-box;margin-right:2px;}
+    .sms-phone-batt::before{content:'';position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:calc(75% - 3px);border-radius:1.5px;background:#0c1212;}
+    .sms-phone-batt::after{content:'';position:absolute;right:-4px;top:50%;width:2px;height:4px;margin-top:-2px;border-radius:0 1px 1px 0;background:#0c1212;}
+    .sms-phone-icons i{display:block;width:4px;border-radius:1px;background:#0c1212;}
+    .sms-phone-icons i:nth-child(1){height:5px}.sms-phone-icons i:nth-child(2){height:8px}.sms-phone-icons i:nth-child(3){height:11px}
+    .sms-phone-contact{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0 10px;border-bottom:1px solid rgba(12,18,18,.08);}
+    .sms-brand--mint{--av-a:#3EE0B0;--av-b:#0B9D7C;}.sms-brand--blue{--av-a:#60A5FA;--av-b:#2563EB;}.sms-brand--violet{--av-a:#C4A1FF;--av-b:#8B5CF6;}
+    .sms-phone-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--av-a,#3EE0B0),var(--av-b,#0B9D7C));color:#fff;font-size:12px;font-weight:700;}
+    .sms-phone-name{font-size:12.5px;font-weight:600;color:#0c1212;}
+    .sms-phone-sub{font-size:10.5px;color:#7a837f;}
+    /* Thread anchored to the bottom: new bubbles push older ones up and out of view */
+    .sms-chat-thread{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:12px 12px 100px;overflow:hidden;contain:layout paint;}
+    .sms-msg,.sms-typing{display:flex;align-items:flex-end;gap:6px;max-width:82%;}
+    .sms-msg p,.sms-typing p{margin:0;padding:8px 12px;border-radius:18px;font-size:13.5px;line-height:1.45;overflow-wrap:anywhere;}
+    .sms-msg--in p,.sms-typing p{background:#e9ecea;color:#0c1212;border-bottom-left-radius:6px;}
+    .sms-msg--out{align-self:flex-end;}
+    .sms-msg--out p{background:#0B9D7C;color:#fff;border-bottom-right-radius:6px;}
+    .sms-msg-av{flex:none;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--av-a,#3EE0B0),var(--av-b,#0B9D7C));color:#fff;font-size:8.5px;font-weight:700;}
+    .sms-typing{display:none;}
+    .sms-typing p{display:flex;gap:4px;align-items:center;padding:12px 14px;}
+    .sms-typing i{display:block;width:6px;height:6px;border-radius:50%;background:#8a938f;}
+    .sms-typing.is-shown i{animation:sms-typing 1s ease-in-out infinite;}
+    .sms-typing i:nth-child(2){animation-delay:.15s}.sms-typing i:nth-child(3){animation-delay:.3s}
+    @keyframes sms-typing{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-3px);opacity:1}}
+    /* Player: hidden until shown, then a springy pop (JS only; without JS every message shows) */
+    .sms-chat--js .sms-msg{display:none;}
+    .sms-chat--js .sms-msg.is-shown,.sms-chat--js .sms-typing.is-shown{display:flex;animation:sms-msg-in .45s cubic-bezier(.34,1.56,.64,1) both;}
+    .sms-msg--in.is-shown,.sms-typing.is-shown{transform-origin:left bottom;}
+    .sms-msg--out.is-shown{transform-origin:right bottom;}
+    @keyframes sms-msg-in{from{opacity:0;transform:translateY(8px) scale(.96)}to{opacity:1;transform:none}}
+    /* Reduced motion: every conversation shown in full, stacked on mobile */
+    .sms-chat--static .sms-chat-track{gap:40px;}
+    .sms-chat--static .sms-chat-slide{grid-area:auto;opacity:1;visibility:visible;}
+    @media (max-width:360px){.sms-chat-clip{width:280px;}}
+
+    /* ── SMS stats: "Numbers that matter" grid between the portal and pricing ── */
+    .sms-stats{--sms:#3EE0B0;--sms-deep:#0B9D7C;--sms-pale:#BDF6E4;position:relative;padding:96px 24px 40px;}
+    .sms-stats-inner{max-width:1024px;margin:0 auto;}
+    /* Same type as .sms-heading in the pricing section */
+    .sms-stats-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:900;text-transform:uppercase;letter-spacing:-.03em;line-height:1.05;color:var(--text-1);text-align:center;text-wrap:balance;}
+    .sms-stats-sub{margin-top:14px;text-align:center;font-family:'Inter',sans-serif;font-size:clamp(18px,2.2vw,24px);letter-spacing:-.015em;line-height:1.5;color:rgba(200,212,232,.6);text-wrap:pretty;}
+    .sms-stats-grid{margin-top:56px;display:grid;grid-template-columns:1fr;gap:16px;}
+    @media (min-width:640px){.sms-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media (min-width:768px){.sms-stats-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+    .sms-stat{
+      --tint:62,224,176;--bg:rgba(62,224,176,.13);
+      position:relative;border-radius:12px;padding:28px 24px;
+      background:var(--bg);border:1px solid rgba(var(--tint),.32);
+      box-shadow:0 1px 2px rgba(0,0,0,.25),0 16px 36px -18px rgba(var(--tint),.25);
+    }
+    .sms-stat svg.sms-stat-icon{display:block;width:40px;height:40px;margin-bottom:28px;stroke:rgb(var(--tint));stroke-width:1.75;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+    .sms-stat-num{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:48px;font-weight:500;letter-spacing:-.03em;line-height:1;color:#fff;}
+    .sms-stat-label{margin-top:16px;font-family:'Inter',sans-serif;font-size:20px;line-height:1.4;color:rgba(238,240,248,.8);}
+    /* Card colours follow the reference grid, in order: blue, green, red (tall), amber, violet */
+    .sms-stat--blue{--tint:59,130,246;--bg:#0e1d33;}
+    .sms-stat--green{--tint:34,197,94;--bg:#0b2a17;}
+    .sms-stat--red{--tint:239,68,68;--bg:#2d1a1b;}
+    .sms-stat--amber{--tint:217,119,6;--bg:#2e2009;}
+    .sms-stat--violet{--tint:168,85,247;--bg:#281b35;}
+    .sms-stat--tall{display:flex;flex-direction:column;overflow:hidden;padding-bottom:0;}
+    .sms-stat--tall .sms-stat-label{margin-bottom:8px;}
+    /* ── SMS stat icons: AnimateIcons (MIT) motion variants ported to CSS keyframes.
+       Desktop: play while the card is hovered. Touch: .is-anim while the card is on screen. ── */
+    /* Globe: spin once with a small pop, outline + orbits redraw */
+    .si-globe-ring,.si-globe-orbit{stroke-dasharray:1;}
+    .sms-stat:hover .si-globe,.sms-stat.is-anim .si-globe{animation:si-globe-spin 1.4s linear,si-globe-pop .25s ease-out;}
+    .sms-stat:hover .si-globe-ring,.sms-stat.is-anim .si-globe-ring{animation:si-globe-ring .35s ease-out;}
+    .sms-stat:hover .si-globe-orbit,.sms-stat.is-anim .si-globe-orbit{animation:si-globe-orbit .4s ease-out .08s both;}
+    @keyframes si-globe-spin{from{rotate:0deg}to{rotate:360deg}}
+    @keyframes si-globe-pop{0%,100%{scale:1}50%{scale:1.03}}
+    @keyframes si-globe-ring{from{stroke-dashoffset:.1;opacity:.8}to{stroke-dashoffset:0;opacity:1}}
+    @keyframes si-globe-orbit{from{stroke-dashoffset:1;opacity:.5}to{stroke-dashoffset:0;opacity:1}}
+    /* Clock: hands run while hovered and freeze where they are on leave */
+    .si-clock-min,.si-clock-hour{transform-box:view-box;transform-origin:12px 12px;animation-play-state:paused;}
+    .si-clock-min{animation:si-spin 2s linear infinite paused;}
+    .si-clock-hour{animation:si-spin 24s linear infinite paused;}
+    .sms-stat:hover .si-clock-min,.sms-stat:hover .si-clock-hour,.sms-stat.is-anim .si-clock-min,.sms-stat.is-anim .si-clock-hour{animation-play-state:running;}
+    @keyframes si-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    /* Message heart: bubble pops in, then the heart beats twice */
+    .si-msg-bubble{transform-box:view-box;transform-origin:4px 20px;}
+    .si-msg-heart{transform-box:view-box;transform-origin:12px 11px;}
+    .sms-stat:hover .si-msg-bubble,.sms-stat.is-anim .si-msg-bubble{animation:si-msg-bubble .55s cubic-bezier(.34,1.4,.64,1);}
+    .sms-stat:hover .si-msg-heart,.sms-stat.is-anim .si-msg-heart{animation:si-msg-heart .7s ease-in-out .24s both;}
+    @keyframes si-msg-bubble{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.05);opacity:1}100%{transform:scale(1);opacity:1}}
+    @keyframes si-msg-heart{0%{transform:scale(.6);opacity:0}30%{transform:scale(1.22);opacity:1}50%{transform:scale(1)}72%{transform:scale(1.14)}100%{transform:scale(1);opacity:1}}
+    /* Smartphone: buzz (0.5s) then rest (0.35s), looping while hovered */
+    .sms-stat:hover .si-phone,.sms-stat.is-anim .si-phone{animation:si-phone-buzz .85s ease-in-out infinite;}
+    @keyframes si-phone-buzz{
+      0%{transform:translateX(0) rotate(0deg)}
+      11.76%{transform:translateX(-2px) rotate(-3deg)}
+      23.53%{transform:translateX(2px) rotate(3deg)}
+      35.29%{transform:translateX(-2px) rotate(-3deg)}
+      47.06%{transform:translateX(2px) rotate(3deg)}
+      58.82%,100%{transform:translateX(0) rotate(0deg)}
+    }
+    /* Badge dollar: badge flips half a turn and back while the $ redraws */
+    .si-badge-outer{stroke-dasharray:260;transform-box:view-box;transform-origin:12px 12px;}
+    .si-badge-dollar{stroke-dasharray:140;transform-box:fill-box;transform-origin:center;}
+    .si-badge-line{stroke-dasharray:20;transform-box:fill-box;transform-origin:center;}
+    .sms-stat:hover .si-badge-outer,.sms-stat.is-anim .si-badge-outer{animation:si-badge-outer 1.1s ease-in-out;}
+    .sms-stat:hover .si-badge-dollar,.sms-stat.is-anim .si-badge-dollar{animation:si-badge-dollar .9s ease-in-out .25s both;}
+    .sms-stat:hover .si-badge-line,.sms-stat.is-anim .si-badge-line{animation:si-badge-line .85s ease-in-out .18s both;}
+    @keyframes si-badge-outer{0%{transform:rotate(0deg) scale(1)}50%{transform:rotate(180deg) scale(1.02)}100%{transform:rotate(0deg) scale(1)}}
+    @keyframes si-badge-dollar{0%{stroke-dashoffset:140;transform:scale(.96)}50%{transform:scale(1.05)}100%{stroke-dashoffset:0;transform:scale(1)}}
+    @keyframes si-badge-line{0%{stroke-dashoffset:16;transform:scaleY(.9);opacity:.8}50%{transform:scaleY(1.05)}100%{stroke-dashoffset:0;transform:scaleY(1);opacity:1}}
+    @media (prefers-reduced-motion:reduce){
+      .sms-stat .sms-stat-icon,.sms-stat .sms-stat-icon *{animation:none!important;}
+    }
+    .sms-stat-art{display:block;width:100%;height:auto;margin-top:auto;margin-bottom:-8px;}
+    @media (min-width:768px){.sms-stat--tall{grid-column:3;grid-row:1 / span 2;}}
+    @media (min-width:640px) and (max-width:767px){.sms-stat--tall{grid-row:span 2;}}
+    /* Mobile: title on one line; cards run blue, green, amber, violet, then the tall red one */
+    @media (max-width:640px){.sms-stats-title{white-space:nowrap;font-size:clamp(20px,7vw,30px);}}
+    @media (max-width:767px){.sms-stat--tall{order:5;}}
+    @media (max-width:520px){.sms-stats{padding:72px 16px 24px;}.sms-stat-num{font-size:42px;}.sms-stat-label{font-size:18px;}}
+
     /* ── SMS pricing (after the CTA). Mint accent so texting reads as its own
        channel next to email's blue; prices come from sms_rates via SMS_RATES. ── */
     .sms-section {
@@ -1012,42 +1274,7 @@
     }
     .sms-fineprint strong { color: rgba(200,212,232,0.75); font-weight: 600; }
 
-    .sms-features { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; margin-top: 64px; }
-    @media (max-width: 960px) { .sms-features { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 520px) { .sms-features { grid-template-columns: 1fr; } }
-    .sms-feature {
-      border-radius: 18px; padding: 24px 22px;
-      background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.07);
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s ease;
-    }
-    @media (hover: hover) {
-      .sms-feature:hover { transform: translateY(-4px); border-color: rgba(62,224,176,0.28); }
-    }
-    .sms-feature-icon {
-      width: 40px; height: 40px; border-radius: 12px; margin-bottom: 16px;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(62,224,176,0.08); border: 1px solid rgba(62,224,176,0.2);
-    }
-    .sms-feature h4 {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 800;
-      letter-spacing: -0.01em; color: var(--text-1); margin-bottom: 8px;
-    }
-    .sms-feature p { font-size: 13.5px; line-height: 1.7; color: var(--text-2); }
-
-    /* How it works: numbered steps reuse the .sms-feature card surface */
-    .sms-steps-wrap { margin-top: 72px; }
-    .sms-steps { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; counter-reset: sms-step; }
-    @media (max-width: 960px) { .sms-steps { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 520px) { .sms-steps { grid-template-columns: 1fr; } }
-    .sms-step-num {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 800;
-      letter-spacing: 0.08em; color: var(--sms);
-      width: 40px; height: 40px; border-radius: 12px; margin-bottom: 16px;
-      display: flex; align-items: center; justify-content: center;
-      background: rgba(62,224,176,0.08); border: 1px solid rgba(62,224,176,0.2);
-    }
-
-    .sms-faq { margin-top: 72px; }
+    .sms-faq { margin-top: 0; scroll-margin-top: 80px; }
     /* SMS FAQ: same h2 as the email FAQ, mint instead of blue */
     .sms-faq-title {
       font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(28px, 4vw, 44px); font-weight: 900;
@@ -1064,10 +1291,6 @@
     .sms-faq .em-faq-item.open .em-faq-trigger-icon,
     .sms-faq .em-faq-item.open .em-faq-toggle { background: rgba(62,224,176,0.12); border-color: rgba(62,224,176,0.3); }
     .sms-faq .em-faq-content-inner::before { background: linear-gradient(to bottom, var(--sms), transparent); }
-    .sms-faq-heading {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 800;
-      letter-spacing: -0.02em; color: var(--text-1); margin-bottom: 24px;
-    }
     .sms-control-head output, .sms-breakdown li span:last-child { white-space: nowrap; }
     .sms-rate-list li .sms-row-label,
     .sms-breakdown li .sms-row-label { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
@@ -1117,6 +1340,218 @@
       .sms-control-head output { font-size: 12.5px; }
       .sms-breakdown li { font-size: 11px; }
     }
+
+    /* ── SMS CTA hero (port of the preview-switch hero) ──
+       Tab rail + phone preview on the left, CTA copy on the right, carrier
+       strip docked below. On md+ with motion on, JS pins it (.is-pinned) and
+       maps scroll progress to the active tab; otherwise tabs are click-driven. */
+    .sms-cta-hero {
+      --sms: #3EE0B0; --sms-deep: #0B9D7C; --sms-pale: #BDF6E4;
+      --sch-muted: rgba(255,255,255,0.06); --sch-line: rgba(255,255,255,0.08);
+      position: relative; scroll-margin-top: 64px;
+    }
+    .sms-cta-hero.is-pinned { height: 340vh; }
+    .sms-cta-hero.is-pinned .sch-pin { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    .sch-main {
+      max-width: 1280px; margin: 0 auto; width: 100%;
+      padding: 40px 24px; display: flex; flex-direction: column; justify-content: center;
+    }
+    @media (min-width: 1024px) { .sch-main { padding: 56px 24px; } }
+    .sms-cta-hero.is-pinned .sch-main { flex: 1; min-height: 0; padding-top: 64px; }
+    .sch-split { display: flex; flex-direction: column-reverse; justify-content: center; gap: 32px; }
+    @media (min-width: 768px) { .sch-split { flex-direction: row; align-items: flex-start; gap: 24px; } }
+    @media (min-width: 1024px) { .sch-split { gap: 40px; } }
+    @media (min-width: 1280px) { .sch-split { gap: 72px; } }
+
+    /* left: rail + phone */
+    .sch-left { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+    @media (min-width: 768px) { .sch-left { width: 400px; flex-shrink: 0; flex-direction: row; gap: 16px; margin-top: 44px; } }
+    @media (min-width: 1024px) { .sch-left { width: 480px; gap: 24px; } }
+    .sch-rail { display: flex; gap: 8px; flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+    .sch-rail::-webkit-scrollbar { display: none; }
+    @media (min-width: 768px) { .sch-rail { flex-direction: column; overflow: visible; } }
+    .sch-tab {
+      white-space: nowrap; text-align: left; border-radius: 12px; padding: 10px 16px;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: rgba(200,212,232,0.62);
+      background: transparent; border: 0; cursor: pointer; position: relative;
+      transition: color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .sch-tab::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit; z-index: -1;
+      background: var(--sch-muted); opacity: 0; transition: opacity 0.2s ease;
+    }
+    .sch-tab:hover { color: var(--text-1); }
+    .sch-tab:hover::before { opacity: 0.6; }
+    .sch-tab:active { transform: scale(0.97); }
+    .sch-tab:focus-visible { outline: 2px solid rgba(62,224,176,0.6); outline-offset: 2px; }
+    .sch-tab[aria-selected="true"] { color: var(--text-1); font-weight: 600; }
+    .sch-tab[aria-selected="true"]::before {
+      opacity: 1; background: rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .sch-tab { isolation: isolate; }
+
+    .sch-stack { position: relative; width: 100%; min-width: 0; }
+    @media (min-width: 768px) { .sch-stack { flex: 1; } }
+    .sch-panel { transition: opacity 0.5s cubic-bezier(0.22,1,0.36,1); }
+    .sch-panel[aria-hidden="true"] { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+    .sch-phone {
+      position: relative; margin: 0 auto; width: 100%; max-width: 400px; padding: 0 8px;
+      -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent);
+              mask-image: linear-gradient(to bottom, #000 80%, transparent);
+    }
+    .sch-bezel {
+      overflow: hidden; border-radius: 2.5rem 2.5rem 0 0; padding: 8px 8px 0;
+      background: rgba(18,20,24,0.75);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1), 0 8px 24px -12px rgba(0,0,0,0.6);
+    }
+    .sch-screen {
+      height: 320px; overflow: hidden; border-radius: 2rem 2rem 0 0; padding: 0 24px;
+      background: #000; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+    }
+    .sch-status { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; font-family: 'Inter', sans-serif; font-size: 12px; color: var(--text-1); }
+    .sch-status b { font-weight: 600; }
+    .sch-status span { display: flex; align-items: flex-end; gap: 4px; }
+    .sch-grabber { margin: 12px auto 0; height: 6px; width: 40px; border-radius: 999px; background: rgba(255,255,255,0.15); }
+    .sch-copy { padding: 40px 8px 0; text-align: center; }
+    .sch-copy .sch-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--sms); }
+    .sch-copy h3 {
+      margin-top: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 700;
+      letter-spacing: -0.03em; line-height: 1.2; color: rgba(238,240,248,0.82);
+    }
+    .sch-copy p { margin-top: 8px; font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.6; color: rgba(200,212,232,0.62); }
+
+    /* right: CTA copy */
+    .sch-right { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 0; }
+    @media (min-width: 768px) { .sch-right { flex: 1; max-width: 496px; align-items: flex-start; text-align: left; } }
+    .sch-badge {
+      display: flex; width: fit-content; align-items: center; gap: 8px; margin-bottom: 16px;
+      padding: 4px 10px 4px 6px; border-radius: 8px; background: var(--sch-muted);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .sch-badge-tag {
+      display: inline-flex; height: 16px; align-items: center; padding: 0 6px; border-radius: 5px;
+      background: #0a0d12; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase; color: var(--sms);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .sch-badge-label { font-family: 'Inter', sans-serif; font-size: 14px; color: rgba(200,212,232,0.62); }
+    .sch-title {
+      margin-bottom: 16px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+      font-size: 30px; line-height: 1.1; letter-spacing: -0.03em; color: var(--text-1); text-wrap: balance;
+    }
+    @media (min-width: 640px) { .sch-title { font-size: 36px; } }
+    @media (min-width: 1024px) { .sch-title { font-size: 48px; margin-bottom: 20px; } }
+    @media (min-width: 1280px) { .sch-title { font-size: 56px; line-height: 1.05; } }
+    .sch-title-grad {
+      background: linear-gradient(120deg, var(--sms-pale) 0%, var(--sms) 45%, var(--sms-deep) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .sch-desc { font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.7; color: rgba(200,212,232,0.62); text-wrap: balance; }
+    @media (min-width: 1024px) { .sch-desc { font-size: 18px; } }
+    .sch-chips { margin-top: 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    @media (min-width: 768px) { .sch-chips { justify-content: flex-start; } }
+    @media (min-width: 1024px) { .sch-chips { margin-top: 32px; } }
+    .sch-chip {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.025);
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-1);
+    }
+    .sch-chip svg { color: var(--sms); flex-shrink: 0; }
+    .sch-ctas { margin-top: 24px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    @media (min-width: 768px) { .sch-ctas { justify-content: flex-start; } }
+    @media (min-width: 1024px) { .sch-ctas { margin-top: 32px; } }
+    .sch-btn {
+      display: inline-flex; height: 40px; align-items: center; justify-content: center; gap: 8px;
+      white-space: nowrap; border-radius: 12px; padding: 0 14px;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; text-decoration: none;
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+      transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased;
+    }
+    .sch-btn:hover { transform: translateY(-2px) translateZ(0); }
+    .sch-btn:active { transform: translateY(0) scale(0.97) translateZ(0); }
+    .sch-btn:focus-visible { outline: 2px solid rgba(62,224,176,0.7); outline-offset: 3px; }
+    .sch-btn-primary {
+      color: #04130e; font-weight: 600;
+      background: linear-gradient(120deg, var(--sms) 0%, var(--sms-deep) 100%);
+      box-shadow: none;
+    }
+    .sch-btn-primary:hover,
+    .sch-btn-primary:active { box-shadow: 0 8px 20px -6px rgba(62,224,176,0.45), 0 10px 28px -8px rgba(11,157,124,0.3); }
+    .sch-btn-secondary { color: rgba(200,212,232,0.7); background: var(--sch-muted); }
+    .sch-btn-secondary:hover,
+    .sch-btn-secondary:active { color: #fff; background: #0a0b0e; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22); }
+    .sch-proof { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    @media (min-width: 768px) { .sch-proof { flex-direction: row; gap: 0; } }
+    .sch-proof-icons { display: flex; align-items: center; }
+    .sch-proof-icons span {
+      display: flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 50%;
+      background: #0d1a17; border: 2px solid #070910; color: var(--sms);
+    }
+    .sch-proof-icons span + span { margin-left: -8px; }
+    .sch-proof-text { font-family: 'Inter', sans-serif; font-size: 14px; color: rgba(200,212,232,0.62); }
+    @media (min-width: 768px) { .sch-proof-text { margin-left: 12px; } }
+
+    /* carrier strip */
+    .sch-logos { border-top: 1px solid var(--sch-line); border-bottom: 1px solid var(--sch-line); }
+    .sch-logos-cap {
+      padding: 0 16px 12px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+      font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(62,224,176,0.7);
+    }
+    .sch-logos-inner { max-width: 1280px; margin: 0 auto; }
+    @media (min-width: 1024px) { .sch-logos-inner { padding: 0 28px; } }
+    .sch-logos-row { display: flex; align-items: center; overflow-x: auto; scrollbar-width: none; list-style: none; margin: 0; padding: 0; }
+    .sch-logos-row::-webkit-scrollbar { display: none; }
+    .sch-logos-row li { display: flex; flex-shrink: 0; align-items: center; }
+    @media (min-width: 1024px) { .sch-logos-row { overflow: visible; } .sch-logos-row li { flex: 1 1 0; } }
+    .sch-logo {
+      display: flex; width: 100%; align-items: center; justify-content: center; gap: 6px; padding: 18px 24px;
+      white-space: nowrap; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 600;
+      letter-spacing: -0.02em; color: rgba(200,212,232,0.62);
+    }
+    @media (min-width: 1024px) { .sch-logo { padding: 22px 0; } }
+    .sch-logos-row li + li::before { content: ''; width: 1px; height: 36px; flex-shrink: 0; background: var(--sch-line); }
+
+    /* Mobile: badge, title, desc, step rail, phone, chips, CTAs, proof (children of both columns interleaved) */
+    @media (max-width: 767px) {
+      .sch-split { flex-direction: column; align-items: center; text-align: center; gap: 0; }
+      .sch-right { display: contents; }
+      .sch-left { order: 4; width: 100%; display: block; }
+      .sch-badge { order: 1; }
+      .sch-title { order: 2; }
+      .sch-desc { order: 3; }
+      .sch-rail { margin-top: 24px; max-width: 100%; justify-content: safe center; }
+      .sch-stack { margin-top: 16px; }
+      /* Scroll-stepping: rail + phone stick under the nav while the reader scrolls a runway,
+         and the active step follows scroll progress (JS adds .is-stepping + the vars) */
+      /* Runway is real content (sticky can't travel through padding) */
+      .sch-split.is-stepping .sch-left::after { content: ''; display: block; height: var(--sch-runway, 140svh); }
+      .sch-split.is-stepping .sch-rail { position: sticky; top: 76px; z-index: 2; }
+      .sch-split.is-stepping .sch-stack { position: sticky; top: var(--sch-stack-top, 140px); }
+      .sch-chips { order: 6; }
+      .sch-ctas { order: 7; }
+      .sch-proof { order: 8; }
+    }
+    /* Narrow phones: all four step tabs fit on one line */
+    @media (max-width: 374px) { .sch-tab { padding: 10px 9px; } }
+
+    /* Below 1024px the carrier logos run as a seamless right-to-left marquee (JS adds clones +
+       .is-marquee). Every item carries its separator so one set = the exact repeat distance. */
+    .sch-logos-row.is-marquee {
+      width: max-content; overflow: visible; pointer-events: none; user-select: none; touch-action: none;
+      animation: sch-marquee var(--sch-dur, 30s) linear infinite; will-change: transform;
+    }
+    .sch-logos-row.is-marquee li::before { content: ''; width: 1px; height: 36px; flex-shrink: 0; background: var(--sch-line); }
+    @keyframes sch-marquee { from { transform: translate3d(0,0,0); } to { transform: translate3d(calc(-1 * var(--sch-set-w, 0px)),0,0); } }
+    @media (max-width: 1023px) {
+      .sch-logos-inner {
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+                mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) { .sch-logos-row.is-marquee { animation: none; } }
+    @media (max-width: 560px) { .sch-main { padding-left: 16px; padding-right: 16px; } }
 
     /* Footer (shared site chrome, ported from sem-seo.html) */
     .site-footer { background: var(--surface); border-top: 1px solid rgba(0,229,255,0.07); padding: 64px 28px 40px; }
@@ -1249,6 +1684,21 @@
         scroll-behavior: auto !important;
       }
     }
+    /* ── SMS seam balance: equal space above and below each green section divider
+       (and the content edges of the green portal). Desktop 88px, mobile 64px. ── */
+    #sms-portal [data-gp-content] { padding-bottom: 88px; }
+    #sms-stats { padding-top: 87px; padding-bottom: 88px; }
+    #sms-pricing { padding-top: 87px; padding-bottom: 88px; }
+    #sms-cta .sch-main, #sms-cta.is-pinned .sch-main { justify-content: flex-start; padding-top: 88px; }
+    @media (max-width: 767px) {
+      #sms-portal [data-gp-content] { padding-bottom: 64px; }
+      #sms-stats { padding-top: 63px; padding-bottom: 64px; }
+      #sms-pricing { padding-top: 63px; padding-bottom: 64px; }
+      #sms-cta .sch-main { padding-top: 63px; }
+    }
+
+    /* Section tags are kept in the markup as code/navigation markers but hidden on the page */
+    .sec-tag, .email-pricing-head .sec-tag, .sms-head .sec-tag { display: none; }
   </style>
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
@@ -1471,12 +1921,19 @@
           <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
         <div class="dropdown-menu em-hero-services-panel" id="email-hero-services-panel" role="menu">
-          <a href="#email-pricing" class="dropdown-item" role="menuitem">Scale your sending</a>
+          <a href="#email-pricing" class="dropdown-item" role="menuitem">Email Pricing</a>
           <a href="#email-payg" class="dropdown-item" role="menuitem">Pay-as-you-go</a>
           <a href="#email-addons-list" class="dropdown-item" role="menuitem">Add-ons</a>
-          <a href="#email-compare" class="dropdown-item" role="menuitem">Comparison Charts</a>
-          <a href="#email-faq" class="dropdown-item" role="menuitem">FAQ</a>
-          <a href="#sms-pricing" class="dropdown-item" role="menuitem">SMS pricing</a>
+          <a href="#email-compare" class="dropdown-item" role="menuitem">Comparison</a>
+          <a href="#email-faq" class="dropdown-item" role="menuitem">Email FAQ</a>
+          <div class="em-hero-dd-sep" role="separator" aria-hidden="true"></div>
+          <a href="#sms-portal" class="dropdown-item" role="menuitem">SMS Marketing</a>
+          <a href="#sms-portal-content" class="dropdown-item" role="menuitem">What's Included</a>
+          <a href="#sms-chat" class="dropdown-item" role="menuitem">SMS Examples</a>
+          <a href="#sms-stats" class="dropdown-item" role="menuitem">The Numbers</a>
+          <a href="#sms-pricing" class="dropdown-item" role="menuitem">SMS Pricing</a>
+          <a href="#sms-faq" class="dropdown-item" role="menuitem">SMS FAQ</a>
+          <a href="#sms-cta" class="dropdown-item" role="menuitem">Start Texting</a>
         </div>
       </div>
       <a href="#email-pricing" class="btn em-hero-btn em-hero-btn-gradient">Get Started <span aria-hidden="true">→</span></a>
@@ -1599,7 +2056,7 @@
       <div class="email-slider-wrap">
         <input type="range" class="email-range" min="0" max="7" step="1" value="0" aria-label="Estimated monthly marketing contact volume" />
         <div class="email-slider-ticks" aria-hidden="true">
-          <span style="left:calc(9px + (100% - 18px) * 0)">1K</span><span style="left:calc(9px + (100% - 18px) * 0.142857)">3K</span><span style="left:calc(9px + (100% - 18px) * 0.285714)">5K</span><span style="left:calc(9px + (100% - 18px) * 0.428571)">10K</span><span style="left:calc(9px + (100% - 18px) * 0.571429)">25K</span><span style="left:calc(9px + (100% - 18px) * 0.714286)">50K</span><span style="left:calc(9px + (100% - 18px) * 0.857143)">100K</span><span style="left:calc(9px + (100% - 18px) * 1)">150K</span>
+          <span style="left:calc(9px + (100% - 18px) * 0)"><span class="tick-full">1,000</span><span class="tick-short">1K</span></span><span style="left:calc(9px + (100% - 18px) * 0.142857)"><span class="tick-full">3,000</span><span class="tick-short">3K</span></span><span style="left:calc(9px + (100% - 18px) * 0.285714)"><span class="tick-full">5,000</span><span class="tick-short">5K</span></span><span style="left:calc(9px + (100% - 18px) * 0.428571)"><span class="tick-full">10,000</span><span class="tick-short">10K</span></span><span style="left:calc(9px + (100% - 18px) * 0.571429)"><span class="tick-full">25,000</span><span class="tick-short">25K</span></span><span style="left:calc(9px + (100% - 18px) * 0.714286)"><span class="tick-full">50,000</span><span class="tick-short">50K</span></span><span style="left:calc(9px + (100% - 18px) * 0.857143)"><span class="tick-full">100,000</span><span class="tick-short">100K</span></span><span style="left:calc(9px + (100% - 18px) * 1)"><span class="tick-full">150,000</span><span class="tick-short">150K</span></span>
         </div>
       </div>
 
@@ -2002,7 +2459,222 @@
   </div>
 </section>
 
-<div class="divider"></div>
+<div class="divider sms-cta-divider sms-edge-divider" aria-hidden="true"></div>
+
+<!-- ── SMS HERO (Glyph Portal) ──
+     Scroll flies the camera through one letter of the word into the green
+     field. Desktop: hover a letter to choose it. Touch: enters through the M. -->
+<section class="sms-portal" id="sms-portal" aria-label="SMS MARKETING" style="--gp-length:2.4;--gp-characters:13">
+  <noscript><style>#sms-portal [data-gp-fallback]{display:grid}#sms-portal [data-gp-hint]{display:none}</style></noscript>
+  <div data-gp-viewport aria-hidden="true"></div>
+  <div data-gp-pin>
+    <div data-gp-field aria-hidden="true" inert>
+      <div data-gp-default-field style="position:absolute;inset:0;transform:scale(var(--gp-field-scale,1));background:radial-gradient(circle at 18% 8%, rgba(68,125,98,.72), transparent 34%), radial-gradient(circle at 82% 20%, rgba(251,251,250,.12), transparent 28%), radial-gradient(circle at 48% 78%, rgba(9,48,35,.5), transparent 44%), linear-gradient(135deg,#0b3b2a 0%,#14573f 48%,#082d22 100%)"></div>
+      </div>
+    <svg data-gp-art aria-hidden="true" focusable="false">
+      <defs>
+        <clipPath id="sms-portal-clip" clipPathUnits="userSpaceOnUse">
+          <text data-gp-glyph x="0" y="0" style="font-weight:700;font-size:100px;font-kerning:none;font-variant-ligatures:none;letter-spacing:0">SMS MARKETING</text>
+        </clipPath>
+      </defs>
+      <g data-gp-marks style="visibility:hidden"><path /></g>
+    </svg>
+    <div data-gp-choices role="radiogroup" aria-label="Choose the letter to enter through" inert>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="0" aria-label="S, letter 1 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="1" aria-label="M, letter 2 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="2" aria-label="S, letter 3 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="3" aria-label="space, letter 4 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="4" aria-label="M, letter 5 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="5" aria-label="A, letter 6 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="6" aria-label="R, letter 7 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="7" aria-label="K, letter 8 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="8" aria-label="E, letter 9 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="9" aria-label="T, letter 10 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="10" aria-label="I, letter 11 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="11" aria-label="N, letter 12 of 13"></button>
+        <button type="button" role="radio" aria-checked="false" tabindex="-1" data-gp-letter="12" aria-label="G, letter 13 of 13"></button>
+    </div>
+    <label data-gp-touch-picker><span class="sr-only">Entry letter</span><select data-gp-select>
+          <option value="" disabled selected>Choose a letter</option>
+          <option value="0">1 · S</option>
+          <option value="1">2 · M</option>
+          <option value="2">3 · S</option>
+          <option value="3">4 ·  </option>
+          <option value="4">5 · M</option>
+          <option value="5">6 · A</option>
+          <option value="6">7 · R</option>
+          <option value="7">8 · K</option>
+          <option value="8">9 · E</option>
+          <option value="9">10 · T</option>
+          <option value="10">11 · I</option>
+          <option value="11">12 · N</option>
+          <option value="12">13 · G</option>
+    </select></label>
+    <div data-gp-front>
+      <div data-sublime-header><span data-sublime-logo>instantly.</span><span data-sublime-category><span class="sms-nowrap-chunk">Cut through</span> <span class="sms-nowrap-chunk">the noise</span></span></div>
+      <p data-sublime-eyebrow>Reach customers where they actually look.</p>
+      <p data-sublime-support>Start texting today.</p>
+      <span data-sublime-scroll>Scroll for a closer look ↓</span>
+    </div>
+    <span data-gp-fallback aria-hidden="true" style="font-family:'Plus Jakarta Sans',Arial,sans-serif;font-weight:700">SMS MARKETING</span>
+    <div data-gp-caption>
+      <span data-gp-hint aria-hidden="true">Scroll to enter.</span>
+      <a data-gp-enter href="#sms-portal-content">Step inside<span aria-hidden="true">↘</span></a>
+    </div>
+  </div>
+  <div data-gp-content id="sms-portal-content">
+    <div data-slipstream-copy>
+      <h2>Everything you need to text with confidence.</h2>
+      <div class="sms-portal-cards">
+        <div class="sms-portal-card">
+          <div class="sms-portal-card-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
+          <h3>Cart &amp; order texts</h3>
+          <p>Cart reminders, order confirmations and shipping updates, sent automatically from your store.</p>
+        </div>
+        <div class="sms-portal-card">
+          <div class="sms-portal-card-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg></div>
+          <h3>Two-way replies</h3>
+          <p>Customers can text back. Replies land in your dashboard, with replies up to 10% of sends included.</p>
+        </div>
+        <div class="sms-portal-card">
+          <div class="sms-portal-card-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+          <h3>Consent built in</h3>
+          <p>Opt-in, STOP and HELP replies, and 8am to 9pm quiet hours keep you within CASL and TCPA.</p>
+        </div>
+        <div class="sms-portal-card">
+          <div class="sms-portal-card-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+          <h3>Numbers handled</h3>
+          <p>We set up and verify your numbers: local for Canada, toll-free for the US, at no extra cost.</p>
+        </div>
+      </div>
+    </div>
+    <!-- SMS chat demo: three common workflows played out in a phone (ported from a supplied
+         React "chat-messages-2" component). Lives inside the portal content so it shares the
+         green field. Desktop: plays left to right. Mobile: one at a time with dot controls. -->
+    <div class="sms-chat" id="sms-chat" aria-label="Example SMS conversations">
+      <div class="divider sms-white-divider" aria-hidden="true"></div>
+      <div class="sms-chat-head">
+        <h2 class="sms-stats-title sms-chat-heading">SMS in <span class="sms-heading-grad">action</span></h2>
+        <p class="sms-stats-sub sms-chat-sub">Three everyday workflows, sent and answered automatically.</p>
+      </div>
+      <div class="sms-chat-inner">
+        <div class="sms-chat-nav" role="group" aria-label="Choose an example conversation">
+          <button type="button" class="sms-chat-arrow" data-chat-step="-1" aria-label="Previous scenario"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button type="button" class="sms-chat-dot" data-chat-go="0" aria-label="Show Abandoned Cart" aria-current="true"></button>
+          <button type="button" class="sms-chat-dot" data-chat-go="1" aria-label="Show Order Updates"></button>
+          <button type="button" class="sms-chat-dot" data-chat-go="2" aria-label="Show Appointment Reminders"></button>
+          <button type="button" class="sms-chat-arrow" data-chat-step="1" aria-label="Next scenario"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+        <div class="sms-chat-track">
+          <div class="sms-chat-slide is-active sms-brand--mint">
+            <h3 class="sms-chat-title">Abandoned Cart</h3>
+            <div class="sms-chat-clip">
+              <div class="sms-phone">
+                <div class="sms-phone-status" aria-hidden="true"><span>9:41</span><span class="sms-phone-island"></span><span class="sms-phone-right"><span class="sms-phone-icons"><i></i><i></i><i></i></span><span class="sms-phone-batt"></span></span></div>
+                <div class="sms-phone-contact"><span class="sms-phone-av" aria-hidden="true">MC</span><span class="sms-phone-name">Maple &amp; Co.</span><span class="sms-phone-sub">Text Message</span></div>
+                <div class="sms-chat-thread" role="log" aria-live="off" aria-label="Abandoned Cart example conversation">
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">MC</span><p>Hi Sam, you left the Linen Throw in your cart. It's still here for you: maple.co/c/8f2</p></div>
+                  <div class="sms-msg sms-msg--out"><p>Is shipping free?</p></div>
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">MC</span><p>Free over $75, and here's 10% off to finish your order: SAVE10</p></div>
+                  <div class="sms-msg sms-msg--out"><p>Done, just ordered!</p></div>
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">MC</span><p>Thanks Sam! Order #1042 is confirmed. We'll text you when it ships.</p></div>
+                  <div class="sms-typing" aria-hidden="true"><span class="sms-msg-av">MC</span><p><i></i><i></i><i></i></p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sms-chat-slide sms-brand--blue">
+            <h3 class="sms-chat-title">Order Updates</h3>
+            <div class="sms-chat-clip">
+              <div class="sms-phone">
+                <div class="sms-phone-status" aria-hidden="true"><span>9:41</span><span class="sms-phone-island"></span><span class="sms-phone-right"><span class="sms-phone-icons"><i></i><i></i><i></i></span><span class="sms-phone-batt"></span></span></div>
+                <div class="sms-phone-contact"><span class="sms-phone-av" aria-hidden="true">HG</span><span class="sms-phone-name">Harbour Goods</span><span class="sms-phone-sub">Text Message</span></div>
+                <div class="sms-chat-thread" role="log" aria-live="off" aria-label="Order Updates example conversation">
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">HG</span><p>Good news! Order #2318 has shipped. Track it: harbourgoods.ca/t/2318</p></div>
+                  <div class="sms-msg sms-msg--out"><p>When will it arrive?</p></div>
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">HG</span><p>It's out for delivery today, expected by 6pm.</p></div>
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">HG</span><p>Delivered! Your package is at your front door.</p></div>
+                  <div class="sms-msg sms-msg--out"><p>Got it, thanks!</p></div>
+                  <div class="sms-typing" aria-hidden="true"><span class="sms-msg-av">HG</span><p><i></i><i></i><i></i></p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sms-chat-slide sms-brand--violet">
+            <h3 class="sms-chat-title">Appointment Reminders</h3>
+            <div class="sms-chat-clip">
+              <div class="sms-phone">
+                <div class="sms-phone-status" aria-hidden="true"><span>9:41</span><span class="sms-phone-island"></span><span class="sms-phone-right"><span class="sms-phone-icons"><i></i><i></i><i></i></span><span class="sms-phone-batt"></span></span></div>
+                <div class="sms-phone-contact"><span class="sms-phone-av" aria-hidden="true">GS</span><span class="sms-phone-name">Glow Studio</span><span class="sms-phone-sub">Text Message</span></div>
+                <div class="sms-chat-thread" role="log" aria-live="off" aria-label="Appointment Reminders example conversation">
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">GS</span><p>Hi Alex, reminder: your appointment is tomorrow at 2:00pm. Reply C to confirm or R to reschedule.</p></div>
+                  <div class="sms-msg sms-msg--out"><p>R</p></div>
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">GS</span><p>No problem. We have Thu 11:00am or Fri 3:30pm open. Which works?</p></div>
+                  <div class="sms-msg sms-msg--out"><p>Fri 3:30 please</p></div>
+                  <div class="sms-msg sms-msg--in"><span class="sms-msg-av" aria-hidden="true">GS</span><p>You're booked for Friday at 3:30pm. See you then!</p></div>
+                  <div class="sms-typing" aria-hidden="true"><span class="sms-msg-av">GS</span><p><i></i><i></i><i></i></p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SMS STATS ── industry figures (open/response/reply rates, global reach)
+     plus our own no-setup-fee offer. Illustration is a recoloured Freepik SVG. -->
+<section class="sms-stats" id="sms-stats" aria-labelledby="sms-stats-title">
+  <div class="sms-stats-inner">
+    <h2 class="sms-stats-title reveal-fade" id="sms-stats-title">Numbers that <span class="sms-heading-grad">matter</span></h2>
+    <p class="sms-stats-sub reveal-fade">Why texting reaches people email can't</p>
+
+    <!-- Card icons: globe, clock, message-square-heart, smartphone and badge-dollar-sign from
+         AnimateIcons / Lucide by Avijit Dey (@avijit07x), MIT, https://github.com/Avijit07x/animateicons.
+         Motion variants ported to CSS keyframes (see "SMS stat icons" in the stylesheet). -->
+    <div class="sms-stats-grid">
+      <div class="sms-stat sms-stat--blue reveal-fade">
+        <svg class="sms-stat-icon si-globe" aria-hidden="true" viewBox="0 0 24 24"><circle class="si-globe-ring" cx="12" cy="12" r="10" pathLength="1"/><path class="si-globe-orbit" d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" pathLength="1"/><path class="si-globe-orbit" d="M2 12h20" pathLength="1"/></svg>
+        <span class="sms-stat-num">5B+</span>
+        <p class="sms-stat-label">People who can get a text</p>
+      </div>
+      <div class="sms-stat sms-stat--green reveal-fade" style="transition-delay:0.06s">
+        <svg class="sms-stat-icon si-clock" aria-hidden="true" viewBox="0 0 24 24"><path class="si-clock-min" d="M12 12V6"/><path class="si-clock-hour" d="M12 12l4 2"/><circle cx="12" cy="12" r="10"/></svg>
+        <span class="sms-stat-num">90s</span>
+        <p class="sms-stat-label">Average reply time</p>
+      </div>
+      <div class="sms-stat sms-stat--red sms-stat--tall reveal-fade" style="transition-delay:0.12s">
+        <svg class="sms-stat-icon si-msg" aria-hidden="true" viewBox="0 0 24 24"><path class="si-msg-bubble" d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/><path class="si-msg-heart" d="M7.5 9.5c0 .687.265 1.383.697 1.844l3.009 3.264a1.14 1.14 0 0 0 .407.314 1 1 0 0 0 .783-.004 1.14 1.14 0 0 0 .398-.31l3.008-3.264A2.77 2.77 0 0 0 16.5 9.5 2.5 2.5 0 0 0 12 8a2.5 2.5 0 0 0-4.5 1.5"/></svg>
+        <span class="sms-stat-num">98%</span>
+        <p class="sms-stat-label">Of texts get opened</p>
+        <svg class="sms-stat-art" aria-hidden="true" viewBox="0 0 400 340" xmlns="http://www.w3.org/2000/svg">
+          <rect x="34" y="6" width="200" height="328" rx="30" fill="#1a1112" stroke="rgba(239,68,68,.35)" stroke-width="2"/>
+          <rect x="46" y="32" width="176" height="258" rx="6" fill="#0f0a0b"/>
+          <rect x="110" y="20" width="48" height="6" rx="3" fill="rgba(255,255,255,.14)"/>
+          <circle cx="134" cy="312" r="12" fill="#140d0e" stroke="rgba(255,255,255,.22)" stroke-width="2"/>
+          <rect x="129" y="307" width="10" height="10" rx="3" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.5"/>
+          <g><polygon points="46,40 382,40 398,69.0 382,98 46,98" fill="#F2735E"/><polygon points="46,98 54,98 46,103" fill="rgba(0,0,0,.35)"/><g transform="translate(76,69.0)"><rect x="-17" y="-15" width="34" height="34" rx="8" fill="#3e8e41"/><rect x="-17" y="-17" width="34" height="34" rx="8" fill="#5cb85c"/><rect x="-12.5" y="-10" width="25" height="16" rx="5" fill="#fff"/><path d="M-7 5.5 -10 11 -1.5 5.5Z" fill="#fff"/><text x="0" y="1" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-size="8.5" font-weight="800" letter-spacing=".2" fill="#3e8e41">SMS</text></g><text x="106" y="71" font-family="Plus Jakarta Sans, sans-serif" font-size="32" font-weight="800" letter-spacing="-1" fill="#fff">98%</text><text x="107" y="89" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.88)">of texts are read.</text></g>
+          <g><polygon points="46,103 356,103 372,132.0 356,161 46,161" fill="#B4474F"/><polygon points="46,161 54,161 46,166" fill="rgba(0,0,0,.35)"/><g transform="translate(76,132.0)"><circle r="18" fill="#55ACEE"/><g transform="translate(-12.1 -11.6) scale(1.01)"><path fill="#fff" d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></g></g><text x="106" y="134" font-family="Plus Jakarta Sans, sans-serif" font-size="32" font-weight="800" letter-spacing="-1" fill="#fff">29%</text><text x="107" y="152" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.88)">of tweets are read.</text></g>
+          <g><polygon points="46,166 350,166 366,195.0 350,224 46,224" fill="#8E3A40"/><polygon points="46,224 54,224 46,229" fill="rgba(0,0,0,.35)"/><g transform="translate(76,195.0)"><circle r="18" fill="#2c3e50"/><path d="M-11 -1 0 -11 11 -1Z" fill="#d89a36"/><rect x="-11" y="-1" width="22" height="12" fill="#d89a36"/><rect x="-8" y="-9" width="16" height="14" rx="1" fill="#fff"/><g><rect x="-8" y="-9" width="16" height="2" fill="#e04b4b"/><rect x="-6" y="-9" width="2" height="2" fill="#3b82f6"/><rect x="-2" y="-9" width="2" height="2" fill="#3b82f6"/><rect x="2" y="-9" width="2" height="2" fill="#3b82f6"/><rect x="6" y="-9" width="2" height="2" fill="#3b82f6"/></g><rect x="-5" y="-5" width="10" height="1.5" rx=".75" fill="#b8c0cc"/><rect x="-5" y="-2" width="7" height="1.5" rx=".75" fill="#b8c0cc"/><path d="M-11 -1 0 6 11 -1V11H-11Z" fill="#f5c26b"/><path d="M-11 11 -2 4.5M11 11 2 4.5" stroke="#e0a64a" stroke-width="1" fill="none"/></g><text x="106" y="197" font-family="Plus Jakarta Sans, sans-serif" font-size="32" font-weight="800" letter-spacing="-1" fill="#fff">20%</text><text x="107" y="215" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.88)">of emails are opened.</text></g>
+          <g><polygon points="46,229 344,229 360,258.0 344,287 46,287" fill="#6E3035"/><polygon points="46,287 54,287 46,292" fill="rgba(0,0,0,.35)"/><g transform="translate(76,258.0)"><circle r="18" fill="#2c3e50"/><g transform="translate(-12.5 -12.9) scale(1.05)"><path d="M7 10.6 10.4 3.4A3.13 3.13 0 0 1 15 5.88L14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H7Z" fill="#4267B2"/><path d="M11.6 4.1a2 2 0 0 1 2.3 1.9L13.2 8.8" fill="none" stroke="#6f93e0" stroke-width="1.4" stroke-linecap="round"/><path d="M14.6 14h5.4M14.2 17.4h4.9" stroke="#34569a" stroke-width="1.1" stroke-linecap="round"/><rect x="2" y="10" width="5.6" height="12" rx="1.6" fill="#8fb0f0"/><path d="M5.9 11.2v9.6" stroke="#fff" stroke-width=".9" stroke-linecap="round" opacity=".8"/></g></g><text x="106" y="260" font-family="Plus Jakarta Sans, sans-serif" font-size="32" font-weight="800" letter-spacing="-1" fill="#fff">12%</text><text x="107" y="278" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="rgba(255,255,255,.88)">of Facebook posts are read.</text></g>
+        </svg>
+      </div>
+      <div class="sms-stat sms-stat--amber reveal-fade" style="transition-delay:0.18s">
+        <svg class="sms-stat-icon si-phone" aria-hidden="true" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
+        <span class="sms-stat-num">45%</span>
+        <p class="sms-stat-label">Average response rate</p>
+      </div>
+      <div class="sms-stat sms-stat--violet reveal-fade" style="transition-delay:0.24s">
+        <svg class="sms-stat-icon si-badge" aria-hidden="true" viewBox="0 0 24 24"><path class="si-badge-outer" d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path class="si-badge-dollar" d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path class="si-badge-line" d="M12 18V6"/></svg>
+        <span class="sms-stat-num">C$0</span>
+        <p class="sms-stat-label">No setup fees</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider sms-cta-divider" aria-hidden="true"></div>
 
 <!-- ── SMS PRICING ──
      Rates render from SMS_RATES (script below): hardcoded fallback, then
@@ -2074,56 +2746,9 @@
 
     <p class="sms-fineprint reveal-fade"><span class="sms-fp-line">Prices in CAD before tax.</span> <span class="sms-fp-line">Replies included up to 10% of sends.<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="replies" data-tooltip="" aria-label="More about: Replies" aria-expanded="false">?</button></span> <span class="sms-fp-line">Rates follow carrier fees.<button type="button" class="tt-icon-trigger tt-trigger" data-sms-tt="carrier" data-tooltip="" aria-label="More about: Carrier fees" aria-expanded="false">?</button></span></p>
 
-    <div class="sms-features">
-      <div class="sms-feature reveal-fade">
-        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
-        <h4>Cart &amp; order texts</h4>
-        <p>Abandoned-cart reminders, order confirmations and shipping updates, sent automatically from your store.</p>
-      </div>
-      <div class="sms-feature reveal-fade" style="transition-delay:0.06s">
-        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="13" y2="13"/></svg></div>
-        <h4>Two-way replies</h4>
-        <p>Customers can text you back. Replies land in your dashboard, and a reply volume of 10% of your sends is included.</p>
-      </div>
-      <div class="sms-feature reveal-fade" style="transition-delay:0.12s">
-        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg></div>
-        <h4>Consent built in</h4>
-        <p>Opt-in capture, STOP and HELP replies, and quiet hours from 8am to 9pm local time, so you stay within CASL and TCPA.</p>
-      </div>
-      <div class="sms-feature reveal-fade" style="transition-delay:0.18s">
-        <div class="sms-feature-icon"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--sms)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
-        <h4>Numbers handled</h4>
-        <p>We set up and verify your sending numbers, a local number for Canada and a toll-free number for the US, at no extra cost.</p>
-      </div>
-    </div>
+    <div class="divider sms-cta-divider sms-faq-divider" aria-hidden="true"></div>
 
-    <div class="sms-steps-wrap">
-      <h3 class="sms-faq-heading reveal-fade">From sign-up to first text</h3>
-      <ol class="sms-steps" style="list-style:none;margin:0;padding:0">
-        <li class="sms-feature reveal-fade">
-          <div class="sms-step-num" aria-hidden="true">01</div>
-          <h4>We get your numbers</h4>
-          <p>A local Canadian number and a US toll-free number, set up for you.</p>
-        </li>
-        <li class="sms-feature reveal-fade" style="transition-delay:0.06s">
-          <div class="sms-step-num" aria-hidden="true">02</div>
-          <h4>We verify them</h4>
-          <p>Send us your business registration number and a link to your privacy policy. We handle carrier verification from there.</p>
-        </li>
-        <li class="sms-feature reveal-fade" style="transition-delay:0.12s">
-          <div class="sms-step-num" aria-hidden="true">03</div>
-          <h4>Test together</h4>
-          <p>We send test texts to your phone so you see exactly what your customers will get.</p>
-        </li>
-        <li class="sms-feature reveal-fade" style="transition-delay:0.18s">
-          <div class="sms-step-num" aria-hidden="true">04</div>
-          <h4>Go live</h4>
-          <p>Turn on cart, order and promo texts, and grow from a few hundred to thousands of texts a month.</p>
-        </li>
-      </ol>
-    </div>
-
-    <div class="sms-faq">
+    <div class="sms-faq" id="sms-faq">
       <h2 class="sms-faq-title reveal-fade">SMS Questions, <span class="sms-heading-grad">Answered</span></h2>
 
       <div class="em-faq-item reveal-fade">
@@ -2260,6 +2885,94 @@
             <p>Photo messages (MMS) can carry a product photo, GIF or short video clip when a picture sells better than words.</p>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider sms-cta-divider" aria-hidden="true"></div>
+
+<!-- ── SMS CTA ──
+     Closing CTA for the SMS area. The four phone panels carry the
+     sign-up-to-first-text steps; the script below pins the section on md+
+     and steps through the tabs as you scroll. -->
+<section class="sms-cta-hero" id="sms-cta" aria-label="Start texting">
+  <div class="sch-pin">
+    <div class="sch-main">
+      <div class="sch-split">
+        <div class="sch-left">
+          <div class="sch-rail" role="tablist" aria-label="From sign-up to first text">
+            <button type="button" class="sch-tab" role="tab" id="sch-tab-0" aria-controls="sch-panel-0" aria-selected="true" tabindex="0">Numbers</button>
+            <button type="button" class="sch-tab" role="tab" id="sch-tab-1" aria-controls="sch-panel-1" aria-selected="false" tabindex="-1">Verify</button>
+            <button type="button" class="sch-tab" role="tab" id="sch-tab-2" aria-controls="sch-panel-2" aria-selected="false" tabindex="-1">Test</button>
+            <button type="button" class="sch-tab" role="tab" id="sch-tab-3" aria-controls="sch-panel-3" aria-selected="false" tabindex="-1">Launch</button>
+          </div>
+          <div class="sch-stack">
+            <template id="sch-phone-chrome">
+              <div class="sch-status"><b>9:41</b><span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></svg><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-bottom:-1px"><rect width="16" height="10" x="2" y="7" rx="2"/><line x1="22" x2="22" y1="11" y2="13"/></svg></span></div>
+              <div class="sch-grabber"></div>
+            </template>
+            <div class="sch-panel" role="tabpanel" id="sch-panel-0" aria-labelledby="sch-tab-0" aria-hidden="false">
+              <div class="sch-phone"><div class="sch-bezel"><div class="sch-screen" data-sch-chrome>
+                <div class="sch-copy"><p class="sch-num">01</p><h3>We get your numbers</h3><p>A local Canadian number and a US toll-free number, set up for you.</p></div>
+              </div></div></div>
+            </div>
+            <div class="sch-panel" role="tabpanel" id="sch-panel-1" aria-labelledby="sch-tab-1" aria-hidden="true">
+              <div class="sch-phone"><div class="sch-bezel"><div class="sch-screen" data-sch-chrome>
+                <div class="sch-copy"><p class="sch-num">02</p><h3>We verify them</h3><p>Send us your business registration number and a link to your privacy policy. We handle carrier verification from there.</p></div>
+              </div></div></div>
+            </div>
+            <div class="sch-panel" role="tabpanel" id="sch-panel-2" aria-labelledby="sch-tab-2" aria-hidden="true">
+              <div class="sch-phone"><div class="sch-bezel"><div class="sch-screen" data-sch-chrome>
+                <div class="sch-copy"><p class="sch-num">03</p><h3>Test together</h3><p>We send test texts to your phone so you see exactly what your customers will get.</p></div>
+              </div></div></div>
+            </div>
+            <div class="sch-panel" role="tabpanel" id="sch-panel-3" aria-labelledby="sch-tab-3" aria-hidden="true">
+              <div class="sch-phone"><div class="sch-bezel"><div class="sch-screen" data-sch-chrome>
+                <div class="sch-copy"><p class="sch-num">04</p><h3>Go live</h3><p>Turn on cart, order and promo texts, and grow from a few hundred to thousands of texts a month.</p></div>
+              </div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sch-right">
+          <div class="sch-badge"><span class="sch-badge-tag">New</span><span class="sch-badge-label">US texting now available</span></div>
+          <h2 class="sch-title">Your next sale is <span class="sch-title-grad">one text away</span></h2>
+          <p class="sch-desc">Pick a plan, we set up and verify your numbers, and your first campaign goes out once you've seen it on your own phone.</p>
+          <div class="sch-chips">
+            <span class="sch-chip"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Canada + US</span>
+            <span class="sch-chip"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Two-way replies</span>
+            <span class="sch-chip"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Opt-outs handled</span>
+          </div>
+          <div class="sch-ctas">
+            <a href="#sms-pricing" class="sch-btn sch-btn-primary">Get Started <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+            <a href="contact.html?type=Email%20Marketing&amp;typeColor=%2360A5FA&amp;service=SMS%20Marketing&amp;serviceColor=%233EE0B0&amp;bookCall=1" class="sch-btn sch-btn-secondary">Contact Us</a>
+          </div>
+          <div class="sch-proof">
+            <div class="sch-proof-icons" aria-hidden="true">
+              <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+              <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></span>
+              <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></span>
+              <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></span>
+              <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg></span>
+            </div>
+            <span class="sch-proof-text">Join &amp; send thousands of texts a month</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="sch-logos-cap">Delivers to every major network</p>
+    <div class="sch-logos">
+      <div class="sch-logos-inner">
+        <ul class="sch-logos-row">
+          <li><span class="sch-logo"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Rogers</span></li>
+          <li><span class="sch-logo"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>Bell</span></li>
+          <li><span class="sch-logo"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>Telus</span></li>
+          <li><span class="sch-logo"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>Verizon</span></li>
+          <li><span class="sch-logo"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>AT&amp;T</span></li>
+          <li><span class="sch-logo"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>T-Mobile</span></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -3284,6 +3997,581 @@
       threshold: 0.01
     });
   });
+</script>
+
+<script>
+  /* ── SMS hero: Glyph Portal © 2026 Christian Katzmann. MIT.
+     Origin: UsefulPortal.astro on https://ktzm.dk → UsefulPortal.tsx → ClarityPortal.tsx.
+     A scroll-driven camera through live type. Keep this notice with copies.
+     Vanilla port of the React component's layout effect. Changes: the pin sits
+     under the fixed nav (--gp-top), touch devices enter through the first M,
+     and the face is loaded before mounting so the ink never moves. ── */
+  (function () {
+    var section = document.getElementById('sms-portal');
+    if (!section) return;
+
+    var WORD = 'SMS MARKETING';
+    var FOCUS_CHAR = 'M';
+    var LENGTH = 2.4;
+    var DEFAULT_FONT = '"Arial Black", "Arial", sans-serif';
+    var clipId = 'sms-portal-clip';
+
+    function clamp(n, a, b) { if (a === undefined) a = 0; if (b === undefined) b = 1; return Math.min(b, Math.max(a, n)); }
+    function smooth(a, b, n) { var t = clamp((n - a) / (b - a)); return t * t * (3 - 2 * t); }
+
+    /* Largest opaque square, in linear time. Unlike a stem guess, it works in O, S and Ø. */
+    function interior(context, char, font) {
+      var canvas = context.canvas;
+      context.font = font;
+      var m = context.measureText(char);
+      var pad = 8;
+      var left = Math.ceil(m.actualBoundingBoxLeft);
+      var ascent = Math.ceil(m.actualBoundingBoxAscent);
+      canvas.width = Math.max(1, Math.ceil(m.actualBoundingBoxLeft + m.actualBoundingBoxRight) + pad * 2);
+      canvas.height = Math.max(1, Math.ceil(m.actualBoundingBoxAscent + m.actualBoundingBoxDescent) + pad * 2);
+      context.font = font;
+      context.fontKerning = 'none';
+      context.fillText(char, pad + left, pad + ascent);
+      var width = canvas.width, height = canvas.height;
+      var pixels = context.getImageData(0, 0, width, height).data;
+      var rows = new Uint16Array(width + 1);
+      var size = 0, bx = 0, by = 0;
+      for (var y = 0; y < height; y++) {
+        var diagonal = 0;
+        for (var x = 0; x < width; x++) {
+          var above = rows[x + 1];
+          rows[x + 1] = pixels[(y * width + x) * 4 + 3] > 245 ? Math.min(above, rows[x], diagonal) + 1 : 0;
+          diagonal = above;
+          if (rows[x + 1] > size) { size = rows[x + 1]; bx = x; by = y; }
+        }
+      }
+      if (size < 3) return null;
+      // Scan at 3× SVG size. Inscribe a disk in the square, with room for raster disagreement.
+      return { x: (bx + 1 - size / 2 - pad - left) / 3,
+        y: (by + 1 - size / 2 - pad - ascent) / 3, radius: (size / 2 - 1) / 3 };
+    }
+
+    function scrollParent(element) {
+      for (var p = element.parentElement; p; p = p.parentElement) {
+        if (/(auto|scroll|hidden)/.test(getComputedStyle(p).overflowY) && p !== document.body && p !== document.documentElement) return p;
+      }
+      return null;
+    }
+
+    function mount(fontFamily, interactive) {
+      var text = WORD.trim().normalize('NFC');
+      var weight = 700;
+      var length = LENGTH;
+      var hasFront = true;
+      var focusChar = FOCUS_CHAR;
+      section.style.fontFamily = fontFamily;
+
+      var pin = section.querySelector('[data-gp-pin]');
+      var field = section.querySelector('[data-gp-field]');
+      var art = section.querySelector('[data-gp-art]');
+      var clip = section.querySelector('#' + clipId);
+      var glyph = section.querySelector('[data-gp-glyph]');
+      var marks = section.querySelector('[data-gp-marks]');
+      var choices = section.querySelector('[data-gp-choices]');
+      var buttons = Array.from(choices.querySelectorAll('button'));
+      var picker = section.querySelector('[data-gp-select]');
+      var content = section.querySelector('[data-gp-content]');
+      var caption = section.querySelector('[data-gp-caption]');
+      var front = section.querySelector('[data-gp-front]') || caption;
+      var root = scrollParent(section);
+      var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      var canvas = document.createElement('canvas');
+      var context = canvas.getContext('2d', { willReadFrequently: true });
+      var raf = 0, dirty = true, active = true, ready = false;
+      var mountedAt = performance.now();
+      var browserFrameSeen = false, stalled = false;
+      var W = 1, H = 1, travel = 1, startScale = 1, endScale = 1;
+      var center = { x: 0, y: 0 }, target = null;
+      var candidates = [], letters = [];
+      var choosing = false;
+      var bounds = { x: 0, y: 0, width: 1, height: 1 };
+      var fontDirty = true;
+      // Freeze an available face for this mount. Late font swaps move the ink under the camera.
+      glyph.style.fontFamily = fontFamily;
+      var computedFamily = getComputedStyle(glyph).fontFamily;
+      var families = computedFamily.match(/(?:[^,"']+|"[^"]*"|'[^']*')+/g) || [];
+      var available = families.filter(function (family) {
+        try { return document.fonts.check(weight + ' 100px ' + family.trim(), text); }
+        catch (e) { return false; }
+      });
+      glyph.style.fontFamily = available.concat([DEFAULT_FONT]).join(',');
+      // A pending requested face may also hold WebKit's render loop. Keep that mount static.
+      stalled = available.length < families.length;
+
+      function readInk() {
+        if (!context) return false;
+        var font = getComputedStyle(glyph);
+        var scanFont = font.fontWeight + ' 300px ' + font.fontFamily;
+        context.font = font.fontWeight + ' 100px ' + font.fontFamily;
+        context.fontKerning = 'none';
+        var metrics = context.measureText(text);
+        var advances = [];
+        for (var i = 0; i < text.length; i++) advances.push(context.measureText(text.slice(0, i)).width);
+        // SVG getBBox includes the font's line box in some engines. Frame visible ink instead.
+        bounds = { x: -metrics.actualBoundingBoxLeft, y: -metrics.actualBoundingBoxAscent,
+          width: metrics.actualBoundingBoxLeft + metrics.actualBoundingBoxRight,
+          height: metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent };
+        if (!bounds.width || !bounds.height) return false;
+        center = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+        var requested = focusChar ? text.indexOf(focusChar.normalize('NFC')) : -1;
+        var offset = 0;
+        candidates = []; letters = [];
+        Array.from(text).forEach(function (char) {
+          context.font = font.fontWeight + ' 100px ' + font.fontFamily;
+          var m = context.measureText(char);
+          letters.push({ index: offset, x: advances[offset] - m.actualBoundingBoxLeft,
+            y: -m.actualBoundingBoxAscent, width: m.actualBoundingBoxLeft + m.actualBoundingBoxRight,
+            height: m.actualBoundingBoxAscent + m.actualBoundingBoxDescent });
+          var found = interior(context, char, scanFont);
+          if (found) candidates.push({ x: found.x + advances[offset], y: found.y, radius: found.radius, index: offset });
+          offset += char.length;
+        });
+        target = candidates.find(function (c) { return c.index === requested; })
+          || candidates.slice().sort(function (a, b) { return b.radius - a.radius || Math.abs(a.x - center.x) - Math.abs(b.x - center.x); })[0]
+          || null;
+        return true;
+      }
+
+      function select(next) {
+        target = next;
+        endScale = target ? Math.max(startScale, Math.hypot(W, H) / (target.radius * 1.35)) : startScale;
+        section.dataset.gpFocus = target ? Array.from(text.slice(target.index))[0] : '';
+        section.dataset.gpFocusIndex = String(target ? target.index : -1);
+        buttons.forEach(function (button) {
+          var idx = Number(button.dataset.gpLetter);
+          var selected = target && idx === target.index;
+          button.disabled = !candidates.some(function (c) { return c.index === idx; });
+          button.setAttribute('aria-checked', String(!!selected));
+          button.tabIndex = selected ? 0 : -1;
+        });
+        if (picker.value !== '') picker.value = String(target ? target.index : -1);
+        Array.from(picker.options).forEach(function (option) {
+          option.disabled = option.value === '' || !candidates.some(function (c) { return c.index === Number(option.value); });
+        });
+        var u = 1 / startScale;
+        var y = bounds.y + bounds.height + 25 * u;
+        var x = bounds.x;
+        var right = x + bounds.width;
+        var cross = target ? 'M' + (target.x - 9 * u) + ' ' + target.y + 'h' + (18 * u) + 'M' + target.x + ' ' + (target.y - 9 * u) + 'v' + (18 * u) : '';
+        var annotationPath = marks.querySelector('path');
+        annotationPath.setAttribute('d', 'M' + x + ' ' + y + 'H' + right + 'M' + x + ' ' + (y - 5 * u) + 'v' + (10 * u) + 'M' + right + ' ' + (y - 5 * u) + 'v' + (10 * u) + cross);
+        annotationPath.setAttribute('stroke-width', String(u));
+      }
+
+      // The pin sticks below the fixed nav, so progress starts when the section reaches it.
+      var navTop = parseFloat(getComputedStyle(section).getPropertyValue('--gp-top')) || 0;
+      function position() {
+        var origin = root ? root.getBoundingClientRect().top + root.clientTop : navTop;
+        return clamp((origin - section.getBoundingClientRect().top) / travel);
+      }
+
+      function paint(progress) {
+        var isStatic = motion.matches || !browserFrameSeen || stalled || !target;
+        var p = isStatic ? 0 : progress;
+        var t = clamp(p / 0.78);
+        var eased = t < 0.5 ? 4 * Math.pow(t, 3) : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        var scale = Math.exp(Math.log(startScale) + Math.log(endScale / startScale) * eased);
+        var blend = endScale === startScale ? 0 : (1 / scale - 1 / startScale) / (1 / endScale - 1 / startScale);
+        var tx = target ? target.x : center.x, ty = target ? target.y : center.y;
+        var cx = center.x + (tx - center.x) * blend;
+        var cy = center.y + (ty - center.y) * blend;
+        var roll = -4 * smooth(0.06, 0.5, t) * (1 - smooth(0.62, 0.92, t));
+        var transform = 'translate(' + (W / 2) + ' ' + (H * 0.46 + H * 0.04 * eased) + ') scale(' + scale + ') rotate(' + roll + ') translate(' + (-cx) + ' ' + (-cy) + ')';
+        // Keep scale on the clip to avoid text paint limits. Text-local translation
+        // follows page zoom in WebKit; translation on an HTML clip reference does not.
+        var radians = roll * Math.PI / 180;
+        var dx = W / 2 / scale, dy = (H * 0.46 + H * 0.04 * eased) / scale;
+        clip.setAttribute('transform', 'scale(' + scale + ') rotate(' + roll + ')');
+        glyph.setAttribute('transform', 'translate(' + (Math.cos(radians) * dx + Math.sin(radians) * dy - cx) + ' ' + (-Math.sin(radians) * dx + Math.cos(radians) * dy - cy) + ')');
+        marks.setAttribute('transform', transform);
+        marks.style.opacity = String(1 - smooth(0.015, 0.17, p));
+        choosing = interactive && !isStatic && p < 0.04;
+        choices.inert = !choosing;
+        section.dataset.gpChoosing = String(choosing);
+        // Drop the clip only after the camera has already filled the viewport with ink.
+        field.style.clipPath = t >= 1 ? 'none' : 'url(#' + clipId + ')';
+        section.style.setProperty('--gp-caption', String(1 - smooth(0.01, 0.16, p)));
+        section.style.setProperty('--gp-reveal', String(isStatic ? 1 : smooth(0.78, 0.9, p)));
+        section.style.setProperty('--gp-field-scale', String(1 + 0.16 * smooth(0, 0.82, p)));
+        section.style.setProperty('--gp-caption-hit', p < 0.08 ? 'auto' : 'none');
+        section.dataset.gpEntered = String(p >= 0.9);
+        // Scrolling back out: drop any focus left inside the content (a click focuses it via
+        // tabindex=-1) so it can't hold the field open or hide the opening frame.
+        if (p < 0.9 && content.contains(document.activeElement)) document.activeElement.blur();
+        // Same for the opening frame: a pressed "Step inside" must fade out with the caption
+        if (p >= 0.08 && (caption.contains(document.activeElement) || front.contains(document.activeElement))) document.activeElement.blur();
+        if (p < 0.9 && section.dataset.gpKbd === 'content') section.dataset.gpKbd = '';
+        if (pendingFocus && p >= 0.9) { pendingFocus = false; content.focus({ preventScroll: true }); }
+        if (p >= 0.08 && section.dataset.gpKbd === 'caption') section.dataset.gpKbd = '';
+        section.dataset.gpProgress = p.toFixed(5);
+      }
+
+      function layout() {
+        if (!section.clientWidth) return;
+        W = pin.clientWidth;
+        // A 100svh probe keeps browser chrome from continually changing the scroll distance.
+        var smallViewport = section.querySelector('[data-gp-viewport]').offsetHeight;
+        var viewportHeight = Math.max(1, Math.min(root ? root.clientHeight : smallViewport, smallViewport));
+        H = motion.matches ? Math.min(viewportHeight * 0.75, 480) : viewportHeight;
+        section.style.setProperty('--gp-height', H + 'px');
+        travel = H * length;
+        art.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+        if (fontDirty) { ready = readInk(); fontDirty = false; }
+        if (!ready) return;
+        var wordHeight = hasFront && H < 480 ? Math.min(H * 0.38, Math.max(24, H - 264)) : H * 0.38;
+        startScale = Math.min(W * 0.84 / bounds.width, wordHeight / bounds.height);
+        // The whole viewport fits inside measured ink, even with the small camera bank.
+        select(target);
+        buttons.forEach(function (button) {
+          var idx = Number(button.dataset.gpLetter);
+          var letter = letters.find(function (item) { return item.index === idx; });
+          Object.assign(button.style, {
+            left: (W / 2 + (letter.x - center.x) * startScale) + 'px',
+            top: (H * 0.46 + (letter.y - center.y) * startScale - Math.max(0, 44 - letter.height * startScale) / 2) + 'px',
+            width: Math.max(1, letter.width * startScale) + 'px',
+            height: Math.max(44, letter.height * startScale) + 'px'
+          });
+        });
+        section.style.setProperty('--gp-word-top', (H * 0.46 - bounds.height * startScale / 2) + 'px');
+        section.style.setProperty('--gp-word-bottom', (H * 0.46 + bounds.height * startScale / 2) + 'px');
+        section.dataset.gpReady = 'true';
+        section.dataset.gpMotion = !motion.matches && browserFrameSeen && !stalled && target ? 'on' : 'off';
+      }
+
+      function frame(time) {
+        raf = 0;
+        if (time !== undefined && !browserFrameSeen) {
+          browserFrameSeen = true; stalled = stalled || performance.now() - mountedAt > 2500; dirty = true;
+        }
+        if (dirty) { dirty = false; layout(); }
+        if (ready) paint(position());
+      }
+      function schedule() { if (!raf && active) raf = requestAnimationFrame(frame); }
+      function resize() { cancelAnimationFrame(raf); raf = 0; dirty = true; frame(); }
+      function choose(event) {
+        if (!choosing || position() >= 0.04) return;
+        var button = event.target.closest('[data-gp-letter]');
+        var next = button && candidates.find(function (c) { return c.index === Number(button.dataset.gpLetter); });
+        if (!next || next === target) return;
+        select(next); paint(position());
+      }
+      function navigate(event) {
+        if (!choosing || ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].indexOf(event.key) < 0) return;
+        event.preventDefault();
+        var current = candidates.indexOf(target);
+        var index = event.key === 'Home' ? 0 : event.key === 'End' ? candidates.length - 1
+          : (current + (event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1) + candidates.length) % candidates.length;
+        var btn = buttons.find(function (b) { return Number(b.dataset.gpLetter) === candidates[index].index; });
+        if (btn) btn.focus({ preventScroll: true });
+      }
+      function pick() {
+        if (!choosing || position() >= 0.04) return;
+        var next = candidates.find(function (c) { return c.index === Number(picker.value); });
+        if (next) { select(next); paint(position()); }
+      }
+      // Keyboard focus region (replaces :has(:focus-visible) in the CSS)
+      function trackFocus() {
+        var el = document.activeElement, kbd = '';
+        if (el && section.contains(el) && el.matches(':focus-visible')) {
+          kbd = content.contains(el) ? 'content' : (caption.contains(el) || front.contains(el)) ? 'caption' : '';
+        }
+        if ((section.dataset.gpKbd || '') !== kbd) section.dataset.gpKbd = kbd;
+      }
+      // Content is only focusable for keyboard users who press "Step inside". A permanent
+      // tabindex let every mouse click focus (and repaint) the whole content layer.
+      var enter = section.querySelector('[data-gp-enter]');
+      var pendingFocus = false;
+      if (enter) enter.addEventListener('click', function (e) {
+        if (e.detail !== 0) return;
+        content.setAttribute('tabindex', '-1');
+        pendingFocus = true; // focused in paint() once the smooth scroll has entered
+      });
+      content.addEventListener('blur', function () { content.removeAttribute('tabindex'); });
+      section.addEventListener('focusin', trackFocus);
+      section.addEventListener('focusout', function () { setTimeout(trackFocus, 0); });
+      choices.addEventListener('pointerover', choose);
+      choices.addEventListener('click', choose);
+      choices.addEventListener('focusin', choose);
+      choices.addEventListener('keydown', navigate);
+      picker.addEventListener('change', pick);
+      var observer = new ResizeObserver(resize);
+      observer.observe(section);
+      if (root) observer.observe(root);
+      var visibility = new IntersectionObserver(function (entries) {
+        // A fast scroll can batch leave + enter into one callback: the last entry is current
+        active = entries[entries.length - 1].isIntersecting;
+        if (active) { dirty = true; schedule(); }
+        else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      }, { root: root, rootMargin: '100% 0px' });
+      visibility.observe(section);
+      // Any scroll near the section means it may be on screen, so never skip the frame
+      (root || window).addEventListener('scroll', function () { active = true; schedule(); }, { passive: true });
+      window.addEventListener('resize', resize);
+      if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+      motion.addEventListener('change', resize);
+      frame();
+      // WebKit can withhold frames, timers and scroll events behind an initial hung font.
+      // Begin in reading flow. Enable motion only when the browser starts rendering promptly.
+      schedule();
+    }
+
+    // Mount once Plus Jakarta Sans is ready (or fall back after 1.6s), since the
+    // camera is aimed at measured ink and a late face swap would move it.
+    var interactive = !window.matchMedia('(hover: none)').matches;
+    var started = false;
+    function start(face) { if (started) return; started = true; mount(face, interactive); }
+    var JAKARTA = '"Plus Jakarta Sans", Arial, sans-serif';
+    setTimeout(function () { start('Arial, sans-serif'); }, 1600);
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('700 100px "Plus Jakarta Sans"', WORD).then(
+        function (faces) { start(faces.length ? JAKARTA : 'Arial, sans-serif'); },
+        function () { start('Arial, sans-serif'); });
+    } else {
+      start('Arial, sans-serif');
+    }
+  })();
+</script>
+
+<script>
+  // SMS stat icons on touch screens (no hover): animate while the card is on screen
+  (function () {
+    if (!window.matchMedia('(hover: none)').matches || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { e.target.classList.toggle('is-anim', e.isIntersecting); });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('#sms-stats .sms-stat').forEach(function (card) { io.observe(card); });
+  })();
+</script>
+
+<script>
+  // SMS chat demo player. Desktop: the three conversations play left to right, then loop.
+  // Mobile: one at a time, rotating when each ends; dots + arrows jump or restart.
+  (function () {
+    var chat = document.getElementById('sms-chat');
+    if (!chat) return;
+    var slides = Array.prototype.slice.call(chat.querySelectorAll('.sms-chat-slide'));
+    var dots = Array.prototype.slice.call(chat.querySelectorAll('.sms-chat-dot'));
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      chat.classList.add('sms-chat--static');
+      return;
+    }
+    chat.classList.add('sms-chat--js');
+    var desk = window.matchMedia('(min-width: 1024px)');
+    var TYPING = 900, REPLY = 700, GAP = 600, NEXT = 1200, HOLD = 2500, LOOP = 3000;
+    var timers = [], inView = false, active = 0;
+
+    function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+    function stop() { timers.forEach(clearTimeout); timers = []; }
+    function reset(slide) {
+      slide.querySelectorAll('.sms-msg.is-shown, .sms-typing.is-shown').forEach(function (el) { el.classList.remove('is-shown'); });
+    }
+    // Queue one conversation; calls done() after the last message lands
+    function play(slide, start, done) {
+      reset(slide);
+      var typing = slide.querySelector('.sms-typing');
+      var t = start;
+      slide.querySelectorAll('.sms-msg').forEach(function (msg) {
+        if (msg.classList.contains('sms-msg--in')) {
+          later(function () { typing.classList.add('is-shown'); }, t);
+          t += TYPING;
+          later(function () { typing.classList.remove('is-shown'); msg.classList.add('is-shown'); }, t);
+        } else {
+          t += REPLY;
+          later(function () { msg.classList.add('is-shown'); }, t);
+        }
+        t += GAP;
+      });
+      if (done) later(done, t);
+    }
+    function show(i) {
+      active = i;
+      slides.forEach(function (sl, n) {
+        sl.classList.toggle('is-active', n === i);
+        if (desk.matches) sl.removeAttribute('aria-hidden'); else sl.setAttribute('aria-hidden', String(n !== i));
+      });
+      dots.forEach(function (d, n) { if (n === i) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+    }
+    // Desktop: each finished conversation stays readable until its turn comes round again
+    function runDesk(i) {
+      play(slides[i], i === 0 ? 300 : 0, function () {
+        later(function () { runDesk((i + 1) % slides.length); }, i === slides.length - 1 ? LOOP : NEXT);
+      });
+    }
+    function runMobile(i) {
+      show(i);
+      play(slides[i], 300, function () {
+        later(function () { reset(slides[i]); runMobile((i + 1) % slides.length); }, HOLD);
+      });
+    }
+    function start(from) {
+      stop();
+      slides.forEach(reset);
+      if (desk.matches) { show(0); runDesk(0); }
+      else runMobile(from || 0);
+    }
+    // Mobile controls: jump to (or restart) a scenario, then keep rotating from there
+    function go(i) {
+      stop();
+      slides.forEach(reset);
+      runMobile((i + slides.length) % slides.length);
+    }
+    chat.querySelectorAll('[data-chat-go]').forEach(function (btn) {
+      btn.addEventListener('click', function () { go(Number(btn.getAttribute('data-chat-go'))); });
+    });
+    chat.querySelectorAll('[data-chat-step]').forEach(function (btn) {
+      btn.addEventListener('click', function () { go(active + Number(btn.getAttribute('data-chat-step'))); });
+    });
+    new IntersectionObserver(function (entries) {
+      var e = entries[entries.length - 1];
+      if (e.isIntersecting && !inView) { inView = true; start(active); }
+      else if (!e.isIntersecting && inView) { inView = false; stop(); }
+    }, { threshold: 0.35 }).observe(chat);
+    desk.addEventListener('change', function () { if (inView) start(0); else { stop(); slides.forEach(reset); show(0); } });
+  })();
+</script>
+
+<script>
+  /* ── SMS CTA tabs ──
+     Port of the preview-switch hero. md+ with motion on: the section is
+     pinned and scroll progress through it picks the tab. Otherwise the tabs
+     are plain click/arrow-key tabs. */
+  (function () {
+    var section = document.getElementById('sms-cta');
+    if (!section) return;
+    var tabs = Array.prototype.slice.call(section.querySelectorAll('.sch-tab'));
+    var panels = Array.prototype.slice.call(section.querySelectorAll('.sch-panel'));
+    var n = tabs.length, active = 0, pinned = false, stepping = false, ticking = false;
+    var split = section.querySelector('.sch-split');
+    var left = section.querySelector('.sch-left');
+    var rail = section.querySelector('.sch-rail');
+    var STICKY_TOP = 76; // 64px nav + 12px
+    // Mobile: progress through the runway under the sticky rail + phone (0..1)
+    function stepProgress() {
+      var runway = parseFloat(getComputedStyle(left, '::after').height) || 1;
+      var railMargin = parseFloat(getComputedStyle(rail).marginTop) || 0;
+      var start = left.getBoundingClientRect().top + railMargin; // rail's top, unstuck
+      return Math.min(1, Math.max(0, (STICKY_TOP - start) / runway));
+    }
+
+    // Status bar + grabber are shared, so stamp them into each screen once
+    var chrome = document.getElementById('sch-phone-chrome');
+    section.querySelectorAll('[data-sch-chrome]').forEach(function (screen) {
+      screen.insertBefore(chrome.content.cloneNode(true), screen.firstChild);
+    });
+
+    function setActive(i) {
+      if (i === active) return;
+      active = i;
+      tabs.forEach(function (t, k) {
+        t.setAttribute('aria-selected', k === i ? 'true' : 'false');
+        t.tabIndex = k === i ? 0 : -1;
+      });
+      panels.forEach(function (p, k) { p.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
+    }
+
+    function range() { return section.offsetHeight - window.innerHeight; }
+    function sectionTop() { return window.scrollY + section.getBoundingClientRect().top; }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        if (!pinned && !stepping) return;
+        var p = stepping ? stepProgress() : Math.min(1, Math.max(0, (window.scrollY - sectionTop()) / range()));
+        setActive(Math.min(n - 1, Math.max(0, Math.floor(p * n - 1e-6))));
+      });
+    }
+
+    function select(i) {
+      if (stepping) {
+        // Middle of this step's slice of the mobile runway
+        var runway = parseFloat(getComputedStyle(left, '::after').height) || 0;
+        var railTop = window.scrollY + left.getBoundingClientRect().top + (parseFloat(getComputedStyle(rail).marginTop) || 0);
+        window.scrollTo({ top: Math.max(0, railTop - STICKY_TOP + ((i + 0.5) / n) * runway), behavior: 'smooth' });
+        return;
+      }
+      if (pinned) {
+        // Middle of this tab's slice of the pinned track
+        window.scrollTo({ top: Math.max(0, sectionTop() + ((i + 0.5) / n) * range()), behavior: 'smooth' });
+      } else {
+        setActive(i);
+      }
+    }
+
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(i); });
+      t.addEventListener('keydown', function (e) {
+        var d = (e.key === 'ArrowRight' || e.key === 'ArrowDown') ? 1 : (e.key === 'ArrowLeft' || e.key === 'ArrowUp') ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var j = (i + d + n) % n;
+        tabs[j].focus();
+        select(j);
+      });
+    });
+
+    var wide = window.matchMedia('(min-width: 768px)');
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function apply() {
+      pinned = wide.matches && !still.matches;
+      stepping = !wide.matches && !still.matches;
+      section.classList.toggle('is-pinned', pinned);
+      split.classList.toggle('is-stepping', stepping);
+      if (stepping) split.style.setProperty('--sch-stack-top', (STICKY_TOP + rail.offsetHeight + 16) + 'px');
+      onScroll();
+    }
+    apply();
+    wide.addEventListener('change', apply);
+    still.addEventListener('change', apply);
+    window.addEventListener('resize', function () { if (stepping) apply(); });
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  // Carrier logo marquee below 1024px: clone the set until the strip is at least twice the
+  // visible width, then slide exactly one set width per loop so the wrap is invisible.
+  (function () {
+    var row = document.querySelector('#sms-cta .sch-logos-row');
+    if (!row) return;
+    var originals = Array.prototype.slice.call(row.children);
+    var mq = window.matchMedia('(max-width: 1023px)');
+    var SPEED = 40; // px per second
+    function teardown() {
+      row.classList.remove('is-marquee');
+      row.querySelectorAll('[data-sch-clone]').forEach(function (li) { li.remove(); });
+    }
+    function build() {
+      teardown();
+      if (!mq.matches) return;
+      row.classList.add('is-marquee');
+      var first = originals[0].getBoundingClientRect().left;
+      var last = originals[originals.length - 1].getBoundingClientRect().right;
+      var setW = last - first;
+      var need = row.parentElement.clientWidth * 2 + setW;
+      var total = setW;
+      while (total < need) {
+        originals.forEach(function (li) {
+          var c = li.cloneNode(true);
+          c.setAttribute('aria-hidden', 'true');
+          c.setAttribute('data-sch-clone', '');
+          row.appendChild(c);
+        });
+        total += setW;
+      }
+      row.style.setProperty('--sch-set-w', setW + 'px');
+      row.style.setProperty('--sch-dur', (setW / SPEED).toFixed(2) + 's');
+    }
+    var t;
+    function rebuild() { clearTimeout(t); t = setTimeout(build, 150); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(build); else build();
+    mq.addEventListener('change', build);
+    window.addEventListener('resize', rebuild);
+  })();
 </script>
 
 </body>

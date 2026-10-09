@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecommerce Store Demo | VardWeb</title>
+  <meta name="description" content="A demo storefront template built by VardWeb: product catalog, product pages, blog, about, contact and account screens.">
+  <link rel="icon" type="image/png" href="brand_assets/VardWeb_Favicon_2_Transparent.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            accent: '#f37513',
+            ink: '#0a0a0a',
+            muted: '#555555',
+            line: '#e1e1e1',
+            canvas: '#f2f2f2',
+            sunk: '#ececec',
+            foot: '#ededed',
+          },
+          fontFamily: { sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root { --spring: cubic-bezier(.34, 1.4, .64, 1); --ease: cubic-bezier(.22, 1, .36, 1); }
+    html { -webkit-text-size-adjust: 100%; }
+    body { background: #f2f2f2; color: #0a0a0a; font-family: "Space Grotesk", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+    /* Views (hash router) */
+    [data-view] { display: none; }
+    [data-view].is-active { display: block; animation: viewIn .45s var(--ease) both; }
+    @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    /* Shared focus ring */
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+      outline: 2px solid #f37513; outline-offset: 2px;
+    }
+    input:focus, textarea:focus { border-color: #0a0a0a; }
+
+    /* Press feedback */
+    .press { transition: transform .35s var(--spring), opacity .2s ease; }
+    .press:hover { transform: translateY(-1px); }
+    .press:active { transform: translateY(0) scale(.97); }
+
+    /* Text links */
+    .tlink { transition: opacity .2s ease; }
+    .tlink:hover { opacity: .6; }
+    .tlink:active { opacity: .4; }
+
+    /* Image zoom inside a card */
+    .zoom img { transform: translateZ(0) scale(1); backface-visibility: hidden; transition: transform .7s var(--ease); }
+    .zoom:hover img { transform: translateZ(0) scale(1.04); }
+    .zoom:active img { transform: translateZ(0) scale(1.02); }
+
+    /* Section chip */
+    .chip { display: inline-block; background: #fff; color: #555; font-size: 14px; line-height: 20px; padding: 4px 16px; }
+
+    /* Testimonials marquee */
+    .marquee { display: flex; width: max-content; gap: 3px; animation: scrollL 60s linear infinite; }
+    .marquee.rev { animation-name: scrollR; }
+    .marquee-wrap:hover .marquee { animation-play-state: paused; }
+    @keyframes scrollL { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes scrollR { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+    @media (prefers-reduced-motion: reduce) {
+      .marquee { animation: none; }
+      [data-view].is-active { animation: none; }
+    }
+
+    /* FAQ / accordion */
+    details > summary { list-style: none; cursor: pointer; }
+    details > summary::-webkit-details-marker { display: none; }
+    details .chev { transition: transform .35s var(--spring); }
+    details[open] .chev { transform: rotate(180deg); }
+    details .plus { transition: transform .35s var(--spring); }
+    details[open] .plus { transform: rotate(45deg); }
+
+    /* Article body */
+    .prose-post h2 { font-size: 30px; line-height: 38px; font-weight: 600; margin: 56px 0 20px; letter-spacing: -.01em; }
+    .prose-post h3 { font-size: 22px; line-height: 30px; font-weight: 600; margin: 32px 0 14px; }
+    .prose-post p { font-size: 18px; line-height: 1.65; color: #555; margin: 0 0 18px; }
+    .prose-post ul, .prose-post ol { margin: 0 0 22px; padding-left: 24px; color: #555; font-size: 18px; }
+    .prose-post ul { list-style: disc; }
+    .prose-post ol { list-style: decimal; }
+    .prose-post li { margin: 0 0 12px; line-height: 1.5; }
+    .prose-post code { background: #fff; padding: 2px 8px; font-size: 16px; color: #0a0a0a; }
+
+    /* Mobile menu */
+    #mobileMenu { transform: translateY(-8px); opacity: 0; pointer-events: none; transition: transform .35s var(--spring), opacity .2s ease; }
+    #mobileMenu.open { transform: none; opacity: 1; pointer-events: auto; }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ============ HEADER ============ -->
+  <header class="relative z-30 border-b border-line bg-canvas">
+    <nav class="mx-auto flex h-[71px] max-w-[1280px] items-center justify-between px-6" aria-label="Main">
+      <a href="#/" class="press flex items-center" aria-label="Home">
+        <svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true"><path d="M0 0h5.5l8 10-8 10H0l8-10z M11 0h5.5l8 10-8 10H11l8-10z" fill="#0a0a0a"/></svg>
+      </a>
+      <ul class="hidden items-center gap-8 md:flex">
+        <li><a href="#/about" data-nav="about" class="tlink text-sm font-medium">About</a></li>
+        <li><a href="#/products" data-nav="products" class="tlink text-sm font-medium">Products</a></li>
+        <li><a href="#/blog" data-nav="blog" class="tlink text-sm font-medium">Blogs</a></li>
+        <li><a href="#/newsletter" data-nav="newsletter" class="tlink text-sm font-medium">Newsletter</a></li>
+        <li><a href="#/contact" data-nav="contact" class="tlink text-sm font-medium">Contact</a></li>
+      </ul>
+      <div class="hidden items-center gap-2 md:flex">
+        <a href="#/login" class="press border border-line px-4 py-2 text-sm font-medium hover:bg-white">Login</a>
+        <a href="#/signup" class="press px-4 py-2 text-sm font-medium hover:bg-white">Sign Up</a>
+      </div>
+      <button id="menuBtn" class="press -mr-2 p-2 md:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </nav>
+    <div id="mobileMenu" class="absolute inset-x-0 top-full border-b border-line bg-canvas px-6 pb-6 pt-2 md:hidden" style="box-shadow:0 18px 30px -18px rgba(10,10,10,.18)">
+      <ul class="flex flex-col">
+        <li><a href="#/about" class="tlink block py-3 text-base font-medium">About</a></li>
+        <li><a href="#/products" class="tlink block py-3 text-base font-medium">Products</a></li>
+        <li><a href="#/blog" class="tlink block py-3 text-base font-medium">Blogs</a></li>
+        <li><a href="#/newsletter" class="tlink block py-3 text-base font-medium">Newsletter</a></li>
+        <li><a href="#/contact" class="tlink block py-3 text-base font-medium">Contact</a></li>
+      </ul>
+      <div class="mt-3 grid grid-cols-2 gap-2">
+        <a href="#/login" class="press border border-line bg-white px-4 py-2.5 text-center text-sm font-medium">Login</a>
+        <a href="#/signup" class="press bg-ink px-4 py-2.5 text-center text-sm font-medium text-white">Sign Up</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="app">
+
+    <!-- ============ HOME ============ -->
+    <div data-view="home">
+      <!-- Hero + categories -->
+      <section class="mx-auto max-w-[1280px] px-6 py-16 md:py-24">
+        <div class="text-center">
+          <h1 class="mx-auto max-w-[620px] text-[38px] font-bold leading-[1.2] tracking-[-0.025em] md:text-[60px] md:leading-[75px]">
+            Uncover <span class="text-accent">The Most</span> Innovative Products.
+          </h1>
+          <p class="mx-auto mt-4 max-w-[448px] text-sm text-muted">Exploring the tech and design shaping the world of tomorrow.</p>
+        </div>
+        <div id="categoryGrid" class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mt-16"></div>
+      </section>
+
+      <!-- Popular products -->
+      <section class="mx-auto max-w-[1280px] px-6 py-16 md:py-24">
+        <div data-slot="productsHeader"></div>
+        <div data-slot="productGrid"></div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="overflow-hidden bg-[#f3f3f3] py-16 md:py-24">
+        <div class="mx-auto max-w-[1280px] px-6 text-center">
+          <span class="chip !px-2 !py-2">Testimonials</span>
+          <h2 class="mx-auto mt-4 max-w-[680px] text-[32px] font-bold leading-[1.25] tracking-[-0.025em] md:text-5xl md:leading-[60px]">
+            See what our <span class="text-accent">customers</span> think <span class="text-accent">about us</span> and our products
+          </h2>
+          <p class="mx-auto mt-6 max-w-[512px] text-sm text-muted">Read real reviews from people who use our products every day.</p>
+        </div>
+        <div class="marquee-wrap mt-12 flex flex-col gap-[3px]">
+          <div class="marquee" id="marqueeA"></div>
+          <div class="marquee rev" id="marqueeB"></div>
+        </div>
+      </section>
+
+      <div data-slot="aboutBlock"></div>
+      <div data-slot="blogPreview"></div>
+      <div data-slot="newsletter"></div>
+    </div>
+
+    <!-- ============ PRODUCTS ============ -->
+    <div data-view="products">
+      <section class="mx-auto max-w-[1280px] px-6 py-16 md:py-24">
+        <div data-slot="productsHeader"></div>
+        <div data-slot="productGrid"></div>
+      </section>
+    </div>
+
+    <!-- ============ PRODUCT DETAIL ============ -->
+    <div data-view="product">
+      <section class="mx-auto max-w-[1280px] px-6 pb-16 pt-10 md:pb-14 md:pt-14">
+        <div class="grid gap-8 md:grid-cols-[617fr_583fr]">
+          <div>
+            <div class="flex aspect-[617/584] items-center justify-center overflow-hidden bg-white">
+              <img id="pdpMain" src="" alt="" class="h-full w-full object-contain p-10">
+            </div>
+            <div id="pdpThumbs" class="mt-3 grid grid-cols-5 gap-3"></div>
+          </div>
+          <div>
+            <span id="pdpLabel" class="inline-block bg-sunk px-2 py-1 text-xs text-muted"></span>
+            <h1 id="pdpName" class="mt-3 text-[30px] font-medium leading-tight tracking-[-0.02em] md:text-4xl"></h1>
+            <p id="pdpTag" class="mt-1 text-xl text-muted md:text-2xl"></p>
+            <p id="pdpPrice" class="mt-3 text-5xl font-medium tracking-[-0.03em] text-accent"></p>
+            <button id="pdpBuy" class="press mt-6 h-[60px] w-full bg-[#1a1a1a] text-lg font-semibold text-white hover:bg-black">Buy now</button>
+            <p id="pdpStock" class="mt-6 flex items-center justify-center gap-2 bg-sunk py-3 text-base text-muted"></p>
+            <details class="mt-2 border border-line bg-white">
+              <summary class="flex items-center justify-between px-4 py-3 text-lg hover:bg-[#fafafa]">
+                Description
+                <svg class="plus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              </summary>
+              <p id="pdpDesc" class="px-4 pb-4 text-base leading-[1.7] text-muted"></p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ ABOUT ============ -->
+    <div data-view="about">
+      <div data-slot="aboutBlock"></div>
+
+      <section class="bg-[#efefef] py-16 md:py-24">
+        <div class="mx-auto max-w-[1280px] px-6">
+          <div class="text-center">
+            <span class="chip !px-3">Our Products</span>
+            <h2 class="mt-4 text-[34px] font-medium leading-tight tracking-[-0.025em] md:text-5xl">About Our <span class="text-accent">Products</span></h2>
+            <p class="mt-4 text-lg text-muted">Explore the types of products available in our store.</p>
+          </div>
+          <div id="productTypes" class="mt-12 grid gap-2 md:grid-cols-2"></div>
+
+          <!-- Find your product banner -->
+          <div class="relative mt-14 overflow-hidden border border-line bg-sunk">
+            <div id="findCollage" class="pointer-events-none absolute inset-0 grid grid-cols-3 gap-6 p-4 opacity-50 blur-[3px] md:grid-cols-5" aria-hidden="true"></div>
+            <div class="relative flex flex-col items-center px-6 py-20 text-center md:py-24">
+              <h2 class="text-[34px] font-medium leading-tight tracking-[-0.025em] text-accent md:text-5xl">Find Your Product</h2>
+              <a href="#/products" class="press mt-6 bg-[#1a1a1a] px-6 py-3 text-sm font-semibold text-white hover:bg-black">Explore Categories</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div data-slot="faq"></div>
+    </div>
+
+    <!-- ============ BLOG LIST ============ -->
+    <div data-view="blog">
+      <section class="mx-auto max-w-[1280px] px-6 py-16 md:py-24">
+        <div class="text-center">
+          <span class="chip !px-3">Blog</span>
+          <h1 class="mt-4 text-[34px] font-medium leading-tight tracking-[-0.025em] md:text-5xl">Latest <span class="text-accent">Articles</span></h1>
+          <p class="mt-4 text-lg text-muted">Practical ideas on products, workflow, and modern design.</p>
+        </div>
+        <div id="blogFeatured" class="mt-10"></div>
+        <div class="mt-14 flex items-end justify-between">
+          <h2 class="text-2xl font-semibold">More Articles</h2>
+          <span id="blogCount" class="text-sm text-muted"></span>
+        </div>
+        <div id="blogGrid" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"></div>
+      </section>
+    </div>
+
+    <!-- ============ BLOG POST ============ -->
+    <div data-view="post">
+      <article class="mx-auto max-w-[896px] px-6 pb-16 pt-12 md:pb-24 md:pt-20">
+        <a href="#/blog" class="tlink text-sm text-accent">&larr; Back to Blog</a>
+        <p id="postMeta" class="mt-4 text-xs uppercase text-muted"></p>
+        <h1 id="postTitle" class="mt-2 text-[34px] font-medium leading-[1.1] tracking-[-0.025em] md:text-5xl"></h1>
+        <p id="postLead" class="mt-5 text-lg leading-[1.6] text-muted"></p>
+        <hr class="mt-6 border-line">
+        <div class="mt-6 aspect-[848/420] overflow-hidden bg-white">
+          <img id="postImg" src="" alt="" class="h-full w-full object-cover">
+        </div>
+        <div id="postBody" class="prose-post mt-10"></div>
+      </article>
+    </div>
+
+    <!-- ============ CONTACT ============ -->
+    <div data-view="contact">
+      <section class="mx-auto max-w-[1280px] px-6 py-16 md:py-24">
+        <div class="text-center">
+          <span class="chip !px-3">Contact</span>
+          <h1 class="mt-4 text-[34px] font-medium leading-tight tracking-[-0.025em] md:text-5xl">Let&rsquo;s <span class="text-accent">Talk</span></h1>
+          <p class="mx-auto mt-4 max-w-[640px] text-lg leading-[1.55] text-muted">Reach out for product questions, order help, or partnership inquiries. We typically reply within 24 hours.</p>
+        </div>
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
+          <div class="bg-white p-6">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="1.8"><rect x="3" y="5" width="18" height="14"/><path d="m3 7 9 6 9-6"/></svg>
+            <h3 class="mt-4 text-lg font-semibold">Email</h3>
+            <a href="mailto:hello@yourstore.com" class="tlink mt-1 block text-sm text-muted">hello@yourstore.com</a>
+          </div>
+          <div class="bg-white p-6">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>
+            <h3 class="mt-4 text-lg font-semibold">Phone</h3>
+            <a href="tel:+15550000000" class="tlink mt-1 block text-sm text-muted">+1 (555) 000-0000</a>
+          </div>
+          <div class="bg-white p-6">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="1.8"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            <h3 class="mt-4 text-lg font-semibold">Address</h3>
+            <p class="mt-1 text-sm text-muted">123 Main Street, Your City</p>
+          </div>
+        </div>
+        <div class="mt-6 grid gap-4 md:grid-cols-[637fr_579fr]">
+          <form class="bg-white p-6 md:p-8" data-demo-form>
+            <h2 class="text-2xl font-medium">Send a message</h2>
+            <p class="mt-1 text-sm text-muted">We&rsquo;d love to hear from you.</p>
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              <input type="text" required placeholder="Your name" aria-label="Your name" class="border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+              <input type="email" required placeholder="Email address" aria-label="Email address" class="border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+            </div>
+            <input type="text" placeholder="Subject" aria-label="Subject" class="mt-4 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+            <textarea rows="7" required placeholder="Tell us about your query..." aria-label="Message" class="mt-4 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]"></textarea>
+            <button class="press mt-4 bg-[#1a1a1a] px-6 py-3 text-sm font-semibold text-white hover:bg-black">Send Message</button>
+            <p class="demo-ok mt-3 hidden text-sm text-accent">Thanks! This is a demo form, so nothing was sent.</p>
+          </form>
+          <div class="flex items-center bg-white p-6">
+            <div class="w-full border border-dashed border-[#cfcfcf] bg-[#f6f6f6] px-6 py-12 text-center">
+              <h3 class="text-sm font-semibold">Office Hours</h3>
+              <p class="mt-3 text-sm leading-6 text-muted">Mon - Fri: 9:00 AM to 6:00 PM<br>Sat: 10:00 AM to 2:00 PM</p>
+              <p class="mt-5 text-xs text-muted">For urgent requests, include &ldquo;Urgent&rdquo; in your email subject.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ NEWSLETTER ============ -->
+    <div data-view="newsletter">
+      <div data-slot="newsletter"></div>
+      <div data-slot="faq"></div>
+    </div>
+
+    <!-- ============ LOGIN ============ -->
+    <div data-view="login">
+      <section class="px-6 py-16 md:py-24">
+        <form class="mx-auto max-w-[400px] bg-white p-8" data-demo-form>
+          <span class="inline-block bg-sunk px-3 py-1 text-sm text-muted">Account</span>
+          <h1 class="mt-4 text-3xl font-medium">Login</h1>
+          <p class="mt-2 text-sm text-muted">Welcome back. Please enter your details.</p>
+          <input type="email" required placeholder="Email address" aria-label="Email address" class="mt-6 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+          <input type="password" required placeholder="Password" aria-label="Password" class="mt-4 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+          <button class="press mt-4 w-full bg-[#1a1a1a] py-3 text-sm font-semibold text-white hover:bg-black">Login</button>
+          <p class="demo-ok mt-3 hidden text-center text-sm text-accent">Demo only. No account was created.</p>
+          <p class="mt-6 text-center text-sm text-muted">Don&rsquo;t have an account? <a href="#/signup" class="tlink text-accent">Sign up</a></p>
+        </form>
+      </section>
+    </div>
+
+    <!-- ============ SIGN UP ============ -->
+    <div data-view="signup">
+      <section class="px-6 py-16 md:py-24">
+        <form class="mx-auto max-w-[400px] bg-white p-8" data-demo-form>
+          <span class="inline-block bg-sunk px-3 py-1 text-sm text-muted">Account</span>
+          <h1 class="mt-4 text-3xl font-medium">Sign Up</h1>
+          <p class="mt-2 text-sm text-muted">Create your account to get started.</p>
+          <input type="text" required placeholder="Full name" aria-label="Full name" class="mt-6 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+          <input type="email" required placeholder="Email address" aria-label="Email address" class="mt-4 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+          <input type="password" required placeholder="Password" aria-label="Password" class="mt-4 w-full border border-line px-4 py-3 text-sm outline-none placeholder:text-[#888]">
+          <button class="press mt-4 w-full bg-[#1a1a1a] py-3 text-sm font-semibold text-white hover:bg-black">Create Account</button>
+          <p class="demo-ok mt-3 hidden text-center text-sm text-accent">Demo only. No account was created.</p>
+          <p class="mt-6 text-center text-sm text-muted">Already have an account? <a href="#/login" class="tlink text-accent">Login</a></p>
+        </form>
+      </section>
+    </div>
+
+    <!-- ============ LEGAL (privacy / terms) ============ -->
+    <div data-view="legal">
+      <section class="mx-auto max-w-[896px] px-6 py-16 md:py-24">
+        <span class="chip !px-3">Legal</span>
+        <h1 id="legalTitle" class="mt-4 text-[34px] font-medium leading-tight tracking-[-0.025em] md:text-5xl"></h1>
+        <p id="legalLead" class="mt-4 text-lg text-muted"></p>
+        <div id="legalBody" class="mt-8 bg-white p-6 md:p-8"></div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="border-t border-line bg-foot">
+    <div class="mx-auto grid max-w-[1280px] gap-10 px-6 py-12 sm:grid-cols-2 md:grid-cols-4">
+      <div>
+        <a href="#/" class="press inline-block" aria-label="Home">
+          <svg width="32" height="24" viewBox="0 0 26 20" aria-hidden="true"><path d="M0 0h5.5l8 10-8 10H0l8-10z M11 0h5.5l8 10-8 10H11l8-10z" fill="#0a0a0a"/></svg>
+        </a>
+        <p class="mt-5 max-w-[260px] text-sm leading-5 text-muted">Modern products selected for design, quality, and everyday usability.</p>
+        <div class="mt-5 flex gap-3">
+          <a href="#" class="press flex h-9 w-9 items-center justify-center bg-white hover:bg-ink hover:text-white" aria-label="Facebook"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h-2a4 4 0 0 0-4 4v3H7v4h2v7h4v-7h3l1-4h-4V7a1 1 0 0 1 1-1h2z"/></svg></a>
+          <a href="#" class="press flex h-9 w-9 items-center justify-center bg-white hover:bg-ink hover:text-white" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6" fill="currentColor"/></svg></a>
+          <a href="#" class="press flex h-9 w-9 items-center justify-center bg-white hover:bg-ink hover:text-white" aria-label="Twitter"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg></a>
+          <a href="#" class="press flex h-9 w-9 items-center justify-center bg-white hover:bg-ink hover:text-white" aria-label="YouTube"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-[0.05em]">Quick Links</h3>
+        <ul class="mt-4 space-y-2 text-sm text-muted">
+          <li><a href="#/" class="tlink">Home</a></li>
+          <li><a href="#/products" class="tlink">Products</a></li>
+          <li><a href="#/about" class="tlink">About Us</a></li>
+          <li><a href="#/blog" class="tlink">Blog</a></li>
+          <li><a href="#/contact" class="tlink">Contact</a></li>
+          <li><a href="#/login" class="tlink">Login</a></li>
+          <li><a href="#/signup" class="tlink">Sign Up</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-[0.05em]">Support</h3>
+        <ul class="mt-4 space-y-2 text-sm text-muted">
+          <li><a href="#/about" class="tlink">Shipping</a></li>
+          <li><a href="#/about" class="tlink">Returns</a></li>
+          <li><a href="#/about" class="tlink">FAQs</a></li>
+          <li><a href="#/contact" class="tlink">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-[0.05em]">Contact</h3>
+        <ul class="mt-4 space-y-2 text-sm text-muted">
+          <li><a href="mailto:hello@yourstore.com" class="tlink">hello@yourstore.com</a></li>
+          <li><a href="tel:+15550000000" class="tlink">+1 (555) 000-0000</a></li>
+          <li>123 Main Street, Your City</li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-line">
+      <div class="mx-auto flex max-w-[1280px] flex-col gap-3 px-6 py-5 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
+        <p>&copy; 2026 Your Store. All rights reserved.</p>
+        <div class="flex gap-4">
+          <a href="#/privacy" class="tlink">Privacy Policy</a>
+          <a href="#/terms" class="tlink">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  /* =====================================================================
+     IMAGE SLOTS (31 total). Every slot uses one temporary placeholder.
+     Swap each path for a real image when available.
+     ===================================================================== */
+  const PH = 'brand_assets/icons/svc-ecommerce.webp';
+  const IMG = {
+    // Home category tiles (4), ~900x900
+    catOutdoor: PH,
+    catSound: PH,
+    catVideo: PH,
+    catBestSellers: PH,
+    // Product photos (9), ~800x800 on a light/white background
+    prodSurfboard: PH,
+    prodPocketLight: PH,
+    prodCharger: PH,
+    prodSynth: PH,
+    prodHeadphones: PH,
+    prodMixer: PH,
+    prodCoolingFan: PH,
+    prodCamera: PH,
+    prodController: PH,
+    // Extra gallery shots on the product page (4), ~800x800
+    gallery1: PH,
+    gallery2: PH,
+    gallery3: PH,
+    gallery4: PH,
+    // About section photo (1), ~1200x1400
+    about: PH,
+    // Blog covers (7), ~1200x800. The post page reuses its cover.
+    blogPhotography: PH,
+    blogDesk: PH,
+    blogAboutProducts: PH,
+    blogBuyersGuide: PH,
+    blogTesting: PH,
+    blogModernDesign: PH,
+    blogTechSetup: PH,
+    // Testimonial avatars (6), 80x80
+    avatarAva: PH,
+    avatarEthanW: PH,
+    avatarEthanB: PH,
+    avatarIsabella: PH,
+    avatarEmily: PH,
+    avatarJames: PH,
+  };
+
+  /* ============================ DATA ============================ */
+  const CATEGORIES = [
+    { name: 'Outdoor', count: 4, img: IMG.catOutdoor },
+    { name: 'Sound Essentials', count: 4, img: IMG.catSound },
+    { name: 'Video Gear', count: 4, img: IMG.catVideo },
+    { name: 'Best Sellers', count: 8, img: IMG.catBestSellers },
+  ];
+
+  const PRODUCTS = [
+    { slug: 'swell-25-surfboard', name: 'Swell 25 Surfboard', price: 750, isNew: true, img: IMG.prodSurfboard,
+      label: 'Outdoor Pick', tag: 'Lightweight shortboard', stock: 'Only 3 left, hurry up!',
+      desc: 'A responsive, lightweight shortboard shaped for quick turns and clean lines on everyday waves.' },
+    { slug: 'lumen-m40-pocket-light', name: 'Lumen M40 Pocket Light', price: 84, isNew: false, img: IMG.prodPocketLight,
+      label: 'Creator Essential', tag: 'Compact 40W video light', stock: 'Only 5 left, hurry up!',
+      desc: 'A palm-sized 40W light with adjustable color temperature for portable shoots and on-the-go content.' },
+    { slug: 'pixel-67w-charger', name: 'Pixel 67W Charger', price: 49, isNew: false, img: IMG.prodCharger,
+      label: 'Everyday Carry', tag: 'Retro display fast charger', stock: 'Only 8 left, hurry up!',
+      desc: 'A 67W fast charger with a retro pixel display that shows live power output while you charge.' },
+    { slug: 'field-synth-one', name: 'Field Synth One', price: 1990, isNew: true, img: IMG.prodSynth,
+      label: 'Studio Favorite', tag: 'Portable synth and sampler', stock: 'Only 2 left, hurry up!',
+      desc: 'A premium all-in-one music workstation for composing, sampling, and performing anywhere.' },
+    { slug: 'clear-over-ear-headphones', name: 'Clear Over-Ear Headphones', price: 249, isNew: false, img: IMG.prodHeadphones,
+      label: 'Sound Essential', tag: 'Wireless noise-cancelling', stock: 'Only 4 left, hurry up!',
+      desc: 'Transparent-design wireless headphones with active noise cancelling and all-day comfort.' },
+    { slug: 'pocket-mixer-m6', name: 'Pocket Mixer M6', price: 1199, isNew: true, img: IMG.prodMixer,
+      label: 'Studio Favorite', tag: 'Six-channel digital mixer', stock: 'Only 2 left, hurry up!',
+      desc: 'A compact six-channel digital mixer with built-in effects for studio sessions and live sets.' },
+    { slug: 'arc-camera-cooling-fan', name: 'Arc Camera Cooling Fan', price: 69, isNew: true, img: IMG.prodCoolingFan,
+      label: 'Video Gear', tag: 'Clip-on cooling for long shoots', stock: 'Only 6 left, hurry up!',
+      desc: 'A quiet clip-on fan that keeps mirrorless cameras cool during long recording sessions.' },
+    { slug: 'prime-full-frame-camera', name: 'Prime Full-Frame Camera', price: 2499, isNew: true, img: IMG.prodCamera,
+      label: 'Pro Pick', tag: 'Compact full-frame body', stock: 'Only 1 left, hurry up!',
+      desc: 'A compact full-frame camera body built for stills and cinema-grade video in a minimal form.' },
+    { slug: 'glide-motion-controller', name: 'Glide Motion Controller', price: 189, isNew: true, img: IMG.prodController,
+      label: 'Video Gear', tag: 'One-handed drone controller', stock: 'Only 3 left, hurry up!',
+      desc: 'An intuitive one-handed motion controller for smooth, cinematic flight and camera moves.' },
+  ];
+
+  const TESTIMONIALS = [
+    { name: 'Ava Mitchell', role: 'Creative Director', img: IMG.avatarAva, text: 'Everything works as expected and feels well put together. Setup was easy and the experience has been smooth so far.' },
+    { name: 'Ethan Walker', role: 'Brand designer', img: IMG.avatarEthanW, text: 'The overall experience feels balanced and well executed. Setup took only a few minutes and worked without issues.' },
+    { name: 'Ethan Brooks', role: 'Director', img: IMG.avatarEthanB, text: 'The build quality is excellent and the overall experience feels premium. Setup was straightforward and everything worked as expected.' },
+    { name: 'Emily Collins', role: 'Sound Designer', img: IMG.avatarEmily, text: 'It integrates well into an existing setup and doesn’t require much adjustment. After a short setup, it was ready to use.' },
+    { name: 'James Walker', role: 'Music Producer', img: IMG.avatarJames, text: 'The quality is immediately noticeable and it feels great to use. Everything works smoothly and the overall experience is genuinely satisfying.' },
+    { name: 'Isabella Reed', role: 'Audio Engineer', img: IMG.avatarIsabella, text: 'You can tell right away that this is a well-made product. It feels reliable, thoughtfully designed, and enjoyable to use.' },
+  ];
+
+  const POSTS = [
+    { slug: 'product-photography-guide', title: 'Product Photography Guide for Small Brands', date: 'Mar 22, 2026', read: '12 min read', author: 'Creative Team', img: IMG.blogPhotography, isNew: true,
+      excerpt: 'A practical, step-by-step guide to shooting clean product photos with a small budget and consistent visual style.' },
+    { slug: 'minimal-creator-desk', title: 'Building a Minimal Creator Desk Setup', date: 'Mar 21, 2026', read: '11 min read', author: 'Creative Team', img: IMG.blogDesk,
+      excerpt: 'How to design a focused desk setup for editing, writing, and daily creative work without unnecessary gear.' },
+    { slug: 'about-our-products', title: 'About Our Products', date: 'Mar 20, 2026', read: '4 min read', author: 'Creative Team', img: IMG.blogAboutProducts,
+      excerpt: 'A transparent look at the standards and philosophy behind every item we curate.' },
+    { slug: 'lighting-audio-buyers-guide', title: 'Complete Buyer’s Guide: Lighting and Audio for Creators', date: 'Mar 19, 2026', read: '14 min read', author: 'Creative Team', img: IMG.blogBuyersGuide,
+      excerpt: 'A detailed decision framework for choosing lighting and audio gear that fits your workflow, budget, and output quality.' },
+    { slug: 'how-we-test-products', title: 'How We Test Products Before Listing Them', date: 'Mar 18, 2026', read: '10 min read', author: 'Creative Team', img: IMG.blogTesting,
+      excerpt: 'A transparent walkthrough of our review process, from quality checks and real-use testing to final listing decisions.' },
+    { slug: 'modern-product-design', title: 'Modern Product Design', date: 'Mar 14, 2026', read: '6 min read', author: 'Creative Team', img: IMG.blogModernDesign,
+      excerpt: 'Where technology meets intention, simplicity, and long-term value.' },
+    { slug: 'your-tech-setup', title: 'Your Tech Setup', date: 'Mar 10, 2026', read: '5 min read', author: 'Creative Team', img: IMG.blogTechSetup,
+      excerpt: 'Building a setup that works for you starts with clarity, not complexity.' },
+  ];
+
+  const PHOTO_GUIDE_BODY = `
+    <h2 style="margin-top:0">Product Photography Guide for Small Brands</h2>
+    <p>Strong product photography is one of the fastest ways to increase trust, improve conversion rates, and reduce return requests. When customers can clearly see shape, texture, scale, and finish, they make better decisions.</p>
+    <p>This guide is built for small teams and solo creators who need reliable results without a large studio budget.</p>
+    <h2>1. Start With a Shot Plan</h2>
+    <p>Before touching your camera, define a list of shots for every product:</p>
+    <ul><li>Hero image (clean background)</li><li>45-degree angle</li><li>Side and back view</li><li>Detail close-up (materials, controls, texture)</li><li>Scale reference shot</li><li>In-use lifestyle shot</li></ul>
+    <p>This prevents random photos and keeps your catalog visually consistent.</p>
+    <h2>2. Build a Simple Lighting Setup</h2>
+    <p>You do not need expensive strobes to start. A compact continuous light setup works well for e-commerce:</p>
+    <ol><li>Key light at 45 degrees to the product</li><li>Fill card (white foam board) on the opposite side</li><li>Back/rim light for edge separation if needed</li></ol>
+    <h3>Lighting Tips</h3>
+    <ul><li>Use diffusion to avoid harsh reflections on glossy surfaces</li><li>Keep white balance fixed (not auto)</li><li>Turn off mixed room lighting to avoid color shifts</li><li>Mark your light positions on the floor to repeat them easily</li></ul>
+    <h2>3. Background and Surface Choices</h2>
+    <p>For store pages, neutral backgrounds usually convert best because they keep focus on the product.</p>
+    <ul><li>White or very light gray for catalog shots</li><li>Matte surfaces to avoid unwanted reflections</li><li>Same background color across all variants when possible</li></ul>
+    <p>If you use colored backgrounds for campaigns, keep product pages neutral and use color in social assets instead.</p>
+    <h2>4. Camera Settings That Keep Results Sharp</h2>
+    <p>You can use a mirrorless camera, DSLR, or even a modern phone with manual controls. What matters most is consistency:</p>
+    <ul><li>ISO: as low as possible</li><li>Aperture: around f/8 to f/11 for depth</li><li>Shutter speed: adjust based on light (tripod recommended)</li><li>Focus: manual or controlled autofocus on the key detail</li></ul>
+    <p>Use a tripod for every product session. Small motion blur often goes unnoticed during editing and then becomes obvious on high-resolution screens.</p>
+    <h2>5. Styling and Product Preparation</h2>
+    <p>Small details make large quality differences:</p>
+    <ul><li>Clean fingerprints and dust before every shot</li><li>Align logos and labels consistently</li><li>Remove temporary stickers unless they are part of packaging</li><li>Prepare matching props for related categories</li></ul>
+    <p>For tech products, cable routing and button orientation should look intentional, not random.</p>
+    <h2>6. Editing Workflow for Speed and Consistency</h2>
+    <p>Create a reusable editing preset:</p>
+    <ol><li>Correct exposure and white balance</li><li>Match contrast across the full set</li><li>Remove dust/spots</li><li>Export web-optimized files in consistent dimensions</li></ol>
+    <p>Aim for accurate color instead of dramatic filters. Over-stylized edits can increase disappointment and returns when the product arrives.</p>
+    <h2>7. File Naming and Asset Management</h2>
+    <p>Use predictable filenames:</p>
+    <p><code>product-slug-view-type-01.jpg</code></p>
+    <p>Example:</p>
+    <p><code>lumen-m40-pocket-light-hero-01.jpg</code></p>
+    <p>This saves time for your content team, ad team, and developers when integrating images into pages.</p>
+    <h2>8. Common Mistakes to Avoid</h2>
+    <ul><li>Different color temperatures between products</li><li>Inconsistent crop ratios</li><li>Over-sharpening during export</li><li>Missing close-ups for key differentiators</li><li>No scale context for size-sensitive products</li></ul>
+    <h2>9. Final Quality Checklist</h2>
+    <p>Before publishing:</p>
+    <ul><li>Are all products represented with the same shot sequence?</li><li>Are colors faithful to real life?</li><li>Are edges clean from background cutouts?</li><li>Are thumbnails readable on mobile screens?</li><li>Does every product include at least one detail shot?</li></ul>
+    <p>If yes, your visual catalog is ready for launch.</p>
+    <h2>Closing Thought</h2>
+    <p>Good product photography is not about expensive gear. It is about repeatable process, controlled lighting, and careful attention to detail. Start simple, document your setup, and improve every batch.</p>`;
+
+  const FAQS = [
+    ['What types of projects do you work on?', 'We offer a curated selection of modern products with a strong focus on design, quality, and usability. Every item is chosen carefully to fit our overall aesthetic and standards.'],
+    ['Do you ship internationally?', 'Yes, we ship to most countries. Shipping options and rates are calculated at checkout based on your delivery location.'],
+    ['How long does delivery take?', 'Standard delivery usually takes 3-7 business days, while international orders may take 7-14 business days depending on customs and region.'],
+    ['Can I return a product?', 'Absolutely. You can request a return within 14 days of delivery if the item is unused and in its original condition.'],
+    ['How can I contact support?', 'You can contact our support team through the contact form, email, or live chat during business hours.'],
+  ];
+
+  const PRODUCT_TYPES = [
+    ['Popular Products', 'Loved By Everyone', '<path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/>'],
+    ['Useful Products', 'Practical Everyday Essentials', '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>'],
+    ['Electronic Products', 'Latest Tech Gadgets', '<rect x="6" y="6" width="12" height="12"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>'],
+    ['Innovative Products', 'Creative New Solutions', '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'],
+    ['Well-Designed Products', 'Beautiful And Functional', '<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21 8 9l4-6 4 6z"/>'],
+    ['High-Quality Products', 'Built To Last', '<path d="M12 2 4 7v10l8 5 8-5V7z"/><circle cx="12" cy="12" r="3"/>'],
+  ];
+
+  const LEGAL = {
+    privacy: {
+      title: 'Privacy Policy',
+      lead: 'Effective date: March 23, 2026. This policy explains how we handle your personal information.',
+      sections: [
+        ['Information We Collect', 'We may collect information you provide directly, such as your name, email address, shipping address, and payment-related details when you place an order or contact support.'],
+        ['How We Use Information', 'We use your information to process orders, provide support, send transactional messages, improve our services, and protect against fraud or misuse.'],
+        ['Sharing of Information', 'We share data only with trusted providers needed to operate our store (for example, payment processors and shipping partners), and only as required to perform those services.'],
+        ['Data Security', 'We apply reasonable technical and organizational safeguards to protect your information. No system can be guaranteed 100% secure, but we continuously work to improve our protections.'],
+        ['Your Rights', 'Depending on your location, you may have rights to access, correct, or delete your personal data. To make a request, contact us at hello@yourstore.com.'],
+        ['Contact', 'If you have privacy questions, please visit our <a href="#/contact" class="tlink text-accent">contact page</a>.'],
+      ],
+    },
+    terms: {
+      title: 'Terms of Service',
+      lead: 'Effective date: March 23, 2026. These terms govern your use of our website and services.',
+      sections: [
+        ['Acceptance of Terms', 'By accessing or using this site, you agree to these terms. If you do not agree, please do not use the website.'],
+        ['Account Responsibilities', 'You are responsible for maintaining the confidentiality of your account credentials and for all activity under your account.'],
+        ['Orders and Payments', 'Prices and availability may change without notice. We reserve the right to refuse or cancel orders where required by law or in cases of suspected fraud.'],
+        ['Returns and Refunds', 'Return and refund conditions are outlined in our support policy. Please review shipping and return details before purchase.'],
+        ['Limitation of Liability', 'To the maximum extent permitted by law, we are not liable for indirect, incidental, or consequential damages arising from use of the site or products.'],
+        ['Changes to Terms', 'We may update these terms periodically. Continued use of the site after updates indicates acceptance of the revised terms.'],
+        ['Contact', 'Questions about these terms can be sent via our <a href="#/contact" class="tlink text-accent">contact page</a>.'],
+      ],
+    },
+  };
+
+  /* ========================== TEMPLATES ========================== */
+  const flame = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22a7 7 0 0 0 7-7c0-4-3-6-4-9-1 2-2 3-3 3 0-3-1-5-3-7 0 4-4 7-4 13a7 7 0 0 0 7 7z"/></svg>';
+  const star = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#f37513"><path d="m12 2 3 6.5 7 .8-5.2 4.8 1.5 7L12 17.5 5.7 21l1.5-7L2 9.3l7-.8z"/></svg>';
+  const money = n => '$' + n;
+
+  const T = {
+    productsHeader: () => `
+      <div class="text-center">
+        <span class="chip !px-2 !py-2">Popular Products</span>
+        <h2 class="mx-auto mt-4 max-w-[520px] text-[32px] font-bold leading-[1.25] tracking-[-0.025em] md:text-5xl md:leading-[60px]">
+          Check Out The <span class="text-accent">Most</span> <span class="text-accent">Popular</span> Pieces.
+        </h2>
+        <p class="mt-5 text-sm text-muted">Exploring the tech and design shaping the world of tomorrow.</p>
+        <div class="mt-10 flex flex-wrap justify-center gap-2" role="tablist" aria-label="Filter products">
+          ${[['all','All Items'],['new','New Products'],['classic','Classic']].map(([k,l],i)=>`
+            <button role="tab" data-filter="${k}" aria-selected="${i===0}" class="press flex items-center gap-2 border px-4 py-2 text-sm font-medium ${i===0?'border-accent bg-accent text-white':'border-line bg-white hover:border-[#bdbdbd]'}">${flame}${l}</button>`).join('')}
+        </div>
+      </div>`,
+
+    productGrid: () => `<div class="product-grid mt-10 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"></div>`,
+
+    productCard: p => `
+      <a href="#/product/${p.slug}" data-new="${p.isNew}" class="zoom group relative flex aspect-[405/457] flex-col bg-white transition-opacity duration-200 hover:z-10 active:opacity-90" style="box-shadow:0 0 0 0 rgba(0,0,0,0)">
+        ${p.isNew ? '<span class="absolute left-4 top-4 z-10 bg-accent px-2.5 py-1 text-xs font-semibold text-white">New</span>' : ''}
+        <div class="flex flex-1 items-center justify-center overflow-hidden p-12">
+          <img src="${p.img}" alt="${p.name}" loading="lazy" class="max-h-[240px] w-auto object-contain">
+        </div>
+        <div class="flex items-end justify-between gap-4 px-6 pb-6">
+          <div>
+            <h3 class="text-sm font-semibold group-hover:text-accent">${p.name}</h3>
+            <p class="text-xs text-muted">In Stock</p>
+          </div>
+          <span class="text-sm font-semibold">${money(p.price)}</span>
+        </div>
+      </a>`,
+
+    aboutBlock: () => `
+      <section class="bg-[#f3f3f3] py-16 md:py-24">
+        <div class="mx-auto max-w-[1280px] px-6">
+          <div class="text-center">
+            <span class="chip">About Us</span>
+            <h2 class="mt-4 text-[30px] font-bold leading-10 md:text-4xl">Learn More <span class="text-accent">About Us</span></h2>
+            <p class="mt-3 text-base text-muted">Discover our story, values, and what we stand for.</p>
+          </div>
+          <div class="mt-10 grid md:grid-cols-2">
+            <div class="zoom aspect-[616/716] overflow-hidden bg-sunk">
+              <img src="${IMG.about}" alt="Our team" loading="lazy" class="h-full w-full object-cover">
+            </div>
+            <div class="bg-white">
+              <div class="border-b border-line p-8">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="1.6"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5z"/><path d="m15 5 4 4"/></svg>
+                <h3 class="mt-3 text-lg font-bold">Well-Designed Products</h3>
+                <p class="mt-2 text-sm leading-5 text-muted">We focus on products where form, function, and thoughtful design come together.</p>
+              </div>
+              <div class="p-8">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="1.6"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+                <h3 class="mt-3 text-lg font-bold">Modern Tech Selection</h3>
+                <p class="mt-2 text-sm leading-5 text-muted">A curated range of tech products built for everyday use and creative workflows.</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-3 md:grid-cols-4">
+            ${[['12+','Official Partners'],['9,000+','Community Members'],['1,000+','Orders This Month'],['299+','Reviews']].map(([n,l])=>`
+              <div class="bg-white px-5 py-[22px]">
+                <p class="text-2xl font-bold text-accent">${n}</p>
+                <p class="mt-1 text-sm text-muted">${l}</p>
+              </div>`).join('')}
+          </div>
+          <div class="mt-6 text-center">
+            <a href="#/about" class="press inline-block bg-white p-2 text-base hover:bg-ink hover:text-white">More About Us</a>
+          </div>
+        </div>
+      </section>`,
+
+    blogPreview: () => `
+      <section class="bg-[#f3f3f3] py-16 md:py-24">
+        <div class="mx-auto max-w-[1280px] px-6">
+          <div class="text-center">
+            <span class="chip">Blogs</span>
+            <h2 class="mt-4 text-[30px] font-bold leading-10 md:text-4xl">Check out our <span class="text-accent">blogs</span></h2>
+            <p class="mt-3 text-base text-muted">Explore stories, tips, and insights that matter.</p>
+          </div>
+          <div class="mt-10 grid gap-4 md:grid-cols-3">
+            ${POSTS.slice(0,3).map(p=>`
+              <a href="#/post/${p.slug}" class="zoom group block bg-white active:opacity-90">
+                <div class="aspect-[400/256] overflow-hidden bg-sunk"><img src="${p.img}" alt="" loading="lazy" class="h-full w-full object-cover"></div>
+                <div class="p-4">
+                  <h3 class="text-base font-bold group-hover:text-accent">${p.title}</h3>
+                  <p class="mt-2 text-sm leading-5 text-muted">${p.excerpt}</p>
+                </div>
+              </a>`).join('')}
+          </div>
+          <div class="mt-8 text-center">
+            <a href="#/blog" class="press inline-flex h-8 items-center bg-white px-6 text-sm font-medium hover:bg-ink hover:text-white">More Blog Posts</a>
+          </div>
+        </div>
+      </section>`,
+
+    newsletter: () => `
+      <section class="bg-white px-6 py-16 md:py-24">
+        <div class="mx-auto max-w-[672px] text-center">
+          <span class="chip !bg-canvas">Newsletter</span>
+          <h2 class="mt-4 text-[30px] font-bold leading-10 md:text-4xl">Join our <span class="text-accent">newsletter</span></h2>
+          <p class="mt-3 text-base text-muted">Stay updated with the latest products, tips, and exclusive offers delivered to your inbox.</p>
+          <form class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row" data-demo-form>
+            <input type="email" required placeholder="Enter your email" aria-label="Email address" class="h-[34px] w-full border border-line px-4 text-sm outline-none placeholder:text-[#666] sm:w-80">
+            <button class="press h-8 w-full bg-ink px-10 text-sm font-medium text-white hover:bg-[#2a2a2a] sm:w-auto">Subscribe</button>
+          </form>
+          <p class="demo-ok mt-3 hidden text-sm text-accent">Thanks! This is a demo form, so nothing was sent.</p>
+        </div>
+      </section>`,
+
+    faq: () => `
+      <section class="py-16 md:py-24">
+        <div class="mx-auto max-w-[1280px] px-6">
+          <div class="text-center">
+            <span class="chip !px-3">FAQs</span>
+            <h2 class="mt-4 text-[34px] font-medium leading-tight tracking-[-0.025em] md:text-5xl">Frequently Asked <span class="text-accent">Questions</span></h2>
+            <p class="mt-4 text-lg text-muted">Common questions about our products, shipping, and support.</p>
+          </div>
+          <div class="mt-10 space-y-1.5">
+            ${FAQS.map(([q,a],i)=>`
+              <details class="bg-sunk" ${i===0?'open':''}>
+                <summary class="flex items-center justify-between gap-4 px-5 py-5 text-xl hover:bg-[#e6e6e6] md:text-[32px] md:leading-10">
+                  ${q}
+                  <svg class="chev shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f37513" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                </summary>
+                <p class="max-w-[1010px] px-5 pb-6 text-lg leading-[1.6] text-muted md:text-[26px] md:leading-[42px]">${a}</p>
+              </details>`).join('')}
+          </div>
+        </div>
+      </section>`,
+  };
+
+  /* =========================== RENDER =========================== */
+  // Fill shared slots
+  document.querySelectorAll('[data-slot]').forEach(el => { el.outerHTML = T[el.dataset.slot](); });
+
+  // Category tiles
+  document.getElementById('categoryGrid').innerHTML = CATEGORIES.map(c => `
+    <a href="#/products" class="zoom group relative block aspect-square overflow-hidden bg-sunk active:opacity-90">
+      <img src="${c.img}" alt="${c.name}" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
+      <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
+      <div class="absolute bottom-5 left-5 text-white">
+        <h3 class="text-base font-semibold">${c.name}</h3>
+        <p class="text-xs opacity-70">${c.count} pcs</p>
+      </div>
+    </a>`).join('');
+
+  // Product grids + filters (home and products view each get their own)
+  document.querySelectorAll('.product-grid').forEach(grid => {
+    grid.innerHTML = PRODUCTS.map(T.productCard).join('');
+    const tabs = grid.previousElementSibling.querySelectorAll('[data-filter]');
+    tabs.forEach(btn => btn.addEventListener('click', () => {
+      tabs.forEach(b => {
+        const on = b === btn;
+        b.setAttribute('aria-selected', on);
+        b.className = 'press flex items-center gap-2 border px-4 py-2 text-sm font-medium ' + (on ? 'border-accent bg-accent text-white' : 'border-line bg-white hover:border-[#bdbdbd]');
+      });
+      const f = btn.dataset.filter;
+      grid.querySelectorAll('a').forEach(card => {
+        const isNew = card.dataset.new === 'true';
+        card.style.display = (f === 'all' || (f === 'new' && isNew) || (f === 'classic' && !isNew)) ? '' : 'none';
+      });
+    }));
+  });
+
+  // Testimonials marquee (content doubled for a seamless loop)
+  const tCard = t => `
+    <div class="flex h-[265px] w-[300px] shrink-0 flex-col justify-between bg-white p-6 sm:w-[420px]">
+      <div>
+        <div class="flex gap-0.5">${star.repeat(5)}</div>
+        <p class="mt-4 text-sm leading-[22.75px]">${t.text}</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <img src="${t.img}" alt="" class="h-10 w-10 rounded-full bg-sunk object-cover">
+        <div><p class="text-sm font-semibold">${t.name}</p><p class="text-xs text-muted">${t.role}</p></div>
+      </div>
+    </div>`;
+  const rowA = TESTIMONIALS.slice(0,3), rowB = TESTIMONIALS.slice(3);
+  document.getElementById('marqueeA').innerHTML = [...rowA, ...rowA, ...rowA, ...rowA].map(tCard).join('');
+  document.getElementById('marqueeB').innerHTML = [...rowB, ...rowB, ...rowB, ...rowB].map(tCard).join('');
+
+  // About: product types + blurred collage
+  document.getElementById('productTypes').innerHTML = PRODUCT_TYPES.map(([t,s,icon]) => `
+    <div class="flex items-center gap-2 bg-sunk p-2">
+      <span class="flex h-12 w-12 shrink-0 items-center justify-center bg-accent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6">${icon}</svg></span>
+      <div><h3 class="text-lg font-medium leading-6">${t}</h3><p class="text-sm text-muted">${s}</p></div>
+    </div>`).join('');
+  document.getElementById('findCollage').innerHTML = PRODUCTS.slice(0,5).map(p => `
+    <div class="flex items-center justify-center bg-white/70 p-4"><img src="${p.img}" alt="" class="max-h-32 object-contain"></div>`).join('');
+
+  // Blog list
+  const featured = POSTS[0];
+  document.getElementById('blogFeatured').innerHTML = `
+    <a href="#/post/${featured.slug}" class="zoom group grid bg-white active:opacity-95 md:grid-cols-[645fr_587fr]">
+      <div class="relative aspect-[645/446] overflow-hidden bg-sunk md:aspect-auto md:min-h-[446px]"><img src="${featured.img}" alt="" class="absolute inset-0 h-full w-full object-cover"></div>
+      <div class="flex flex-col justify-center p-8 md:p-10">
+        <span class="w-fit bg-accent px-3 py-1 text-xs font-semibold text-white">NEW</span>
+        <p class="mt-5 text-xs uppercase text-muted">${featured.date} &bull; ${featured.read}</p>
+        <h3 class="mt-4 text-3xl font-medium leading-[1.25] md:text-5xl md:leading-[60px]">${featured.title}</h3>
+        <p class="mt-6 text-lg leading-[1.6] text-muted">${featured.excerpt}</p>
+        <span class="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-accent">Read full article <span class="inline-block transition-transform duration-300 group-hover:translate-x-1">&rarr;</span></span>
+      </div>
+    </a>`;
+  const rest = POSTS.slice(1);
+  document.getElementById('blogCount').textContent = rest.length + ' posts';
+  document.getElementById('blogGrid').innerHTML = rest.map(p => `
+    <a href="#/post/${p.slug}" class="zoom group block bg-white active:opacity-90">
+      <div class="aspect-[397/224] overflow-hidden bg-sunk"><img src="${p.img}" alt="" loading="lazy" class="h-full w-full object-cover"></div>
+      <div class="p-5">
+        <p class="text-xs uppercase text-muted">${p.date} &bull; ${p.read}</p>
+        <h3 class="mt-3 text-2xl font-medium leading-8 group-hover:text-accent">${p.title}</h3>
+        <p class="mt-3 text-base leading-6 text-muted">${p.excerpt}</p>
+      </div>
+    </a>`).join('');
+
+  // Demo forms: no network calls, just a confirmation line
+  document.querySelectorAll('[data-demo-form]').forEach(f => f.addEventListener('submit', e => {
+    e.preventDefault();
+    const ok = f.querySelector('.demo-ok') || f.nextElementSibling;
+    if (ok && ok.classList.contains('demo-ok')) ok.classList.remove('hidden');
+    f.reset();
+  }));
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const open = menu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', open);
+  });
+
+  /* =========================== ROUTER =========================== */
+  function renderProduct(slug) {
+    const p = PRODUCTS.find(x => x.slug === slug) || PRODUCTS[3];
+    const shots = [p.img, IMG.gallery1, IMG.gallery2, IMG.gallery3, IMG.gallery4];
+    const main = document.getElementById('pdpMain');
+    main.src = p.img; main.alt = p.name;
+    document.getElementById('pdpLabel').textContent = p.label;
+    document.getElementById('pdpName').textContent = p.name;
+    document.getElementById('pdpTag').textContent = p.tag;
+    document.getElementById('pdpPrice').textContent = money(p.price);
+    document.getElementById('pdpStock').innerHTML = `<span class="text-accent">${flame}</span>${p.stock}`;
+    document.getElementById('pdpDesc').textContent = p.desc;
+    const thumbs = document.getElementById('pdpThumbs');
+    thumbs.innerHTML = shots.map((s, i) => `
+      <button data-i="${i}" class="press flex aspect-square items-center justify-center border bg-white p-2 ${i===0?'border-accent':'border-transparent hover:border-line'}" aria-label="View image ${i+1}">
+        <img src="${s}" alt="" class="max-h-full object-contain">
+      </button>`).join('');
+    thumbs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      main.src = shots[b.dataset.i];
+      thumbs.querySelectorAll('button').forEach(x => {
+        x.classList.toggle('border-accent', x === b);
+        x.classList.toggle('border-transparent', x !== b);
+      });
+    }));
+    document.title = p.name + ' | Ecommerce Store Demo';
+  }
+
+  function renderPost(slug) {
+    const p = POSTS.find(x => x.slug === slug) || POSTS[0];
+    document.getElementById('postMeta').textContent = `${p.date} • ${p.read} • ${p.author}`;
+    document.getElementById('postTitle').textContent = p.title;
+    document.getElementById('postLead').textContent = p.excerpt;
+    const img = document.getElementById('postImg'); img.src = p.img; img.alt = p.title;
+    document.getElementById('postBody').innerHTML = p.slug === 'product-photography-guide'
+      ? PHOTO_GUIDE_BODY
+      : `<p>${p.excerpt}</p>`;
+    document.title = p.title + ' | Ecommerce Store Demo';
+  }
+
+  function renderLegal(key) {
+    const d = LEGAL[key];
+    document.getElementById('legalTitle').textContent = d.title;
+    document.getElementById('legalLead').textContent = d.lead;
+    document.getElementById('legalBody').innerHTML = d.sections.map(([h, t]) => `
+      <h2 class="mt-6 text-xl font-medium first:mt-0">${h}</h2>
+      <p class="mt-2 text-base leading-[1.7] text-muted">${t}</p>`).join('');
+    document.title = d.title + ' | Ecommerce Store Demo';
+  }
+
+  function route() {
+    const [, name = '', arg] = (location.hash || '#/').split('/');
+    let view = name || 'home';
+    document.title = 'Ecommerce Store Demo | VardWeb';
+    if (view === 'product') renderProduct(arg);
+    else if (view === 'post') renderPost(arg);
+    else if (view === 'privacy' || view === 'terms') { renderLegal(view); view = 'legal'; }
+    if (!document.querySelector(`[data-view="${view}"]`)) view = 'home';
+    document.querySelectorAll('[data-view]').forEach(v => v.classList.toggle('is-active', v.dataset.view === view));
+    document.querySelectorAll('[data-nav]').forEach(a => {
+      const on = a.dataset.nav === view || (a.dataset.nav === 'blog' && view === 'post') || (a.dataset.nav === 'products' && view === 'product');
+      a.classList.toggle('text-accent', on);
+      on ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current');
+    });
+    menu.classList.remove('open'); menuBtn.setAttribute('aria-expanded', 'false');
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  route();
+  </script>
+</body>
+</html>
