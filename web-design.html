@@ -282,10 +282,12 @@
       box-shadow: 0 10px 28px -6px rgba(0,229,255,0.55), 0 12px 34px -8px rgba(0,153,204,0.45);
     }
     .wd-hero-services-menu { position: relative; display: inline-flex; }
+    /* Deep links (page.html#section) land like in-page clicks: nav + 16px, matching nav-mobile.js */
+    section[id] { scroll-margin-top: 80px; }
     .wd-hero-services-trigger { display: inline-flex; align-items: center; gap: 7px; }
     .wd-hero-services-trigger .chevron { transition: transform 0.2s ease; }
     .wd-hero-services-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
-    .wd-hero-services-panel { position: fixed; left: 0; transform: translateY(6px); }
+    .wd-hero-services-panel { position: fixed; left: 0; transform: translateY(6px); overflow-y: auto; overscroll-behavior: contain; }
     .wd-hero-services-panel.drop-down { transform: translateY(-6px); }
     .wd-hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
@@ -325,6 +327,7 @@
       color: var(--text-1); margin-bottom: 26px;
     }
     .wd-cta-heading .wd-cta-heading-line1 { display: block; }
+    .wd-cta-kern { margin-right: 0.05em; } /* E and T crossbars touch at this weight/tracking */
     .wd-cta-heading .wd-cta-heading-line2 { display: block; white-space: nowrap; color: rgba(238,240,248,0.62); }
     .wd-cta-sub {
       font-size: 16.5px; line-height: 1.75; color: var(--text-2);
@@ -357,6 +360,8 @@
     .wd-cta-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,229,255,0.55); }
     @media (max-width: 640px) {
       .wd-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; }
+      .wd-cta-heading { text-wrap: balance; }
+      .wd-cta-heading .wd-cta-heading-line2 { white-space: normal; }
     }
 
     /* ── Divider ── */
@@ -884,7 +889,11 @@
 
     /* ── Compute rows (Passion = included feature, Pro = add-on) ── */
     /* Plain inline flow so the "?" always follows the last word when the label wraps */
-    .compute-label { min-width: 0; }
+    .compute-label { min-width: 0; overflow-wrap: anywhere; }
+    @media (max-width: 374px) { .compute-label .compute-nowrap { white-space: normal; } }
+    .compute-tail { white-space: nowrap; }
+    .wd-hero-pill .pill-short { display: none; }
+    @media (max-width: 480px) { .wd-hero-pill { white-space: nowrap; } .wd-hero-pill .pill-long { display: none; } .wd-hero-pill .pill-short { display: inline; } }
     .compute-nowrap { white-space: nowrap; }
     .compute-label .tt-icon-trigger { display: inline-flex; vertical-align: baseline; margin-left: 7px; position: relative; top: -2.5px; }
     .compute-feature { flex: 1; min-width: 0; }
@@ -1362,7 +1371,7 @@
     @media (max-width: 860px) { .overview-grid { grid-template-columns: 1fr; gap: 40px; } }
 
     /* ── What-You-Get case study rows ── */
-    .wyg-cases { display:flex; flex-direction:column; gap:0; margin-top:0; }
+    .wyg-cases { --wyg-s: 0.9; display:flex; flex-direction:column; gap:0; margin-top:0; }
     .wyg-row {
       display:grid;
       grid-template-columns: 2fr 1fr;
@@ -1389,20 +1398,21 @@
     .wyg-img-card {
       flex-shrink: 0;
       position: relative;
-      width: 168px;
-      height: 158px;
+      /* --wyg-s scales box + icon together so the icon's overflow ratio never changes */
+      width: calc(168px * var(--wyg-s, 1));
+      height: calc(158px * var(--wyg-s, 1));
       background: var(--raised);
       border: 1px solid var(--tier-border, rgba(0,229,255,0.25));
-      border-radius: 20px;
+      border-radius: calc(20px * var(--wyg-s, 1));
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
                   0 4px 24px var(--tier-glow, rgba(0,229,255,0.08));
       overflow: visible;
     }
     .wyg-img {
-      width: 168px;
-      height: 158px;
+      width: calc(168px * var(--wyg-s, 1));
+      height: calc(158px * var(--wyg-s, 1));
       max-width: none;
-      border-radius: 16px;
+      border-radius: calc(16px * var(--wyg-s, 1));
       object-fit: cover;
       position: absolute;
       top: 50%;
@@ -1439,8 +1449,8 @@
       .wyg-row--rev .wyg-content { order:1; padding-left:0; border-left:none; }
       .wyg-row--rev .wyg-metrics { order:2; }
       .wyg-content { padding-right:0; border-right:none; flex-direction:column; align-items:center; }
-      .wyg-img-card { width: 160px; height: 160px; }
-      .wyg-img { width: 160px; height: 160px; transform: translate(-50%, -50%) scale(0.90); }
+      .wyg-img-card { width: calc(160px * var(--wyg-s, 1)); height: calc(160px * var(--wyg-s, 1)); }
+      .wyg-img { width: calc(160px * var(--wyg-s, 1)); height: calc(160px * var(--wyg-s, 1)); transform: translate(-50%, -50%) scale(0.90); }
     }
     @media (max-width:480px) {
       .wyg-row { padding:40px 0; }
@@ -1502,8 +1512,10 @@
       background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
       padding: 22px 26px;
       transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform; -webkit-font-smoothing: antialiased;
     }
-    .wd-pitch-card:hover { border-color: rgba(0,229,255,0.22); transform: translateY(-3px); }
+    .wd-pitch-card:hover { border-color: rgba(0,229,255,0.22); transform: translateY(-3px) translateZ(0); }
     .wd-pitch-num {
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
       letter-spacing: 0.1em; color: rgba(0,229,255,0.55); margin-bottom: 14px;
@@ -1529,8 +1541,10 @@
       padding: 24px 26px 26px;
       display: flex; flex-direction: column;
       transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform; -webkit-font-smoothing: antialiased;
     }
-    .wd-feat-card:hover { border-color: rgba(0,229,255,0.25); transform: translateY(-3px); }
+    .wd-feat-card:hover { border-color: rgba(0,229,255,0.25); transform: translateY(-3px) translateZ(0); }
     .wd-feat-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .wd-feat-card-icon {
       width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
@@ -1621,8 +1635,12 @@
         var closeSvc = function () { svcTrigger.setAttribute('aria-expanded', 'false'); svcPanel.classList.remove('open'); };
         var openSvc = function () {
           var rect = svcTrigger.getBoundingClientRect();
+          svcPanel.style.maxHeight = '';
           var panelHeight = svcPanel.offsetHeight;
-          var openDown = rect.top - panelHeight - 10 < 16;
+          var spaceAbove = rect.top - 26, spaceBelow = window.innerHeight - rect.bottom - 26;
+          // open toward the roomier side when it doesn't fit above; scroll inside if it fits neither
+          var openDown = panelHeight > spaceAbove && spaceBelow > spaceAbove;
+          svcPanel.style.maxHeight = Math.max(160, openDown ? spaceBelow : spaceAbove) + 'px';
           if (openDown) {
             svcPanel.style.top = (rect.bottom + 10) + 'px';
             svcPanel.style.bottom = 'auto';
@@ -1693,7 +1711,7 @@
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
           <a href="web-design.html" class="dropdown-item active" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
           <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+          <a href="landing-pages.html" class="dropdown-item" role="menuitem" style="--item-c:#FF2D78;--item-bg:rgba(255,45,120,0.08)">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
           <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email &amp; SMS Marketing</a>
@@ -1750,7 +1768,7 @@
     <a href="services.html"   class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub active">Web Design</a>
     <a href="ecommerce.html"    class="mob-link mob-sub">E-Commerce</a>
-    <a href="contact.html"    class="mob-link mob-sub">Landing Pages</a>
+    <a href="landing-pages.html" class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"    class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email &amp; SMS Marketing</a>
@@ -1805,7 +1823,7 @@
   <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;text-align:center;">
     <div class="wd-hero-pill">
       <span class="wd-hero-pill-dot"></span>
-      Clinically proven to cure low conversion!
+      <span class="pill-long">Clinically proven to cure low conversion!</span><span class="pill-short">Cures low conversion!</span>
     </div>
     <p class="wd-hero-kicker">
       <span class="wd-kicker-slash">//</span>
@@ -1877,13 +1895,14 @@
       </button>
       <div class="dropdown-menu wd-hero-services-panel" id="wd-hero-services-panel" role="menu">
         <a href="#apps" class="dropdown-item" role="menuitem">Apps</a>
-        <a href="#what-you-get" class="dropdown-item" role="menuitem">SEO, CRM, TCI, CMS</a>
-        <a href="#full-picture" class="dropdown-item" role="menuitem">Google Stack</a>
+        <a href="#what-you-get" class="dropdown-item" role="menuitem">Merging Complete</a>
+        <a href="#full-picture" class="dropdown-item" role="menuitem">Ecosystem Stack</a>
         <a href="#wd-pitch" class="dropdown-item" role="menuitem">Not Off the Shelf</a>
         <a href="#wd-features" class="dropdown-item" role="menuitem">What's Included</a>
-        <a href="#ai" class="dropdown-item" role="menuitem">AI</a>
+        <a href="#ai" class="dropdown-item" role="menuitem">AI Optimization</a>
+        <a href="#wd-addons" class="dropdown-item" role="menuitem">Beyond the Tiers</a>
         <a href="#advertising" class="dropdown-item" role="menuitem">Advertising</a>
-        <a href="#pricing" class="dropdown-item" role="menuitem">Pricing</a>
+        <a href="#pricing" class="dropdown-item" role="menuitem">Choose Your Tier</a>
         <a href="#wd-faq" class="dropdown-item" role="menuitem">FAQ</a>
       </div>
     </div>
@@ -2298,7 +2317,7 @@
     </div>
 
     <!-- Card container: Google Setup -->
-    <div class="fp-card" style="border-radius:16px;border:1px solid var(--border);background:var(--raised);padding:40px 36px;box-shadow:0 0 40px rgba(0,229,255,0.04),0 4px 24px rgba(0,0,0,0.3);">
+    <div class="fp-card" style="border-radius:16px;border:1px solid rgba(0,229,255,0.3);background:var(--raised);padding:40px 36px;box-shadow:0 0 40px rgba(0,229,255,0.04),0 4px 24px rgba(0,0,0,0.3);">
 
       <p class="fp-card-title">Google Setup <span>legend</span></p>
       <p class="fp-legend"><span><b>CTA</b>call to action</span><span><b>CTR</b>click-through rate</span><span><b>GS</b>Google Shopping</span><span><b>GPR</b>Google Product Ratings</span><span><b>ROAS</b>return on ad spend</span><span><b>RPM</b>revenue per 1,000 ad impressions</span></p>
@@ -2307,7 +2326,7 @@
       <div id="fp-grid" class="fp-grid" style="display:grid;grid-template-columns:repeat(3,minmax(0,max-content));justify-content:space-evenly;gap:40px 0;">
 
         <!-- 1. GA4 -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
@@ -2323,7 +2342,7 @@
         </div>
 
         <!-- 2. GSC -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -2339,7 +2358,7 @@
         </div>
 
         <!-- 3. GBP -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -2355,7 +2374,7 @@
         </div>
 
         <!-- 4. GMC (includes GS and GPR) -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -2371,7 +2390,7 @@
         </div>
 
         <!-- 5. GAds -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
@@ -2387,7 +2406,7 @@
         </div>
 
         <!-- 6. GAS -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -2407,7 +2426,7 @@
     </div><!-- /card -->
 
     <!-- Card container: Meta Setup (on request) -->
-    <div class="fp-card fp-card--meta" style="border-radius:16px;border:1px solid var(--border);background:var(--raised);box-shadow:0 0 40px rgba(8,102,255,0.05),0 4px 24px rgba(0,0,0,0.3);">
+    <div class="fp-card fp-card--meta" style="border-radius:16px;border:1px solid rgba(0,229,255,0.3);background:var(--raised);box-shadow:0 0 40px rgba(8,102,255,0.05),0 4px 24px rgba(0,0,0,0.3);">
 
       <p class="fp-card-title">Meta Setup <span>on request</span></p>
       <p class="fp-legend"><span><b>EMQ</b>Event Match Quality, Meta’s 0–10 score for how well events match real people</span></p>
@@ -2415,7 +2434,7 @@
       <div class="fp-grid fp-grid--meta">
 
         <!-- 7. MP -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#0866FF;filter:drop-shadow(0 0 8px rgba(8,102,255,0.5));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
@@ -2431,7 +2450,7 @@
         </div>
 
         <!-- 8. CAPI -->
-        <div class="fp-item" style="opacity:0;transform:translateY(32px);display:flex;flex-direction:column;align-items:stretch;">
+        <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
           <div class="fp-head">
             <div style="align-self:center;margin-bottom:12px;color:#0866FF;filter:drop-shadow(0 0 8px rgba(8,102,255,0.5));" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="7" rx="2"/><rect x="2" y="14" width="20" height="7" rx="2"/><line x1="6" y1="6.5" x2="6.01" y2="6.5"/><line x1="6" y1="17.5" x2="6.01" y2="17.5"/></svg>
@@ -2465,6 +2484,13 @@
 .fp-grid ul { width: 100%; align-items: stretch; }
 .fp-grid ul li { display:flex; align-items:flex-start; gap:8px; }
 .fp-grid ul li::before { content:''; flex-shrink:0; width:4px; height:4px; border-radius:50%; background:rgba(236,72,153,0.45); margin-top:9px; }
+.fp-staged .fp-head > div, .fp-staged .fp-item h3, .fp-staged .fp-item li {
+  opacity:0; transform:translateY(12px);
+  transition:opacity 0.5s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  transition-delay:var(--fp-d, 0ms);
+}
+.fp-staged.is-revealed .fp-head > div, .fp-staged.is-revealed .fp-item h3, .fp-staged.is-revealed .fp-item li { opacity:1; transform:none; }
+.fp-staged.fp-instant .fp-head > div, .fp-staged.fp-instant .fp-item h3, .fp-staged.fp-instant .fp-item li { transition:none; }
 .fp-card-title { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#EC4899; margin:0 0 10px; }
 .fp-card-title span { color:var(--text-3, #6E7695); font-weight:500; letter-spacing:0; text-transform:none; margin-left:8px; }
 .fp-legend { display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 28px; padding-bottom:18px; border-bottom:1px solid var(--border); font-size:12.5px; line-height:1.5; color:var(--text-2); }
@@ -2477,6 +2503,7 @@
 @media (max-width:860px) { .cap-hero-img { margin: 0 auto; } }
 .cap-hdr-row { gap:32px; }
 @media (min-width:861px) { .cap-hdr-row { justify-content:flex-start; gap:260px; } .cap-hdr-row > div:first-child { max-width:480px; } }
+@media (min-width:861px) { .cap-hdr-row h2 { white-space:nowrap; } }
 .cap-hero-img { cursor: default; }
 .cap-hero-img img {
   transform: rotate(-5deg) scale(0.82);
@@ -2492,27 +2519,27 @@
 
 <script>
 (function () {
-  var items = document.querySelectorAll('.fp-item');
-  var ease  = 'cubic-bezier(0.22,1,0.36,1)';
-  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
-  function reveal() {
-    items.forEach(function (el, i) {
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-      el.style.transitionDelay = (i * 120) + 'ms';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-      el.addEventListener('transitionend', function cleanup(evt) {
-        if (evt.propertyName !== 'transform') return;
-        el.style.opacity = '';
-        el.style.transform = '';
-        el.style.transition = '';
-        el.style.transitionDelay = '';
-        el.removeEventListener('transitionend', cleanup);
+  /* Staged reveal: icons, then headers, then the dot-jots row by row, across
+     every card at once. Each grid (Google, Meta) starts when it scrolls into view. */
+  function stageGrid(grid) {
+    if (!window.PerfUtils || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    grid.querySelectorAll('.fp-item').forEach(function (item, i) {
+      var icon = item.querySelector('.fp-head > div');
+      var h3 = item.querySelector('h3');
+      if (icon) icon.style.setProperty('--fp-d', (i * 70) + 'ms');
+      if (h3) h3.style.setProperty('--fp-d', (350 + i * 70) + 'ms');
+      item.querySelectorAll('li').forEach(function (li, k) {
+        li.style.setProperty('--fp-d', (750 + k * 160 + i * 40) + 'ms');
       });
     });
+    /* Hide instantly (no fade-out) even if the grid has already painted */
+    grid.classList.add('fp-staged', 'fp-instant');
+    void grid.offsetWidth;
+    grid.classList.remove('fp-instant');
+    var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+    sharedObs15.watch(grid, function () { grid.classList.add('is-revealed'); }, { once: true });
   }
-  var grid = document.getElementById('fp-grid');
-  if (grid) sharedObs15.watch(grid, reveal, { once: true });
+  document.querySelectorAll('#full-picture .fp-grid').forEach(stageGrid);
 
   /* Centre each heading block (icon + h3): on desktop over the text of its
      first dot-jot; on mobile (single column) over the card's centre line,
@@ -2741,7 +2768,7 @@
           <li><strong>Transactional emails</strong><br>Receipts &amp; confirmations</li>
           <li><strong>Lifecycle flows</strong><br>1, 3 or 10 by tier</li>
           <li><strong>Customer accounts</strong><br>Order history &amp; discount codes</li>
-          <li><strong>SMS campaigns</strong><br>Sent when you need them. SMS is <a href="email-marketing.html#sms-pricing" class="wd-feat-inline-link">pay per text</a></li>
+          <li><strong>SMS campaigns</strong><br>Sent when you need them.<br>SMS is <a href="email-marketing.html#sms-pricing" class="wd-feat-inline-link">pay per text</a></li>
         </ul>
       </div>
       <div class="wd-feat-card" style="opacity:0;transform:translateY(32px);">
@@ -3286,7 +3313,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3637,7 +3664,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to two professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to two professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3988,7 +4015,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to three professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to three professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4338,7 +4365,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span>
+            <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4876,16 +4903,16 @@
       <div class="wd-cta-content">
         <div class="wd-cta-pill">
           <span class="wd-cta-pill-dot"></span>
-          Let's Build Your Site
+          Flawless Asset
         </div>
 
         <h2 class="wd-cta-heading">
-          <span class="wd-cta-heading-line1">Build something</span>
+          <span class="wd-cta-heading-line1">Build som<span class="wd-cta-kern">e</span>thing</span>
           <span class="wd-cta-heading-line2">Worth visiting.</span>
         </h2>
 
         <p class="wd-cta-sub">
-          Every project is different. Book a free 1-hour discovery call and we'll scope the right fit together. No commitment required.
+          Confused visitors never pull out their credit cards. Stop treating your web design as an expense. Your website is your only 24/7 salesperson. 
         </p>
 
         <div class="wd-cta-row">
@@ -4941,7 +4968,7 @@
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link active">Web Design</a>
         <a href="ecommerce.html" class="footer-link">E-Commerce</a>
-        <a href="contact.html" class="footer-link">Landing Pages</a>
+        <a href="landing-pages.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link">Email &amp; SMS Marketing</a>

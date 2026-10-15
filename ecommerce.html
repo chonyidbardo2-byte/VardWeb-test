@@ -580,10 +580,12 @@
       box-shadow: 0 10px 28px -6px rgba(239,68,68,0.55), 0 12px 34px -8px rgba(220,38,38,0.45);
     }
     .ecom-hero-services-menu { position: relative; display: inline-flex; }
+    /* Deep links (page.html#section) land like in-page clicks: nav + 16px, matching nav-mobile.js */
+    section[id] { scroll-margin-top: 80px; }
     .ecom-hero-services-trigger { display: inline-flex; align-items: center; gap: 7px; }
     .ecom-hero-services-trigger .chevron { transition: transform 0.2s ease; }
     .ecom-hero-services-trigger[aria-expanded="true"] .chevron { transform: rotate(180deg); }
-    .ecom-hero-services-panel { position: fixed; left: 0; transform: translateY(6px); }
+    .ecom-hero-services-panel { position: fixed; left: 0; transform: translateY(6px); overflow-y: auto; overscroll-behavior: contain; }
     .ecom-hero-services-panel.drop-down { transform: translateY(-6px); }
     .ecom-hero-services-panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
 
@@ -1049,7 +1051,7 @@
 
     /* ── What-You-Get case study rows: ported from web-design.html #what-you-get.
        Frame re-themed to ecom red; per-row --tier-color identities kept. ── */
-    .wyg-cases { display:flex; flex-direction:column; gap:0; margin-top:0; }
+    .wyg-cases { --wyg-s: 0.9; display:flex; flex-direction:column; gap:0; margin-top:0; }
     .wyg-row {
       display:grid;
       grid-template-columns: 2fr 1fr;
@@ -1076,20 +1078,21 @@
     .wyg-img-card {
       flex-shrink: 0;
       position: relative;
-      width: 168px;
-      height: 158px;
+      /* --wyg-s scales box + icon together so the icon's overflow ratio never changes */
+      width: calc(168px * var(--wyg-s, 1));
+      height: calc(158px * var(--wyg-s, 1));
       background: var(--raised);
       border: 1px solid var(--tier-border, rgba(239,68,68,0.25));
-      border-radius: 20px;
+      border-radius: calc(20px * var(--wyg-s, 1));
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.04),
                   0 4px 24px var(--tier-glow, rgba(239,68,68,0.08));
       overflow: visible;
     }
     .wyg-img {
-      width: 168px;
-      height: 158px;
+      width: calc(168px * var(--wyg-s, 1));
+      height: calc(158px * var(--wyg-s, 1));
       max-width: none;
-      border-radius: 16px;
+      border-radius: calc(16px * var(--wyg-s, 1));
       object-fit: cover;
       position: absolute;
       top: 50%;
@@ -1126,8 +1129,8 @@
       .wyg-row--rev .wyg-content { order:1; padding-left:0; border-left:none; }
       .wyg-row--rev .wyg-metrics { order:2; }
       .wyg-content { padding-right:0; border-right:none; flex-direction:column; align-items:center; }
-      .wyg-img-card { width: 160px; height: 160px; }
-      .wyg-img { width: 160px; height: 160px; transform: translate(-50%, -50%) scale(0.90); }
+      .wyg-img-card { width: calc(160px * var(--wyg-s, 1)); height: calc(160px * var(--wyg-s, 1)); }
+      .wyg-img { width: calc(160px * var(--wyg-s, 1)); height: calc(160px * var(--wyg-s, 1)); transform: translate(-50%, -50%) scale(0.90); }
     }
     @media (max-width:480px) {
       .wyg-row { padding:40px 0; }
@@ -1142,8 +1145,10 @@
       background: var(--raised); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
       padding: 22px 26px;
       transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform; -webkit-font-smoothing: antialiased;
     }
-    .pitch-card:hover { border-color: rgba(239,68,68,0.22); transform: translateY(-3px); }
+    .pitch-card:hover { border-color: rgba(239,68,68,0.22); transform: translateY(-3px) translateZ(0); }
     .pitch-num {
       font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
       letter-spacing: 0.1em; color: rgba(239,68,68,0.55); margin-bottom: 14px;
@@ -1168,8 +1173,10 @@
       padding: 24px 26px 26px;
       display: flex; flex-direction: column;
       transition: border-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      transform: translateZ(0); backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      will-change: transform; -webkit-font-smoothing: antialiased;
     }
-    .feat-card:hover { border-color: rgba(239,68,68,0.25); transform: translateY(-3px); }
+    .feat-card:hover { border-color: rgba(239,68,68,0.25); transform: translateY(-3px) translateZ(0); }
     .feat-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .feat-card-icon {
       width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
@@ -1515,7 +1522,11 @@
 
     /* ── Compute rows (Passion = included feature, Pro = add-on) ── */
     /* Plain inline flow so the "?" always follows the last word when the label wraps */
-    .compute-label { min-width: 0; }
+    .compute-label { min-width: 0; overflow-wrap: anywhere; }
+    @media (max-width: 374px) { .compute-label .compute-nowrap { white-space: normal; } }
+    .compute-tail { white-space: nowrap; }
+    .ecom-hero-pill .pill-short { display: none; }
+    @media (max-width: 480px) { .ecom-hero-pill { white-space: nowrap; } .ecom-hero-pill .pill-long { display: none; } .ecom-hero-pill .pill-short { display: inline; } }
     .compute-nowrap { white-space: nowrap; }
     .compute-label .tt-icon-trigger { display: inline-flex; vertical-align: baseline; margin-left: 7px; position: relative; top: -2.5px; }
     .compute-feature { flex: 1; min-width: 0; }
@@ -1801,7 +1812,7 @@
     .ecom-cta { padding: 90px 28px 110px; }
     .ecom-cta-card {
       max-width: 1200px; margin: 0 auto; position: relative; overflow: hidden;
-      border-radius: 48px; min-height: 500px;
+      border-radius: 48px; min-height: 560px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 60px 28px; text-align: center;
       background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
@@ -1811,9 +1822,10 @@
     .ecom-cta-content { position: relative; z-index: 1; max-width: 900px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
     .ecom-cta-heading { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; line-height: 1.05; font-size: clamp(30px, 5.2vw, 60px); color: var(--text-1); margin: 18px 0 16px; }
     @media (max-width: 340px) { .ecom-cta-heading { font-size: 26px; } }
-    .ecom-cta-break { display: none; }
-    @media (min-width: 641px) { .ecom-cta-break { display: block; } }
-    @media (max-width: 640px) { .ecom-cta-card { padding: 48px 22px; min-height: 440px; border-radius: 32px; } }
+    .ecom-cta-heading { text-wrap: balance; }
+    .ecom-cta-heading .ecom-heading-grad { display: inline-block; text-wrap: balance; }
+    .ecom-cta-break { display: block; }
+    @media (max-width: 640px) { .ecom-cta-card { padding: 48px 22px; min-height: 480px; border-radius: 32px; } }
     .ecom-cta-sub { font-size: 15px; color: var(--text-2); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
     .ecom-cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
     .ecom-cta-actions .btn { padding: 15px 34px; font-size: 13.5px; transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
@@ -2005,7 +2017,7 @@
           <div class="dropdown-menu" id="dd-services-menu" role="menu">
             <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
             <a href="ecommerce.html"  class="dropdown-item active" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
-            <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+            <a href="landing-pages.html" class="dropdown-item" role="menuitem" style="--item-c:#FF2D78;--item-bg:rgba(255,45,120,0.08)">Landing Pages</a>
             <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
             <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
             <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email &amp; SMS Marketing</a>
@@ -2060,7 +2072,7 @@
       <a href="services.html" class="mob-link mob-sub">All Services</a>
       <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
       <a href="ecommerce.html" class="mob-link mob-sub active">E-Commerce</a>
-      <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+      <a href="landing-pages.html" class="mob-link mob-sub">Landing Pages</a>
       <a href="contact.html"  class="mob-link mob-sub">App Development</a>
       <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
       <a href="email-marketing.html" class="mob-link mob-sub">Email &amp; SMS Marketing</a>
@@ -2110,7 +2122,7 @@
         <div class="ecom-hero-content">
           <div class="ecom-hero-pill reveal-fade">
             <span class="ecom-hero-pill-dot"></span>
-            Warning: May cause extreme revenue spikes.
+            <span class="pill-long">Warning: May cause extreme revenue spikes.</span><span class="pill-short">May cause revenue spikes.</span>
           </div>
           <p class="ecom-hero-kicker reveal-fade" style="transition-delay:0.02s">
             <span class="ecom-kicker-slash">//</span>
@@ -2128,11 +2140,15 @@
                 <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
               <div class="dropdown-menu ecom-hero-services-panel" id="ecom-hero-services-panel" role="menu">
+                <a href="#ecom-apps" class="dropdown-item" role="menuitem">Apps</a>
                 <a href="#ecom-wyg" class="dropdown-item" role="menuitem">Merging Complete</a>
                 <a href="#ecom-deploy" class="dropdown-item" role="menuitem">How It Works</a>
+                <a href="#ecom-full-picture" class="dropdown-item" role="menuitem">Ecosystem Stack</a>
                 <a href="#ecom-pitch" class="dropdown-item" role="menuitem">Not Off the Shelf</a>
                 <a href="#ecom-features" class="dropdown-item" role="menuitem">What's Included</a>
+                <a href="#ecom-ai" class="dropdown-item" role="menuitem">AI Optimization</a>
                 <a href="#ecom-addons" class="dropdown-item" role="menuitem">Beyond the Tiers</a>
+                <a href="#ecom-advertising" class="dropdown-item" role="menuitem">Advertising</a>
                 <a href="#ecom-tiers" class="dropdown-item" role="menuitem">Choose Your Tier</a>
                 <a href="#ecom-faq" class="dropdown-item" role="menuitem">FAQ</a>
               </div>
@@ -2664,8 +2680,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="section-inner">
         <div class="section-head reveal-fade">
           <p class="sec-tag">// Featured</p>
-          <h2>Complex Deployments,<span class="ecom-heading-grad" style="display:block;">Zero Friction.</span></h2>
-          <p>Deploy with ease, leave complexities to us.</p>
+          <h2>Complex Deployments.<span class="ecom-heading-grad" style="display:block;">Zero Friction.</span></h2>
         </div>
         <div class="deploy-bento">
         <div class="deploy-bento-row">
@@ -2966,6 +2981,335 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
     </section>
 
+    <div class="divider"></div>
+
+    <!-- ============ FULLY STACKED (ported from web-design.html #full-picture) ============ -->
+    <section id="ecom-full-picture" aria-label="What's included">
+      <div class="section-inner">
+
+        <!-- Header row: title/subtitle left, illustration right -->
+        <div class="cap-hdr-row" style="display:flex;flex-wrap:wrap;align-items:center;margin-bottom:48px;">
+          <div class="reveal-fade" style="flex:1;min-width:260px;">
+            <p class="sec-tag">// Fully stacked</p>
+            <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+              Everything your site
+              <span style="position:relative;display:inline-block;">
+                needs.
+                <svg viewBox="0 0 80 6" style="position:absolute;left:0;bottom:-5px;width:100%;" aria-hidden="true" focusable="false">
+                  <path d="M1 4.5C17 1.63 55 1.39 79 4.5" stroke="#FF2D78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+              </span>
+            </h2>
+            <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:480px;">
+              Empower with Google’s entire growth ecosystem.<br><br>Now featuring Meta's stack available on request.<br><br>We handle the complex setup of your tracking, SEO monitoring, product feeds, and revenue streams before launch.<br><br>You get an asset that is fully tracked, visible to search engines, and ready to generate revenue from day one.<br><br>Any paid advertising or features available are offered and billed separately.
+            </p>
+          </div>
+          <div class="cap-hero-img" style="flex-shrink:0;">
+            <img src="brand_assets/icons/wd-google-stack-hero.webp" alt="" aria-hidden="true" style="width:192px;height:auto;border-radius:12px;display:block;" loading="lazy" />
+          </div>
+        </div>
+
+        <!-- Card container: Google Setup -->
+        <div class="fp-card" style="border-radius:16px;border:1px solid var(--border);background:var(--raised);padding:40px 36px;box-shadow:0 0 40px rgba(0,229,255,0.04),0 4px 24px rgba(0,0,0,0.3);">
+
+          <p class="fp-card-title">Google Setup <span>legend</span></p>
+          <p class="fp-legend"><span><b>CTA</b>call to action</span><span><b>CTR</b>click-through rate</span><span><b>GS</b>Google Shopping</span><span><b>GPR</b>Google Product Ratings</span><span><b>ROAS</b>return on ad spend</span></p>
+
+          <!-- Feature grid -->
+          <div id="fp-grid" class="fp-grid fp-grid--five">
+
+            <!-- 1. GA4 -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GA4<br>(Google Analytics 4)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Event and conversion tracking on every CTA</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Funnels from first visit to lead or sale</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Audiences shared with GAds for remarketing</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Cross-device journeys in one view</li>
+              </ul>
+            </div>
+
+            <!-- 2. GSC -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GSC<br>(Google Search Console)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Index coverage and crawl error monitoring</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Query, impression and CTR reporting</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Core Web Vitals health checks</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Sitemap and rich-result validation</li>
+              </ul>
+            </div>
+
+            <!-- 3. GBP -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GBP<br>(Google Business Profile)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Verified listing on Google Maps and Search</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Hours, services and photos kept current</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Review requests and owner replies</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Calls and direction requests tracked in GA4</li>
+              </ul>
+            </div>
+
+            <!-- 4. GMC (includes GS and GPR) -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GMC<br>(Google Merchant Center)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Product feed built, verified and synced</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">GS: free listings and Shopping ad eligibility</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">GPR: star ratings on Shopping results</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Shipping, tax and feed errors resolved</li>
+              </ul>
+            </div>
+
+            <!-- 5. GAds -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#EC4899;filter:drop-shadow(0 0 8px rgba(236,72,153,0.45));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">GAds<br>(Google Ads)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Conversion tracking on every lead and sale</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Enhanced Conversions recover lost signals</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Linked with GA4 and GMC for smarter bidding</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Cost per lead and ROAS reporting</li>
+              </ul>
+            </div>
+
+          </div><!-- /fp-grid -->
+
+        </div><!-- /card -->
+
+        <!-- Card container: Meta Setup (on request) -->
+        <div class="fp-card fp-card--meta" style="border-radius:16px;border:1px solid var(--border);background:var(--raised);box-shadow:0 0 40px rgba(8,102,255,0.05),0 4px 24px rgba(0,0,0,0.3);">
+
+          <p class="fp-card-title">Meta Setup <span>on request</span></p>
+          <p class="fp-legend"><span><b>EMQ</b>Event Match Quality, Meta’s 0–10 score for how well events match real people</span></p>
+
+          <div class="fp-grid fp-grid--meta">
+
+            <!-- 7. MP -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#0866FF;filter:drop-shadow(0 0 8px rgba(8,102,255,0.5));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">MP<br>(Meta Pixel)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Installed behind the consent banner</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Standard events on views, leads and sales</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Custom audiences for retargeting</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">EMQ score monitored and improved</li>
+              </ul>
+            </div>
+
+            <!-- 8. CAPI -->
+            <div class="fp-item" style="display:flex;flex-direction:column;align-items:stretch;">
+              <div class="fp-head">
+                <div style="align-self:center;margin-bottom:12px;color:#0866FF;filter:drop-shadow(0 0 8px rgba(8,102,255,0.5));" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="7" rx="2"/><rect x="2" y="14" width="20" height="7" rx="2"/><line x1="6" y1="6.5" x2="6.01" y2="6.5"/><line x1="6" y1="17.5" x2="6.01" y2="17.5"/></svg>
+                </div>
+                <h3 style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;color:var(--text-1);margin-bottom:10px;letter-spacing:-0.02em;">CAPI<br>(Conversions API)</h3>
+              </div>
+              <ul style="list-style:none;display:flex;flex-direction:column;gap:6px;padding:0;width:100%;">
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Server-side events from the client’s edge</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Deduplicated with MP for clean counts</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Recovers conversions blocked by browsers</li>
+                <li style="font-size:13px;line-height:1.65;color:var(--text-2);">Hashed customer data, privacy-safe</li>
+              </ul>
+            </div>
+
+          </div><!-- /fp-grid--meta -->
+
+        </div><!-- /card meta -->
+      </div>
+    </section>
+
+    <style>
+    /* 5 Google cards: 3 on top, the bottom 2 centred under the gaps of the row above */
+    .fp-grid--five { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:40px 24px; }
+    .fp-grid--five > .fp-item { grid-column:span 2; justify-self:center; max-width:100%; }
+    .fp-grid--five > .fp-item:nth-child(4) { grid-column:2 / span 2; }
+    .fp-grid--five > .fp-item:nth-child(5) { grid-column:4 / span 2; }
+    @media (max-width:860px) {
+      .fp-grid--five { grid-template-columns:repeat(4,minmax(0,1fr)); }
+      .fp-grid--five > .fp-item:nth-child(4) { grid-column:auto / span 2; }
+      .fp-grid--five > .fp-item:nth-child(5) { grid-column:2 / span 2; }
+    }
+    @media (max-width:640px) {
+      .fp-grid--five { grid-template-columns:minmax(0,1fr); }
+      .fp-grid--five > .fp-item:nth-child(n) { grid-column:auto; }
+    }
+    .fp-grid .fp-head { align-self:flex-start; margin-left:12px; display:flex; flex-direction:column; align-items:center; }
+    .fp-grid .fp-item h3 { text-align: center; }
+    /* Heading blocks are centred on each card's first dot-jot by the script below the section */
+    @media (max-width:640px) {
+      .fp-card { padding-left: 20px !important; padding-right: 20px !important; }
+      .fp-grid .fp-item h3 { white-space: nowrap; }
+    }
+    .fp-grid ul { width: 100%; align-items: stretch; }
+    .fp-grid ul li { display:flex; align-items:flex-start; gap:8px; }
+    .fp-grid ul li::before { content:''; flex-shrink:0; width:4px; height:4px; border-radius:50%; background:rgba(236,72,153,0.45); margin-top:9px; }
+    .fp-staged .fp-head > div, .fp-staged .fp-item h3, .fp-staged .fp-item li {
+      opacity:0; transform:translateY(12px);
+      transition:opacity 0.5s ease, transform 0.6s cubic-bezier(0.22,1,0.36,1);
+      transition-delay:var(--fp-d, 0ms);
+    }
+    .fp-staged.is-revealed .fp-head > div, .fp-staged.is-revealed .fp-item h3, .fp-staged.is-revealed .fp-item li { opacity:1; transform:none; }
+    .fp-staged.fp-instant .fp-head > div, .fp-staged.fp-instant .fp-item h3, .fp-staged.fp-instant .fp-item li { transition:none; }
+    .fp-card-title { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#EC4899; margin:0 0 10px; }
+    .fp-card-title span { color:var(--text-3, #6E7695); font-weight:500; letter-spacing:0; text-transform:none; margin-left:8px; }
+    .fp-legend { display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 28px; padding-bottom:18px; border-bottom:1px solid var(--border); font-size:12.5px; line-height:1.5; color:var(--text-2); }
+    .fp-legend b { font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--text-1); margin-right:6px; }
+    .fp-card--meta { width:fit-content; max-width:100%; margin:24px auto 0; padding:28px 32px; }
+    .fp-card--meta .fp-card-title { color:#5B93FF; }
+    .fp-card--meta ul li::before { background:rgba(8,102,255,0.6); }
+    .fp-grid--meta { display:grid; grid-template-columns:repeat(2,minmax(0,max-content)); justify-content:center; gap:32px 56px; }
+    @media (max-width:640px) { .fp-card--meta { padding:24px 20px; } .fp-grid--meta { grid-template-columns:minmax(0,max-content); } .fp-legend { flex-direction:column; gap:6px; } }
+    @media (max-width:860px) { .cap-hero-img { margin: 0 auto; } }
+    .cap-hdr-row { gap:32px; }
+    @media (min-width:861px) { .cap-hdr-row { justify-content:flex-start; gap:260px; } .cap-hdr-row > div:first-child { max-width:480px; } }
+    @media (min-width:861px) { .cap-hdr-row h2 { white-space:nowrap; } }
+    .cap-hero-img { cursor: default; }
+    .cap-hero-img img {
+      transform: rotate(-5deg) scale(0.82);
+      transform-origin: center center;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .cap-hero-img.is-visible img {
+      transform: rotate(-1deg) scale(1.17) translateY(0px);
+      opacity: 1;
+    }
+    </style>
+
+    <script>
+    (function () {
+      /* Centre each heading block (icon + h3): on desktop over the text of its
+         first dot-jot; on mobile (single column) over the card's centre line,
+         so every icon in the stack lines up vertically. */
+      var mobileQuery = window.matchMedia('(max-width: 640px)');
+      function centreHeads() {
+        var mobile = mobileQuery.matches;
+        document.querySelectorAll('#ecom-full-picture .fp-grid .fp-item').forEach(function (item) {
+          var head = item.querySelector('.fp-head');
+          var li = item.querySelector('li');
+          if (!head || !li) return;
+          var centre;
+          if (mobile) {
+            var card = item.closest('.fp-card').getBoundingClientRect();
+            centre = (card.left + card.right) / 2;
+          } else {
+            var range = document.createRange();
+            range.selectNodeContents(li);
+            var text = range.getBoundingClientRect();
+            centre = (text.left + text.right) / 2;
+          }
+          var itemLeft = item.getBoundingClientRect().left;
+          var headWidth = head.getBoundingClientRect().width;
+          head.style.marginLeft = (centre - itemLeft - headWidth / 2) + 'px';
+        });
+      }
+      var centreQueued = false;
+      function queueCentre() {
+        if (centreQueued) return;
+        centreQueued = true;
+        requestAnimationFrame(function () { centreQueued = false; centreHeads(); });
+      }
+      queueCentre();
+      window.addEventListener('load', queueCentre);
+      window.addEventListener('resize', queueCentre);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueCentre);
+
+      /* Staged reveal: icons, then headers, then the dot-jots row by row, across
+         every card at once. Each grid (Google, Meta) starts when it scrolls into view. */
+      function stageGrid(grid) {
+        if (!window.PerfUtils || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        grid.querySelectorAll('.fp-item').forEach(function (item, i) {
+          var icon = item.querySelector('.fp-head > div');
+          var h3 = item.querySelector('h3');
+          if (icon) icon.style.setProperty('--fp-d', (i * 70) + 'ms');
+          if (h3) h3.style.setProperty('--fp-d', (350 + i * 70) + 'ms');
+          item.querySelectorAll('li').forEach(function (li, k) {
+            li.style.setProperty('--fp-d', (750 + k * 160 + i * 40) + 'ms');
+          });
+        });
+        /* Hide instantly (no fade-out) even if the grid has already painted */
+        grid.classList.add('fp-staged', 'fp-instant');
+        void grid.offsetWidth;
+        grid.classList.remove('fp-instant');
+        var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+        sharedObs15.watch(grid, function () { grid.classList.add('is-revealed'); }, { once: true });
+      }
+      /* perf-utils.js loads at the end of this page, so wait for it */
+      document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('#ecom-full-picture .fp-grid').forEach(stageGrid);
+      });
+
+      /* Hero illustration: settle in on first view, then float while on screen.
+         perf-utils.js loads at the end of this page, so wait for it */
+      document.addEventListener('DOMContentLoaded', function () {
+      var heroEl = document.querySelector('#ecom-full-picture .cap-hero-img');
+      var heroImg = heroEl && heroEl.querySelector('img');
+      if (!heroEl || !heroImg || !window.PerfUtils) return;
+      var sharedObs20 = window.__sharedObs20 = window.__sharedObs20 || PerfUtils.sharedObserver(0.2);
+      sharedObs20.watch(heroEl, function () {
+        heroImg.style.transition = 'transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease';
+        heroEl.classList.add('is-visible');
+      }, { once: true });
+
+      var T = 2000;
+      var hs = { rid: null, tid: null };
+      function startFloat() {
+        clearTimeout(hs.tid);
+        if (hs.rid) { cancelAnimationFrame(hs.rid); hs.rid = null; }
+        hs.tid = setTimeout(function () {
+          heroImg.style.transition = '';
+          var start = performance.now();
+          (function loop(now) {
+            var phase = Math.sin(((now - start) / T) * Math.PI * 2);
+            heroImg.style.transform = 'rotate(-1deg) scale(1.17) translateY(' + (phase * 4).toFixed(3) + 'px)';
+            hs.rid = requestAnimationFrame(loop);
+          }(performance.now()));
+        }, 600);
+      }
+      function stopFloat() {
+        clearTimeout(hs.tid);
+        if (hs.rid) { cancelAnimationFrame(hs.rid); hs.rid = null; }
+        heroImg.style.transform = '';
+      }
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) { if (!hs.rid) startFloat(); }
+        else stopFloat();
+      }, { threshold: 0, rootMargin: '-20% 0px -20% 0px' }).observe(heroEl);
+      });
+    })();
+    </script>
+
     <!-- ============ PORTING PITCH ============ -->
     <section id="ecom-pitch" style="background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);">
       <div class="section-inner">
@@ -3145,7 +3489,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             <ul class="feat-list">
               <li><strong>Customer accounts</strong><br>With order history</li>
-              <li><strong>Lifecycle email/SMS</strong><br>Welcome, abandoned cart, win-back. SMS is <a href="email-marketing.html#sms-pricing" class="feat-inline-link">pay per text</a></li>
+              <li><strong>Lifecycle email/SMS</strong><br>Welcome, abandoned cart, win-back.<br>SMS is <a href="email-marketing.html#sms-pricing" class="feat-inline-link">pay per text</a></li>
               <li><strong>Discount codes &amp; promos</strong><br>Auto-applied at checkout</li>
               <li><strong>Loyalty / rewards points</strong><br>Earned and redeemed on repeat orders</li>
             </ul>
@@ -3474,7 +3818,7 @@ document.addEventListener('DOMContentLoaded', function () {
               <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$300</span></span></span>
               <span class="price-suffix">/mo + tax</span>
             </div>
-            <p class="pricing-pages">1–10 pages · ~1-4 week delivery</p>
+            <p class="pricing-pages">Up to 250 products · 1–10 pages · ~1-4 week delivery</p>
             <p class="pricing-desc">
               A clean, fast, custom-coded store with checkout, stock and email basics already wired in. Ideal if "I should really start selling online" has been living in your notes app for a while.
             </p>
@@ -3577,7 +3921,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, so order questions never land in a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span>
+                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, so order questions never land in a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3841,7 +4185,7 @@ document.addEventListener('DOMContentLoaded', function () {
               <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$450</span></span></span>
               <span class="price-suffix">/mo + tax</span>
             </div>
-            <p class="pricing-pages">10–20 pages · ~2-6 week delivery</p>
+            <p class="pricing-pages">Up to 1,000 products · 10–20 pages · ~2-6 week delivery</p>
             <p class="pricing-desc">
               For stores that have outgrown their first catalog and the spreadsheet holding it together. More products, smarter emails and prices overseas buyers can read, so growth never turns into chaos.
             </p>
@@ -3944,7 +4288,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Separate addresses for orders and support, so nothing gets lost in one shared inbox." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span>
+                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Separate addresses for orders and support, so nothing gets lost in one shared inbox." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4208,7 +4552,7 @@ document.addEventListener('DOMContentLoaded', function () {
               <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$600</span></span></span>
               <span class="price-suffix">/mo + tax</span>
             </div>
-            <p class="pricing-pages">20–30 pages · ~3-8 week delivery</p>
+            <p class="pricing-pages">Up to 5,000 products · 20–30 pages · ~3-8 week delivery</p>
             <p class="pricing-desc">
               Full-scale commerce for brands moving serious volume. Every currency, a loyalty program and our fastest fixes, ready for every launch, restock and "can we run a flash sale tomorrow?"
             </p>
@@ -4311,7 +4655,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Orders, support and wholesale each get their own address on your domain." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span>
+                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Orders, support and wholesale each get their own address on your domain." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4677,7 +5021,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span>
+                <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -5163,12 +5507,12 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="ecom-cta-content reveal-fade">
           <div class="ecom-hero-pill" style="margin-bottom:0;">
             <span class="ecom-hero-pill-dot"></span>
-            Ready When You Are
+            Add To Cart
           </div>
           <h2 class="ecom-cta-heading">
             Stop Renting a Storefront.<br class="ecom-cta-break"> <span class="ecom-heading-grad">Start Owning One.</span>
           </h2>
-          <p class="ecom-cta-sub">No per-sale cut, no app-store shopping list, no ceiling to outgrow. Tell us about your business and we'll scope a platform built for it.</p>
+          <p class="ecom-cta-sub">No per-sale cut, no app-store shopping list, no ceiling to outgrow. Stock is actually low. We aren't just using a fake marketing timer.<br>( ͡~ ͜ʖ ͡°)</p>
           <div class="ecom-cta-actions">
             <a href="#ecom-tiers" class="btn addon-card-cta">Get Started <span class="btn-arrow" aria-hidden="true">→</span></a>
             <a href="contact.html?type=E-Commerce&amp;typeColor=%23EF4444&amp;learnMore=1" class="btn btn-outline-brand">Contact Us</a>
@@ -5217,7 +5561,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <a href="services.html" class="footer-link">All Services</a>
           <a href="web-design.html" class="footer-link">Web Design</a>
           <a href="ecommerce.html" class="footer-link active">E-Commerce</a>
-          <a href="contact.html" class="footer-link">Landing Pages</a>
+          <a href="landing-pages.html" class="footer-link">Landing Pages</a>
           <a href="contact.html" class="footer-link">App Development</a>
           <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
           <a href="email-marketing.html" class="footer-link">Email &amp; SMS Marketing</a>
@@ -5548,8 +5892,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var closeSvc = function () { svcTrigger.setAttribute('aria-expanded', 'false'); svcPanel.classList.remove('open'); };
         var openSvc = function () {
           var rect = svcTrigger.getBoundingClientRect();
+          svcPanel.style.maxHeight = '';
           var panelHeight = svcPanel.offsetHeight;
-          var openDown = rect.top - panelHeight - 10 < 16;
+          var spaceAbove = rect.top - 26, spaceBelow = window.innerHeight - rect.bottom - 26;
+          // open toward the roomier side when it doesn't fit above; scroll inside if it fits neither
+          var openDown = panelHeight > spaceAbove && spaceBelow > spaceAbove;
+          svcPanel.style.maxHeight = Math.max(160, openDown ? spaceBelow : spaceAbove) + 'px';
           if (openDown) {
             svcPanel.style.top = (rect.bottom + 10) + 'px';
             svcPanel.style.bottom = 'auto';

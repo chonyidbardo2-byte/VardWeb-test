@@ -282,17 +282,22 @@
     #mini-form-box label, #mini-form-box legend { color: var(--z500) !important; letter-spacing: 0.1em !important; font-size: 11.5px !important; margin-bottom: 8px !important; }
     #mini-form-inner { gap: 18px !important; }
 
-    .ctc-booking { display: flex; flex-direction: row-reverse; justify-content: flex-start; align-items: stretch; gap: 16px; max-width: 1024px; margin: 48px auto 0; }
+    .ctc-booking { display: flex; flex-direction: row; justify-content: center; align-items: stretch; gap: 16px; max-width: 1024px; margin: 48px auto 0; }
     #contact-form-box { background: var(--z900); border: 1px solid var(--z800); border-radius: 16px; padding: 24px; overflow: hidden; flex: 0 0 auto; min-width: 0; box-sizing: border-box;
       box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 24px 48px -24px rgba(0,0,0,0.6); }
     /* Calendly draws its own dark gutter inside the iframe (66px top, 17px sides, 33px bottom).
        Crop it so the white booking card fills the visible window edge to edge. */
     #contact-form-box .calendly-inline-widget { width: 646px !important; height: 601px !important; max-width: 100%; overflow: hidden !important; border-radius: 12px; position: relative; }
     #contact-form-box .calendly-inline-widget iframe { display: block; width: 680px !important; height: 700px !important; margin: -66px 0 0 -17px; }
-    #social-box { background: var(--z900); border: 1px solid var(--z800); border-radius: 16px; padding: 24px 16px; width: auto; min-width: 0; flex: 1 1 auto; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    #social-box { background: var(--z900); border: 1px solid var(--z800); border-radius: 16px; padding: 24px; width: 100%; min-width: 0; min-height: 140px; margin: 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
       box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 24px 48px -24px rgba(0,0,0,0.6); }
     .social-row-lg { display: flex; justify-content: center; gap: 16px; margin-top: 14px; }
-    #social-box .social-row-lg { flex-direction: column; margin-top: 0; }
+    #social-box .social-row-lg { margin-top: 0; }
+    /* Desktop: social box lives under the globe, top aligned to the message label, bottom to the card */
+    @media (min-width: 1025px) {
+      .contact-grid { align-items: stretch; }
+      #ctc-social-slot { margin-top: auto; display: flex; flex: 0 0 auto; }
+    }
     @media (max-width: 1024px) {
       .ctc-booking { flex-direction: column; align-items: stretch; max-width: 560px; }
       #contact-form-box .calendly-inline-widget { width: 100% !important; height: 610px !important; }
@@ -646,7 +651,7 @@
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
           <a href="web-design.html" class="dropdown-item" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
           <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Landing Pages</a>
+          <a href="landing-pages.html" class="dropdown-item" role="menuitem" style="--item-c:#FF2D78;--item-bg:rgba(255,45,120,0.08)">Landing Pages</a>
           <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
           <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
           <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email &amp; SMS Marketing</a>
@@ -702,7 +707,7 @@
     <a href="services.html" class="mob-link mob-sub">All Services</a>
     <a href="web-design.html" class="mob-link mob-sub">Web Design</a>
     <a href="ecommerce.html"  class="mob-link mob-sub">E-Commerce</a>
-    <a href="contact.html"  class="mob-link mob-sub">Landing Pages</a>
+    <a href="landing-pages.html" class="mob-link mob-sub">Landing Pages</a>
     <a href="contact.html"  class="mob-link mob-sub">App Development</a>
     <a href="sem-seo.html"  class="mob-link mob-sub">SEM &amp; SEO</a>
     <a href="email-marketing.html" class="mob-link mob-sub">Email &amp; SMS Marketing</a>
@@ -773,6 +778,9 @@
           <div class="ctc-globe" id="ctc-globe"></div>
           <div class="ctc-globe-fade"></div>
         </div>
+
+        <!-- Desktop home for #social-box (moved here by script above 1024px) -->
+        <div id="ctc-social-slot"></div>
       </div>
 
       <!-- Send a message card -->
@@ -957,7 +965,7 @@
         <a href="services.html" class="footer-link">All Services</a>
         <a href="web-design.html" class="footer-link">Web Design</a>
         <a href="ecommerce.html" class="footer-link">E-Commerce</a>
-        <a href="contact.html" class="footer-link">Landing Pages</a>
+        <a href="landing-pages.html" class="footer-link">Landing Pages</a>
         <a href="contact.html" class="footer-link">App Development</a>
         <a href="sem-seo.html" class="footer-link">SEM &amp; SEO</a>
         <a href="email-marketing.html" class="footer-link">Email &amp; SMS Marketing</a>
@@ -1623,20 +1631,53 @@ var serviceParam = urlParams.get('service');
 </script>
 
 <script>
+/* ── Social box placement: under the globe on desktop, under Calendly when stacked ── */
+(function () {
+  var box     = document.getElementById('social-box');
+  var slot    = document.getElementById('ctc-social-slot');
+  var booking = document.querySelector('.ctc-booking');
+  var card    = document.querySelector('.ctc-card');
+  var label   = document.querySelector('label[for="mini-message"]');
+  if (!box || !slot || !booking || !card || !label) return;
+  var mq = window.matchMedia('(min-width: 1025px)');
+
+  /* Top aligns with the "Tell Us About Your Project" label, bottom with the card */
+  function sync() {
+    if (!mq.matches || !label.offsetParent) { box.style.height = ''; return; }
+    var h = card.getBoundingClientRect().bottom - label.getBoundingClientRect().top;
+    box.style.height = Math.max(140, Math.round(h)) + 'px';
+  }
+
+  function place() {
+    var home = mq.matches ? slot : booking;
+    if (box.parentNode !== home) home.appendChild(box);
+    sync();
+  }
+
+  place();
+  mq.addEventListener('change', place);
+  new ResizeObserver(sync).observe(card);
+  window.addEventListener('resize', sync);
+})();
+</script>
+
+<script>
 /* ── Wireframe globe (vanilla port of GlobeWireframe, "wireframesolid" variant) ── */
 window.addEventListener('DOMContentLoaded', function () {
   var host = document.getElementById('ctc-globe');
   if (!host || !window.d3 || !window.topojson) return;
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var SPEED = 0.45;
+  var DEG_PER_SEC = 27;   /* time-based, so speed is identical at any frame rate */
   var rotation = [100, -20];
-  var size = 0, visible = false, dragging = false, last = null, raf = null;
+  var size = 0, visible = false, dragging = false, last = null, raf = null, lastTime = null;
 
   var svg = d3.select(host).append('svg');
-  var projection = d3.geoOrthographic().precision(0.1);
+  var projection = d3.geoOrthographic().precision(0.5);
   var path = d3.geoPath(projection);
-  var countries = svg.append('g');
+  /* All borders + coastlines as ONE path (topojson mesh): 1 DOM write per frame, shared borders projected once */
+  var land = svg.append('path')
+    .attr('fill', 'none').attr('stroke', 'currentColor').attr('stroke-width', 0.6);
   var sphere = svg.append('path').datum({ type: 'Sphere' })
     .attr('fill', 'none').attr('stroke', 'currentColor')
     .attr('stroke-width', 1.5).attr('opacity', 0.8);
@@ -1644,7 +1685,7 @@ window.addEventListener('DOMContentLoaded', function () {
   function draw() {
     if (!size) return;
     projection.scale(size / 2 * 0.9).translate([size / 2, size / 2]).rotate(rotation);
-    countries.selectAll('path').attr('d', path);
+    if (land.datum()) land.attr('d', path);
     sphere.attr('d', path);
   }
 
@@ -1654,12 +1695,15 @@ window.addEventListener('DOMContentLoaded', function () {
     draw();
   }
 
-  function tick() {
-    rotation = [(rotation[0] + SPEED) % 360, rotation[1]];
+  function tick(now) {
+    /* Clamp dt so a stalled frame or tab switch never causes a visible jump */
+    var dt = lastTime === null ? 0 : Math.min(now - lastTime, 50);
+    lastTime = now;
+    rotation = [(rotation[0] + DEG_PER_SEC * dt / 1000) % 360, rotation[1]];
     draw();
     raf = requestAnimationFrame(tick);
   }
-  function start() { if (!raf && visible && !dragging && !reduceMotion) raf = requestAnimationFrame(tick); }
+  function start() { if (!raf && visible && !dragging && !reduceMotion) { lastTime = null; raf = requestAnimationFrame(tick); } }
   function stop()  { if (raf) { cancelAnimationFrame(raf); raf = null; } }
 
   new ResizeObserver(resize).observe(host);
@@ -1696,9 +1740,7 @@ window.addEventListener('DOMContentLoaded', function () {
   fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
     .then(function (r) { return r.json(); })
     .then(function (world) {
-      var features = topojson.feature(world, world.objects.countries).features;
-      countries.selectAll('path').data(features).enter().append('path')
-        .attr('fill', 'none').attr('stroke', 'currentColor').attr('stroke-width', 0.6);
+      land.datum(topojson.mesh(world, world.objects.countries));
       resize();
       host.classList.add('ready');
       start();
