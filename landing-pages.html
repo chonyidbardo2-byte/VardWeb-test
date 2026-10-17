@@ -405,14 +405,15 @@
       min-height: 560px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 60px 28px;
-      background: linear-gradient(180deg, var(--raised) 0%, var(--surface) 100%);
+      background: #0a0a0c;
       border: 1px solid rgba(255,45,120,0.14);
       box-shadow: 0 30px 80px -20px rgba(0,0,0,0.55), 0 0 60px -20px rgba(255,45,120,0.08);
     }
     .wd-cta-bg {
       position: absolute; inset: 0; z-index: 0; pointer-events: none;
-      opacity: 0.32; mix-blend-mode: screen;
+      opacity: 0.95;
     }
+    .wd-cta-bg canvas { display: block; }
     .wd-cta-content { position: relative; z-index: 1; max-width: 720px; width: 100%; min-width: 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
     .wd-cta-pill {
       display: inline-flex; align-items: center; gap: 8px;
@@ -6205,27 +6206,22 @@
 
 <script type="module">
   /* ── CTA animated background ──
-     Vanilla port of email-marketing.html's initEmailCtaBackground (itself a
-     port of the supplied React CTASection's @paper-design/shaders-react
-     Dithering shader): a domain-warped fbm noise field read as thin curling
-     sheet contours, dithered with Bayer 4x4 grain. Recolored here to blend
-     between this page's cyan and deep-cyan accents (instead of a single
-     flat tint) by mixing uColor/uColor2 across the fbm field. Speed ramps
-     from 0.8 (idle) to 2.6 (hover), lazily initialized once the CTA card
-     scrolls into view. */
+     Vanilla port of the supplied React NeuralNoise component: 15 rotated
+     sine layers summed into thin glowing filaments. Tinted with this page's
+     --lp-pink; bright cores clamp toward pink-white. Not interactive: the
+     original's mouse-driven glow point instead follows a self-driven wander
+     path across the card, so the animation just plays. Lazily initialized
+     once the CTA card scrolls into view. */
   import * as THREE from 'three';
 
-  function initWebDesignCtaBackground(bgEl, hoverEl) {
-    const RENDER_SCALE = 2;
-
+  function initWebDesignCtaBackground(bgEl) {
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: true,
       powerPreference: 'low-power'
     });
-    renderer.setPixelRatio(1);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setClearColor(0x000000, 0);
-    renderer.domElement.style.imageRendering = 'pixelated';
     bgEl.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -6237,8 +6233,12 @@
       uniforms: {
         uTime:       { value: 0 },
         uResolution: { value: new THREE.Vector2(1, 1) },
-        uColor:      { value: new THREE.Color(0xff2d78) },
-        uColor2:     { value: new THREE.Color(0xc4004f) }
+        uPointer:    { value: new THREE.Vector2(0.5, 0.5) },
+        uZoom:       { value: 1.0 },
+        uSwirl:      { value: 0.0 },
+        uVig:        { value: 1.0 },
+        uFloor:      { value: 0.5 },
+        uColor:      { value: new THREE.Vector3(1.0, 0.176, 0.471) } // --lp-pink #FF2D78
       },
       vertexShader: `
         varying vec2 vUv;
@@ -6252,77 +6252,98 @@
         varying vec2 vUv;
         uniform float uTime;
         uniform vec2  uResolution;
+        uniform vec2  uPointer;
         uniform vec3  uColor;
-        uniform vec3  uColor2;
+        uniform float uZoom;
+        uniform float uSwirl;
+        uniform float uVig;
+        uniform float uFloor;
 
-        float hash(vec2 p) {
-          p = fract(p * vec2(123.34, 456.21));
-          p += dot(p, p + 45.32);
-          return fract(p.x * p.y);
+        vec2 rotate(vec2 uv, float th) {
+          return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
         }
-        float noise(vec2 p) {
-          vec2 i = floor(p);
-          vec2 f = fract(p);
-          float a = hash(i);
-          float b = hash(i + vec2(1.0, 0.0));
-          float c = hash(i + vec2(0.0, 1.0));
-          float d = hash(i + vec2(1.0, 1.0));
-          vec2 u = f * f * (3.0 - 2.0 * f);
-          return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-        }
-        float fbm(vec2 p) {
-          float v = 0.0;
-          float amp = 0.5;
-          for (int i = 0; i < 5; i++) {
-            v += amp * noise(p);
-            p *= 2.02;
-            amp *= 0.5;
+        float neuro_shape(vec2 uv, float t, float p) {
+          vec2 sine_acc = vec2(0.0);
+          vec2 res = vec2(0.0);
+          float scale = 8.0;
+          for (int j = 0; j < 15; j++) {
+            uv = rotate(uv, 1.0);
+            sine_acc = rotate(sine_acc, 1.0);
+            vec2 layer = uv * scale + float(j) + sine_acc - t;
+            sine_acc += sin(layer) + 2.4 * p;
+            res += (0.5 + 0.5 * cos(layer)) / scale;
+            scale *= 1.2;
           }
-          return v;
+          return res.x + res.y;
         }
-        float bayer2(vec2 a) { return fract(a.x / 2.0 + a.y * a.y * 0.75); }
-        float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
 
         void main() {
-          vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
-          vec2 uv = (vUv - 0.5) * aspect * 3.0;
-          float t = uTime;
+          float ratio = uResolution.x / uResolution.y;
+          vec2 uv = 0.5 * vUv * uZoom;
+          uv.x *= ratio;
+          // Mobile only (uSwirl > 0): slowly sway the flow direction so the
+          // field doesn't read as one straight, repeating slide.
+          vec2 c = vec2(0.25 * uZoom * ratio, 0.25 * uZoom);
+          uv = rotate(uv - c, uSwirl * sin(uTime * 0.11)) + c;
+          vec2 pointer = vUv - uPointer;
+          pointer.x *= ratio;
+          float p = clamp(length(pointer), 0.0, 1.0);
+          p = 0.5 * pow(1.0 - p, 2.0);
 
-          vec2 q = vec2(fbm(uv + t * 0.05), fbm(uv + vec2(5.2, 1.3) + t * 0.05));
-          vec2 r = vec2(
-            fbm(uv + 3.5 * q + vec2(1.7, 9.2) + t * 0.08),
-            fbm(uv + 3.5 * q + vec2(8.3, 2.8) + t * 0.08)
-          );
-          float f = fbm(uv + 3.5 * r);
+          float noise = neuro_shape(uv, uTime, p);
+          noise = 1.2 * pow(noise, 3.0);
+          noise += pow(noise, 10.0);
+          noise = max(0.0, noise - uFloor);
+          noise *= (1.0 - length((vUv - 0.5) * vec2(1.0, uVig)));
 
-          float sheet = 1.0 - abs(fract(f * 2.5) - 0.5) * 2.0;
-          sheet = pow(clamp(sheet, 0.0, 1.0), 4.0);
-
-          float dissolve = smoothstep(0.25, 0.75, fbm(uv * 0.25 - t * 0.03));
-
-          float grain = bayer4(floor(gl_FragCoord.xy)) - 0.5;
-          float alpha = clamp(sheet * dissolve + grain * 0.12, 0.0, 1.0);
-
-          vec3 color = mix(uColor, uColor2, smoothstep(0.3, 0.7, f));
-
-          gl_FragColor = vec4(color, alpha);
+          gl_FragColor = vec4(uColor * noise, noise);
         }
       `
     });
 
     scene.add(new THREE.Mesh(geometry, material));
 
-    let speed = 0.8;
-    let targetSpeed = 0.8;
+    let speed = 1.0;
+    let targetSpeed = 1.0;
+    let idleSpeed = 1.0;
+    let wanderA = 0.42, wanderB = 0.38;
     let simTime = 0;
     const clock = new THREE.Clock();
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Mobile tuning: the tall card only shows a sliver of the field, so the
+    // motion reads as one short loop. Widen the sample window, sway the
+    // flow, soften the vignette and lower the glow floor. Desktop gets a
+    // lighter version of each (smaller swirl, wider wander for the wide card).
+    const mobileMq = window.matchMedia('(hover: none), (max-width: 640px)');
+    let isMobile = mobileMq.matches;
+    function applyTuning() {
+      isMobile = mobileMq.matches;
+      material.uniforms.uZoom.value  = isMobile ? 1.5  : 1.15;
+      material.uniforms.uSwirl.value = isMobile ? 0.6  : 0.4;
+      material.uniforms.uVig.value   = isMobile ? 0.6  : 0.8;
+      material.uniforms.uFloor.value = isMobile ? 0.35 : 0.38;
+      wanderA = isMobile ? 0.38 : 0.42;
+      wanderB = isMobile ? 0.42 : 0.38;
+      idleSpeed = isMobile ? 1.3 : 1.0;
+      targetSpeed = idleSpeed;
+    }
+    applyTuning();
+
+    // Card-local glow point (0..1, Y up) on a Lissajous wander path, eased
+    // like the original's 0.2 pointer lerp.
+    const pointer = { x: 0.5, y: 0.5, tX: 0.5, tY: 0.5 };
 
     function renderFrame() {
       const delta = reduceMotion ? 0 : clock.getDelta();
       speed += (targetSpeed - speed) * 0.05;
       simTime += delta * speed;
+      pointer.tX = 0.5 + wanderA * Math.sin(simTime * 0.37);
+      pointer.tY = 0.5 + wanderB * Math.sin(simTime * 0.23 + 1.3);
+      pointer.x += (pointer.tX - pointer.x) * 0.2;
+      pointer.y += (pointer.tY - pointer.y) * 0.2;
       material.uniforms.uTime.value = simTime;
+      material.uniforms.uPointer.value.set(pointer.x, pointer.y);
       renderer.render(scene, camera);
     }
 
@@ -6333,14 +6354,12 @@
     }
 
     function resize() {
-      const w = bgEl.clientWidth;
-      const h = bgEl.clientHeight;
-      const rw = Math.max(1, Math.round(w / RENDER_SCALE));
-      const rh = Math.max(1, Math.round(h / RENDER_SCALE));
-      renderer.setSize(rw, rh, false);
-      renderer.domElement.style.width = w + 'px';
-      renderer.domElement.style.height = h + 'px';
-      material.uniforms.uResolution.value.set(rw, rh);
+      const w = Math.max(1, bgEl.clientWidth);
+      const h = Math.max(1, bgEl.clientHeight);
+      renderer.setSize(w, h);
+      material.uniforms.uResolution.value.set(w, h);
+      if (mobileMq.matches !== isMobile) applyTuning();
+      if (reduceMotion) renderFrame();
     }
 
     const resizeObserver = new ResizeObserver(resize);
@@ -6350,9 +6369,6 @@
     if (reduceMotion) {
       simTime = 1.0;
       renderFrame();
-    } else {
-      hoverEl.addEventListener('mouseenter', function () { targetSpeed = 2.6; });
-      hoverEl.addEventListener('mouseleave', function () { targetSpeed = 0.8; });
     }
 
     // One-time GL/shader/buffer setup is done above. Only the RAF chain is
@@ -6376,7 +6392,7 @@
     let ctaLoop = null;
     window.PerfUtils.gatedLoop(card, {
       start: function () {
-        if (!ctaLoop) ctaLoop = initWebDesignCtaBackground(bg, card);
+        if (!ctaLoop) ctaLoop = initWebDesignCtaBackground(bg);
         ctaLoop.start();
       },
       stop: function () {
