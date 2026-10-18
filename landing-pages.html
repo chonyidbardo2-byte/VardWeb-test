@@ -996,8 +996,10 @@
     /* ── Compute rows (Passion = included feature, Pro = add-on) ── */
     /* Plain inline flow so the "?" always follows the last word when the label wraps */
     .compute-label { min-width: 0; overflow-wrap: anywhere; }
-    @media (max-width: 374px) { .compute-label .compute-nowrap { white-space: normal; } }
+    @media (max-width: 374px) { .compute-label .compute-nowrap:has(> wbr) { white-space: normal; } }
     .compute-tail { white-space: nowrap; }
+    .lp-mbreak { display: inline; }
+    @media (min-width: 375px) and (max-width: 424px) { .lp-mbreak { display: block; } }
     .compute-nowrap { white-space: nowrap; }
     .compute-label .tt-icon-trigger { display: inline-flex; vertical-align: baseline; margin-left: 7px; position: relative; top: -2.5px; }
     .compute-feature { flex: 1; min-width: 0; }
@@ -3272,7 +3274,7 @@
         <div class="ai-inner-card">
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text-1);margin-bottom:3px;">Intent Discovery Call</div>
           <div style="font-size:11px;color:var(--text-2);margin-bottom:12px;">4 people in last hour</div>
-          <div style="display:flex;margin-bottom:10px;">
+          <div class="ai-discover-row" style="display:flex;margin-bottom:10px;">
             <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid var(--border);overflow:hidden;margin-right:-6px;background:var(--raised);flex-shrink:0;">
               <img src="brand_assets/icons/wd-avatar-1.png" alt="" width="26" height="26" style="border-radius:50%;object-fit:cover;" loading="lazy">
             </div>
@@ -3386,10 +3388,24 @@
   padding: 16px;
   flex: 1;
 }
-/* Card 2: overlapping cards rotate on parent hover */
+/* Cards 2 + 3 loop on their own: play in, hold 2s, play back out, hold 2s.
+   Paused until #ai-svc-grid is in view (.ai-anim-on, set by the script below). */
+@keyframes aiTiltFront {
+  0%, 65%, 100% { transform: translateY(16px); }
+  15%, 50%      { transform: translateY(16px) rotate(-3deg); }
+}
+@keyframes aiTiltBack {
+  0%, 65%, 100% { transform: translateY(16px); }
+  15%, 50%      { transform: translateY(16px) rotate(3deg); }
+}
+@keyframes aiPromptSlide {
+  0%, 65%, 100% { transform: translateY(16px); }
+  15%, 50%      { transform: translateY(0); }
+}
+/* Card 2: overlapping cards rotate apart */
 .ai-review-front {
   transform: translateY(16px);
-  transition: transform 0.2s ease-in-out;
+  animation: aiTiltFront 4s cubic-bezier(0.22,1,0.36,1) infinite paused;
   z-index: 1;
   will-change: transform;
 }
@@ -3399,28 +3415,30 @@
 }
 .ai-review-back {
   transform: translateY(16px);
-  transition: transform 0.2s ease-in-out;
+  animation: aiTiltBack 4s cubic-bezier(0.22,1,0.36,1) infinite paused;
   z-index: 2;
   aspect-ratio: 57/126;
   will-change: transform;
   backface-visibility: hidden;
 }
-.ai-feat-card:hover .ai-review-front,
-.ai-feat-card.is-scroll-active .ai-review-front {
-  transform: translateY(16px) rotate(-3deg);
-}
-.ai-feat-card:hover .ai-review-back,
-.ai-feat-card.is-scroll-active .ai-review-back {
-  transform: translateY(16px) rotate(3deg);
-}
-/* Card 3: prompt card slides up on parent hover, pops out to show blue circle */
+/* Card 3: prompt card slides up, pops out to show the send button */
 .ai-prompt-slide {
   transform: translateY(16px);
-  transition: transform 0.2s ease-in-out;
+  /* -1.3s offset: moves ~0.7s after card 2, card 1's avatars ~0.7s after that */
+  animation: aiPromptSlide 4s cubic-bezier(0.22,1,0.36,1) -1.3s infinite paused;
 }
-.ai-feat-card:hover .ai-prompt-slide,
-.ai-feat-card.is-scroll-active .ai-prompt-slide {
-  transform: translateY(0);
+#ai-svc-grid.ai-anim-on .ai-review-front,
+#ai-svc-grid.ai-anim-on .ai-review-back,
+#ai-svc-grid.ai-anim-on .ai-prompt-slide { animation-play-state: running; }
+/* Card 1: avatar row, new buyers pop in at the front (driven by the script below) */
+.ai-discover-row { position: relative; }
+.ai-discover-ping {
+  position: absolute; left: 0; top: 0; width: 26px; height: 26px;
+  border-radius: 50%; border: 1.5px solid var(--lp-pink);
+  opacity: 0; pointer-events: none; z-index: 2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-review-front, .ai-review-back, .ai-prompt-slide { animation: none; }
 }
 @media (max-width:860px) { #ai-svc-grid { grid-template-columns: repeat(2,1fr) !important; } }
 @media (max-width:640px) { #ai-svc-grid { grid-template-columns: 1fr !important; } }
@@ -3449,6 +3467,46 @@
   }
   var grid = document.getElementById('ai-svc-grid');
   if (grid) sharedObs15.watch(grid, reveal, { once: true });
+  if (!grid || !('IntersectionObserver' in window)) return;
+
+  // Card 1: every 2s a "discovered" buyer pops in at the front, the rest shift
+  // one slot right (FLIP), and the one pushed past slot 4 fades out. The newcomer
+  // reuses the leaving avatar's image, so no face shows twice at once.
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var row = grid.querySelector('.ai-discover-row');
+  var timer = null;
+  var spring = 'cubic-bezier(0.22,1,0.36,1)';
+  function discover() {
+    if (document.hidden || !row) return;
+    var avs = [].slice.call(row.children).filter(function (el) { return !el.classList.contains('ai-discover-ping') && !el.__leaving; });
+    if (avs.length < 2) return;
+    var before = avs.map(function (el) { return el.getBoundingClientRect().left; });
+    var leaving = avs[avs.length - 1];
+    var fresh = leaving.cloneNode(true);
+    fresh.style.marginRight = '-6px';
+    row.insertBefore(fresh, avs[0]);
+    avs.forEach(function (el, i) {
+      var dx = before[i] - el.getBoundingClientRect().left;
+      if (dx) el.animate([{ transform: 'translateX(' + dx + 'px)' }, { transform: 'none' }], { duration: 600, easing: spring });
+    });
+    leaving.__leaving = true;
+    leaving.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.6)' }], { duration: 450, easing: 'ease-out', fill: 'forwards' })
+      .onfinish = function () { leaving.remove(); avs[avs.length - 2].style.marginRight = ''; };
+    fresh.animate([{ opacity: 0, transform: 'scale(0.4)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 600, easing: spring });
+    var ping = row.querySelector('.ai-discover-ping');
+    if (!ping) { ping = document.createElement('span'); ping.className = 'ai-discover-ping'; row.appendChild(ping); }
+    ping.animate([{ opacity: 0.9, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.8)' }], { duration: 900, easing: 'ease-out' });
+  }
+
+  // Run the card loops (CSS) and the avatar loop only while the grid is on screen
+  new IntersectionObserver(function (entries) {
+    var on = entries[0].isIntersecting;
+    grid.classList.toggle('ai-anim-on', on);
+    if (reduce || !row) return;
+    // First pop lands 1.4s in, so card 1 steps out of sync with cards 2 and 3
+    if (on && !timer) timer = setTimeout(function () { discover(); timer = setInterval(discover, 2000); }, 1400);
+    else if (!on && timer) { clearTimeout(timer); clearInterval(timer); timer = null; }
+  }, { threshold: 0 }).observe(grid);
 })();
 </script>
 
@@ -3625,27 +3683,23 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + local-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Customers pay with whatever’s already in their wallet, from a tap of the phone to “pay in 4”, and you pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + local-currency checkout">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">1 new variant a month,</span> <span>judged month over <span class="compute-nowrap">month<button type="button" class="tt-icon-trigger" data-tooltip="**Better every month.**&#10;&#10;We build one new version of your page each month and compare it with last month’s results. Unused variants don’t roll over." aria-label="More about: 1 new variant a month, judged month over month">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Conversion copy</span> <span>and a short lead <span class="compute-nowrap">form<button type="button" class="tt-icon-trigger" data-tooltip="**Words that work.**&#10;&#10;Headlines and copy written for one offer and one audience, with a form short enough that people finish it." aria-label="More about: Conversion copy and a short lead form">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Monthly conversion report;</span> <span>what we tested, what won, what’s <span class="compute-nowrap">next<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language." aria-label="More about: Monthly conversion report; what we tested, what won, what’s next">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span>
+            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/<wbr>Afterpay/<wbr>Affirm + local-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Customers pay with whatever’s already in their wallet, from a tap of the phone to “pay in 4”, and you pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + local-currency checkout">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span class="compute-label">Sub-2-second load <span class="compute-nowrap">guarantee<button type="button" class="tt-icon-trigger" data-tooltip="**Fast where it counts.**&#10;&#10;Pages under 2 seconds convert more than three times better than pages over 5 seconds. Yours is built and hosted to stay under 2." aria-label="More about: Sub-2-second load guarantee">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Up to 1 new variant a month,</span> <span>judged month over <span class="compute-nowrap">month<button type="button" class="tt-icon-trigger" data-tooltip="**Better every month.**&#10;&#10;We build one new version of your page each month and compare it with last month’s results. Unused variants don’t roll over." aria-label="More about: 1 new variant a month, judged month over month">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="block">Smart Funnels Architecture;</span> <span>Conversion copy and a short lead <span class="compute-nowrap">form<button type="button" class="tt-icon-trigger" data-tooltip="**Words that work.**&#10;&#10;Headlines and copy written for one offer and one audience, with a form short enough that people finish it." aria-label="More about: Conversion copy and a short lead form">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Monthly conversion report;</span> <span>Artisanal <span class="compute-nowrap">Strategy<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language." aria-label="More about: Monthly conversion report; what we tested, what won, what’s next">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3657,7 +3711,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span></span>
+            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3685,7 +3739,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Lead &amp; sales dashboard, up to 2 team <span class="compute-nowrap">seats<button type="button" class="tt-icon-trigger" data-tooltip="**Everything in one place.**&#10;&#10;Leads, sales and test results on a single screen, so nobody digs through emails to find out what’s working." aria-label="More about: Lead & sales dashboard, up to 2 team seats">?</button></span></span>
+            <span class="compute-label">Lead &amp; sales dashboard; Up to 2 team <span class="compute-nowrap">seats<button type="button" class="tt-icon-trigger" data-tooltip="**Everything in one place.**&#10;&#10;Leads, sales and test results on a single screen, so nobody digs through emails to find out what’s working." aria-label="More about: Lead & sales dashboard, up to 2 team seats">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3713,7 +3767,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3933,27 +3987,23 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + local-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Customers pay with whatever’s already in their wallet, from a tap of the phone to “pay in 4”, and you pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + local-currency checkout">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Up to 2 new variants a month,</span> <span>run as 1 live A/B <span class="compute-nowrap">test<button type="button" class="tt-icon-trigger" data-tooltip="**Proven, not guessed.**&#10;&#10;Visitors are split between versions at the same time until one wins with confidence. Pages under about 5,000 visitors a month are compared month over month instead, and the report says so. Unused variants don’t roll over." aria-label="More about: Up to 2 new variants a month, run as 1 live A/B test">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Dynamic text replacement</span> <span>for ad <span class="compute-nowrap">keywords<button type="button" class="tt-icon-trigger" data-tooltip="**Say what they searched.**&#10;&#10;The headline updates to match the keyword in the ad that was clicked, so visitors know instantly they’re in the right place." aria-label="More about: Dynamic text replacement for ad keywords">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Monthly conversion report;</span> <span>heatmaps &amp; session <span class="compute-nowrap">recordings<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language. Heatmaps and session recordings show exactly where visitors stall." aria-label="More about: Monthly conversion report; heatmaps & session recordings">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span>
+            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/<wbr>Afterpay/<wbr>Affirm + local-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Customers pay with whatever’s already in their wallet, from a tap of the phone to “pay in 4”, and you pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + local-currency checkout">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span class="compute-label">Sub-2-second load <span class="compute-nowrap">guarantee<button type="button" class="tt-icon-trigger" data-tooltip="**Fast where it counts.**&#10;&#10;Pages under 2 seconds convert more than three times better than pages over 5 seconds. Yours is built and hosted to stay under 2." aria-label="More about: Sub-2-second load guarantee">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Up to 2 new variants a month,</span> <span>run as 1 live A/B <span class="compute-nowrap">test<button type="button" class="tt-icon-trigger" data-tooltip="**Proven, not guessed.**&#10;&#10;Visitors are split between versions at the same time until one wins with confidence. Pages under about 5,000 visitors a month are compared month over month instead, and the report says so. Unused variants don’t roll over." aria-label="More about: Up to 2 new variants a month, run as 1 live A/B test">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="block">Smart Funnels Architecture; </span> <span>Dynamic text replacement for ad <span class="compute-nowrap">keywords<button type="button" class="tt-icon-trigger" data-tooltip="**Say what they searched.**&#10;&#10;The headline updates to match the keyword in the ad that was clicked, so visitors know instantly they’re in the right place." aria-label="More about: Dynamic text replacement for ad keywords">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Monthly conversion report;</span> <span>heatmaps &amp; session <span class="compute-nowrap">recordings<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language. Heatmaps and session recordings show exactly where visitors stall." aria-label="More about: Monthly conversion report; heatmaps & session recordings">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3965,7 +4015,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span></span>
+            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -3993,7 +4043,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Lead &amp; sales dashboard, up to 5 team <span class="compute-nowrap">seats<button type="button" class="tt-icon-trigger" data-tooltip="**Everything in one place.**&#10;&#10;Leads, sales and test results on a single screen, so nobody digs through emails to find out what’s working." aria-label="More about: Lead & sales dashboard, up to 5 team seats">?</button></span></span>
+            <span class="compute-label">Lead &amp; sales dashboard; Up to 5 team <span class="compute-nowrap">seats<button type="button" class="tt-icon-trigger" data-tooltip="**Everything in one place.**&#10;&#10;Leads, sales and test results on a single screen, so nobody digs through emails to find out what’s working." aria-label="More about: Lead & sales dashboard, up to 5 team seats">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4021,7 +4071,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4248,27 +4298,23 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + true multi-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Gold adds true multi-currency, so overseas buyers see and pay prices in their own currency. You pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + true multi-currency checkout">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Up to 3 new variants a month,</span> <span>across 2 live A/B tests (one per <span class="compute-nowrap">page)<button type="button" class="tt-icon-trigger" data-tooltip="**Proven, not guessed.**&#10;&#10;Visitors are split between versions at the same time until one wins with confidence. Pages under about 5,000 visitors a month are compared month over month instead, and the report says so. Unused variants don’t roll over." aria-label="More about: Up to 3 new variants a month, across 2 live A/B tests (one per page)">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Dynamic text replacement;</span> <span>multi-step forms with lead <span class="compute-nowrap">scoring<button type="button" class="tt-icon-trigger" data-tooltip="**Say what they searched.**&#10;&#10;The headline updates to match the keyword in the ad that was clicked. Multi-step forms ask the easy questions first and score each lead as it comes in." aria-label="More about: Dynamic text replacement; multi-step forms with lead scoring">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Monthly report, heatmaps &amp; recordings;</span> <span>quarterly conversion <span class="compute-nowrap">audit<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language. Heatmaps and session recordings show exactly where visitors stall." aria-label="More about: Monthly report, heatmaps & recordings; quarterly conversion audit">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span>
+            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/<wbr>Afterpay/<wbr>Affirm + true multi-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Gold adds true multi-currency, so overseas buyers see and pay prices in their own currency. You pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + true multi-currency checkout">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span class="compute-label">Sub-2-second load <span class="compute-nowrap">guarantee<button type="button" class="tt-icon-trigger" data-tooltip="**Fast where it counts.**&#10;&#10;Pages under 2 seconds convert more than three times better than pages over 5 seconds. Yours is built and hosted to stay under 2." aria-label="More about: Sub-2-second load guarantee">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Up to 3 new variants a month,</span> <span>across 2 live A/B tests (one per <span class="compute-nowrap">page)<button type="button" class="tt-icon-trigger" data-tooltip="**Proven, not guessed.**&#10;&#10;Visitors are split between versions at the same time until one wins with confidence. Pages under about 5,000 visitors a month are compared month over month instead, and the report says so. Unused variants don’t roll over." aria-label="More about: Up to 3 new variants a month, across 2 live A/B tests (one per page)">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="block">Smart Funnels Architecture; </span> <span>Dynamic text replacement &</span> <span>multi-step forms with lead <span class="compute-nowrap">scoring<button type="button" class="tt-icon-trigger" data-tooltip="**Say what they searched.**&#10;&#10;The headline updates to match the keyword in the ad that was clicked. Multi-step forms ask the easy questions first and score each lead as it comes in." aria-label="More about: Dynamic text replacement; multi-step forms with lead scoring">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span>Monthly report, heatmaps &amp; recordings;</span> <span>quarterly conversion <span class="compute-nowrap">audit<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language. Heatmaps and session recordings show exactly where visitors stall." aria-label="More about: Monthly report, heatmaps & recordings; quarterly conversion audit">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4280,7 +4326,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span></span>
+            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4308,7 +4354,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Lead &amp; sales dashboard, unlimited team seats with role-based <span class="compute-nowrap">permissions<button type="button" class="tt-icon-trigger" data-tooltip="**Right keys, right people.**&#10;&#10;Sales works the leads, finance sees the revenue, and the intern sees neither." aria-label="More about: Lead & sales dashboard, unlimited team seats with role-based permissions">?</button></span></span>
+            <span class="compute-label"><span class="md:block">Lead &amp; sales dashboard;</span> <span>Unlimited team seats with role-based <span class="compute-nowrap">permissions<button type="button" class="tt-icon-trigger" data-tooltip="**Right keys, right people.**&#10;&#10;Sales works the leads, finance sees the revenue, and the intern sees neither." aria-label="More about: Lead & sales dashboard, unlimited team seats with role-based permissions">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4336,7 +4382,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4562,27 +4608,23 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + true multi-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Gold adds true multi-currency, so overseas buyers see and pay prices in their own currency. You pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + true multi-currency checkout">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Multivariate tests</span> <span>on high-traffic <span class="compute-nowrap">pages<button type="button" class="tt-icon-trigger" data-tooltip="**Every combination, tested.**&#10;&#10;Test several elements at once on pages with the traffic to support it, and learn which mix converts best." aria-label="More about: Multivariate tests on high-traffic pages">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Personalization</span> <span>by audience or <span class="compute-nowrap">region<button type="button" class="tt-icon-trigger" data-tooltip="**The right page for each visitor.**&#10;&#10;Content adapts to the audience, campaign or region a visitor arrives from." aria-label="More about: Personalization by audience or region">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Custom reporting;</span> <span>heatmaps &amp; session <span class="compute-nowrap">recordings<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language. Heatmaps and session recordings show exactly where visitors stall." aria-label="More about: Custom reporting; heatmaps & session recordings">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span>
+            <span class="compute-label"><span class="md:block">Every Stripe payment method on request: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/<wbr>Afterpay/<wbr>Affirm + true multi-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Set up on request at no extra charge from us. Gold adds true multi-currency, so overseas buyers see and pay prices in their own currency. You pay only the provider’s own transaction fees." aria-label="More about: Every Stripe payment method on request: Cards, Apple Pay & Google Pay, PayPal, Klarna/Afterpay/Affirm + true multi-currency checkout">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span class="compute-label">Sub-2-second load <span class="compute-nowrap">guarantee<button type="button" class="tt-icon-trigger" data-tooltip="**Fast where it counts.**&#10;&#10;Pages under 2 seconds convert more than three times better than pages over 5 seconds. Yours is built and hosted to stay under 2." aria-label="More about: Sub-2-second load guarantee">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Multivariate tests</span> <span>on high-traffic <span class="compute-nowrap">pages<button type="button" class="tt-icon-trigger" data-tooltip="**Every combination, tested.**&#10;&#10;Test several elements at once on pages with the traffic to support it, and learn which mix converts best." aria-label="More about: Multivariate tests on high-traffic pages">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="block">Smart Funnels Architecture; </span> <span>Personalization</span> <span>by audience or <span class="compute-nowrap">region<button type="button" class="tt-icon-trigger" data-tooltip="**The right page for each visitor.**&#10;&#10;Content adapts to the audience, campaign or region a visitor arrives from." aria-label="More about: Personalization by audience or region">?</button></span></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label"><span class="lp-mbreak">Custom reporting;</span> <span>heatmaps &amp; session <span class="compute-nowrap">recordings<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers with a point.**&#10;&#10;What we tested, what won and what we try next, in plain language. Heatmaps and session recordings show exactly where visitors stall." aria-label="More about: Custom reporting; heatmaps & session recordings">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4594,7 +4636,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span></span>
+            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, <span class="compute-nowrap">GAds<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired, where it fits.**&#10;&#10;GA4 and GAds on every page; GSC, GBP and GMC set up when they apply. GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile, for local businesses. GMC: Merchant Center, for pages that sell products. GAds: Google Ads conversion tracking with Enhanced Conversions." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4622,7 +4664,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Lead &amp; sales dashboard, unlimited team seats with role-based <span class="compute-nowrap">permissions<button type="button" class="tt-icon-trigger" data-tooltip="**Right keys, right people.**&#10;&#10;Sales works the leads, finance sees the revenue, and the intern sees neither." aria-label="More about: Lead & sales dashboard, unlimited team seats with role-based permissions">?</button></span></span>
+            <span class="compute-label"><span class="md:block">Lead &amp; sales dashboard;</span> <span>Unlimited team seats with role-based <span class="compute-nowrap">permissions<button type="button" class="tt-icon-trigger" data-tooltip="**Right keys, right people.**&#10;&#10;Sales works the leads, finance sees the revenue, and the intern sees neither." aria-label="More about: Lead & sales dashboard, unlimited team seats with role-based permissions">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4650,7 +4692,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
+            <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4988,7 +5030,7 @@
   <div class="wd-faq-inner">
     <p class="sec-tag">// frequently asked</p>
     <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:900;text-transform:uppercase;letter-spacing:-0.03em;line-height:1.05;color:var(--text-1);margin-bottom:36px;">
-      Landing Page Questions, <span class="grad-cyan-pink">Answered</span>
+      Landing Questions, <span class="grad-cyan-pink">Answered</span>
     </h2>
     <div class="wd-faq-list" id="wd-faq-list">
       <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">

@@ -310,10 +310,24 @@
       padding: 16px;
       flex: 1;
     }
-    /* Card 2: overlapping cards rotate on parent hover */
+    /* Cards 2 + 3 loop on their own: play in, hold 2s, play back out, hold 2s.
+       Paused until #ai-svc-grid is in view (.ai-anim-on, set by the script below). */
+    @keyframes aiTiltFront {
+      0%, 65%, 100% { transform: translateY(16px); }
+      15%, 50%      { transform: translateY(16px) rotate(-3deg); }
+    }
+    @keyframes aiTiltBack {
+      0%, 65%, 100% { transform: translateY(16px); }
+      15%, 50%      { transform: translateY(16px) rotate(3deg); }
+    }
+    @keyframes aiPromptSlide {
+      0%, 65%, 100% { transform: translateY(16px); }
+      15%, 50%      { transform: translateY(0); }
+    }
+    /* Card 2: overlapping cards rotate apart */
     .ai-review-front {
       transform: translateY(16px);
-      transition: transform 0.2s ease-in-out;
+      animation: aiTiltFront 4s cubic-bezier(0.22,1,0.36,1) infinite paused;
       z-index: 1;
       will-change: transform;
     }
@@ -323,28 +337,30 @@
     }
     .ai-review-back {
       transform: translateY(16px);
-      transition: transform 0.2s ease-in-out;
+      animation: aiTiltBack 4s cubic-bezier(0.22,1,0.36,1) infinite paused;
       z-index: 2;
       aspect-ratio: 57/126;
       will-change: transform;
       backface-visibility: hidden;
     }
-    .ai-feat-card:hover .ai-review-front,
-    .ai-feat-card.is-scroll-active .ai-review-front {
-      transform: translateY(16px) rotate(-3deg);
-    }
-    .ai-feat-card:hover .ai-review-back,
-    .ai-feat-card.is-scroll-active .ai-review-back {
-      transform: translateY(16px) rotate(3deg);
-    }
-    /* Card 3: prompt card slides up on parent hover, pops out to show the send button */
+    /* Card 3: prompt card slides up, pops out to show the send button */
     .ai-prompt-slide {
       transform: translateY(16px);
-      transition: transform 0.2s ease-in-out;
+      /* -1.3s offset: moves ~0.7s after card 2, card 1's avatars ~0.7s after that */
+      animation: aiPromptSlide 4s cubic-bezier(0.22,1,0.36,1) -1.3s infinite paused;
     }
-    .ai-feat-card:hover .ai-prompt-slide,
-    .ai-feat-card.is-scroll-active .ai-prompt-slide {
-      transform: translateY(0);
+    #ai-svc-grid.ai-anim-on .ai-review-front,
+    #ai-svc-grid.ai-anim-on .ai-review-back,
+    #ai-svc-grid.ai-anim-on .ai-prompt-slide { animation-play-state: running; }
+    /* Card 1: avatar row, new buyers pop in at the front (driven by the script below) */
+    .ai-discover-row { position: relative; }
+    .ai-discover-ping {
+      position: absolute; left: 0; top: 0; width: 26px; height: 26px;
+      border-radius: 50%; border: 1.5px solid var(--ecom-red);
+      opacity: 0; pointer-events: none; z-index: 2;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ai-review-front, .ai-review-back, .ai-prompt-slide { animation: none; }
     }
     @media (max-width:860px) { #ai-svc-grid { grid-template-columns: repeat(2,1fr) !important; } }
     @media (max-width:640px) { #ai-svc-grid { grid-template-columns: 1fr !important; } }
@@ -1523,7 +1539,7 @@
     /* ── Compute rows (Passion = included feature, Pro = add-on) ── */
     /* Plain inline flow so the "?" always follows the last word when the label wraps */
     .compute-label { min-width: 0; overflow-wrap: anywhere; }
-    @media (max-width: 374px) { .compute-label .compute-nowrap { white-space: normal; } }
+    @media (max-width: 374px) { .compute-label .compute-nowrap:has(> wbr) { white-space: normal; } }
     .compute-tail { white-space: nowrap; }
     .ecom-hero-pill .pill-short { display: none; }
     @media (max-width: 480px) { .ecom-hero-pill { white-space: nowrap; } .ecom-hero-pill .pill-long { display: none; } .ecom-hero-pill .pill-short { display: inline; } }
@@ -3564,7 +3580,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="ai-inner-card">
               <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--text-1);margin-bottom:3px;">Intent Discovery Call</div>
               <div style="font-size:11px;color:var(--text-2);margin-bottom:12px;">4 people in last hour</div>
-              <div style="display:flex;margin-bottom:10px;">
+              <div class="ai-discover-row" style="display:flex;margin-bottom:10px;">
                 <div style="width:26px;height:26px;border-radius:50%;border:1.5px solid rgba(239,68,68,0.22);overflow:hidden;margin-right:-6px;background:var(--raised);flex-shrink:0;">
                   <img src="brand_assets/icons/wd-avatar-1.png" alt="" width="26" height="26" style="border-radius:50%;object-fit:cover;" loading="lazy">
                 </div>
@@ -3657,6 +3673,53 @@ document.addEventListener('DOMContentLoaded', function () {
         </div><!-- /ai-svc-grid -->
       </div>
     </section>
+
+    <script>
+    /* AI cards: card 2/3 CSS loops run only in view; card 1 avatar "discover" loop (same as landing-pages.html) */
+    (function () {
+      var grid = document.getElementById('ai-svc-grid');
+      if (!grid || !('IntersectionObserver' in window)) return;
+
+      // Card 1: every 2s a "discovered" buyer pops in at the front, the rest shift
+      // one slot right (FLIP), and the one pushed past slot 4 fades out. The newcomer
+      // reuses the leaving avatar's image, so no face shows twice at once.
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var row = grid.querySelector('.ai-discover-row');
+      var timer = null;
+      var spring = 'cubic-bezier(0.22,1,0.36,1)';
+      function discover() {
+        if (document.hidden || !row) return;
+        var avs = [].slice.call(row.children).filter(function (el) { return !el.classList.contains('ai-discover-ping') && !el.__leaving; });
+        if (avs.length < 2) return;
+        var before = avs.map(function (el) { return el.getBoundingClientRect().left; });
+        var leaving = avs[avs.length - 1];
+        var fresh = leaving.cloneNode(true);
+        fresh.style.marginRight = '-6px';
+        row.insertBefore(fresh, avs[0]);
+        avs.forEach(function (el, i) {
+          var dx = before[i] - el.getBoundingClientRect().left;
+          if (dx) el.animate([{ transform: 'translateX(' + dx + 'px)' }, { transform: 'none' }], { duration: 600, easing: spring });
+        });
+        leaving.__leaving = true;
+        leaving.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(0.6)' }], { duration: 450, easing: 'ease-out', fill: 'forwards' })
+          .onfinish = function () { leaving.remove(); avs[avs.length - 2].style.marginRight = ''; };
+        fresh.animate([{ opacity: 0, transform: 'scale(0.4)' }, { opacity: 1, transform: 'scale(1)' }], { duration: 600, easing: spring });
+        var ping = row.querySelector('.ai-discover-ping');
+        if (!ping) { ping = document.createElement('span'); ping.className = 'ai-discover-ping'; row.appendChild(ping); }
+        ping.animate([{ opacity: 0.9, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.8)' }], { duration: 900, easing: 'ease-out' });
+      }
+
+      // Run the card loops (CSS) and the avatar loop only while the grid is on screen
+      new IntersectionObserver(function (entries) {
+        var on = entries[0].isIntersecting;
+        grid.classList.toggle('ai-anim-on', on);
+        if (reduce || !row) return;
+        // First pop lands 1.4s in, so card 1 steps out of sync with cards 2 and 3
+        if (on && !timer) timer = setTimeout(function () { discover(); timer = setInterval(discover, 2000); }, 1400);
+        else if (!on && timer) { clearTimeout(timer); clearInterval(timer); timer = null; }
+      }, { threshold: 0 }).observe(grid);
+    })();
+    </script>
 
     <div class="divider"></div>
 
@@ -3921,7 +3984,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, so order questions never land in a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
+                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, so order questions never land in a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4288,7 +4351,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Separate addresses for orders and support, so nothing gets lost in one shared inbox." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
+                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Separate addresses for orders and support, so nothing gets lost in one shared inbox." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4655,7 +4718,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Orders, support and wholesale each get their own address on your domain." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
+                <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Orders, support and wholesale each get their own address on your domain." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -5021,7 +5084,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </li>
               <li>
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-                <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@<wbr><span class="compute-tail">yourcompany.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
+                <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
               </li>
               <li class="compute-row">
                 <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
