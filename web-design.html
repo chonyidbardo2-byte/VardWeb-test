@@ -7,7 +7,7 @@
   <meta name="description" content="Custom web design services by VardWeb. Hand-coded, pixel-precise, conversion-focused. Bronze, Silver, Gold, and Custom tiers." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script type="importmap">
@@ -243,21 +243,91 @@
     }
 
     /* ── Hero section spacing (matches ecommerce hero top padding) ── */
-    .wd-hero { padding: 188px 28px 0; }
-    @media (max-width: 1024px) { .wd-hero { padding-top: 140px; } }
+    .wd-hero { padding: 0; }
+
+    /* ── Silk hero (vanilla port of the AuroraHero component) ── */
+    .wd-silk {
+      --silk-bg: #08080B; --silk-fg: #EDE8DF; --silk-gold: #C9A961;
+      position: relative; isolation: isolate; overflow: hidden;
+      display: grid; place-items: center;
+      min-height: max(100svh, 540px);
+      background: var(--silk-bg); color: var(--silk-fg);
+    }
+    .wd-silk-canvas { position: absolute; inset: 0; z-index: 0; }
+    .wd-silk-canvas canvas { display: block; width: 100%; height: 100%; }
+    /* Scrim: keeps the copy at 4.5:1+ where the silk is brightest */
+    .wd-silk-scrim {
+      position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background:
+        linear-gradient(180deg, #08080B 0%, #08080BF7 40%, #08080BE0 58%, #08080B8C 72%, #08080B1F 84%, #08080B00 93%),
+        linear-gradient(0deg, #08080BA6 0%, #08080B47 14%, #08080B00 34%);
+    }
+    .wd-silk-content {
+      position: relative; z-index: 2;
+      width: min(100% - 2.5rem, 62rem); margin: 0 auto;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      text-align: center; padding: 112px 0 56px;
+    }
+    @media (min-width: 640px) { .wd-silk-content { gap: 24px; padding: 128px 0 72px; } }
+    .wd-silk-content .wd-hero-pill { margin-bottom: 0; }
+    .wd-silk-content .wd-hero-kicker { margin-bottom: 0; }
+    .wd-silk-h1 {
+      margin: 0; font-family: 'Bodoni Moda', Georgia, serif; font-weight: 400;
+      font-size: clamp(2.75rem, 9vw, 7rem); line-height: 0.98; letter-spacing: -0.02em;
+      color: var(--silk-fg);
+    }
+    .wd-silk-sub {
+      margin: 0; max-width: 44ch; font-family: 'Inter', sans-serif;
+      font-size: 15px; line-height: 1.7; color: rgba(237,232,223,0.8);
+    }
+    @media (min-width: 640px) { .wd-silk-sub { font-size: 17px; } }
+    .wd-silk .wd-hero-cta-row { gap: 12px; padding-bottom: 0; margin-top: 8px; }
+    .wd-silk-btn {
+      display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 28px;
+      border-radius: 999px; border: 1px solid transparent; cursor: pointer; text-decoration: none;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background-color 0.3s ease, border-color 0.3s ease;
+    }
+    .wd-silk-btn--solid { background: var(--silk-fg); color: var(--silk-bg); }
+    .wd-silk-btn--solid:hover { background: #FFFFFF; }
+    .wd-silk-btn--ghost { background: transparent; color: var(--silk-fg); border-color: rgba(237,232,223,0.24); }
+    .wd-silk-btn--ghost:hover { background: rgba(255,255,255,0.05); border-color: rgba(237,232,223,0.45); }
+    .wd-silk-btn:hover { transform: translateY(-2px); }
+    .wd-silk-btn:active { transform: translateY(0) scale(0.98); }
+    .wd-silk-btn:focus-visible { outline: 2px solid var(--silk-gold); outline-offset: 3px; }
+    .wd-silk-mq {
+      width: 100vw; margin-top: 16px; overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+    }
+    @media (min-width: 640px) { .wd-silk-mq { margin-top: 24px; } }
+    /* Isolate each row's raster so a repaint in one row never touches the others */
+    .wd-silk-mq > div > div { contain: layout paint; }
+    /* Entrance: staggered spring rise, transform + opacity only */
+    @keyframes wd-silk-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    .wd-silk-content > * { animation: wd-silk-in 0.8s cubic-bezier(0.22,1.2,0.36,1) both; }
+    .wd-silk-content > :nth-child(1) { animation-delay: 0.15s; }
+    .wd-silk-content > :nth-child(2) { animation-delay: 0.26s; }
+    .wd-silk-content > :nth-child(3) { animation-delay: 0.37s; }
+    .wd-silk-content > :nth-child(4) { animation-delay: 0.48s; }
+    .wd-silk-content > :nth-child(5) { animation-delay: 0.59s; }
+    .wd-silk-content > :nth-child(6) { animation-delay: 0.70s; }
+    @media (prefers-reduced-motion: reduce) { .wd-silk-content > * { animation: none; } }
+    .wd-hero-feat-wrap { padding: 0 28px; }
 
     /* ── Hero pill ── */
     .wd-hero-pill {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 8px 18px; border-radius: 999px;
-      background: rgba(0,229,255,0.07);
-      border: 1.5px solid rgba(0,229,255,0.3);
+      background: rgba(201,169,97,0.07);
+      border: 1.5px solid rgba(201,169,97,0.35);
       backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
       font-family: 'JetBrains Mono', monospace; font-size: 12.5px; font-weight: 600;
       color: rgba(238,240,248,0.9); letter-spacing: 0.06em; text-transform: uppercase;
       margin-bottom: 26px;
     }
-    .wd-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); flex-shrink: 0; }
+    .wd-hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: #C9A961; box-shadow: 0 0 8px #C9A961; flex-shrink: 0; }
 
     /* ── Hero CTA buttons ── */
     .wd-hero-cta-row { display: flex; align-items: center; gap: 16px; justify-content: center; flex-wrap: wrap; padding-bottom: 72px; }
@@ -491,6 +561,40 @@
       .mob-cta-primary::before { display: none; }
     }
 
+    /* ── Nav icons (desktop dropdowns + mobile menu) ── */
+    .ni { width: 16px; height: 16px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transform: translateZ(0); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease; }
+    .dropdown-item { display: flex; align-items: center; gap: 10px; }
+    .dropdown-item .ni { width: 14px; height: 14px; color: var(--item-c, currentColor); opacity: 0.7; }
+    .dropdown-item:hover .ni, .dropdown-item:focus-visible .ni, .dropdown-item.active .ni { opacity: 1; color: var(--item-c, var(--cyan)); }
+    .mob-link { gap: 12px; }
+    .mob-accordion-trigger { justify-content: flex-start; }
+    .mob-accordion-trigger .mob-chevron { margin-left: auto; }
+    .mob-link .ni { color: var(--item-c, currentColor); opacity: 0.85; }
+    .mob-sub .ni { width: 15px; height: 15px; opacity: 1; }
+    .mob-link:hover .ni, .mob-link:focus-visible .ni, .mob-link.active .ni, .mob-accordion-trigger[aria-expanded="true"] .ni { opacity: 1; color: var(--item-c, var(--cyan)); }
+    .mob-link:focus-visible .ni, .mob-link:active .ni, .dropdown-item:focus-visible .ni { transform: translateX(2px) scale(1.12); }
+    @media (hover: hover) and (pointer: fine) {
+      .mob-link:hover .ni, .dropdown-item:hover .ni { transform: translateX(2px) scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ni { transition: none; }
+      .mob-link .ni, .dropdown-item .ni, .mob-link:hover .ni, .dropdown-item:hover .ni, .mob-link:focus-visible .ni, .mob-link:active .ni, .dropdown-item:focus-visible .ni { transform: none; }
+    }
+
+    /* Desktop header links: icon before the label, underline under the text only */
+    .nav-links .nav-link { display: inline-flex; align-items: center; gap: 7px; }
+    .nav-link .ni { width: 14px; height: 14px; opacity: 0.75; }
+    .nav-link:hover .ni, .nav-link:focus-visible .ni, .nav-link.active .ni, .nav-dropdown:focus-within .nav-link .ni { opacity: 1; }
+    .nav-link:has(> .ni)::after { left: 21px; }
+    .nav-link:has(> .ni):hover::after, .nav-link:has(> .ni).active::after { width: calc(100% - 21px); }
+    .nav-link:focus-visible .ni { transform: translateX(1px) scale(1.12); }
+    @media (hover: hover) and (pointer: fine) {
+      .nav-link:hover .ni { transform: translateX(1px) scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nav-link:hover .ni, .nav-link:focus-visible .ni { transform: none; }
+    }
+
     /* ── Skip link ── */
     .skip-link {
       position: absolute; top: -100px; left: 20px; z-index: 9000;
@@ -568,6 +672,20 @@
       font-size: 14px; line-height: 1.72;
       color: var(--text-2);
     }
+    /* Apps card link: 10px gap matches the h3 to p rhythm */
+    .w-card-more {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px; font-weight: 600;
+      color: var(--more-c, var(--cyan));
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+      transition: color 0.2s ease;
+    }
+    .w-card-more:hover { color: var(--more-c-hover, var(--cyan)); }
+    .w-card-more:focus-visible { outline: 2px solid var(--more-c, var(--cyan)); outline-offset: 3px; border-radius: 4px; }
+    .w-card-more:active { transform: translateY(1px); }
 
     /* ── Pricing tier cards ──
        Shared format with web-design.html and ecommerce.html; keep the two in
@@ -1466,17 +1584,19 @@
       from { transform: translateX(-50%); }
       to   { transform: translateX(0); }
     }
-    .mq-track     { display:flex; width:max-content; }
+    .mq-track     { display:flex; width:max-content; will-change:transform; backface-visibility:hidden; }
     .mq-animate-l { animation: marquee-left  var(--dur,45s) linear infinite; }
     .mq-animate-r { animation: marquee-right var(--dur,50s) linear infinite; }
     .mq-badge {
       display:inline-flex; align-items:center;
-      padding:6px 14px;
+      padding:7px 14px;
       margin-right:0.75rem;
-      font-size:13px; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap;
-      color:var(--text-2);
-      background:rgba(0,229,255,0.055);
-      border:1px solid rgba(0,229,255,0.14);
+      font-size:10.5px; font-family:'JetBrains Mono',monospace; font-weight:500; white-space:nowrap;
+      text-transform:uppercase; letter-spacing:0.16em;
+      color:rgba(237,232,223,0.72);
+      background:rgba(8,8,11,0.45);
+      border:1px solid rgba(237,232,223,0.12);
+      border-radius:999px;
     }
     @media (prefers-reduced-motion: reduce) {
       .mq-animate-l, .mq-animate-r { animation: none; }
@@ -1675,6 +1795,44 @@
 
 <!-- ── Nav ── -->
 <nav class="nav">
+  <!-- Nav icon sprite: shared by the desktop dropdowns and the mobile menu -->
+  <svg id="ni-sprite" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="ni-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></symbol>
+    <symbol id="ni-company" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M2 21h20"/><path d="M8 8h3M8 12h3M8 16h3"/></symbol>
+    <symbol id="ni-services" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 2.5c.4 2.3 1.2 3.1 3.5 3.5-2.3.4-3.1 1.2-3.5 3.5-.4-2.3-1.2-3.1-3.5-3.5 2.3-.4 3.1-1.2 3.5-3.5z"/></symbol>
+    <symbol id="ni-legal" viewBox="0 0 24 24"><path d="M12 3v18M8 21h8M4 7h16"/><path d="M6 7 3 14a3 3 0 0 0 6 0z"/><path d="M18 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+    <symbol id="ni-account" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+    <symbol id="ni-landing" viewBox="0 0 24 24"><path d="M14 3h5a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-5"/><path d="M3 12h11"/><path d="m10 8 4 4-4 4"/></symbol>
+    <symbol id="ni-why" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M8.5 14 7 22l5-3 5 3-1.5-8"/><path d="m12 6.2.85 1.7 1.85.25-1.35 1.3.3 1.85L12 10.4l-1.65.9.3-1.85L9.3 8.15l1.85-.25z"/></symbol>
+    <symbol id="ni-layers" viewBox="0 0 24 24"><path d="M12 2.5 2 7.5l10 5 10-5z"/><path d="m2 12 10 5 10-5"/><path d="m2 16.5 10 5 10-5"/></symbol>
+    <symbol id="ni-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></symbol>
+    <symbol id="ni-invest" viewBox="0 0 24 24"><ellipse cx="9" cy="7" rx="6" ry="3"/><path d="M3 7v10c0 1.7 2.7 3 6 3s6-1.3 6-3V7"/><path d="M3 12c0 1.7 2.7 3 6 3s6-1.3 6-3"/><path d="M19 19V5M16.5 7.5 19 5l2.5 2.5"/></symbol>
+    <symbol id="ni-results" viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="12" width="3" height="6" rx="1"/><rect x="10.5" y="8" width="3" height="10" rx="1"/><rect x="16" y="4" width="3" height="14" rx="1"/></symbol>
+    <symbol id="ni-roadmap" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h3"/><path d="M18 2.5a3 3 0 0 1 3 3c0 2.2-3 5-3 5s-3-2.8-3-5a3 3 0 0 1 3-3z"/></symbol>
+    <symbol id="ni-faq" viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/><path d="M9.7 9.3a2.4 2.4 0 0 1 4.6.9c0 1.6-2.3 2.1-2.3 3.3"/><path d="M12 16.5h.01"/></symbol>
+    <symbol id="ni-blog" viewBox="0 0 24 24"><path d="M2.5 5a2 2 0 0 1 2-2h9.5a2 2 0 0 1 2 2v5.5a2 2 0 0 1-2 2H8.5l-4 3.5v-3.5a2 2 0 0 1-2-2z"/><path d="M6.25 7.75h.01M9.25 7.75h.01M12.25 7.75h.01"/><path d="m12 19.5 6.6-6.6a1.6 1.6 0 0 1 2.3 2.3l-6.6 6.6-3.3.9z"/><path d="m17.1 14.4 2.3 2.3"/></symbol>
+    <symbol id="ni-work" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.8"/><path d="m21 15-5-5-9.5 10"/></symbol>
+    <symbol id="ni-about" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8"/><path d="M18.5 14.2a6.5 6.5 0 0 1 3 5.8"/></symbol>
+    <symbol id="ni-contact" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></symbol>
+    <symbol id="ni-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="ni-web" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2"/><path d="M2.5 8.5h19"/><path d="M5.5 6.25h.01M8 6.25h.01"/><path d="m9.5 12-2.5 2.5 2.5 2.5M14.5 12l2.5 2.5-2.5 2.5"/></symbol>
+    <symbol id="ni-ecom" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.5"/><circle cx="17.5" cy="20" r="1.5"/><path d="M2 3h2.5l2.6 12.2a1 1 0 0 0 1 .8h9.6a1 1 0 0 0 1-.8L21 7H5.6"/></symbol>
+    <symbol id="ni-lp" viewBox="0 0 24 24"><g transform="rotate(45 12 12)"><path d="M12 2.5c3 2.3 4.5 5.6 4.5 9.2V16h-9v-4.3c0-3.6 1.5-6.9 4.5-9.2z"/><circle cx="12" cy="9.5" r="1.75"/><path d="M7.5 12.5 4.5 15v3.5l3-1.5M16.5 12.5l3 2.5v3.5l-3-1.5"/><path d="M10 19.5c0 1.2 1 2 2 2.5 1-.5 2-1.3 2-2.5"/></g></symbol>
+    <symbol id="ni-app" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M9.5 7.5h.01M12 7.5h.01M14.5 7.5h.01M9.5 11h.01M12 11h.01M14.5 11h.01"/></symbol>
+    <symbol id="ni-sem" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m21 21-5.5-5.5"/><path d="m7 12.5 2.5-2.5 1.75 1.75L14 9"/></symbol>
+    <symbol id="ni-email" viewBox="0 0 24 24"><path d="M14 5H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6"/><path d="m3.5 6.5 6.5 5 4-3"/><path d="M14 13a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1l-2.5 2.5V18H16a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="ni-host" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="6"/><path d="M6 8.5h12"/><path d="M12 2.5c1.7 1.7 2.5 3.8 2.5 6s-.8 4.3-2.5 6c-1.7-1.7-2.5-3.8-2.5-6s.8-4.3 2.5-6z"/><rect x="3" y="17" width="18" height="4.5" rx="1.5"/><path d="M6.5 19.25h.01"/></symbol>
+    <symbol id="ni-content" viewBox="0 0 24 24"><path d="M4 7h3l1.5-2h5L15 7h5a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/><path d="M18 10h.01"/></symbol>
+    <symbol id="ni-smm" viewBox="0 0 24 24"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-8l-5 4v-4H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/><path d="M12 13.5s-3.5-2-3.5-4.2A1.8 1.8 0 0 1 12 8.6a1.8 1.8 0 0 1 3.5.7c0 2.2-3.5 4.2-3.5 4.2z"/></symbol>
+    <symbol id="ni-custom" viewBox="0 0 24 24"><path d="M3 13h13c0 3-2.9 5-6.5 5S3 16 3 13z"/><path d="M16 13c2 0 3.8-1.3 5.5-3.5-.2 3.3-2.4 5.6-6.3 6.6"/><path d="M3.3 14.6c-1.8.1-2.8-1.1-2.5-2.5.3-1.2 1.6-1.6 2.6-.9"/><path d="M6 13c0-2 1.6-3.5 3.5-3.5S13 11 13 13"/><path d="M9.5 9.5V7.5"/><path d="M9.5 18v2.5M6.5 21h6"/><path d="M21.5 7c-.8-1.2.5-2.2 0-3.5-.4-.9-1.3-1.2-1.8-2"/></symbol>
+    <symbol id="ni-privacy" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 14.5V17"/></symbol>
+    <symbol id="ni-terms" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="M8.5 9h3M8.5 12.5h7M8.5 16h7"/></symbol>
+    <symbol id="ni-cookie" viewBox="0 0 24 24"><path d="M21 12.5A9 9 0 1 1 11.5 3a3 3 0 0 0 3.5 3.5 3 3 0 0 0 3 3 3 3 0 0 0 3 3z"/><path d="M8.5 9.5h.01M8 14.5h.01M12.5 13h.01M15.5 16.5h.01M11 17.5h.01"/></symbol>
+    <symbol id="ni-a11y" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><circle cx="12" cy="7.5" r="1.25"/><path d="m7.5 10.5 4.5 1 4.5-1"/><path d="M12 11.5v3l-2.5 4M12 14.5l2.5 4"/></symbol>
+    <symbol id="ni-wcag" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.5v6c0 4.7 3.2 8.4 7.5 10 4.3-1.6 7.5-5.3 7.5-10v-6z"/><path d="m8.75 12 2.25 2.25 4.25-4.5"/></symbol>
+    <symbol id="ni-proxy" viewBox="0 0 24 24"><path d="M12 2.5 4.5 5.5v6c0 4.7 3.2 8.4 7.5 10 4.3-1.6 7.5-5.3 7.5-10v-6z"/><circle cx="12" cy="11.5" r="4"/><path d="M8 11.5h8"/></symbol>
+    <symbol id="ni-hostag" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="7" rx="1.5"/><path d="M6.5 6.5h.01M10 6.5h4"/><path d="M11 13H5a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h6"/><path d="M14 13h4.5l2.5 2.5V21h-7z"/><path d="M18.5 13v2.5H21"/></symbol>
+  </svg>
   <div class="nav-inner">
     <a href="index.html" aria-label="VardWeb Home">
       <div class="logo-nav-wrap">
@@ -1688,40 +1846,40 @@
     <div class="nav-links">
       <div class="nav-dropdown">
         <a href="index.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-home-menu">
-          Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <svg class="ni" aria-hidden="true"><use href="#ni-home"/></svg>Home <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-home-menu" role="menu">
-          <a href="index.html" class="dropdown-item" role="menuitem">Landing</a>
-          <a href="index.html#why-us"   class="dropdown-item" role="menuitem">Why Us?</a>
-          <a href="index.html#services" class="dropdown-item" role="menuitem">Services</a>
-          <a href="index.html#advanced" class="dropdown-item" role="menuitem">Advanced</a>
-          <a href="index.html#investment" class="dropdown-item" role="menuitem">Investment</a>
-          <a href="index.html#results"  class="dropdown-item" role="menuitem">Results</a>
-          <a href="index.html#roadmap"  class="dropdown-item" role="menuitem">Roadmap</a>
+          <a href="index.html" class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-landing"/></svg>Landing</a>
+          <a href="index.html#why-us"   class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-why"/></svg>Why Us?</a>
+          <a href="index.html#services" class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-layers"/></svg>Services</a>
+          <a href="index.html#advanced" class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-chip"/></svg>Advanced</a>
+          <a href="index.html#investment" class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-invest"/></svg>Investment</a>
+          <a href="index.html#results"  class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-results"/></svg>Results</a>
+          <a href="index.html#roadmap"  class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-roadmap"/></svg>Roadmap</a>
         </div>
       </div>
-      <a href="faq.html"      class="nav-link">FAQ</a>
-      <a href="blog.html"     class="nav-link">Blog</a>
-      <a href="our-work.html" class="nav-link">Our Work</a>
-      <a href="about.html"    class="nav-link">About</a>
+      <a href="faq.html"      class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-faq"/></svg>FAQ</a>
+      <a href="blog.html"     class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-blog"/></svg>Blog</a>
+      <a href="our-work.html" class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-work"/></svg>Our Work</a>
+      <a href="about.html"    class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-about"/></svg>About</a>
       <div class="nav-dropdown">
         <a href="services.html" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
-          Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <svg class="ni" aria-hidden="true"><use href="#ni-services"/></svg>Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </a>
         <div class="dropdown-menu" id="dd-services-menu" role="menu">
-          <a href="web-design.html" class="dropdown-item active" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)">Web Design</a>
-          <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)">E-Commerce</a>
-          <a href="landing-pages.html" class="dropdown-item" role="menuitem" style="--item-c:#FF2D78;--item-bg:rgba(255,45,120,0.08)">Landing Pages</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">App Development</a>
-          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)">SEM &amp; SEO</a>
-          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)">Email &amp; SMS Marketing</a>
-          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)">Domain &amp; Hosting</a>
-          <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)">Content Creation &amp; CM</a>
-          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)">Social Media &amp; SMM</a>
-          <a href="contact.html"    class="dropdown-item" role="menuitem">Custom Request</a>
+          <a href="web-design.html" class="dropdown-item active" role="menuitem" style="--item-c:#00E5FF;--item-bg:rgba(0,229,255,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-web"/></svg>Web Design</a>
+          <a href="ecommerce.html"    class="dropdown-item" role="menuitem" style="--item-c:#EF4444;--item-bg:rgba(239,68,68,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-ecom"/></svg>E-Commerce</a>
+          <a href="landing-pages.html" class="dropdown-item" role="menuitem" style="--item-c:#FF2D78;--item-bg:rgba(255,45,120,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-lp"/></svg>Landing Pages</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-app"/></svg>App Development</a>
+          <a href="sem-seo.html" class="dropdown-item" role="menuitem" style="--item-c:#f97316;--item-bg:rgba(249,115,22,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-sem"/></svg>SEM &amp; SEO</a>
+          <a href="email-marketing.html" class="dropdown-item" role="menuitem" style="--item-c:#60A5FA;--item-bg:rgba(96,165,250,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-email"/></svg>Email &amp; SMS Marketing</a>
+          <a href="hosting-services.html" class="dropdown-item" role="menuitem" style="--item-c:#34D399;--item-bg:rgba(52,211,153,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-host"/></svg>Domain &amp; Hosting</a>
+          <a href="content-creation.html" class="dropdown-item" role="menuitem" style="--item-c:#FBBF24;--item-bg:rgba(251,191,36,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-content"/></svg>Content Creation &amp; CM</a>
+          <a href="smm.html" class="dropdown-item" role="menuitem" style="--item-c:#F472B6;--item-bg:rgba(244,114,182,0.08)"><svg class="ni" aria-hidden="true"><use href="#ni-smm"/></svg>Social Media &amp; SMM</a>
+          <a href="contact.html"    class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-custom"/></svg>Custom Request</a>
         </div>
       </div>
-      <a href="contact.html"  class="nav-link">Contact</a>
+      <a href="contact.html"  class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-contact"/></svg>Contact</a>
     </div>
 
     <div class="nav-right">
@@ -1737,61 +1895,61 @@
   <div class="nav-mobile-menu">
     <div class="mob-section-label">Navigate</div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-home-panel">
-      Home
+      <svg class="ni" aria-hidden="true"><use href="#ni-home"/></svg>Home
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-home-panel"><div>
-    <a href="index.html"          class="mob-link mob-sub">Landing</a>
-    <a href="index.html#why-us"   class="mob-link mob-sub">Why Us?</a>
-    <a href="index.html#services" class="mob-link mob-sub">Services</a>
-    <a href="index.html#advanced" class="mob-link mob-sub">Advanced</a>
-    <a href="index.html#investment" class="mob-link mob-sub">Investment</a>
-    <a href="index.html#results"  class="mob-link mob-sub">Results</a>
-    <a href="index.html#roadmap"  class="mob-link mob-sub">Roadmap</a>
+    <a href="index.html"          class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-landing"/></svg>Landing</a>
+    <a href="index.html#why-us"   class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-why"/></svg>Why Us?</a>
+    <a href="index.html#services" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-layers"/></svg>Services</a>
+    <a href="index.html#advanced" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-chip"/></svg>Advanced</a>
+    <a href="index.html#investment" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-invest"/></svg>Investment</a>
+    <a href="index.html#results"  class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-results"/></svg>Results</a>
+    <a href="index.html#roadmap"  class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-roadmap"/></svg>Roadmap</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-company-panel">
-      Company
+      <svg class="ni" aria-hidden="true"><use href="#ni-company"/></svg>Company
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-company-panel"><div>
-    <a href="faq.html"      class="mob-link mob-sub">FAQ</a>
-    <a href="blog.html"     class="mob-link mob-sub">Blog</a>
-    <a href="our-work.html" class="mob-link mob-sub">Our Work</a>
-    <a href="about.html"    class="mob-link mob-sub">About Us</a>
-    <a href="contact.html"  class="mob-link mob-sub">Contact</a>
+    <a href="faq.html"      class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-faq"/></svg>FAQ</a>
+    <a href="blog.html"     class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-blog"/></svg>Blog</a>
+    <a href="our-work.html" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-work"/></svg>Our Work</a>
+    <a href="about.html"    class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-about"/></svg>About Us</a>
+    <a href="contact.html"  class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-contact"/></svg>Contact</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger active" aria-expanded="false" aria-controls="mob-services-panel">
-      Services
+      <svg class="ni" aria-hidden="true"><use href="#ni-services"/></svg>Services
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-services-panel"><div>
-    <a href="services.html"   class="mob-link mob-sub">All Services</a>
-    <a href="web-design.html" class="mob-link mob-sub active">Web Design</a>
-    <a href="ecommerce.html"    class="mob-link mob-sub">E-Commerce</a>
-    <a href="landing-pages.html" class="mob-link mob-sub">Landing Pages</a>
-    <a href="contact.html"    class="mob-link mob-sub">App Development</a>
-    <a href="sem-seo.html"    class="mob-link mob-sub">SEM &amp; SEO</a>
-    <a href="email-marketing.html" class="mob-link mob-sub">Email &amp; SMS Marketing</a>
-    <a href="hosting-services.html"    class="mob-link mob-sub">Domain &amp; Hosting</a>
-    <a href="content-creation.html" class="mob-link mob-sub">Content Creation &amp; CM</a>
-    <a href="smm.html"    class="mob-link mob-sub">Social Media &amp; SMM</a>
-    <a href="contact.html"    class="mob-link mob-sub">Custom Request</a>
+    <a href="services.html"   class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-grid"/></svg>All Services</a>
+    <a href="web-design.html" class="mob-link mob-sub active" style="--item-c:#00E5FF"><svg class="ni" aria-hidden="true"><use href="#ni-web"/></svg>Web Design</a>
+    <a href="ecommerce.html"    class="mob-link mob-sub" style="--item-c:#EF4444"><svg class="ni" aria-hidden="true"><use href="#ni-ecom"/></svg>E-Commerce</a>
+    <a href="landing-pages.html" class="mob-link mob-sub" style="--item-c:#FF2D78"><svg class="ni" aria-hidden="true"><use href="#ni-lp"/></svg>Landing Pages</a>
+    <a href="contact.html"    class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-app"/></svg>App Development</a>
+    <a href="sem-seo.html"    class="mob-link mob-sub" style="--item-c:#f97316"><svg class="ni" aria-hidden="true"><use href="#ni-sem"/></svg>SEM &amp; SEO</a>
+    <a href="email-marketing.html" class="mob-link mob-sub" style="--item-c:#60A5FA"><svg class="ni" aria-hidden="true"><use href="#ni-email"/></svg>Email &amp; SMS Marketing</a>
+    <a href="hosting-services.html"    class="mob-link mob-sub" style="--item-c:#34D399"><svg class="ni" aria-hidden="true"><use href="#ni-host"/></svg>Domain &amp; Hosting</a>
+    <a href="content-creation.html" class="mob-link mob-sub" style="--item-c:#FBBF24"><svg class="ni" aria-hidden="true"><use href="#ni-content"/></svg>Content Creation &amp; CM</a>
+    <a href="smm.html"    class="mob-link mob-sub" style="--item-c:#F472B6"><svg class="ni" aria-hidden="true"><use href="#ni-smm"/></svg>Social Media &amp; SMM</a>
+    <a href="contact.html"    class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-custom"/></svg>Custom Request</a>
     </div></div>
     <button type="button" class="mob-link mob-accordion-trigger" aria-expanded="false" aria-controls="mob-legal-panel">
-      Legal
+      <svg class="ni" aria-hidden="true"><use href="#ni-legal"/></svg>Legal
       <svg class="mob-chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </button>
     <div class="mob-accordion-panel" id="mob-legal-panel"><div>
-    <a href="privacy.html"         class="mob-link mob-sub">Privacy Policy</a>
-    <a href="terms.html"           class="mob-link mob-sub">Terms of Service</a>
-    <a href="cookie-policy.html"   class="mob-link mob-sub">Cookie Policy</a>
-    <a href="accessibility.html"   class="mob-link mob-sub">Accessibility</a>
-    <a href="wcag-compliance.html" class="mob-link mob-sub">WCAG Compliance</a>
-    <a href="domain-name-proxy-agreement.html" class="mob-link mob-sub">Domain Name Proxy Agreement</a>
-    <a href="hosting-agreement.html" class="mob-link mob-sub">Hosting Agreement</a>
+    <a href="privacy.html"         class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-privacy"/></svg>Privacy Policy</a>
+    <a href="terms.html"           class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-terms"/></svg>Terms of Service</a>
+    <a href="cookie-policy.html"   class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-cookie"/></svg>Cookie Policy</a>
+    <a href="accessibility.html"   class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-a11y"/></svg>Accessibility</a>
+    <a href="wcag-compliance.html" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-wcag"/></svg>WCAG Compliance</a>
+    <a href="domain-name-proxy-agreement.html" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-proxy"/></svg>Domain Name Proxy Agreement</a>
+    <a href="hosting-agreement.html" class="mob-link mob-sub"><svg class="ni" aria-hidden="true"><use href="#ni-hostag"/></svg>Hosting Agreement</a>
     </div></div>
     <div class="mob-divider"></div>
-    <a href="/crm/login.html" class="mob-link mob-cta-ghost">Account →</a>
+    <a href="/crm/login.html" class="mob-link mob-cta-ghost"><svg class="ni" aria-hidden="true"><use href="#ni-account"/></svg>Account →</a>
   </div>
 </nav>
 
@@ -1812,103 +1970,143 @@
       </filter>
     </defs>
   </svg>
-  <!-- Radial gradient bg orbs -->
-  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;">
-    <div style="position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,229,255,0.065) 0%,transparent 68%);"></div>
-    <div style="position:absolute;top:20px;right:0;width:400px;height:340px;background:radial-gradient(ellipse,rgba(255,45,120,0.03) 0%,transparent 70%);"></div>
-    <div style="position:absolute;top:80px;left:0;width:360px;height:280px;background:radial-gradient(ellipse,rgba(255,215,0,0.022) 0%,transparent 70%);"></div>
-  </div>
+  <!-- Silk hero: procedural three.js silk (see the module script below), scrim, then copy -->
+  <div class="wd-silk">
+    <div class="wd-silk-canvas" aria-hidden="true"></div>
+    <div class="wd-silk-scrim" aria-hidden="true"></div>
 
-  <!-- Heading + paragraph -->
-  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;text-align:center;">
-    <div class="wd-hero-pill">
-      <span class="wd-hero-pill-dot"></span>
-      <span class="pill-long">Clinically proven to cure low conversion!</span><span class="pill-short">Cures low conversion!</span>
-    </div>
-    <p class="wd-hero-kicker">
-      <span class="wd-kicker-slash">//</span>
-      <span class="wd-kw" style="--i:0; animation-delay:0s">W</span><span class="wd-kw" style="--i:1; animation-delay:0.07s">e</span><span class="wd-kw" style="--i:2; animation-delay:0.14s">b</span>
-      <span class="wd-kw" style="--i:3; animation-delay:0.21s">D</span><span class="wd-kw" style="--i:4; animation-delay:0.28s">e</span><span class="wd-kw" style="--i:5; animation-delay:0.35s">s</span><span class="wd-kw" style="--i:6; animation-delay:0.42s">i</span><span class="wd-kw" style="--i:7; animation-delay:0.49s">g</span><span class="wd-kw" style="--i:8; animation-delay:0.56s">n</span>
-    </p>
-    <h1 class="hero-h1" style="font-size:clamp(2.6rem,6.5vw,4.6rem);font-weight:800;line-height:1.05;margin-bottom:20px;color:var(--text-1);">
-      Your digital home,<br>
-      <span class="grad-cyan-purple">Just a click away</span>
-    </h1>
-    <p style="font-size:17px;line-height:1.78;color:var(--text-2);max-width:520px;margin:0 auto 40px;">
-      We engineer every website from scratch. No templates, no page builders, no compromises. Built to load fast, rank on Google, and convert the visitors that matter most to your business.
-    </p>
-  </div>
+    <div class="wd-silk-content">
+      <div class="wd-hero-pill">
+        <span class="wd-hero-pill-dot"></span>
+        <span class="pill-long">Clinically proven to cure low conversion!</span><span class="pill-short">Cures low conversion!</span>
+      </div>
+      <p class="wd-hero-kicker">
+        <span class="wd-kicker-slash">//</span>
+        <span class="wd-kw" style="--i:0; animation-delay:0s">W</span><span class="wd-kw" style="--i:1; animation-delay:0.07s">e</span><span class="wd-kw" style="--i:2; animation-delay:0.14s">b</span>
+        <span class="wd-kw" style="--i:3; animation-delay:0.21s">D</span><span class="wd-kw" style="--i:4; animation-delay:0.28s">e</span><span class="wd-kw" style="--i:5; animation-delay:0.35s">s</span><span class="wd-kw" style="--i:6; animation-delay:0.42s">i</span><span class="wd-kw" style="--i:7; animation-delay:0.49s">g</span><span class="wd-kw" style="--i:8; animation-delay:0.56s">n</span>
+      </p>
+      <h1 class="wd-silk-h1">Drive Revenue</h1>
+      <p class="wd-silk-sub">Custom web code that stops hemorrhaging sales. Engineer your website to look like a million bucks. Conquer Google and hijack your market.</p>
 
-  <!-- Marquee: 3 rows of scrolling web-design questions -->
-  <div style="position:relative;z-index:1;overflow:hidden;margin:0 -28px 44px;">
-    <div style="position:absolute;left:0;top:0;bottom:0;width:120px;background:linear-gradient(to right,var(--base),transparent);z-index:10;pointer-events:none;"></div>
-    <div style="position:absolute;right:0;top:0;bottom:0;width:120px;background:linear-gradient(to left,var(--base),transparent);z-index:10;pointer-events:none;"></div>
-    <div style="display:flex;flex-direction:column;gap:10px;padding:6px 0;">
-      <!-- Row 1 → left -->
-      <div style="overflow:hidden;">
-        <div class="mq-track mq-animate-l" style="--dur:44s;">
-          <span class="mq-badge">Should I build on WordPress or go fully custom?</span>
-          <span class="mq-badge">How much does a professional website actually cost?</span>
-          <span class="mq-badge">Will my site rank on Google without a plugin?</span>
-          <span class="mq-badge">How do I know if visitors are converting?</span>
-          <span class="mq-badge">Should I build on WordPress or go fully custom?</span>
-          <span class="mq-badge">How much does a professional website actually cost?</span>
-          <span class="mq-badge">Will my site rank on Google without a plugin?</span>
-          <span class="mq-badge">How do I know if visitors are converting?</span>
+      <!-- CTA buttons -->
+      <div class="wd-hero-cta-row">
+        <a href="#pricing" class="wd-silk-btn wd-silk-btn--solid">View Pricing <span aria-hidden="true">→</span></a>
+        <div class="wd-hero-services-menu">
+          <button type="button" class="wd-silk-btn wd-silk-btn--ghost wd-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="wd-hero-services-panel">
+            View Services
+            <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="dropdown-menu wd-hero-services-panel" id="wd-hero-services-panel" role="menu">
+            <a href="#apps" class="dropdown-item" role="menuitem">Apps</a>
+            <a href="#what-you-get" class="dropdown-item" role="menuitem">Merging Complete</a>
+            <a href="#full-picture" class="dropdown-item" role="menuitem">Ecosystem Stack</a>
+            <a href="#wd-pitch" class="dropdown-item" role="menuitem">Not Off the Shelf</a>
+            <a href="#wd-features" class="dropdown-item" role="menuitem">What's Included</a>
+            <a href="#ai" class="dropdown-item" role="menuitem">AI Optimization</a>
+            <a href="#wd-addons" class="dropdown-item" role="menuitem">Beyond the Tiers</a>
+            <a href="#advertising" class="dropdown-item" role="menuitem">Advertising</a>
+            <a href="#pricing" class="dropdown-item" role="menuitem">Choose Your Tier</a>
+            <a href="#wd-faq" class="dropdown-item" role="menuitem">FAQ</a>
+          </div>
         </div>
       </div>
-      <!-- Row 2 → right -->
-      <div style="overflow:hidden;">
-        <div class="mq-track mq-animate-r" style="--dur:50s;">
-          <span class="mq-badge">Should I use a template or pay for custom design?</span>
-          <span class="mq-badge">Do I actually own my website if I use a builder?</span>
-          <span class="mq-badge">Why is my competitor ranking above me?</span>
-          <span class="mq-badge">What if my site goes down and I lose sales?</span>
-          <span class="mq-badge">Should I use a template or pay for custom design?</span>
-          <span class="mq-badge">Do I actually own my website if I use a builder?</span>
-          <span class="mq-badge">Why is my competitor ranking above me?</span>
-          <span class="mq-badge">What if my site goes down and I lose sales?</span>
-        </div>
-      </div>
-      <!-- Row 3 → left -->
-      <div style="overflow:hidden;">
-        <div class="mq-track mq-animate-l" style="--dur:42s;">
-          <span class="mq-badge">How long does it really take to build a quality site?</span>
-          <span class="mq-badge">Will my site load fast enough to keep visitors?</span>
-          <span class="mq-badge">How often should I actually update my website?</span>
-          <span class="mq-badge">What makes a website perform versus just look good?</span>
-          <span class="mq-badge">How long does it really take to build a quality site?</span>
-          <span class="mq-badge">Will my site load fast enough to keep visitors?</span>
-          <span class="mq-badge">How often should I actually update my website?</span>
-          <span class="mq-badge">What makes a website perform versus just look good?</span>
+
+      <!-- Marquee: 3 rows of what every Web Design build includes -->
+      <div class="wd-silk-mq">
+        <div style="display:flex;flex-direction:column;gap:10px;padding:6px 0;">
+          <!-- Row 1 → left -->
+          <div style="overflow:hidden;">
+            <div class="mq-track mq-animate-l" style="--dur:132s;">
+              <span class="mq-badge">Built from scratch</span>
+              <span class="mq-badge">Mobile-first by design</span>
+              <span class="mq-badge">Custom SEO, CRM, TCI &amp; CMS</span>
+              <span class="mq-badge">Google Setup: GA4, GSC, GBP</span>
+              <span class="mq-badge">Built from scratch</span>
+              <span class="mq-badge">Mobile-first by design</span>
+              <span class="mq-badge">Custom SEO, CRM, TCI &amp; CMS</span>
+              <span class="mq-badge">Google Setup: GA4, GSC, GBP</span>
+              <span class="mq-badge">Built from scratch</span>
+              <span class="mq-badge">Mobile-first by design</span>
+              <span class="mq-badge">Custom SEO, CRM, TCI &amp; CMS</span>
+              <span class="mq-badge">Google Setup: GA4, GSC, GBP</span>
+              <span class="mq-badge">Built from scratch</span>
+              <span class="mq-badge">Mobile-first by design</span>
+              <span class="mq-badge">Custom SEO, CRM, TCI &amp; CMS</span>
+              <span class="mq-badge">Google Setup: GA4, GSC, GBP</span>
+              <span class="mq-badge">Built from scratch</span>
+              <span class="mq-badge">Mobile-first by design</span>
+              <span class="mq-badge">Custom SEO, CRM, TCI &amp; CMS</span>
+              <span class="mq-badge">Google Setup: GA4, GSC, GBP</span>
+              <span class="mq-badge">Built from scratch</span>
+              <span class="mq-badge">Mobile-first by design</span>
+              <span class="mq-badge">Custom SEO, CRM, TCI &amp; CMS</span>
+              <span class="mq-badge">Google Setup: GA4, GSC, GBP</span>
+            </div>
+          </div>
+          <!-- Row 2 → right -->
+          <div style="overflow:hidden;">
+            <div class="mq-track mq-animate-r" style="--dur:150s;">
+              <span class="mq-badge">AI search visibility</span>
+              <span class="mq-badge">Every Stripe payment method</span>
+              <span class="mq-badge">Domain hosting &amp; delegation</span>
+              <span class="mq-badge">GDPR/CCPA-ready, daily backups</span>
+              <span class="mq-badge">AI search visibility</span>
+              <span class="mq-badge">Every Stripe payment method</span>
+              <span class="mq-badge">Domain hosting &amp; delegation</span>
+              <span class="mq-badge">GDPR/CCPA-ready, daily backups</span>
+              <span class="mq-badge">AI search visibility</span>
+              <span class="mq-badge">Every Stripe payment method</span>
+              <span class="mq-badge">Domain hosting &amp; delegation</span>
+              <span class="mq-badge">GDPR/CCPA-ready, daily backups</span>
+              <span class="mq-badge">AI search visibility</span>
+              <span class="mq-badge">Every Stripe payment method</span>
+              <span class="mq-badge">Domain hosting &amp; delegation</span>
+              <span class="mq-badge">GDPR/CCPA-ready, daily backups</span>
+              <span class="mq-badge">AI search visibility</span>
+              <span class="mq-badge">Every Stripe payment method</span>
+              <span class="mq-badge">Domain hosting &amp; delegation</span>
+              <span class="mq-badge">GDPR/CCPA-ready, daily backups</span>
+              <span class="mq-badge">AI search visibility</span>
+              <span class="mq-badge">Every Stripe payment method</span>
+              <span class="mq-badge">Domain hosting &amp; delegation</span>
+              <span class="mq-badge">GDPR/CCPA-ready, daily backups</span>
+            </div>
+          </div>
+          <!-- Row 3 → left -->
+          <div style="overflow:hidden;">
+            <div class="mq-track mq-animate-l" style="--dur:126s;">
+              <span class="mq-badge">Client &amp; sales dashboards</span>
+              <span class="mq-badge">Fixes within 12 hours</span>
+              <span class="mq-badge">Logo, favicon &amp; custom email</span>
+              <span class="mq-badge">Active growth partnership</span>
+              <span class="mq-badge">Client &amp; sales dashboards</span>
+              <span class="mq-badge">Fixes within 12 hours</span>
+              <span class="mq-badge">Logo, favicon &amp; custom email</span>
+              <span class="mq-badge">Active growth partnership</span>
+              <span class="mq-badge">Client &amp; sales dashboards</span>
+              <span class="mq-badge">Fixes within 12 hours</span>
+              <span class="mq-badge">Logo, favicon &amp; custom email</span>
+              <span class="mq-badge">Active growth partnership</span>
+              <span class="mq-badge">Client &amp; sales dashboards</span>
+              <span class="mq-badge">Fixes within 12 hours</span>
+              <span class="mq-badge">Logo, favicon &amp; custom email</span>
+              <span class="mq-badge">Active growth partnership</span>
+              <span class="mq-badge">Client &amp; sales dashboards</span>
+              <span class="mq-badge">Fixes within 12 hours</span>
+              <span class="mq-badge">Logo, favicon &amp; custom email</span>
+              <span class="mq-badge">Active growth partnership</span>
+              <span class="mq-badge">Client &amp; sales dashboards</span>
+              <span class="mq-badge">Fixes within 12 hours</span>
+              <span class="mq-badge">Logo, favicon &amp; custom email</span>
+              <span class="mq-badge">Active growth partnership</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CTA buttons -->
-  <div class="wd-hero-cta-row" style="position:relative;z-index:1;">
-    <div class="wd-hero-services-menu">
-      <button type="button" class="btn wd-hero-btn wd-hero-btn-outline wd-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="wd-hero-services-panel">
-        View Services
-        <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </button>
-      <div class="dropdown-menu wd-hero-services-panel" id="wd-hero-services-panel" role="menu">
-        <a href="#apps" class="dropdown-item" role="menuitem">Apps</a>
-        <a href="#what-you-get" class="dropdown-item" role="menuitem">Merging Complete</a>
-        <a href="#full-picture" class="dropdown-item" role="menuitem">Ecosystem Stack</a>
-        <a href="#wd-pitch" class="dropdown-item" role="menuitem">Not Off the Shelf</a>
-        <a href="#wd-features" class="dropdown-item" role="menuitem">What's Included</a>
-        <a href="#ai" class="dropdown-item" role="menuitem">AI Optimization</a>
-        <a href="#wd-addons" class="dropdown-item" role="menuitem">Beyond the Tiers</a>
-        <a href="#advertising" class="dropdown-item" role="menuitem">Advertising</a>
-        <a href="#pricing" class="dropdown-item" role="menuitem">Choose Your Tier</a>
-        <a href="#wd-faq" class="dropdown-item" role="menuitem">FAQ</a>
-      </div>
-    </div>
-    <a href="#pricing" class="btn wd-hero-btn wd-hero-btn-gradient">View Pricing <span aria-hidden="true">→</span></a>
-  </div>
-
+  <div class="wd-hero-feat-wrap">
   <!-- 4 Feature Cards Grid -->
   <div class="hero-feat-grid" style="position:relative;z-index:1;border-top:1px dashed rgba(200,212,232,0.12);display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:0 -28px;">
     <!-- Card 1: Built from scratch -->
@@ -1963,6 +2161,7 @@
       </div>
     </div>
   </div>
+  </div>
 </section>
 
 <div class="divider hero-apps-div"></div>
@@ -1987,71 +2186,57 @@
 
       <!-- ── Card 1: PWA ── -->
       <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
-        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(90,103,250,0.25);margin:0 auto 20px;">
-          <svg width="48" height="48" viewBox="0 0 52 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs>
-              <linearGradient id="pwa-bg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#6C72F7"/>
-                <stop offset="100%" stop-color="#3D45CC"/>
-              </linearGradient>
-              <linearGradient id="pwa-hi" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
-                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
-              </linearGradient>
-            </defs>
-            <path d="M26 2 L48 12 L48 30 C48 42 38 52 26 55 C14 52 4 42 4 30 L4 12 Z" fill="url(#pwa-bg)"/>
-            <path d="M26 2 L48 12 L48 30 C48 42 38 52 26 55 C14 52 4 42 4 30 L4 12 Z" fill="url(#pwa-hi)" opacity="0.5"/>
-            <path d="M26 6 L44 15 L44 30 C44 40 36 49 26 52 C16 49 8 40 8 30 L8 15 Z" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-            <text x="26" y="35" text-anchor="middle" fill="white" font-family="'JetBrains Mono',monospace" font-weight="800" font-size="12" letter-spacing="1">PWA</text>
+        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(90,15,200,0.35);margin:0 auto 20px;">
+          <!-- Official community PWA logo; P and A white for the dark tile -->
+          <svg width="58" height="22" viewBox="0 0 1952 735" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path fill="#FFFFFF" d="M1436.62,603.304L1493.01,460.705L1655.83,460.705L1578.56,244.39L1675.2,0L1952,734.933L1747.87,734.933L1700.57,603.304L1436.62,603.304Z"/>
+            <path fill="#5A0FC8" d="M1262.47,734.935L1558.79,0L1362.34,0L1159.64,474.933L1015.5,0L864.499,0L709.731,474.933L600.585,258.517L501.812,562.819L602.096,734.935L795.427,734.935L935.284,309.025L1068.63,734.935L1262.47,734.935Z"/>
+            <path fill="#FFFFFF" d="M186.476,482.643L307.479,482.643C344.133,482.643 376.772,478.552 405.396,470.37L436.689,373.962L524.148,104.516C517.484,93.9535 509.876,83.9667 501.324,74.5569C456.419,24.852 390.719,0 304.222,0L0,0L0,734.933L186.476,734.933L186.476,482.643Z M346.642,169.079C364.182,186.732 372.951,210.355 372.951,239.95C372.951,269.772 365.238,293.424 349.813,310.906C332.903,330.331 301.766,340.043 256.404,340.043L186.476,340.043L186.476,142.598L256.918,142.598C299.195,142.598 329.103,151.425 346.642,169.079Z"/>
           </svg>
         </div>
         <p class="w-label">(Add-On)</p>
         <h3>Progressive Web App</h3>
         <p>Users install your site directly from the browser. Works offline, loads instantly, and feels native on any device. No app store review required.</p>
+        <!-- Points to contact for now; swap to the Apps page once it's built -->
+        <a href="contact.html" class="w-card-more" style="--more-c:#9D6BFF;--more-c-hover:#C2A3FF;" aria-label="Learn more about Progressive Web Apps">Learn More</a>
       </div>
 
       <!-- ── Card 2: Google Play ── -->
       <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
         <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(52,168,83,0.25);margin:0 auto 20px;">
-          <svg width="48" height="48" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <polygon points="6,6 6,28 22,28" fill="#34A853"/>
-            <polygon points="6,6 22,28 50,28" fill="#4285F4"/>
-            <polygon points="6,28 6,50 22,28" fill="#EA4335"/>
-            <polygon points="6,50 50,28 22,28" fill="#FBBC04"/>
-            <polygon points="6,6 6,28 22,28" fill="rgba(255,255,255,0.07)"/>
+          <svg width="44" height="44" viewBox="-1.5 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M13.54 15.28.12 29.34a3.66 3.66 0 0 0 5.33 2.16l15.1-8.6Z" fill="#EA4335"/>
+            <path d="m27.11 12.89-6.53-3.74-7.35 6.45 7.38 7.28 6.48-3.7a3.54 3.54 0 0 0 1.5-4.79 3.62 3.62 0 0 0-1.5-1.5z" fill="#FBBC04"/>
+            <path d="M.12 2.66a3.57 3.57 0 0 0-.12.92v24.84a3.57 3.57 0 0 0 .12.92L14 15.64Z" fill="#4285F4"/>
+            <path d="m13.64 16 6.94-6.85L5.5.51A3.73 3.73 0 0 0 3.63 0 3.64 3.64 0 0 0 .12 2.65Z" fill="#34A853"/>
           </svg>
         </div>
         <p class="w-label">(Add-On)</p>
         <h3>Google Play</h3>
         <p>Publish to Android's largest distribution platform. Reach billions of users with a listing that drives installs and builds credibility.</p>
+        <!-- Points to contact for now; swap to the Apps page once it's built -->
+        <a href="contact.html" class="w-card-more" style="--more-c:#34A853;--more-c-hover:#5BC97A;" aria-label="Learn more about Google Play apps">Learn More</a>
       </div>
 
       <!-- ── Card 3: App Store ── -->
       <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
         <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(20,120,220,0.25);margin:0 auto 20px;">
-          <svg width="48" height="48" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <svg width="48" height="48" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <defs>
               <linearGradient id="as-bg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#2AAFF7"/>
-                <stop offset="100%" stop-color="#0A7FD5"/>
-              </linearGradient>
-              <linearGradient id="as-hi" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
-                <stop offset="50%" stop-color="rgba(255,255,255,0)"/>
+                <stop offset="0%" stop-color="#18BFFB"/>
+                <stop offset="100%" stop-color="#2072F3"/>
               </linearGradient>
             </defs>
-            <rect width="52" height="52" rx="13" fill="url(#as-bg)"/>
-            <rect width="52" height="26" rx="13" fill="url(#as-hi)"/>
-            <g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="14" y1="40" x2="26" y2="13" stroke-width="4"/>
-              <line x1="26" y1="13" x2="38" y2="40" stroke-width="4"/>
-              <line x1="18.5" y1="30" x2="33.5" y2="30" stroke-width="3.5"/>
-            </g>
+            <path fill="url(#as-bg)" d="M638.4,0H161.6C72.3,0,0,72.3,0,161.6v476.9C0,727.7,72.3,800,161.6,800h476.9c89.2,0,161.6-72.3,161.6-161.6V161.6C800,72.3,727.7,0,638.4,0z"/>
+            <path fill="#FFFFFF" d="M396.6,183.8l16.2-28c10-17.5,32.3-23.4,49.8-13.4s23.4,32.3,13.4,49.8L319.9,462.4h112.9c36.6,0,57.1,43,41.2,72.8H143c-20.2,0-36.4-16.2-36.4-36.4c0-20.2,16.2-36.4,36.4-36.4h92.8l118.8-205.9l-37.1-64.4c-10-17.5-4.1-39.6,13.4-49.8c17.5-10,39.6-4.1,49.8,13.4L396.6,183.8L396.6,183.8z M256.2,572.7l-35,60.7c-10,17.5-32.3,23.4-49.8,13.4S148,614.5,158,597l26-45C213.4,542.9,237.3,549.9,256.2,572.7L256.2,572.7z M557.6,462.6h94.7c20.2,0,36.4,16.2,36.4,36.4c0,20.2-16.2,36.4-36.4,36.4h-52.6l35.5,61.6c10,17.5,4.1,39.6-13.4,49.8c-17.5,10-39.6,4.1-49.8-13.4c-59.8-103.7-104.7-181.3-134.5-233c-30.5-52.6-8.7-105.4,12.8-123.3C474.2,318.1,509.9,380,557.6,462.6L557.6,462.6z"/>
           </svg>
         </div>
         <p class="w-label">(Add-On)</p>
         <h3>App Store</h3>
         <p>Publish to Apple's iOS marketplace and access the highest-spending mobile users. A curated presence lends instant trust and discoverability.</p>
+        <!-- Points to contact for now; swap to the Apps page once it's built -->
+        <a href="contact.html" class="w-card-more" style="--more-c:#18BFFB;--more-c-hover:#7DD9FD;" aria-label="Learn more about App Store apps">Learn More</a>
       </div>
 
     </div>
@@ -6025,6 +6210,317 @@
 
   heroRafObs.observe(heroEl);
 })();
+</script>
+
+<script type="module">
+  /* ── Silk hero background ──
+     Vanilla port of the supplied AuroraHero React component (R3F + motion):
+     a subdivided plane displaced by simplex fbm in the vertex stage, coloured
+     by a fresnel-driven thin-film ramp. No textures or external assets. The
+     loop only runs while the hero is on screen; reduced motion gets one
+     static frame. */
+  import * as THREE from 'three';
+
+  const SIMPLEX = `
+vec3 mod289(vec3 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
+vec4 mod289(vec4 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
+vec4 permute(vec4 x){ return mod289(((x*34.0)+1.0)*x); }
+vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
+float snoise(vec3 v){
+  const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+  const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+  vec3 i  = floor(v + dot(v, C.yyy));
+  vec3 x0 = v - i + dot(i, C.xxx);
+  vec3 g = step(x0.yzx, x0.xyz);
+  vec3 l = 1.0 - g;
+  vec3 i1 = min(g.xyz, l.zxy);
+  vec3 i2 = max(g.xyz, l.zxy);
+  vec3 x1 = x0 - i1 + C.xxx;
+  vec3 x2 = x0 - i2 + C.yyy;
+  vec3 x3 = x0 - D.yyy;
+  i = mod289(i);
+  vec4 p = permute(permute(permute(
+             i.z + vec4(0.0, i1.z, i2.z, 1.0))
+           + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+           + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+  float n_ = 0.142857142857;
+  vec3 ns = n_ * D.wyz - D.xzx;
+  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+  vec4 x_ = floor(j * ns.z);
+  vec4 y_ = floor(j - 7.0 * x_);
+  vec4 x = x_ * ns.x + ns.yyyy;
+  vec4 y = y_ * ns.x + ns.yyyy;
+  vec4 h = 1.0 - abs(x) - abs(y);
+  vec4 b0 = vec4(x.xy, y.xy);
+  vec4 b1 = vec4(x.zw, y.zw);
+  vec4 s0 = floor(b0) * 2.0 + 1.0;
+  vec4 s1 = floor(b1) * 2.0 + 1.0;
+  vec4 sh = -step(h, vec4(0.0));
+  vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+  vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+  vec3 p0 = vec3(a0.xy, h.x);
+  vec3 p1 = vec3(a0.zw, h.y);
+  vec3 p2 = vec3(a1.xy, h.z);
+  vec3 p3 = vec3(a1.zw, h.w);
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+  p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+  m = m * m;
+  return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+}
+`;
+
+  const VERT = `
+${SIMPLEX}
+uniform float uTime;
+uniform float uAmp;
+uniform float uFreq;
+varying vec3  vWorld;
+varying vec3  vNormal;
+varying vec2  vUv;
+varying float vH;
+
+// One long fold plus decaying detail, stretched on one axis so it reads as cloth
+float surface(vec2 xy, float t){
+  vec2 q = xy * vec2(uFreq * 0.55, uFreq * 1.75);
+  float h = snoise(vec3(q, t));
+#if OCTAVES > 1
+  h += 0.26 * snoise(vec3(q * 2.15 + 17.0, t * 1.35));
+#endif
+#if OCTAVES > 2
+  h += 0.085 * snoise(vec3(q * 4.4 + 31.0, t * 1.9));
+#endif
+  return h;
+}
+
+void main(){
+  vUv = uv;
+  vec3 p = position;
+  float t = uTime * 0.075;
+  float settle = smoothstep(0.0, 0.30, vUv.y);
+  float amp = uAmp * settle;
+  float h = surface(p.xy, t);
+  p.z += h * amp;
+  vH = h;
+  // Finite-difference normal shades the surface, not the flat triangle
+  float e = 0.18;
+  float hx = surface(p.xy + vec2(e, 0.0), t) * amp;
+  float hy = surface(p.xy + vec2(0.0, e), t) * amp;
+  vec3 tx = vec3(e, 0.0, hx - h * amp);
+  vec3 ty = vec3(0.0, e, hy - h * amp);
+  vNormal = normalize(normalMatrix * normalize(cross(tx, ty)));
+  vec4 world = modelMatrix * vec4(p, 1.0);
+  vWorld = world.xyz;
+  gl_Position = projectionMatrix * viewMatrix * world;
+}
+`;
+
+  const FRAG = `
+uniform vec3  uA;
+uniform vec3  uB;
+uniform vec3  uC;
+uniform vec3  uBg;
+uniform float uTime;
+uniform float uSheen;
+varying vec3  vWorld;
+varying vec3  vNormal;
+varying vec2  vUv;
+varying float vH;
+
+vec3 ramp(float t){
+  t = clamp(t, 0.0, 1.0);
+  return t < 0.5 ? mix(uA, uB, t * 2.0) : mix(uB, uC, (t - 0.5) * 2.0);
+}
+
+void main(){
+  vec3 n = normalize(vNormal);
+  vec3 v = normalize(cameraPosition - vWorld);
+  float ndv = abs(dot(n, v));
+  float fres = pow(1.0 - ndv, 2.6);
+  // Thin-film banding by view angle; the 0.62 offset keeps the first stop in play
+  float phase = fres * 1.35 + vH * 0.20 + uTime * 0.02 + 0.62;
+  float band  = 0.5 + 0.5 * sin(6.2831 * phase);
+  vec3 col = ramp(band);
+  vec3 l1 = normalize(vec3(0.30, 0.86, 0.42));
+  vec3 l2 = normalize(vec3(-0.55, 0.42, 0.72));
+  float s1 = pow(max(dot(reflect(-l1, n), v), 0.0), 52.0);
+  float s2 = pow(max(dot(reflect(-l2, n), v), 0.0), 22.0);
+  col += s1 * uSheen + s2 * uSheen * 0.30;
+  float wrap = clamp(dot(n, l1) * 0.5 + 0.5, 0.0, 1.0);
+  col *= 0.34 + 0.58 * wrap;
+  // Distance haze so the far edge dissolves into the page
+  float depth = smoothstep(-13.0, 1.0, vWorld.z);
+  col = mix(uBg, col, depth);
+  float edge = smoothstep(0.0, 0.16, vUv.y) * smoothstep(1.0, 0.72, vUv.y);
+  float alpha = edge * depth;
+  gl_FragColor = vec4(col, alpha);
+  #include <colorspace_fragment>
+}
+`;
+
+  // Vertex fbm is the dominant cost, so segments scale with the device
+  const QUALITY = {
+    low:    { segments: 110, octaves: 2, maxDpr: 1.25, sheen: 0.42 },
+    medium: { segments: 168, octaves: 3, maxDpr: 1.5,  sheen: 0.5 },
+    high:   { segments: 232, octaves: 3, maxDpr: 1.75, sheen: 0.55 }
+  };
+  function detectQuality() {
+    const cores = navigator.hardwareConcurrency || 4;
+    const w = window.innerWidth;
+    if (w < 768 || cores <= 4) return 'low';
+    if (w < 1440 || cores <= 8) return 'medium';
+    return 'high';
+  }
+
+  function initSilk(host, watchEl) {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    } catch (e) {
+      return; // No WebGL: the plain dark background stays and the copy still reads
+    }
+    renderer.setClearColor(0x000000, 0);
+    host.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    camera.position.set(0, 2.05, 3.4);
+    camera.lookAt(0, 0, 0); // R3F aims its default camera at the origin
+
+    let tier = detectQuality();
+    let spec = QUALITY[tier];
+    const material = new THREE.ShaderMaterial({
+      vertexShader: VERT,
+      fragmentShader: FRAG,
+      defines: { OCTAVES: spec.octaves },
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      uniforms: {
+        // Start the slow colour cycle on its cyan band; it drifts to white and deep cyan
+        uTime:  { value: 19 },
+        uAmp:   { value: 0.7 },
+        uFreq:  { value: 0.16 },
+        uSheen: { value: spec.sheen },
+        uA:  { value: new THREE.Color('#06404F') },
+        uB:  { value: new THREE.Color('#00B8D4') },
+        uC:  { value: new THREE.Color('#E6FCFF') },
+        uBg: { value: new THREE.Color('#08080B') }
+      }
+    });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(30, 22, spec.segments, spec.segments), material);
+    mesh.rotation.x = -Math.PI / 2;
+    scene.add(mesh);
+
+    let running = false, onScreen = false, raf = 0, last = 0;
+
+    function resize() {
+      const w = host.clientWidth, h = host.clientHeight;
+      if (!w || !h) return;
+      const next = detectQuality();
+      if (next !== tier) {
+        tier = next; spec = QUALITY[tier];
+        mesh.geometry.dispose();
+        mesh.geometry = new THREE.PlaneGeometry(30, 22, spec.segments, spec.segments);
+        material.defines.OCTAVES = spec.octaves;
+        material.uniforms.uSheen.value = spec.sheen;
+        material.needsUpdate = true;
+      }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, spec.maxDpr));
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      // A tall viewport needs the sheet pushed back so the copy has room
+      if (h > w) mesh.position.set(0, -2.35, -8.5);
+      else mesh.position.set(0, -1.85, -6);
+      if (!running) renderer.render(scene, camera);
+    }
+
+    function frame(now) {
+      const dt = Math.min((now - last) / 1000, 0.1);
+      last = now;
+      material.uniforms.uTime.value += dt;
+      renderer.render(scene, camera);
+      host.dataset.frames = String((+host.dataset.frames || 0) + 1);
+      raf = requestAnimationFrame(frame);
+    }
+    function sync() {
+      const want = onScreen && !reduced && !document.hidden;
+      if (want && !running) { running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
+      else if (!want && running) { running = false; cancelAnimationFrame(raf); }
+    }
+
+    new ResizeObserver(resize).observe(host);
+    new IntersectionObserver(function (entries) {
+      onScreen = entries[0].isIntersecting;
+      sync();
+    }, { rootMargin: '120px' }).observe(watchEl);
+    document.addEventListener('visibilitychange', sync);
+    resize();
+  }
+
+  const silkHost = document.querySelector('.wd-silk-canvas');
+  if (silkHost) initSilk(silkHost, silkHost.parentElement);
+</script>
+
+<script>
+  /* ── Hero marquee: pixel-exact loop ──
+     A CSS translateX(-50%) loop jumps whenever the track width changes (web font swap, resize),
+     because -50% suddenly means a different distance. Measure one period in px instead,
+     drive it with the Web Animations API, and re-measure without moving when the width changes. */
+  (function () {
+    var tracks = document.querySelectorAll('.wd-silk-mq .mq-track');
+    if (!tracks.length || !('animate' in Element.prototype)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var paused = false;
+    var rows = Array.prototype.map.call(tracks, function (el) {
+      var dur = parseFloat(getComputedStyle(el).getPropertyValue('--dur')) * 1000 || 45000;
+      var dir = el.classList.contains('mq-animate-r') ? 1 : -1;
+      el.classList.remove('mq-animate-l', 'mq-animate-r');
+      return { el: el, dur: dur, dir: dir, period: 0, anim: null };
+    });
+
+    function period(el) {
+      var b = el.children;
+      return b[b.length / 2].getBoundingClientRect().left - b[0].getBoundingClientRect().left;
+    }
+    function currentX(el) {
+      return new DOMMatrixReadOnly(getComputedStyle(el).transform).m41;
+    }
+
+    function build(row) {
+      var p = period(row.el);
+      if (!(p > 0) || Math.abs(p - row.period) < 0.01) return;
+      // Keep the row exactly where it is on screen, expressed as progress through the new period
+      var x = row.anim ? currentX(row.el) : 0;
+      var frac = row.dir < 0 ? (-x % p + p) % p / p : ((x + p) % p + p) % p / p;
+      if (row.anim) row.anim.cancel();
+      var a = 'translate3d(0,0,0)', b = 'translate3d(' + (-p) + 'px,0,0)';
+      row.anim = row.el.animate(row.dir < 0 ? [{ transform: a }, { transform: b }] : [{ transform: b }, { transform: a }],
+        { duration: row.dur, iterations: Infinity, easing: 'linear' });
+      row.anim.currentTime = frac * row.dur;
+      if (paused) row.anim.pause();
+      row.period = p;
+    }
+
+    rows.forEach(build);
+    // Font swap or viewport change alters badge widths: re-measure in place
+    if ('ResizeObserver' in window) {
+      var ro = new ResizeObserver(function () { rows.forEach(build); });
+      rows.forEach(function (r) { ro.observe(r.el); });
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { rows.forEach(build); });
+
+    // Pause offscreen so the rows don't compete with the silk shader for frames
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        paused = !entries[0].isIntersecting;
+        rows.forEach(function (r) { if (r.anim) paused ? r.anim.pause() : r.anim.play(); });
+      }, { rootMargin: '120px' }).observe(document.querySelector('.wd-silk-mq'));
+    }
+  })();
 </script>
 
 <script type="module">
