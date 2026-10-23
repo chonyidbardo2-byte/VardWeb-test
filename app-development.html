@@ -7,8 +7,22 @@
   <meta name="description" content="App development by VardWeb. Progressive web apps, Google Play and App Store apps built from one codebase, plus custom apps for bookings, payments and loyalty. Bronze, Silver, Gold and Custom tiers." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Host+Grotesk:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
+  <script>
+    /* Hide animated content until the motion script takes over; un-hide if GSAP never loads */
+    try {
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('ka-anim');
+        setTimeout(function () { if (!window.gsap || !window.SplitText) document.documentElement.classList.remove('ka-anim'); }, 4000);
+      }
+    } catch (e) {}
+  </script>
 
   <script type="importmap">
   {
@@ -254,121 +268,6 @@
     .wd-hero { padding: 188px 28px 0; }
     @media (max-width: 1024px) { .wd-hero { padding-top: 140px; } }
 
-/* ── App Development hero: copy left, two floating phone mockups right ── */
-    .lp-hero {
-      position: relative; overflow: hidden; isolation: isolate;
-      min-height: 680px;
-      padding: 132px 28px 72px;
-      background:
-        radial-gradient(60% 70% at 78% 40%, rgba(168,85,247,0.38) 0%, rgba(168,85,247,0) 70%),
-        radial-gradient(45% 55% at 92% 85%, rgba(124,58,237,0.42) 0%, rgba(124,58,237,0) 70%),
-        radial-gradient(50% 60% at 8% 10%, rgba(216,180,254,0.10) 0%, rgba(216,180,254,0) 70%),
-        linear-gradient(160deg, #1A0B2E 0%, #120822 55%, #0B0616 100%);
-      display: flex;
-    }
-    .lp-hero-inner {
-      position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto;
-      display: flex; flex-direction: column; justify-content: space-between; gap: 48px;
-    }
-    .lp-hero-top, .lp-hero-bottom { max-width: 560px; }
-    .lp-hero .wd-hero-kicker { margin-bottom: 18px; }
-    .lp-hero .wd-kicker-slash { color: rgba(255,255,255,0.7); }
-    .lp-hero .wd-kw { background-image: linear-gradient(90deg, #ffffff 0%, var(--lp-pink-pale) 50%, #ffffff 100%); }
-    .lp-hero-h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900;
-      font-size: clamp(38px, 6.2vw, 78px); line-height: 0.98; letter-spacing: -0.03em;
-      text-transform: uppercase; color: #fff; text-shadow: 0 2px 24px rgba(40,10,70,0.3);
-    }
-    .lp-hero-h1 .app-h1-accent {
-      background: linear-gradient(120deg, #fff 0%, var(--lp-pink-pale) 55%, var(--lp-pink) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .lp-hero-sub { font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.86); margin-bottom: 26px; }
-    .lp-hero-sub b { color: #fff; font-weight: 700; }
-    .lp-hero-ctas { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 26px; }
-    .lp-hero-btn {
-      display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 10px;
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14.5px; font-weight: 600; letter-spacing: 0;
-      text-transform: none; cursor: pointer;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease, background-color 0.2s ease, color 0.2s ease;
-      transform: translateZ(0);
-    }
-    .lp-hero-btn-solid { background: #fff; color: #2A0F45; border: none;
-      box-shadow: 0 1px 2px rgba(40,10,70,0.18), 0 8px 24px -10px rgba(124,58,237,0.55); }
-    .lp-hero-btn-solid:hover { transform: translateY(-2px) translateZ(0); color: var(--lp-pink-deep);
-      box-shadow: 0 2px 4px rgba(40,10,70,0.2), 0 14px 32px -10px rgba(124,58,237,0.7); }
-    .lp-hero-btn-ghost { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.18); }
-    .lp-hero-btn-ghost:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.32); }
-    .lp-hero-btn:active { transform: translateY(0) scale(0.97) translateZ(0); }
-    .lp-hero-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-    .lp-hero-btn .chevron { transition: transform 0.2s ease; }
-    .lp-hero-stat {
-      display: flex; align-items: center; gap: 14px; max-width: 480px;
-      padding: 14px 18px; border-radius: 12px;
-      background: rgba(40,14,70,0.42); border: 1px solid rgba(216,180,254,0.22);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      box-shadow: 0 10px 30px -14px rgba(20,6,40,0.6);
-    }
-    .lp-hero-stat-icon {
-      flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff;
-      background: linear-gradient(135deg, var(--lp-pink) 0%, var(--lp-pink-deep) 100%);
-      box-shadow: 0 6px 16px -6px rgba(124,58,237,0.7);
-    }
-    .lp-hero-stat p { font-size: 13px; line-height: 1.55; color: #fff; margin: 0; }
-    .lp-hero-stat b { color: #fff; font-weight: 600; }
-    /* Phone mockups (placeholder screens until the VardWeb app ships) */
-    .app-hero-phones { position: absolute; z-index: 1; right: max(28px, calc((100vw - 1200px) / 2 + 28px)); top: 50%;
-      transform: translateY(-46%); width: 470px; height: 560px; pointer-events: none; }
-    .app-phone { position: absolute; width: 238px; aspect-ratio: 9 / 19.5; border-radius: 38px; padding: 10px;
-      background: linear-gradient(160deg, #2B1A44 0%, #150C26 100%);
-      border: 1px solid rgba(216,180,254,0.22);
-      box-shadow: 0 2px 6px rgba(10,4,20,0.5), 0 30px 60px -20px rgba(10,4,20,0.75), 0 40px 90px -30px rgba(124,58,237,0.55); }
-    .app-phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 29px; display: block; }
-    .app-phone::before { content: ''; position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
-      width: 74px; height: 20px; border-radius: 12px; background: #07040D; z-index: 1; }
-    .app-phone--back { right: 0; top: 0; transform: rotate(6deg); opacity: 0.88; animation: app-float-b 7s cubic-bezier(0.45,0,0.55,1) infinite; }
-    .app-phone--front { left: 0; bottom: 0; transform: rotate(-4deg); animation: app-float-a 6s cubic-bezier(0.45,0,0.55,1) infinite; }
-    @keyframes app-float-a { 0%,100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(-4deg) translateY(-12px); } }
-    @keyframes app-float-b { 0%,100% { transform: rotate(6deg) translateY(0); } 50% { transform: rotate(6deg) translateY(10px); } }
-    .app-phone-chip { position: absolute; z-index: 2; display: flex; align-items: center; gap: 8px; padding: 9px 13px; border-radius: 12px;
-      background: rgba(26,11,46,0.82); border: 1px solid rgba(216,180,254,0.25); color: #fff;
-      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em;
-      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 12px 30px -12px rgba(10,4,20,0.7); }
-    .app-phone-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--lp-pink); box-shadow: 0 0 10px var(--lp-pink); }
-    .app-phone-chip--push { left: -36px; top: 92px; }
-    .app-phone-chip--offline { right: -8px; bottom: 72px; }
-    @media (max-width: 1100px) { .app-hero-phones { transform: translateY(-46%) scale(0.8); transform-origin: right center; } }
-    @media (max-width: 1024px) {
-      .lp-hero { padding: 118px 28px 64px; }
-      .lp-hero-top, .lp-hero-bottom { max-width: 480px; }
-      .lp-hero-inner { gap: 40px; }
-    }
-    @media (max-width: 860px) {
-      .lp-hero { min-height: 0; padding-bottom: 420px; }
-      .app-hero-phones { top: auto; bottom: 24px; right: 50%; transform: translateX(50%) scale(0.66); transform-origin: center bottom; }
-      .lp-hero-top, .lp-hero-bottom { max-width: 600px; }
-    }
-    @media (max-width: 640px) {
-      .lp-hero { padding: 92px 20px 360px; }
-      .app-hero-phones { transform: translateX(50%) scale(0.56); }
-      .lp-hero-inner { gap: 32px; }
-      .lp-hero .wd-hero-kicker { margin-bottom: 12px; }
-      .lp-hero-h1 { font-size: clamp(30px, 10.5vw, 52px); }
-      .lp-hero-sub { font-size: 14.5px; line-height: 1.6; margin-bottom: 18px; }
-      .lp-hero-ctas { margin-bottom: 18px; }
-      .lp-hero-btn { padding: 12px 20px; }
-      .lp-hero-stat { padding: 12px 14px; gap: 12px; }
-      .lp-hero-stat p { font-size: 12.5px; }
-      .lp-hero-stat-icon { width: 34px; height: 34px; }
-    }
-    @media (max-width: 359px) {
-      .lp-hero-ctas { flex-wrap: nowrap; gap: 8px; }
-      .lp-hero-btn { padding: 11px 15px; font-size: 13.5px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .app-phone--back, .app-phone--front { animation: none; }
-    }
 
     /* ── Hero pill ── */
     .wd-hero-pill {
@@ -1791,6 +1690,8 @@
     .wa-list svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 3px; color: var(--wa-c, var(--lp-pink)); }
     .wa-note { margin-top: auto; padding-top: 12px; border-top: 1px dashed rgba(200,212,232,0.12); font-size: 12.5px; line-height: 1.55; color: var(--text-2); }
     .wa-note b { color: var(--text-1); font-weight: 600; }
+    .wa-note s, .wa-list s { color: #FF5A5F; text-decoration-thickness: 1.5px; }
+    @media (min-width: 1240px) { .wa-list li span, .wa-note { white-space: nowrap; } }
     .wa-cta { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 16px; border-radius: 10px;
       font-size: 13.5px; font-weight: 600; color: var(--text-1); text-decoration: none;
       background: rgba(168,85,247,0.10); border: 1px solid rgba(168,85,247,0.28);
@@ -1798,33 +1699,415 @@
     .wa-cta:hover { background: rgba(168,85,247,0.2); border-color: rgba(168,85,247,0.5); transform: translateY(-1px); }
     .wa-cta:focus-visible { outline: 2px solid var(--lp-pink); outline-offset: 3px; }
     .wa-cta:active { transform: translateY(0) scale(0.98); }
-    .hb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 760px) { .hb-grid { grid-template-columns: 1fr; } }
-    .hb-card { padding: 28px 26px; border-radius: 16px; background: var(--raised); border: 1px solid rgba(255,255,255,0.07);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 18px 40px -26px rgba(124,58,237,0.3); display: flex; flex-direction: column; gap: 14px; }
-    .hb-card h3 { font-size: 1.35rem; font-weight: 800; color: var(--text-1); }
-    .hb-card--std { border-color: rgba(168,85,247,0.4); background: linear-gradient(180deg, rgba(168,85,247,0.10) 0%, var(--raised) 75%); }
-    .hb-card--up { --wa-c: #D8B4FE; }
-    .hb-tag { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--lp-pink-pale); }
-    .hb-foot { text-align: center; margin-top: 24px; font-size: 13.5px; color: var(--text-2); }
-    .am-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    @media (max-width: 900px) { .am-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) { .am-grid { grid-template-columns: 1fr; } }
-    .am-card { padding: 24px 22px; border-radius: 14px; background: var(--surface); border: 1px solid rgba(255,255,255,0.06);
-      display: flex; flex-direction: column; gap: 10px; }
-    .am-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--text-1); }
-    .am-card p { font-size: 14px; line-height: 1.65; color: var(--text-2); }
-    .am-icon { width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; color: var(--lp-pink-pale);
-      background: rgba(168,85,247,0.12); border: 1px solid rgba(168,85,247,0.25); }
-    .ap-steps { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; counter-reset: none;
-      border: 1px dashed rgba(200,212,232,0.14); border-radius: 18px; overflow: hidden; }
-    @media (max-width: 900px) { .ap-steps { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) { .ap-steps { grid-template-columns: 1fr; } }
-    .ap-step { padding: 28px 24px 30px; display: flex; flex-direction: column; gap: 10px;
-      border-right: 1px dashed rgba(200,212,232,0.14); border-bottom: 1px dashed rgba(200,212,232,0.14); }
-    .ap-num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--lp-pink); letter-spacing: 0.06em; }
-    .ap-step h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-1); }
-    .ap-step p { font-size: 14px; line-height: 1.65; color: var(--text-2); }
+    /* ══ App Development redesign (Kyntra layout): dark hero, light body.
+       ka- = page-scoped. Host Grotesk headings, DM Sans body.
+       Motion: GSAP 3.15 + ScrollTrigger + SplitText + Lenis (script at the end of the ka- sections). ══ */
+    :root {
+      --ka-ink:     #0C0A12;
+      --ka-ink-2:   #4B4658;
+      --ka-line:    rgba(12,10,18,0.16);
+      --ka-accent:  #7C3AED;
+      --ka-accent-hi: #6D28D9;
+      --ka-black:   #0D0D0D;
+      --ka-mist:    #F5F5F7;
+      --ka-pad-x:   max(20px, 5vw);
+      --ka-pad-y:   clamp(72px, 7vw, 120px);
+      --ka-ease:    cubic-bezier(0.22,1,0.36,1);
+      --ka-spring:  cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .ka-light { background: #fff; color: var(--ka-ink); font-family: 'DM Sans', sans-serif; }
+    .ka-sec { padding: var(--ka-pad-y) var(--ka-pad-x); }
+    .ka-h2 { font-family: 'Host Grotesk', sans-serif; font-weight: 400; font-size: clamp(34px, 3.8vw, 60px);
+      line-height: 1.15; letter-spacing: -0.03em; color: var(--ka-ink); }
+    .ka-lead { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.6; letter-spacing: 0.02em; color: var(--ka-ink); }
+    .ka-light a.ka-link { color: var(--ka-accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(124,58,237,0.35);
+      transition: opacity 0.2s ease; }
+    .ka-light a.ka-link:hover { opacity: 0.75; }
+    .ka-light a.ka-link:focus-visible { outline: 2px solid var(--ka-accent); outline-offset: 2px; border-radius: 2px; }
+    .ka-light a.ka-link:active { opacity: 0.55; }
+
+    /* Motion gates: html.ka-anim is set in <head> only when motion is allowed, and removed again if GSAP never loads */
+    html.ka-anim [data-para], html.ka-anim [data-fade] { opacity: 0; }
+    .ka-line-mask { padding-bottom: 0.08em; margin-bottom: -0.08em; }
+    .ka-intro { position: fixed; inset: 0; height: 100svh; background: #fff; z-index: 10000; pointer-events: none; display: none; }
+    html.ka-anim .ka-intro { display: block; }
+
+    /* Pill buttons */
+    .ka-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 26px; border-radius: 999px; border: 0;
+      font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; line-height: 1.2; text-decoration: none; cursor: pointer; white-space: nowrap;
+      transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased;
+      transition: transform 0.35s var(--ka-spring), box-shadow 0.3s ease, background-color 0.2s ease; }
+    .ka-btn svg { flex-shrink: 0; transition: transform 0.35s var(--ka-spring); }
+    .ka-btn:hover { transform: translateY(-2px) translateZ(0); }
+    .ka-btn:hover svg.ka-arrow { transform: translateX(3px); }
+    .ka-btn:active { transform: translateY(0) scale(0.97) translateZ(0); }
+    .ka-btn:focus-visible { outline: 2px solid var(--ka-accent); outline-offset: 3px; }
+    .ka-btn--accent { background: var(--ka-accent); color: #fff;
+      box-shadow: 0 1px 2px rgba(76,29,149,0.25), 0 10px 24px -10px rgba(124,58,237,0.6); }
+    .ka-btn--accent:hover { background: var(--ka-accent-hi); box-shadow: 0 2px 4px rgba(76,29,149,0.25), 0 16px 32px -12px rgba(124,58,237,0.65); }
+    .ka-btn--white { background: #fff; color: #1A1A1A;
+      box-shadow: 0 1px 2px rgba(12,10,18,0.08), 0 10px 24px -12px rgba(46,16,101,0.35); }
+    .ka-btn--white:hover { background: #F7F3FF; }
+    .ka-btn--sm { padding: 12px 22px; font-size: 14px; }
+
+    /* ── Device: iPhone-style frame (titanium rim, bezel, island, buttons, glass) ── */
+    .ka-device { position: relative; aspect-ratio: 433 / 882; border-radius: 16.5% / 8.1%;
+      background: linear-gradient(90deg, #3A3A3F 0%, #C9C9CF 1.6%, #77777D 3.6%, #2B2B30 9%, #1E1E22 50%, #2B2B30 91%, #77777D 96.4%, #C9C9CF 98.4%, #3A3A3F 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35),
+        0 2px 4px rgba(12,10,18,0.22), 0 24px 48px -18px rgba(28,10,60,0.55), 0 70px 120px -50px rgba(124,58,237,0.45); }
+    .ka-dev-btn { position: absolute; width: 1.3%; border-radius: 2px;
+      background: linear-gradient(90deg, #2A2A2E 0%, #A9A9AF 45%, #3A3A3F 100%); }
+    .ka-dev-btn--action { left: -1%; top: 18%; height: 4.2%; }
+    .ka-dev-btn--vup { left: -1%; top: 25.5%; height: 7.6%; }
+    .ka-dev-btn--vdown { left: -1%; top: 34.6%; height: 7.6%; }
+    .ka-dev-btn--power { right: -1%; top: 28%; height: 11.5%; transform: scaleX(-1); }
+    .ka-dev-body { position: absolute; inset: 0.95% 1.95%; border-radius: 15.4% / 7.6%; background: #050506;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .ka-dev-screen { position: absolute; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; container-type: inline-size;
+      /* clip-path, not overflow:hidden: rounded overflow masks leave a 1px seam inside the moving phone layers */
+      clip-path: inset(0 round 13.4% / 6.3%);
+      background: #fff; isolation: isolate; }
+    .ka-dev-island { position: absolute; z-index: 3; top: 2.9%; left: 50%; transform: translateX(-50%); width: 30.5%; height: 4.1%;
+      border-radius: 999px; background: linear-gradient(180deg, #0C0C0F 0%, #000 55%, #060607 100%);
+      box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.06), inset 0 -1px 1px rgba(255,255,255,0.03); }
+    /* Front camera: graphite rim, black barrel, coated glass iris, pupil and two glints */
+    .ka-dev-island::after { content: ''; position: absolute; right: 10%; top: 50%; height: 64%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background:
+        radial-gradient(circle at 33% 31%, rgba(255,255,255,0.95) 0 5%, rgba(255,255,255,0) 10%),
+        radial-gradient(circle at 66% 70%, rgba(176,196,255,0.4) 0 5%, rgba(176,196,255,0) 13%),
+        radial-gradient(circle at 50% 50%, #010208 0 15%, rgba(1,2,8,0) 17%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 17%, rgba(108,92,231,0.6) 24%, rgba(46,36,128,0.65) 34%, rgba(14,52,72,0.7) 44%, rgba(0,0,0,0) 54%),
+        radial-gradient(circle at 50% 50%, #0B1028 0 50%, #06070E 58%, #000 68%);
+      box-shadow: 0 0 0 1px #1C1C21, 0 0 0 1.6px #040405, inset 0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 1.5px rgba(255,255,255,0.1); }
+    /* Face ID flood/proximity sensor, barely visible like on the real hardware */
+    .ka-dev-island::before { content: ''; position: absolute; left: 22%; top: 50%; height: 22%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #2A1F3D 0%, #0C0812 70%); opacity: 0.8; }
+    .ka-dev-glare { position: absolute; z-index: 4; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; pointer-events: none;
+      background: linear-gradient(118deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.05) 24%, rgba(255,255,255,0) 38%); }
+
+    /* In-screen app UI (sizes in cqw of the screen width) */
+    .ka-ui { position: absolute; inset: 0; display: flex; flex-direction: column; font-family: 'DM Sans', sans-serif; color: var(--ka-ink);
+      padding: 15.5cqw 5.5cqw 0; }
+    .ka-ui svg { display: block; }
+    .ka-ui-status { position: absolute; top: 4.6cqw; left: 9.5cqw; right: 7.5cqw; display: flex; justify-content: space-between; align-items: center;
+      font-size: 3.7cqw; font-weight: 600; letter-spacing: 0.01em; }
+    .ka-ui-status-icons { display: flex; align-items: center; gap: 1.4cqw; }
+    .ka-ui-status-icons svg { height: 3cqw; width: auto; fill: currentColor; }
+    .ka-ui-home { position: absolute; bottom: 1.8cqw; left: 50%; transform: translateX(-50%); width: 34%; height: 1.2cqw; border-radius: 999px; background: rgba(12,10,18,0.85); }
+    .ka-ui--dark { color: #fff; background:
+      radial-gradient(90% 45% at 15% 8%, rgba(124,58,237,0.55) 0%, transparent 70%),
+      radial-gradient(80% 40% at 100% 45%, rgba(91,33,182,0.45) 0%, transparent 70%),
+      radial-gradient(70% 35% at 0% 95%, rgba(168,85,247,0.25) 0%, transparent 70%),
+      linear-gradient(180deg, #1A0C33 0%, #0E0720 55%, #08040F 100%); }
+    .ka-ui--dark .ka-ui-home { background: rgba(255,255,255,0.75); }
+    .ka-ui-glass { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 4.6cqw;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }
+    .ka-ui-head { display: flex; align-items: center; justify-content: space-between; }
+    .ka-ui-logo { font-family: 'Host Grotesk', sans-serif; font-weight: 500; font-size: 7cqw; letter-spacing: -0.04em; }
+    .ka-ui-head-btns { display: flex; gap: 2cqw; }
+    .ka-ui-round { width: 8.6cqw; height: 8.6cqw; border-radius: 50%; display: grid; place-items: center; }
+    .ka-ui-round svg { width: 4.2cqw; height: 4.2cqw; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-ui-sum { margin-top: 4cqw; padding: 3.2cqw 4cqw; display: flex; align-items: center; justify-content: space-between; }
+    .ka-ui-sum b { display: block; font-size: 3.6cqw; font-weight: 500; }
+    .ka-ui-sum small { display: block; margin-top: 0.6cqw; font-size: 2.7cqw; color: #C4B5FD; }
+    .ka-ui-sum-n { display: flex; align-items: baseline; gap: 1.2cqw; font-size: 7cqw; font-family: 'Host Grotesk', sans-serif; }
+    .ka-ui-sum-n svg { width: 3.6cqw; height: 3.6cqw; fill: #FDE68A; align-self: center; }
+    .ka-ui-sum-n i { font-style: normal; font-size: 2.6cqw; color: rgba(255,255,255,0.7); font-family: 'DM Sans', sans-serif; }
+    .ka-ui-grid { margin-top: 2.8cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 2.6cqw; }
+    .ka-ui-tile { padding: 3.2cqw; min-height: 31cqw; display: flex; flex-direction: column; justify-content: space-between; }
+    .ka-ui-tile--acc { background: linear-gradient(160deg, #8B5CF6 0%, #6D28D9 100%); border-color: rgba(255,255,255,0.18);
+      box-shadow: 0 3cqw 6cqw -3cqw rgba(124,58,237,0.8); }
+    .ka-ui-tile-top { display: flex; justify-content: space-between; align-items: center; font-size: 2.9cqw; }
+    .ka-ui-tile-top .ka-ui-round { width: 6cqw; height: 6cqw; background: rgba(255,255,255,0.14); }
+    .ka-ui-tile-top .ka-ui-round svg { width: 3.2cqw; height: 3.2cqw; }
+    .ka-ui-big { font-family: 'Host Grotesk', sans-serif; font-size: 8cqw; line-height: 1; letter-spacing: -0.03em; }
+    .ka-ui-tile-bot { display: flex; justify-content: space-between; align-items: flex-end; }
+    .ka-ui-tile-bot small { display: block; margin-top: 1cqw; font-size: 2.4cqw; color: rgba(255,255,255,0.7); }
+    .ka-ui-switch { width: 8cqw; height: 4.6cqw; border-radius: 999px; background: rgba(255,255,255,0.22); position: relative; }
+    .ka-ui-switch::after { content: ''; position: absolute; top: 0.6cqw; left: 0.6cqw; width: 3.4cqw; height: 3.4cqw; border-radius: 50%; background: #fff; }
+    .ka-ui-switch--on { background: #fff; }
+    .ka-ui-switch--on::after { left: auto; right: 0.6cqw; background: #6D28D9; }
+    .ka-ui-sub { margin-top: 3.4cqw; font-size: 2.9cqw; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 1.6cqw; }
+    .ka-ui-sub i { font-style: normal; font-size: 2.1cqw; padding: 0.4cqw 1.6cqw; border-radius: 999px; background: #7C3AED; color: #fff; }
+    .ka-ui-quick { margin-top: 2cqw; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2cqw; text-align: center; font-size: 2.3cqw; color: rgba(255,255,255,0.7); }
+    .ka-ui-quick .ka-ui-round { margin: 0 auto 1.2cqw; width: 11cqw; height: 11cqw; }
+    .ka-ui-quick .ka-ui-round svg { width: 4.8cqw; height: 4.8cqw; }
+    .ka-ui-tabs { position: absolute; left: 5.5cqw; right: 5.5cqw; bottom: 6cqw; height: 13.5cqw; border-radius: 999px; display: flex; justify-content: space-around; align-items: center;
+      background: rgba(20,12,36,0.78); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .ka-ui-tabs svg { width: 5.4cqw; height: 5.4cqw; fill: none; stroke: rgba(255,255,255,0.7); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-ui-tabs span { width: 10cqw; height: 10cqw; border-radius: 50%; display: grid; place-items: center; }
+    .ka-ui-tabs span:first-child { background: #7C3AED; }
+    .ka-ui-tabs span:first-child svg { stroke: #fff; }
+
+    /* Store listing screens (light) */
+    .ka-ui-bar { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; }
+    .ka-ui-bar-brand { display: flex; align-items: center; gap: 1.8cqw; font-size: 4.2cqw; font-weight: 500; letter-spacing: -0.01em; }
+    .ka-ui-bar-brand svg { width: 5.2cqw; height: 5.2cqw; }
+    .ka-ui-bar-brand h3 { font: inherit; letter-spacing: inherit; }
+    .ka-ui-bar-ico { display: flex; gap: 3cqw; color: #5F6368; }
+    .ka-ui-bar-ico svg { width: 4.4cqw; height: 4.4cqw; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-ui-app { margin-top: 5cqw; display: flex; gap: 3.6cqw; align-items: center; }
+    .ka-ui-icon { flex-shrink: 0; width: 17cqw; height: 17cqw; border-radius: 4.2cqw; display: grid; place-items: center; color: #fff;
+      background: radial-gradient(80% 80% at 30% 20%, #A78BFA 0%, #7C3AED 55%, #4C1D95 100%); box-shadow: 0 1.5cqw 4cqw -1.5cqw rgba(76,29,149,0.6); }
+    .ka-ui-icon svg { width: 9cqw; height: 9cqw; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-ui-app b { display: block; font-size: 4.6cqw; font-weight: 500; }
+    .ka-ui-app small { display: block; margin-top: 0.6cqw; font-size: 3cqw; }
+    .ka-ui-meta { margin-top: 4.4cqw; display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; font-size: 2.5cqw; color: #5F6368; }
+    .ka-ui-meta > span + span { border-left: 1px solid rgba(12,10,18,0.12); }
+    .ka-ui-meta b { display: flex; justify-content: center; align-items: center; gap: 0.6cqw; margin-bottom: 0.8cqw; font-size: 3.2cqw; font-weight: 600; color: var(--ka-ink); }
+    .ka-ui-meta b svg { width: 3cqw; height: 3cqw; }
+    .ka-ui-cta { margin-top: 4.4cqw; height: 9.4cqw; border-radius: 999px; display: grid; place-items: center; font-size: 3.4cqw; font-weight: 600; color: #fff; }
+    .ka-ui-shots { margin-top: 4cqw; display: flex; gap: 2.4cqw; }
+    .ka-ui-shots i { flex-shrink: 0; width: 26cqw; height: 46cqw; border-radius: 3cqw; }
+    .ka-ui-shots i:nth-child(1) { background: linear-gradient(170deg, #EDE9FE 0%, #C4B5FD 100%); }
+    .ka-ui-shots i:nth-child(2) { background: linear-gradient(170deg, #7C3AED 0%, #4C1D95 100%); }
+    .ka-ui-shots i:nth-child(3) { background: linear-gradient(170deg, #F5F3FF 0%, #DDD6FE 100%); }
+    .ka-ui-about { margin-top: 4.4cqw; font-size: 3.8cqw; font-weight: 500; display: flex; justify-content: space-between; }
+    .ka-ui-desc { margin-top: 1.6cqw; font-size: 3.2cqw; line-height: 1.5; color: #5F6368; }
+    .ka-ui-more { align-self: flex-start; margin-top: 3.6cqw; padding: 2.6cqw 5cqw; border-radius: 999px; font-size: 3.2cqw; font-weight: 500;
+      text-decoration: none; color: #fff; background: var(--ka-accent); display: inline-flex; align-items: center; gap: 1.6cqw;
+      transition: transform 0.35s var(--ka-spring), background-color 0.2s ease; transform: translateZ(0); }
+    .ka-ui-more:hover { transform: translateY(-2px) translateZ(0); background: var(--ka-accent-hi); }
+    .ka-ui-more:focus-visible { outline: 2px solid var(--ka-accent); outline-offset: 3px; }
+    .ka-ui-more:active { transform: scale(0.97) translateZ(0); }
+    .ka-ui--play .ka-ui-app small { color: #01875F; }
+    .ka-ui--play .ka-ui-cta { background: #01875F; }
+    .ka-ui--ios .ka-ui-back { color: #0A84FF; font-size: 3.6cqw; display: flex; align-items: center; gap: 0.6cqw; }
+    .ka-ui--ios .ka-ui-back svg { width: 3.6cqw; height: 3.6cqw; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-ui--ios .ka-ui-app small { color: #8E8E93; }
+    .ka-ui-get { margin-top: 2cqw; display: inline-grid; place-items: center; height: 6.4cqw; padding: 0 5cqw; border-radius: 999px; background: #0A84FF;
+      color: #fff; font-size: 3.2cqw; font-weight: 700; }
+    .ka-ui--ios .ka-ui-meta b { color: #6E6E73; }
+    /* PWA screen (purple, featured) */
+    .ka-ui--pwa { color: #fff; padding-left: 7cqw; padding-right: 7cqw; background:
+      radial-gradient(90% 50% at 50% 0%, rgba(255,255,255,0.2) 0%, transparent 70%),
+      radial-gradient(80% 50% at 50% 100%, rgba(46,16,101,0.6) 0%, transparent 70%), #7C3AED; }
+    .ka-ui-url { display: flex; align-items: center; justify-content: center; gap: 1.4cqw; height: 8cqw; border-radius: 999px; font-size: 3cqw;
+      background: rgba(255,255,255,0.16); }
+    .ka-ui-url svg { width: 2.8cqw; height: 2.8cqw; fill: none; stroke: currentColor; stroke-width: 2.4; }
+    .ka-ui-pwa-mid { margin-top: 10cqw; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .ka-ui-pwa-mid .ka-ui-tilelogo { width: 22cqw; height: 22cqw; border-radius: 5.5cqw; display: grid; place-items: center; background: rgba(255,255,255,0.14);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22); }
+    .ka-ui-pwa-mid .ka-ui-tilelogo svg { width: 64%; height: auto; }
+    .ka-ui-label { margin-top: 5cqw; font-size: 2.9cqw; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+    .ka-ui-pwa-mid h3 { margin-top: 1.6cqw; font-family: 'Host Grotesk', sans-serif; font-weight: 400; font-size: 7.6cqw; line-height: 1.15; letter-spacing: -0.03em; }
+    .ka-ui-pwa-mid p { margin-top: 3cqw; font-size: 3.4cqw; line-height: 1.55; color: rgba(255,255,255,0.88); }
+    .ka-ui-sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: 3cqw 6cqw 9cqw; border-radius: 6cqw 6cqw 0 0; background: #fff; color: var(--ka-ink);
+      box-shadow: 0 -4cqw 10cqw -4cqw rgba(30,10,60,0.45); }
+    .ka-ui-sheet::before { content: ''; display: block; width: 10cqw; height: 1.1cqw; margin: 0 auto 3.4cqw; border-radius: 999px; background: rgba(12,10,18,0.18); }
+    .ka-ui-sheet-title { font-size: 3.8cqw; font-weight: 600; }
+    .ka-ui-sheet-row { margin-top: 3cqw; display: flex; gap: 3cqw; align-items: center; font-size: 3cqw; color: #5F6368; }
+    .ka-ui-sheet-row .ka-ui-icon { width: 11cqw; height: 11cqw; border-radius: 3cqw; }
+    .ka-ui-sheet-row .ka-ui-icon svg { width: 6cqw; height: 6cqw; }
+    .ka-ui-sheet-row b { display: block; font-size: 3.4cqw; font-weight: 500; color: var(--ka-ink); }
+    .ka-ui-sheet .ka-ui-more { align-self: auto; margin-top: 4cqw; width: 100%; justify-content: center; padding: 3cqw; }
+    .ka-ui--pwa .ka-ui-home { z-index: 2; }
+
+    /* ── 1. Hero ── */
+    .ka-hero { position: relative; z-index: 2; overflow-x: clip; overflow-y: visible; isolation: isolate; min-height: max(100vh, 78.6vw); background: #fff;
+      padding: 0 var(--ka-pad-x); display: flex; align-items: flex-end; color: var(--ka-ink); font-family: 'DM Sans', sans-serif; }
+    .ka-hero-bg { position: absolute; left: 0; right: 0; top: 0; height: 115vh; z-index: -1; overflow: hidden; background:
+        radial-gradient(60% 40% at 30% 46%, rgba(124,58,237,0.45) 0%, transparent 70%),
+        radial-gradient(50% 35% at 78% 40%, rgba(168,85,247,0.30) 0%, transparent 70%),
+        linear-gradient(180deg, #000 0%, #000 20%, #130A2B 34%, #2E1468 48%, #4C1D95 60%, #7C3AED 70%, #A98BF2 82%, #E3D9FB 92%, #fff 100%); }
+    .ka-hero-wave { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    html.ka-anim .ka-hero-bg { opacity: 0; }
+    .ka-hero-word { position: absolute; z-index: 1; left: 50%; top: 24vh; transform: translateX(-50%);
+      font-family: 'Host Grotesk', sans-serif; font-weight: 500; font-size: min(32vw, 556px); line-height: 0.8; letter-spacing: 0.106em; padding-left: 0.106em; white-space: nowrap;
+      background: linear-gradient(180deg, rgba(91,33,182,0.85) 0%, rgba(124,58,237,0.35) 45%, rgba(124,58,237,0) 80%);
+      -webkit-background-clip: text; background-clip: text; color: transparent; pointer-events: none; user-select: none; }
+    .ka-hero-grid { position: relative; z-index: 10; width: 100%; display: grid; grid-template-columns: minmax(0, 0.83fr) minmax(0, 1fr);
+      align-items: end; padding-top: clamp(300px, 25vw, 380px); }
+    .ka-hero-phone { align-self: stretch; display: flex; align-items: flex-end; justify-content: center; }
+    .ka-hero-phone-enter { width: clamp(240px, 23.8vw, 360px); margin-bottom: 5vw; }
+    html.ka-anim .ka-hero-phone-enter { transform: translateY(110%); }
+    .ka-hero-copy { padding-bottom: clamp(64px, 6vw, 110px); }
+    .ka-hero h1 { font-family: 'Host Grotesk', sans-serif; font-weight: 400; font-size: clamp(42px, 4.8vw, 78px); line-height: 1.2; letter-spacing: -0.03em; color: #000; }
+    .ka-hero-sub { margin-top: clamp(24px, 3vw, 44px); max-width: 30em; font-size: clamp(15px, 1.15vw, 17px); line-height: 1.6; letter-spacing: 0.02em; color: #000; }
+    .ka-hero-ctas { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .ka-hero-ctas .ka-btn { padding: 16px 30px; font-size: 16px; }
+    .ka-hero-ctas .dropdown-menu { font-family: 'Inter', sans-serif; }
+    .ka-hero-proof { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; letter-spacing: 0.02em; color: #2B2733; }
+    .ka-hero-proof i { width: 7px; height: 7px; border-radius: 50%; background: var(--ka-accent); box-shadow: 0 0 0 3px rgba(124,58,237,0.18); flex-shrink: 0; }
+    @media (max-width: 860px) {
+      .ka-hero { align-items: stretch; min-height: 0; }
+      /* No parallax below 1026px, so the hero crops its phone again instead of overlapping the next section */
+      .ka-hero { background: #fff; overflow: hidden; }
+      .ka-hero-bg { height: auto; bottom: 0; background:
+          radial-gradient(70% 30% at 50% 74%, rgba(168,85,247,0.45) 0%, transparent 70%),
+          linear-gradient(180deg, #000 0%, #000 22%, #1C0B3D 44%, #4C1D95 66%, #8B5CF6 86%, #C4B5FD 100%); }
+      .ka-hero-word { top: max(92px, 12vh); font-size: 30vw; letter-spacing: -0.05em; padding-left: 0; }
+      .ka-hero-grid { grid-template-columns: 1fr; padding-top: calc(92px + 25vw); }
+      .ka-hero-copy { order: -1; padding-bottom: 48px; }
+      .ka-hero h1, .ka-hero-sub { color: #fff; }
+      .ka-hero-proof { color: rgba(255,255,255,0.86); }
+      .ka-hero-proof i { background: #D8B4FE; }
+      .ka-hero-phone-enter { width: min(300px, 72vw); margin-bottom: -40vw; }
+    }
+
+    /* ── 2. Platforms: three phones on a dashed connector ── */
+    .ka-plat { padding-bottom: clamp(56px, 6vw, 100px); overflow: hidden; }
+    .ka-split-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; }
+    .ka-split-head .ka-h2 { max-width: 11em; }
+    .ka-split-head .ka-lead { max-width: 27em; text-align: right; color: rgba(0,0,0,0.8); }
+    .ka-phones { position: relative; margin: clamp(56px, 8vw, 120px) calc(-1 * var(--ka-pad-x)) 0;
+      display: flex; justify-content: center; align-items: flex-start; gap: 4.6%; padding: 72px 0 calc(3.1% + 72px); }
+    .ka-phones-line { position: absolute; left: 0; right: 0; top: 72px; width: 100%; height: auto; z-index: 0; pointer-events: none; transform-origin: left center; }
+    .ka-phones-line path { fill: none; stroke: rgba(124,58,237,0.5); stroke-width: 1.2; stroke-dasharray: 5 5; vector-effect: non-scaling-stroke; }
+    .ka-phones > .ka-phone-slot { position: relative; z-index: 1; width: 23%; flex-shrink: 0; }
+    .ka-phones > .ka-phone-slot--side { margin-top: 3.1%; }
+    .ka-also { margin-top: clamp(16px, 2vw, 32px); text-align: center; font-size: 15px; color: var(--ka-ink-2); }
+    .ka-also b { color: var(--ka-ink); font-weight: 500; }
+    @media (max-width: 768px) {
+      .ka-split-head { flex-direction: column; gap: 20px; }
+      .ka-split-head .ka-lead { text-align: left; }
+      .ka-phones { justify-content: flex-start; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px var(--ka-pad-x) 24px;
+        scroll-padding-left: var(--ka-pad-x); scrollbar-width: none; }
+      .ka-phones::-webkit-scrollbar { display: none; }
+      .ka-phones > .ka-phone-slot { width: min(76vw, 320px); scroll-snap-align: center; }
+      .ka-phones > .ka-phone-slot--side { margin-top: 0; }
+      .ka-phones-line { display: none; }
+    }
+
+    /* ── 3. Statement: per-character colour wave (scrubbed) ── */
+    .ka-tf { position: relative; height: 100vh; background: #fff; }
+    .ka-tf-pin { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; overflow-x: hidden; }
+    .ka-tf-text { width: 80%; text-align: center; font-family: 'Host Grotesk', sans-serif; font-weight: 500; font-size: 5vw; line-height: 1.4;
+      letter-spacing: -0.03em; color: #111; }
+    @media (max-width: 1025px) { .ka-tf-text { width: 88%; font-size: 6.5vw; } }
+    @media (max-width: 768px) { .ka-tf-text { width: 95%; font-size: 8vw; } }
+
+    /* ── 4. Scroll stack (cards slide in, older cards ride up) ── */
+    .ka-stack-head .ka-lead { margin-top: 22px; max-width: 26em; }
+    .ka-stack-sec { padding-bottom: 0; }
+    .ka-stack-wrap { position: relative; margin-top: clamp(24px, 3vw, 48px); height: calc((90 * (var(--n) - 1) + 95) * 1svh); }
+    .ka-stack-pin { position: sticky; top: 100px; height: min(80vw, 86vh); }
+    .ka-stack-card { position: absolute; left: 0; right: 0; top: 100px; height: 26vw; min-height: 340px; overflow: hidden; z-index: var(--z);
+      display: flex; flex-direction: column; padding: 3vw 2.4vw; background: #fff; color: #000; border: 1px solid #000; border-radius: 28px;
+      scroll-margin-top: 120px; will-change: transform; }
+    .ka-stack-card:not(:first-child) { transform: translateY(90vh); }
+    .ka-stack-card h3 { font-family: 'Host Grotesk', sans-serif; font-weight: 400; font-size: clamp(26px, 2.4vw, 36px); line-height: 1.2; letter-spacing: -0.01em; color: var(--ka-accent); }
+    .ka-stack-rule { margin-top: 1.4vw; height: 1px; background: rgba(0,0,0,0.18); }
+    .ka-stack-body { margin-top: auto; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+    .ka-feats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 1.6vw; max-width: 620px; list-style: none; }
+    .ka-feat { display: flex; align-items: center; gap: 1.1vw; font-size: clamp(14px, 1.05vw, 16.5px); line-height: 1.35; width: 90%; }
+    .ka-feat:nth-child(odd) { border-right: 1px solid rgba(0,0,0,0.18); padding-right: 2vw; }
+    .ka-feat:nth-child(even) { padding-left: 2vw; }
+    .ka-feat-ico { width: clamp(36px, 3.3vw, 50px); height: clamp(36px, 3.3vw, 50px); border-radius: 8px; flex-shrink: 0; display: grid; place-items: center; color: #fff;
+      background: var(--ka-accent); box-shadow: 0 6px 14px -6px rgba(124,58,237,0.55); }
+    .ka-feat-ico svg { width: 55%; height: 55%; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-stack-side p { font-size: clamp(14px, 1.05vw, 16.5px); line-height: 1.5; color: #000; max-width: 25em; }
+    .ka-stack-side p + p { margin-top: 8px; color: var(--ka-ink-2); }
+    .ka-stack-side .ka-btn { margin-top: 20px; }
+    @media (max-width: 1025px) {
+      .ka-stack-card { top: calc(50% - 35vh); height: 72vh; padding: 5vh 5vw 6vh; }
+      .ka-stack-rule { margin-top: 3vw; }
+      .ka-stack-body { grid-template-columns: 1fr; gap: 4vw; margin-top: 4vw; }
+      .ka-stack-side { order: -1; }
+      .ka-feats { grid-template-columns: 1fr; row-gap: 0; }
+      .ka-feat, .ka-feat:nth-child(odd), .ka-feat:nth-child(even) { width: 70%; border-right: 0; padding: 2.4vw 0; gap: 3vw; }
+      .ka-feat + .ka-feat { border-top: 1px solid rgba(0,0,0,0.18); }
+    }
+    @media (max-width: 768px) {
+      .ka-stack-pin { top: 76px; }
+      .ka-stack-card { top: 0; height: auto; max-height: 82vh; padding: 7vw 6vw; border-radius: 22px; }
+      .ka-feat, .ka-feat:nth-child(odd), .ka-feat:nth-child(even) { width: 100%; padding: 2.5vw 0; gap: 4vw; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ka-stack-wrap { height: auto; }
+      .ka-stack-pin { position: static; height: auto; }
+      .ka-stack-card { position: relative; top: auto; height: auto; min-height: 0; transform: none !important; margin-bottom: 3vw; }
+    }
+
+    /* ── 5. Horizontal card track (pinned, scrubbed) ── */
+    /* Rides up over the released stack so the gap matches the reference (last card to heading ~350px) */
+    .ka-track-sec { position: relative; z-index: 2; margin-top: -11vh; background: #fff; }
+    .ka-track-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+      padding: 64px 0 0; }
+    .ka-track-head { padding: 0 var(--ka-pad-x); }
+    .ka-track-head .ka-h2 { max-width: 14em; }
+    .ka-track-head .ka-lead { margin-top: 22px; max-width: 34em; }
+    .ka-track-clip { margin-top: clamp(28px, 2.8vw, 44px); padding: 0 var(--ka-pad-x); }
+    .ka-track { display: flex; width: max-content; gap: clamp(14px, 1.7vw, 26px); will-change: transform; }
+    .ka-mcard { position: relative; overflow: hidden; flex-shrink: 0; width: clamp(270px, 27.8vw, 420px); min-height: clamp(320px, 30vw, 450px);
+      border-radius: 16px; padding: clamp(20px, 1.9vw, 28px); display: flex; flex-direction: column; justify-content: space-between; color: #fff;
+      background: var(--ka-accent); isolation: isolate;
+      box-shadow: 0 2px 4px rgba(46,16,101,0.15), 0 24px 50px -28px rgba(76,29,149,0.6); }
+    .ka-mcard:nth-child(even) { background: var(--ka-black); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 4px rgba(12,10,18,0.2), 0 24px 50px -28px rgba(12,10,18,0.7); }
+    .ka-mcard-tex { position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; --tx: 0px; --ty: 0px;
+      -webkit-mask-image: radial-gradient(circle 170px at var(--tx) var(--ty), #000 55%, transparent 100%);
+      mask-image: radial-gradient(circle 170px at var(--tx) var(--ty), #000 55%, transparent 100%); }
+    .ka-mcard-ico svg { width: clamp(56px, 4.6vw, 72px); height: clamp(56px, 4.6vw, 72px); fill: none; stroke: #fff; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+    .ka-mcard-ico .f { fill: rgba(255,255,255,0.14); }
+    .ka-mcard-ico .f2 { fill: rgba(255,255,255,0.28); stroke: none; }
+    .ka-mcard-ico .dash { stroke-dasharray: 3 4; stroke-opacity: 0.7; }
+    .ka-mcard-ico .blink { animation: ka-blink 1.8s ease-in-out infinite; }
+    .ka-mcard-ico .d2 { animation-delay: 0.9s; }
+    .ka-mcard-ico .spin { transform-box: view-box; transform-origin: 32px 32px; animation: ka-spin 16s linear infinite; }
+    .ka-mcard-ico .spark { transform-box: fill-box; transform-origin: center; animation: ka-twinkle 2.6s ease-in-out infinite; }
+    @keyframes ka-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+    @keyframes ka-spin { to { transform: rotate(360deg); } }
+    @keyframes ka-twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.6); } }
+    @media (prefers-reduced-motion: reduce) { .ka-mcard-ico .blink, .ka-mcard-ico .spin, .ka-mcard-ico .spark { animation: none; } }
+    .ka-mcard:nth-child(1) .ka-mcard-tex { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2718%27%20height%3D%2718%27%3E%3Ccircle%20cx%3D%273%27%20cy%3D%273%27%20r%3D%271.4%27%20fill%3D%27white%27%20fill-opacity%3D%27.6%27%2F%3E%3C%2Fsvg%3E"); }
+    .ka-mcard:nth-child(2) .ka-mcard-tex { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27120%27%20height%3D%27120%27%3E%3Cg%20stroke%3D%27white%27%20stroke-opacity%3D%27.5%27%20fill%3D%27none%27%20stroke-width%3D%271%27%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2710%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2722%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2734%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2746%27%2F%3E%3Ccircle%20cx%3D%2760%27%20cy%3D%2760%27%20r%3D%2758%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+    .ka-mcard:nth-child(3) .ka-mcard-tex { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2714%27%20height%3D%2714%27%3E%3Cpath%20d%3D%27M-2%2016%2016-2M5%2019%2019%205M-5%209%209-5%27%20stroke%3D%27white%27%20stroke-opacity%3D%27.5%27%20fill%3D%27none%27%20stroke-width%3D%271%27%2F%3E%3C%2Fsvg%3E"); }
+    .ka-mcard:nth-child(4) .ka-mcard-tex { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2772%27%20height%3D%2772%27%3E%3Cg%20stroke%3D%27white%27%20stroke-opacity%3D%27.5%27%20fill%3D%27none%27%20stroke-width%3D%271%27%3E%3Cpath%20d%3D%27M0%2018h22l8%208h14M36%200v12l7%207M72%2052H50l-7-7V32M12%2072V54l7-7h12M58%200v8l-6%206v10%27%2F%3E%3Ccircle%20cx%3D%2744%27%20cy%3D%2726%27%20r%3D%272.2%27%2F%3E%3Ccircle%20cx%3D%2743%27%20cy%3D%2732%27%20r%3D%272.2%27%2F%3E%3Ccircle%20cx%3D%2731%27%20cy%3D%2747%27%20r%3D%272.2%27%2F%3E%3Ccircle%20cx%3D%2752%27%20cy%3D%2724%27%20r%3D%272.2%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+    .ka-mcard:nth-child(5) .ka-mcard-tex { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2728%27%20height%3D%2748%27%3E%3Cpath%20d%3D%27M14%200l14%208v16l-14%208L0%2024V8zM14%2032v16%27%20stroke%3D%27white%27%20stroke-opacity%3D%27.5%27%20fill%3D%27none%27%20stroke-width%3D%271%27%2F%3E%3C%2Fsvg%3E"); }
+    .ka-mcard:nth-child(6) .ka-mcard-tex { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2780%27%20height%3D%2736%27%3E%3Cg%20stroke%3D%27white%27%20stroke-opacity%3D%27.5%27%20fill%3D%27none%27%20stroke-width%3D%271%27%3E%3Cpath%20d%3D%27M0%208c13-8%2027%208%2040%200s27-8%2040%200%27%2F%3E%3Cpath%20d%3D%27M0%2020c13-8%2027%208%2040%200s27-8%2040%200%27%2F%3E%3Cpath%20d%3D%27M0%2032c13-8%2027%208%2040%200s27-8%2040%200%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"); }
+    .ka-mcard h3 { font-family: 'Host Grotesk', sans-serif; font-weight: 400; font-size: clamp(24px, 2.4vw, 35px); line-height: 1.15; letter-spacing: -0.03em; max-width: 9em; }
+    .ka-mcard p { margin-top: 14px; font-size: clamp(14px, 1.05vw, 16px); line-height: 1.35; letter-spacing: 0.02em; color: rgba(255,255,255,0.92); max-width: 24em; }
+    .ka-track-sec.is-static { height: auto !important; }
+    .ka-track-sec.is-static .ka-track-pin { position: static; height: auto; padding: var(--ka-pad-y) 0; }
+    .ka-track-sec.is-static .ka-track-clip { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: var(--ka-pad-x); padding-bottom: 12px; scrollbar-width: none; }
+    .ka-track-sec.is-static .ka-track-clip::-webkit-scrollbar { display: none; }
+    .ka-track-sec.is-static .ka-mcard { scroll-snap-align: start; }
+    @media (max-width: 768px) { .ka-mcard { width: 76vw; min-height: 340px; } }
+
+    /* ── 6. Timeline: line draws, dot travels, text lights (scrubbed) ── */
+    .ka-flow { text-align: center; }
+    .ka-flow .ka-lead { margin: 22px auto 0; max-width: 46em; }
+    .ka-steps { margin-top: clamp(24px, 3vw, 48px); display: flex; flex-direction: column; align-items: center; list-style: none; }
+    .ka-step { display: flex; flex-direction: column; align-items: center; max-width: 30em; }
+    .ka-step-svg { display: block; overflow: visible; }
+    .ka-step-text { padding: 26px 0 18px; }
+    .ka-step h3 { font-family: 'Host Grotesk', sans-serif; font-weight: 400; font-size: clamp(20px, 1.65vw, 25px); line-height: 1.5; color: #000; letter-spacing: -0.01em; }
+    .ka-step p { margin-top: 6px; font-size: clamp(14.5px, 1.15vw, 16.5px); line-height: 1.5; color: #333; }
+    .ka-flow-cta { margin-top: clamp(40px, 4vw, 64px); }
+
+    /* ── 8. Pricing stays on the dark site theme (shared tier-card format) ── */
+    .ka-dark { background: var(--base); color: var(--text-1); padding: 24px 0; }
+
+    /* ── 9. FAQ, light (overrides the shared dark accordion) ── */
+    .ka-faq .wd-faq-inner { max-width: none; }
+    .ka-faq .ka-h2 { margin-bottom: clamp(32px, 4vw, 60px); }
+    .ka-faq .wd-faq-list { gap: 0; }
+    .ka-faq .wd-faq-item { background: transparent; border: 0; border-radius: 8px; box-shadow: none; position: relative;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease; }
+    .ka-faq .wd-faq-item::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 0; height: 1px; background: rgba(12,10,18,0.16); }
+    .ka-faq .wd-faq-item:hover { border-color: transparent; }
+    .ka-faq .wd-faq-item.open { background: var(--ka-accent); box-shadow: 0 16px 36px -20px rgba(124,58,237,0.7); }
+    .ka-faq .wd-faq-item.open::after { opacity: 0; }
+    .ka-faq .wd-faq-trigger { padding: 20px 16px; font-family: 'DM Sans', sans-serif; border-radius: 8px; }
+    .ka-faq .wd-faq-trigger:hover { background: rgba(124,58,237,0.05); }
+    .ka-faq .wd-faq-trigger:active { background: rgba(124,58,237,0.1); }
+    .ka-faq .wd-faq-item.open .wd-faq-trigger { background: transparent; }
+    .ka-faq .wd-faq-trigger:focus-visible { outline: 2px solid var(--ka-accent); outline-offset: 2px; }
+    .ka-faq .wd-faq-item.open .wd-faq-trigger:focus-visible { outline-color: var(--ka-ink); }
+    .ka-faq .wd-faq-trigger-icon { display: none; }
+    .ka-faq .wd-faq-question { font-family: 'DM Sans', sans-serif; font-weight: 400; font-size: clamp(16px, 1.25vw, 18.5px); letter-spacing: 0; color: var(--ka-ink); }
+    .ka-faq .wd-faq-item.open .wd-faq-question { color: #fff; }
+    .ka-faq .wd-faq-toggle { width: 24px; height: 24px; border-radius: 50%; background: var(--ka-accent); border: 0; }
+    .ka-faq .wd-faq-toggle svg { stroke: #fff; }
+    .ka-faq .wd-faq-item.open .wd-faq-toggle { background: #fff; }
+    .ka-faq .wd-faq-item.open .wd-faq-toggle svg { stroke: var(--ka-accent); }
+    .ka-faq .wd-faq-content-inner { padding: 0 56px 22px 16px; font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.92); }
+    .ka-faq .wd-faq-content-inner::before { display: none; }
+    .ka-faq .wd-faq-more { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+    .ka-faq .wd-faq-more:focus-visible { outline-color: #fff; }
+
+    /* ── 10. CTA on a light grey stage ── */
+    .ka-cta { background: linear-gradient(180deg, var(--base) 0%, var(--surface) 100%); padding: var(--ka-pad-y) var(--ka-pad-x); }
   </style>
 
   <script src="/supabase-config.js"></script>
@@ -1870,7 +2153,11 @@
           svcPanel.style.left = rect.left + 'px';
           svcTrigger.setAttribute('aria-expanded', 'true');
           svcPanel.classList.add('open');
+          openY = window.scrollY;
         };
+        // Lenis keeps easing for a moment after the wheel stops, so only a real scroll closes the panel
+        var openY = 0;
+        var closeOnScroll = function () { if (Math.abs(window.scrollY - openY) > 60) closeSvc(); };
         svcTrigger.addEventListener('click', function (e) {
           e.stopPropagation();
           svcTrigger.getAttribute('aria-expanded') === 'true' ? closeSvc() : openSvc();
@@ -1880,7 +2167,7 @@
         });
         document.addEventListener('click', function (e) { if (!wrap.contains(e.target) && !svcPanel.contains(e.target)) closeSvc(); });
         document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSvc(); });
-        window.addEventListener('scroll', closeSvc, { passive: true });
+        window.addEventListener('scroll', closeOnScroll, { passive: true });
         window.addEventListener('resize', closeSvc);
       });
     });
@@ -2055,178 +2342,761 @@
 <!-- ══════════════════════════════════════
      HERO HEADER
 ══════════════════════════════════════ -->
-<section class="wd-hero lp-hero" aria-label="App development">
-  <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
-    <defs>
-      <filter id="wd-hero-text-glow" x="-50%" y="-50%" width="200%" height="200%">
-        <feGaussianBlur stdDeviation="1.5" result="blur" />
-        <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-  </svg>
-
-  <!-- Placeholder screens: swap for real screenshots once the VardWeb app ships -->
-  <div class="app-hero-phones" aria-hidden="true">
-    <div class="app-phone app-phone--back"><img src="https://placehold.co/390x844/1E0F33/D8B4FE?text=Bookings" alt="" loading="eager"/></div>
-    <div class="app-phone app-phone--front"><img src="https://placehold.co/390x844/2A1347/FFFFFF?text=Your+App" alt="" loading="eager"/></div>
-    <span class="app-phone-chip app-phone-chip--push"><i></i>New booking confirmed</span>
-    <span class="app-phone-chip app-phone-chip--offline"><i></i>Works offline</span>
-  </div>
-
-  <div class="lp-hero-inner">
-    <div class="lp-hero-top">
-  <p class="wd-hero-kicker">
-      <span class="wd-kicker-slash">//</span>
-      <span class="wd-kw" style="--i:0; animation-delay:0.0s">A</span><span class="wd-kw" style="--i:1; animation-delay:0.07s">p</span><span class="wd-kw" style="--i:2; animation-delay:0.14s">p</span>
-      <span class="wd-kw" style="--i:3; animation-delay:0.21s">D</span><span class="wd-kw" style="--i:4; animation-delay:0.28s">e</span><span class="wd-kw" style="--i:5; animation-delay:0.35s">v</span><span class="wd-kw" style="--i:6; animation-delay:0.42s">e</span><span class="wd-kw" style="--i:7; animation-delay:0.49s">l</span><span class="wd-kw" style="--i:8; animation-delay:0.56s">o</span><span class="wd-kw" style="--i:9; animation-delay:0.63s">p</span><span class="wd-kw" style="--i:10; animation-delay:0.7s">m</span><span class="wd-kw" style="--i:11; animation-delay:0.77s">e</span><span class="wd-kw" style="--i:12; animation-delay:0.84s">n</span><span class="wd-kw" style="--i:13; animation-delay:0.91s">t</span>
-    </p>
-      <h1 class="lp-hero-h1">Your site.<br><span class="app-h1-accent">In every pocket.</span></h1>
+<div class="ka-intro" aria-hidden="true"></div>
+<noscript><style>.ka-intro{display:none!important}.ka-hero-bg,[data-para],[data-fade]{opacity:1!important}.ka-hero-phone-enter{transform:none!important}</style></noscript>
+<section class="ka-hero" aria-label="App development">
+  <div class="ka-hero-bg" aria-hidden="true"><canvas class="ka-hero-wave"></canvas><p class="ka-hero-word">APPS</p></div>
+  <div class="ka-hero-grid">
+    <!-- Sample app UI built in HTML (illustrative, not a client app) -->
+    <div class="ka-hero-phone" aria-hidden="true">
+      <div class="ka-hero-phone-enter">
+        <div class="ka-hero-phone-par">
+          <div class="ka-device">
+            <span class="ka-dev-btn ka-dev-btn--action"></span><span class="ka-dev-btn ka-dev-btn--vup"></span><span class="ka-dev-btn ka-dev-btn--vdown"></span><span class="ka-dev-btn ka-dev-btn--power"></span>
+            <div class="ka-dev-body">
+              <div class="ka-dev-screen">
+                <div class="ka-ui ka-ui--dark">
+                  <div class="ka-ui-status"><span>9:41</span><span class="ka-ui-status-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM2.8 6.2a7.4 7.4 0 0 1 10.4 0l-1.4 1.4a5.4 5.4 0 0 0-7.6 0zM0 3.4a11.3 11.3 0 0 1 16 0l-1.4 1.4a9.3 9.3 0 0 0-13.2 0z"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="18" height="8" rx="1.8"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity=".45"/></svg></span></div>
+                  <div class="ka-ui-head">
+                    <span class="ka-ui-logo">yourbrand</span>
+                    <span class="ka-ui-head-btns"><span class="ka-ui-round ka-ui-glass"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></span><span class="ka-ui-round ka-ui-glass"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span></span>
+                  </div>
+                  <div class="ka-ui-sum ka-ui-glass">
+                    <div><b>Today</b><small>Next booking at 2:30 PM</small></div>
+                    <div class="ka-ui-sum-n"><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>8<i>bookings</i></div>
+                  </div>
+                  <div class="ka-ui-grid">
+                    <div class="ka-ui-tile ka-ui-glass ka-ui-tile--acc">
+                      <div class="ka-ui-tile-top"><span>Bookings</span><span class="ka-ui-round"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span></div>
+                      <div class="ka-ui-tile-bot"><div><span class="ka-ui-big">12</span><small>Confirmed</small></div><span class="ka-ui-switch ka-ui-switch--on"></span></div>
+                    </div>
+                    <div class="ka-ui-tile ka-ui-glass">
+                      <div class="ka-ui-tile-top"><span>Orders</span><span class="ka-ui-round"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span></div>
+                      <div class="ka-ui-tile-bot"><div><span class="ka-ui-big">70%</span><small>Fulfilled</small></div></div>
+                    </div>
+                    <div class="ka-ui-tile ka-ui-glass">
+                      <div class="ka-ui-tile-top"><span>Members</span><span class="ka-ui-round"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18.5 14.2a6.5 6.5 0 0 1 3 5.8"/></svg></span></div>
+                      <div class="ka-ui-tile-bot"><div><span class="ka-ui-big">3</span><small>Joined today</small></div></div>
+                    </div>
+                    <div class="ka-ui-tile ka-ui-glass">
+                      <div class="ka-ui-tile-top"><span>Push</span><span class="ka-ui-round"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></span></div>
+                      <div class="ka-ui-tile-bot"><div><span class="ka-ui-big">Off</span><small>Quiet hours</small></div><span class="ka-ui-switch"></span></div>
+                    </div>
+                  </div>
+                  <p class="ka-ui-sub">Quick actions <i>New</i></p>
+                  <div class="ka-ui-quick">
+                    <span><span class="ka-ui-round ka-ui-glass"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span>Book</span>
+                    <span><span class="ka-ui-round ka-ui-glass"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span>Shop</span>
+                    <span><span class="ka-ui-round ka-ui-glass"><svg viewBox="0 0 24 24"><rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8S10.5 3.5 8 4.5 9 8 12 8zM12 8s1.5-4.5 4-3.5S15 8 12 8z"/></svg></span>Rewards</span>
+                    <span><span class="ka-ui-round ka-ui-glass"><svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/></svg></span>Chat</span>
+                  </div>
+                  <div class="ka-ui-tabs">
+                    <span><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span>
+                    <span><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+                    <span><svg viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg></span>
+                    <span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span>
+                  </div>
+                  <span class="ka-ui-home"></span>
+                </div>
+              </div>
+              <span class="ka-dev-island"></span>
+              <span class="ka-dev-glare"></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="lp-hero-bottom">
-      <p class="lp-hero-sub"><b>One codebase, every screen.</b> We turn the site you already have, or the idea you keep sketching on napkins, into an app for the web, Android and iPhone. Same code underneath, so nothing drifts out of sync.</p>
-      <div class="lp-hero-ctas">
-        <a href="#pricing" class="btn lp-hero-btn lp-hero-btn-solid">View Pricing</a>
-        <div class="wd-hero-services-menu">
-          <button type="button" class="btn lp-hero-btn lp-hero-btn-ghost wd-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="wd-hero-services-panel">
+    <div class="ka-hero-copy">
+      <h1 data-para data-delay="0.5">Your site.<br>In every pocket.</h1>
+      <p class="ka-hero-sub" data-para>We turn the site you already have, or the idea you keep sketching on napkins, into an app for the web, Android and iPhone. Same code underneath, so nothing drifts out of sync.</p>
+      <div class="ka-hero-ctas">
+        <div data-fade data-delay="0.1"><a href="#pricing" class="ka-btn ka-btn--accent">View Pricing <svg class="ka-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+        <div class="wd-hero-services-menu" data-fade data-delay="0.2">
+          <button type="button" class="ka-btn ka-btn--white wd-hero-services-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="wd-hero-services-panel">
             View Services
             <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="dropdown-menu wd-hero-services-panel" id="wd-hero-services-panel" role="menu">
             <a href="#apps" class="dropdown-item" role="menuitem">Pick Your Platform</a>
-            <a href="#website-app" class="dropdown-item" role="menuitem">Your Website as an App</a>
-            <a href="#pricing" class="dropdown-item" role="menuitem">Custom App Tiers</a>
             <a href="#how-we-build" class="dropdown-item" role="menuitem">How We Build</a>
+            <a href="#app-own" class="dropdown-item" role="menuitem">You Own Your App</a>
             <a href="#app-monthly" class="dropdown-item" role="menuitem">What Monthly Covers</a>
             <a href="#app-process" class="dropdown-item" role="menuitem">From Idea to Store</a>
-            <a href="#app-own" class="dropdown-item" role="menuitem">You Own Your App</a>
+            <a href="#website-app" class="dropdown-item" role="menuitem">Your Website as an App</a>
+            <a href="#pricing" class="dropdown-item" role="menuitem">Custom App Tiers</a>
             <a href="#wd-faq" class="dropdown-item" role="menuitem">FAQ</a>
           </div>
         </div>
       </div>
-      <div class="lp-hero-stat">
-        <span class="lp-hero-stat-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
-        <p><b>One tap from your customers' home screen.</b><br>Push notifications, offline mode and sign-in with Face ID, on every tier.</p>
-      </div>
+      <p class="ka-hero-proof" data-fade data-delay="0.3"><i aria-hidden="true"></i>Push, offline and Face ID on every tier. Built to WCAG 2.2 AA.</p>
     </div>
   </div>
 </section>
 
-<section class="lp-hero-after" style="position:relative;overflow:hidden;padding:0 28px;" aria-label="Highlights">
-  <div class="hero-feat-grid" style="position:relative;z-index:1;border-top:1px dashed rgba(200,212,232,0.12);display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:0 -28px;">
-    <div style="padding:36px 28px 44px;border-right:1px dashed rgba(200,212,232,0.12);display:flex;flex-direction:column;gap:20px;">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><rect x="5" y="9" width="22" height="16" rx="2.5" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/><rect x="25" y="17" width="12" height="20" rx="2.5" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/><path d="M11 33h12" stroke="rgba(168,85,247,0.3)" stroke-width="1.5" stroke-linecap="round"/><path d="M13 15l-3 3 3 3M19 15l3 3-3 3" stroke="#A855F7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="31" cy="33" r="1.4" fill="#A855F7"/></svg>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
-        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">One codebase</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Your website, web app, Android app and iPhone app share the same code, so one change ships everywhere at once.</p>
-      </div>
-    </div>
-    <div style="padding:36px 28px 44px;border-right:1px dashed rgba(200,212,232,0.12);display:flex;flex-direction:column;gap:20px;">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><rect x="13" y="5" width="18" height="34" rx="3.5" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/><path d="M28 13a5 5 0 0 0-10 0c0 5.5-2.2 7-2.2 7h14.4S28 18.5 28 13" stroke="#A855F7" stroke-width="1.6" stroke-linejoin="round"/><path d="M21.3 23.5a1.6 1.6 0 0 0 2.8 0" stroke="#A855F7" stroke-width="1.6" stroke-linecap="round"/><circle cx="22" cy="34" r="1.4" fill="rgba(168,85,247,0.4)"/></svg>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
-        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Real app features</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Push notifications, offline mode, Face ID sign-in and a home-screen icon. The things that make an app worth installing.</p>
-      </div>
-    </div>
-    <div style="padding:36px 28px 44px;border-right:1px dashed rgba(200,212,232,0.12);display:flex;flex-direction:column;gap:20px;">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="16" stroke="rgba(216,180,254,0.3)" stroke-width="1.5"/><path d="M15 22a7 7 0 0 1 12-4.9M29 22a7 7 0 0 1-12 4.9" stroke="#D8B4FE" stroke-width="1.7" stroke-linecap="round"/><path d="M27 12.5v4.6h-4.6M17 31.5v-4.6h4.6" stroke="#D8B4FE" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
-        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Instant updates</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Fixes and content changes reach your customers' phones in minutes, with no waiting on a store review for every tweak.</p>
-      </div>
-    </div>
-    <div style="padding:36px 28px 44px;display:flex;flex-direction:column;gap:20px;">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><ellipse cx="22" cy="12" rx="12" ry="4.5" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/><path d="M10 12v20c0 2.5 5.4 4.5 12 4.5s12-2 12-4.5V12" stroke="rgba(168,85,247,0.3)" stroke-width="1.5"/><path d="M10 22c0 2.5 5.4 4.5 12 4.5s12-2 12-4.5" stroke="rgba(168,85,247,0.4)" stroke-width="1.5"/><path d="M17.5 30.5l3 2.5 6-6" stroke="#A855F7" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:28px;">
-        <h3 style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--text-1);letter-spacing:-0.02em;">Your data stays yours</h3>
-        <p style="font-size:15px;line-height:1.7;color:var(--text-2);">Every account, order and booking lives in your own database, exportable whenever you ask.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="divider hero-apps-div"></div>
+<div class="ka-light">
 
 <!-- ══════════════════════════════════════
-     APPS SECTION
+     PICK YOUR PLATFORM
 ══════════════════════════════════════ -->
-<section id="apps" style="padding:80px 28px;" aria-label="App distribution options">
-  <div style="max-width:1200px;margin:0 auto;">
+<section id="apps" class="ka-sec ka-plat" aria-label="App distribution options">
+  <div class="ka-split-head">
+    <h2 class="ka-h2" data-para>Pick Your Platform. Start Anywhere, Move Up Anytime</h2>
+    <p class="ka-lead" data-para>Start on the web and add the stores when you're ready. Every option runs on the same code, so moving up never means starting over.</p>
+  </div>
 
-    <div style="text-align:center;margin:0 auto 56px;">
-      <p class="sec-tag">// apps</p>
-      <h2 class="apps-heading" style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Pick Your<span class="apps-br"></span>&nbsp;<span class="grad-cyan-pink">Platform.</span>
-      </h2>
-      <p style="font-size:15px;line-height:1.78;color:var(--text-2);max-width:500px;margin:0 auto;">
-        Start on the web and add the stores when you're ready. Every option runs on the same code, so moving up never means starting over.
-      </p>
+  <div class="ka-phones">
+    <svg class="ka-phones-line" viewBox="0 0 1440 770" aria-hidden="true" focusable="false">
+      <path d="M0 740 H157"/>
+      <path d="M489 740 H505 Q522 740 522 723 V318 Q522 300 540 300 H555"/>
+      <path d="M886 300 H951"/>
+      <path d="M1283 300 H1300 Q1318 300 1318 318 V560 Q1318 578 1336 578 H1440"/>
+    </svg>
+
+    <!-- Google Play listing -->
+    <div class="ka-phone-slot ka-phone-slot--side">
+      <div class="ka-device">
+        <span class="ka-dev-btn ka-dev-btn--action" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vup" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vdown" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--power" aria-hidden="true"></span>
+        <div class="ka-dev-body">
+          <div class="ka-dev-screen">
+            <div class="ka-ui ka-ui--play">
+              <div class="ka-ui-status" aria-hidden="true"><span>9:41</span><span class="ka-ui-status-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM2.8 6.2a7.4 7.4 0 0 1 10.4 0l-1.4 1.4a5.4 5.4 0 0 0-7.6 0zM0 3.4a11.3 11.3 0 0 1 16 0l-1.4 1.4a9.3 9.3 0 0 0-13.2 0z"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="18" height="8" rx="1.8"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity=".45"/></svg></span></div>
+              <div class="ka-ui-bar">
+                <div class="ka-ui-bar-brand">
+                  <svg viewBox="-1.5 0 32 32" aria-hidden="true"><path d="M13.54 15.28.12 29.34a3.66 3.66 0 0 0 5.33 2.16l15.1-8.6Z" fill="#EA4335"/><path d="m27.11 12.89-6.53-3.74-7.35 6.45 7.38 7.28 6.48-3.7a3.54 3.54 0 0 0 1.5-4.79 3.62 3.62 0 0 0-1.5-1.5z" fill="#FBBC04"/><path d="M.12 2.66a3.57 3.57 0 0 0-.12.92v24.84a3.57 3.57 0 0 0 .12.92L14 15.64Z" fill="#4285F4"/><path d="m13.64 16 6.94-6.85L5.5.51A3.73 3.73 0 0 0 3.63 0 3.64 3.64 0 0 0 .12 2.65Z" fill="#34A853"/></svg>
+                  <h3>Google Play</h3>
+                </div>
+                <div class="ka-ui-bar-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+              </div>
+              <div class="ka-ui-app" aria-hidden="true">
+                <span class="ka-ui-icon"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span>
+                <div><b>Your App</b><small>Your Business</small></div>
+              </div>
+              <div class="ka-ui-meta" aria-hidden="true">
+                <span><b>★★★★★</b>Reviews</span>
+                <span><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></b>Install</span>
+                <span><b>E</b>Everyone</span>
+              </div>
+              <div class="ka-ui-cta" aria-hidden="true">Install</div>
+              <div class="ka-ui-shots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <p class="ka-ui-about"><span>About this app</span><span aria-hidden="true">→</span></p>
+              <p class="ka-ui-desc">Your business on Android's main app store, where customers search, install and leave the reviews that build trust.</p>
+              <a href="#website-app" class="ka-ui-more" aria-label="See Google Play app pricing">See Pricing</a>
+              <span class="ka-ui-home" aria-hidden="true"></span>
+            </div>
+          </div>
+          <span class="ka-dev-island" aria-hidden="true"></span>
+          <span class="ka-dev-glare" aria-hidden="true"></span>
+        </div>
+      </div>
     </div>
 
-    <div class="ws-grid">
-
-      <!-- ── Card 1: PWA ── -->
-      <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
-        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(90,15,200,0.35);margin:0 auto 20px;">
-          <!-- Official community PWA logo; P and A white for the dark tile -->
-          <svg width="58" height="22" viewBox="0 0 1952 735" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path fill="#FFFFFF" d="M1436.62,603.304L1493.01,460.705L1655.83,460.705L1578.56,244.39L1675.2,0L1952,734.933L1747.87,734.933L1700.57,603.304L1436.62,603.304Z"/>
-            <path fill="#5A0FC8" d="M1262.47,734.935L1558.79,0L1362.34,0L1159.64,474.933L1015.5,0L864.499,0L709.731,474.933L600.585,258.517L501.812,562.819L602.096,734.935L795.427,734.935L935.284,309.025L1068.63,734.935L1262.47,734.935Z"/>
-            <path fill="#FFFFFF" d="M186.476,482.643L307.479,482.643C344.133,482.643 376.772,478.552 405.396,470.37L436.689,373.962L524.148,104.516C517.484,93.9535 509.876,83.9667 501.324,74.5569C456.419,24.852 390.719,0 304.222,0L0,0L0,734.933L186.476,734.933L186.476,482.643Z M346.642,169.079C364.182,186.732 372.951,210.355 372.951,239.95C372.951,269.772 365.238,293.424 349.813,310.906C332.903,330.331 301.766,340.043 256.404,340.043L186.476,340.043L186.476,142.598L256.918,142.598C299.195,142.598 329.103,151.425 346.642,169.079Z"/>
-          </svg>
+    <!-- PWA (featured: where most clients start) -->
+    <div class="ka-phone-slot ka-phone-slot--feat">
+      <div class="ka-device">
+        <span class="ka-dev-btn ka-dev-btn--action" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vup" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vdown" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--power" aria-hidden="true"></span>
+        <div class="ka-dev-body">
+          <div class="ka-dev-screen">
+            <div class="ka-ui ka-ui--pwa">
+              <div class="ka-ui-status" aria-hidden="true"><span>9:41</span><span class="ka-ui-status-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM2.8 6.2a7.4 7.4 0 0 1 10.4 0l-1.4 1.4a5.4 5.4 0 0 0-7.6 0zM0 3.4a11.3 11.3 0 0 1 16 0l-1.4 1.4a9.3 9.3 0 0 0-13.2 0z"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="18" height="8" rx="1.8"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity=".45"/></svg></span></div>
+              <div class="ka-ui-url" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>yourbusiness.com</div>
+              <div class="ka-ui-pwa-mid">
+                <span class="ka-ui-tilelogo" aria-hidden="true">
+                  <!-- Official community PWA logo, retinted for the purple screen -->
+                  <svg viewBox="0 0 1952 735" xmlns="http://www.w3.org/2000/svg"><path fill="#FFFFFF" d="M1436.62,603.304L1493.01,460.705L1655.83,460.705L1578.56,244.39L1675.2,0L1952,734.933L1747.87,734.933L1700.57,603.304L1436.62,603.304Z"/><path fill="#2E1065" d="M1262.47,734.935L1558.79,0L1362.34,0L1159.64,474.933L1015.5,0L864.499,0L709.731,474.933L600.585,258.517L501.812,562.819L602.096,734.935L795.427,734.935L935.284,309.025L1068.63,734.935L1262.47,734.935Z"/><path fill="#FFFFFF" d="M186.476,482.643L307.479,482.643C344.133,482.643 376.772,478.552 405.396,470.37L436.689,373.962L524.148,104.516C517.484,93.9535 509.876,83.9667 501.324,74.5569C456.419,24.852 390.719,0 304.222,0L0,0L0,734.933L186.476,734.933L186.476,482.643Z M346.642,169.079C364.182,186.732 372.951,210.355 372.951,239.95C372.951,269.772 365.238,293.424 349.813,310.906C332.903,330.331 301.766,340.043 256.404,340.043L186.476,340.043L186.476,142.598L256.918,142.598C299.195,142.598 329.103,151.425 346.642,169.079Z"/></svg>
+                </span>
+                <p class="ka-ui-label">No store needed</p>
+                <h3>Progressive Web App</h3>
+                <p>Users install your site directly from the browser. Works offline, loads instantly, and feels native on any device. No app store review required.</p>
+              </div>
+              <div class="ka-ui-sheet">
+                <p class="ka-ui-sheet-title" aria-hidden="true">Install app</p>
+                <div class="ka-ui-sheet-row" aria-hidden="true"><span class="ka-ui-icon"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span><div><b>Your App</b>yourbusiness.com</div></div>
+                <a href="#website-app" class="ka-ui-more" aria-label="See Progressive Web App pricing">See Pricing</a>
+              </div>
+              <span class="ka-ui-home" aria-hidden="true"></span>
+            </div>
+          </div>
+          <span class="ka-dev-island" aria-hidden="true"></span>
+          <span class="ka-dev-glare" aria-hidden="true"></span>
         </div>
-        <p class="w-label">(No store needed)</p>
-        <h3>Progressive Web App</h3>
-        <p>Users install your site directly from the browser. Works offline, loads instantly, and feels native on any device. No app store review required.</p>
-        <a href="#website-app" class="w-card-more" style="--more-c:#9D6BFF;--more-c-hover:#C2A3FF;" aria-label="See Progressive Web App pricing">See Pricing</a>
       </div>
-
-      <!-- ── Card 2: Google Play ── -->
-      <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
-        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(52,168,83,0.25);margin:0 auto 20px;">
-          <svg width="44" height="44" viewBox="-1.5 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M13.54 15.28.12 29.34a3.66 3.66 0 0 0 5.33 2.16l15.1-8.6Z" fill="#EA4335"/>
-            <path d="m27.11 12.89-6.53-3.74-7.35 6.45 7.38 7.28 6.48-3.7a3.54 3.54 0 0 0 1.5-4.79 3.62 3.62 0 0 0-1.5-1.5z" fill="#FBBC04"/>
-            <path d="M.12 2.66a3.57 3.57 0 0 0-.12.92v24.84a3.57 3.57 0 0 0 .12.92L14 15.64Z" fill="#4285F4"/>
-            <path d="m13.64 16 6.94-6.85L5.5.51A3.73 3.73 0 0 0 3.63 0 3.64 3.64 0 0 0 .12 2.65Z" fill="#34A853"/>
-          </svg>
-        </div>
-        <p class="w-label">(Android)</p>
-        <h3>Google Play</h3>
-        <p>Your business on Android's main app store, where customers search, install and leave the reviews that build trust.</p>
-        <a href="#website-app" class="w-card-more" style="--more-c:#34A853;--more-c-hover:#5BC97A;" aria-label="See Google Play app pricing">See Pricing</a>
-      </div>
-
-      <!-- ── Card 3: App Store ── -->
-      <div class="w-card" style="text-align:center;align-items:center;display:flex;flex-direction:column;">
-        <div class="w-icon" style="width:76px;height:76px;border-radius:18px;background:rgba(0,0,0,0.3);border-color:rgba(20,120,220,0.25);margin:0 auto 20px;">
-          <svg width="48" height="48" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs>
-              <linearGradient id="as-bg" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#18BFFB"/>
-                <stop offset="100%" stop-color="#2072F3"/>
-              </linearGradient>
-            </defs>
-            <path fill="url(#as-bg)" d="M638.4,0H161.6C72.3,0,0,72.3,0,161.6v476.9C0,727.7,72.3,800,161.6,800h476.9c89.2,0,161.6-72.3,161.6-161.6V161.6C800,72.3,727.7,0,638.4,0z"/>
-            <path fill="#FFFFFF" d="M396.6,183.8l16.2-28c10-17.5,32.3-23.4,49.8-13.4s23.4,32.3,13.4,49.8L319.9,462.4h112.9c36.6,0,57.1,43,41.2,72.8H143c-20.2,0-36.4-16.2-36.4-36.4c0-20.2,16.2-36.4,36.4-36.4h92.8l118.8-205.9l-37.1-64.4c-10-17.5-4.1-39.6,13.4-49.8c17.5-10,39.6-4.1,49.8,13.4L396.6,183.8L396.6,183.8z M256.2,572.7l-35,60.7c-10,17.5-32.3,23.4-49.8,13.4S148,614.5,158,597l26-45C213.4,542.9,237.3,549.9,256.2,572.7L256.2,572.7z M557.6,462.6h94.7c20.2,0,36.4,16.2,36.4,36.4c0,20.2-16.2,36.4-36.4,36.4h-52.6l35.5,61.6c10,17.5,4.1,39.6-13.4,49.8c-17.5,10-39.6,4.1-49.8-13.4c-59.8-103.7-104.7-181.3-134.5-233c-30.5-52.6-8.7-105.4,12.8-123.3C474.2,318.1,509.9,380,557.6,462.6L557.6,462.6z"/>
-          </svg>
-        </div>
-        <p class="w-label">(iPhone &amp; iPad)</p>
-        <h3>App Store</h3>
-        <p>Your business on iPhone and iPad. Every app is reviewed by Apple before launch, so a listing here carries instant credibility.</p>
-        <a href="#website-app" class="w-card-more" style="--more-c:#18BFFB;--more-c-hover:#7DD9FD;" aria-label="See App Store app pricing">See Pricing</a>
-      </div>
-
     </div>
-    <p class="app-also">Also available: <b>Microsoft Store</b> and <b>Samsung Galaxy Store</b> listings, C$150 each.</p>
+
+    <!-- App Store listing -->
+    <div class="ka-phone-slot ka-phone-slot--side">
+      <div class="ka-device">
+        <span class="ka-dev-btn ka-dev-btn--action" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vup" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vdown" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--power" aria-hidden="true"></span>
+        <div class="ka-dev-body">
+          <div class="ka-dev-screen">
+            <div class="ka-ui ka-ui--ios">
+              <div class="ka-ui-status" aria-hidden="true"><span>9:41</span><span class="ka-ui-status-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM2.8 6.2a7.4 7.4 0 0 1 10.4 0l-1.4 1.4a5.4 5.4 0 0 0-7.6 0zM0 3.4a11.3 11.3 0 0 1 16 0l-1.4 1.4a9.3 9.3 0 0 0-13.2 0z"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="18" height="8" rx="1.8"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity=".45"/></svg></span></div>
+              <div class="ka-ui-bar">
+                <span class="ka-ui-back" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg>Search</span>
+                <div class="ka-ui-bar-brand">
+                  <svg viewBox="0 0 800 800" aria-hidden="true"><defs><linearGradient id="as-bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#18BFFB"/><stop offset="100%" stop-color="#2072F3"/></linearGradient></defs><path fill="url(#as-bg)" d="M638.4,0H161.6C72.3,0,0,72.3,0,161.6v476.9C0,727.7,72.3,800,161.6,800h476.9c89.2,0,161.6-72.3,161.6-161.6V161.6C800,72.3,727.7,0,638.4,0z"/><path fill="#FFFFFF" d="M396.6,183.8l16.2-28c10-17.5,32.3-23.4,49.8-13.4s23.4,32.3,13.4,49.8L319.9,462.4h112.9c36.6,0,57.1,43,41.2,72.8H143c-20.2,0-36.4-16.2-36.4-36.4c0-20.2,16.2-36.4,36.4-36.4h92.8l118.8-205.9l-37.1-64.4c-10-17.5-4.1-39.6,13.4-49.8c17.5-10,39.6-4.1,49.8,13.4L396.6,183.8L396.6,183.8z M256.2,572.7l-35,60.7c-10,17.5-32.3,23.4-49.8,13.4S148,614.5,158,597l26-45C213.4,542.9,237.3,549.9,256.2,572.7L256.2,572.7z M557.6,462.6h94.7c20.2,0,36.4,16.2,36.4,36.4c0,20.2-16.2,36.4-36.4,36.4h-52.6l35.5,61.6c10,17.5,4.1,39.6-13.4,49.8c-17.5,10-39.6,4.1-49.8-13.4c-59.8-103.7-104.7-181.3-134.5-233c-30.5-52.6-8.7-105.4,12.8-123.3C474.2,318.1,509.9,380,557.6,462.6L557.6,462.6z"/></svg>
+                  <h3>App Store</h3>
+                </div>
+              </div>
+              <div class="ka-ui-app" aria-hidden="true">
+                <span class="ka-ui-icon"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg></span>
+                <div><b>Your App</b><small>Your Business</small><span class="ka-ui-get">GET</span></div>
+              </div>
+              <div class="ka-ui-meta" aria-hidden="true">
+                <span><b>★★★★★</b>Ratings</span>
+                <span><b>4+</b>Age</span>
+                <span><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></b>Category</span>
+              </div>
+              <div class="ka-ui-shots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <p class="ka-ui-about"><span>Description</span></p>
+              <p class="ka-ui-desc">Your business on iPhone and iPad. Every app is reviewed by Apple before launch, so a listing here carries instant credibility.</p>
+              <a href="#website-app" class="ka-ui-more" aria-label="See App Store app pricing">See Pricing</a>
+              <span class="ka-ui-home" aria-hidden="true"></span>
+            </div>
+          </div>
+          <span class="ka-dev-island" aria-hidden="true"></span>
+          <span class="ka-dev-glare" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="ka-also" data-fade>Also available: <b>Microsoft Store</b> and <b>Samsung Galaxy Store</b> listings, C$150 each.</p>
+</section>
+
+<!-- ══════════════════════════════════════
+     STATEMENT (per-character colour wave, scrubbed)
+══════════════════════════════════════ -->
+<section class="ka-tf" aria-label="One codebase">
+  <div class="ka-tf-pin">
+    <p class="ka-tf-text">One codebase, every screen. Your website, web app, Android app and iPhone app share the same code, so one change ships everywhere at once.</p>
   </div>
 </section>
 
-<div class="divider"></div>
+<!-- ══════════════════════════════════════
+     HOW WE BUILD (scroll stack)
+══════════════════════════════════════ -->
+<section id="how-we-build" class="ka-sec ka-stack-sec" aria-label="How we build your app">
+  <div class="ka-stack-head">
+    <h2 class="ka-h2" data-para>Built Once.<br>Runs Everywhere.</h2>
+    <p class="ka-lead" data-para>Every app starts on our standard build. If your app needs the exact scroll and gesture feel of a built-in app, there's an upgrade for that.</p>
+  </div>
 
+  <div class="ka-stack-wrap" style="--n:4">
+    <div class="ka-stack-pin">
+      <article class="ka-stack-card" style="--z:1">
+        <h3>Standard Build</h3>
+        <div class="ka-stack-rule" aria-hidden="true"></div>
+        <div class="ka-stack-body">
+          <ul class="ka-feats" role="list">
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2"/><path d="m9.5 10-2.5 2.5 2.5 2.5M14.5 10l2.5 2.5-2.5 2.5"/></svg></span>One codebase</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Real app features</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg></span>Instant updates</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="8" ry="3"/><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"/><path d="m9 13 2 2 4-4"/></svg></span>Your data stays yours</li>
+          </ul>
+          <div class="ka-stack-side">
+            <p>Included on every tier. Your website, web app, Android app and iPhone app share the same code, with push, offline mode, Face ID sign-in, camera, haptics and share built in.</p>
+            <p>Fixes reach your customers' phones in minutes, with no waiting on a store review for every tweak.</p>
+            <a href="#pricing" class="ka-btn ka-btn--accent ka-btn--sm">See the Tiers <svg class="ka-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="ka-stack-card" style="--z:2">
+        <h3>Native UI</h3>
+        <div class="ka-stack-rule" aria-hidden="true"></div>
+        <div class="ka-stack-body">
+          <ul class="ka-feats" role="list">
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5 2 7.5l10 5 10-5z"/><path d="m2 12 10 5 10-5"/><path d="m2 16.5 10 5 10-5"/></svg></span>Native components</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 10.5V9a1.5 1.5 0 0 1 3 0v2"/><path d="M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7l-2.4-3.8a1.5 1.5 0 0 1 2.5-1.7L9 15"/></svg></span>Built-in scroll and gestures</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7.5l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z"/></svg></span>For apps that are the product</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg></span>Available on request</li>
+          </ul>
+          <div class="ka-stack-side">
+            <p>An upgrade for +35% setup and +C$50/mo. Screens are built with native components, so scrolling and gestures match the apps already on your customers' phones.</p>
+            <p>Fully native Swift and Kotlin builds are quoted on the Custom tier.</p>
+            <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=Native%20UI" class="ka-btn ka-btn--accent ka-btn--sm">Ask About Native UI <svg class="ka-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="ka-stack-card" id="app-own" style="--z:3">
+        <h3>You Own Your App</h3>
+        <div class="ka-stack-rule" aria-hidden="true"></div>
+        <div class="ka-stack-body">
+          <ul class="ka-feats" role="list">
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 16.8l-5.6 2.9 1.1-6.2L3 9.1l6.2-.9z"/></svg></span>Store listings, reviews and app name</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8"/><path d="M18.5 14.2a6.5 6.5 0 0 1 3 5.8"/></svg></span>Customers, orders and bookings</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3z"/></svg></span>Your domain and all your data</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>No store cut on products or services</li>
+          </ul>
+          <div class="ka-stack-side">
+            <p>We look after the code and build pipeline, hosting, database and backups, plus updates, store reviews and policy changes.</p>
+            <p>Apple charges about C$140 a year and Google about C$35 once. We pay them and bill you at cost. See our <a href="terms.html" class="ka-link">Terms</a> for how ownership works if you ever leave.</p>
+            <a href="terms.html" class="ka-btn ka-btn--accent ka-btn--sm">Read the Terms <svg class="ka-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+        </div>
+      </article>
+
+      <article class="ka-stack-card" style="--z:4">
+        <h3>The Fine Print, Up Front</h3>
+        <div class="ka-stack-rule" aria-hidden="true"></div>
+        <div class="ka-stack-body">
+          <ul class="ka-feats" role="list">
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="12" height="9" rx="1.5"/><rect x="14" y="8" width="7.5" height="13" rx="1.8"/><path d="M5 19h7M8.5 14v5"/></svg></span>3 platforms, one codebase</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg></span>0% store cut on products and services</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 3h14v18l-2.3-1.5L14.3 21 12 19.5 9.7 21l-2.4-1.5L5 21z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>C$0 markup on Apple and Google fees</li>
+            <li class="ka-feat"><span class="ka-feat-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="4.5" r="2"/><path d="M4.5 8.5 12 10l7.5-1.5"/><path d="M12 10v5l-3.5 6.5M12 15l3.5 6.5"/></svg></span>Built to WCAG 2.2 AA</li>
+          </ul>
+          <div class="ka-stack-side">
+            <p>No hidden costs and no lock-in on your customers. Products and services sell through Stripe, so the stores take nothing, and their yearly fees pass straight through at cost.</p>
+            <p>Every app is built to WCAG 2.2 AA, the current accessibility standard.</p>
+            <a href="#pricing" class="ka-btn ka-btn--accent ka-btn--sm">See the Tiers <svg class="ka-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     WHAT THE MONTHLY FEE COVERS (pinned horizontal track)
+══════════════════════════════════════ -->
+<section id="app-monthly" class="ka-track-sec" aria-label="What the monthly fee covers">
+  <div class="ka-track-pin">
+    <div class="ka-track-head">
+      <h2 class="ka-h2" data-para>Why an App Costs Monthly</h2>
+      <p class="ka-lead" data-para>Apps need looking after even when nothing changes. Apple and Google move the goalposts every year, and your monthly fee keeps you on the right side of them.</p>
+    </div>
+    <div class="ka-track-clip">
+      <div class="ka-track">
+        <article class="ka-mcard"><span class="ka-mcard-tex" aria-hidden="true"></span><span class="ka-mcard-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect class="f" x="12" y="5" width="25" height="46" rx="5"/><path d="M20.5 9.5h8"/><rect class="f2" x="16" y="15" width="17" height="24" rx="2"/><path d="M24.5 34V21M19.5 26 24.5 21l5 5"/><rect class="f" x="33" y="27" width="25" height="25" rx="4"/><path d="M33 34.5h25M39.5 24v6M51.5 24v6M38.5 40.5h4M45.5 40.5h4M38.5 46.5h4"/><circle class="blink" cx="47.5" cy="46.5" r="2.7" fill="#fff"/><rect class="f" x="3" y="44.5" width="22" height="12" rx="6"/><text x="14" y="53" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="7.5" font-weight="700" letter-spacing=".04em" fill="#fff" stroke="none">API</text></svg></span><div><h3>Android's Yearly Deadline</h3><p>Every August, Google raises the minimum Android version apps must target. We update yours before the deadline, so it never stops receiving updates.</p></div></article>
+        <article class="ka-mcard"><span class="ka-mcard-tex" aria-hidden="true"></span><span class="ka-mcard-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><g class="spin"><circle class="dash" cx="32" cy="32" r="25"/><circle cx="57" cy="32" r="2.4" fill="#fff"/></g><rect class="f" x="21" y="11" width="22" height="42" rx="5.5"/><path d="M28.5 14.8h7"/><circle cx="32" cy="29.5" r="4.6"/><path d="M32 22.2v2.6M32 34.2v2.6M24.7 29.5h2.6M36.7 29.5h2.6M26.8 24.3l1.9 1.9M35.3 32.8l1.9 1.9M26.8 34.7l1.9-1.9M35.3 26.2l1.9-1.9"/><rect class="f2" x="26" y="42" width="12" height="2.6" rx="1.3"/><rect x="26" y="42" width="8" height="2.6" rx="1.3" fill="#fff" stroke="none"/><path class="spark" d="M51 8l1.3 3.3 3.3 1.3-3.3 1.3L51 17.2l-1.3-3.3-3.3-1.3 3.3-1.3z" fill="#fff"/><path class="spark d2" d="M11 46l.9 2.3 2.3.9-2.3.9-.9 2.3-.9-2.3-2.3-.9 2.3-.9z" fill="#fff"/></svg></span><div><h3>Every New iOS</h3><p>Apple releases a new iOS each September and new tooling each spring. We test, fix and ship before your customers notice.</p></div></article>
+        <article class="ka-mcard"><span class="ka-mcard-tex" aria-hidden="true"></span><span class="ka-mcard-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect class="f" x="17" y="10" width="28" height="38" rx="4" transform="rotate(-7 31 29)" opacity=".55"/><rect class="f" x="11" y="7" width="29" height="40" rx="4"/><path d="M16 16.5l2.2 2.2 3.8-3.8M25.5 17h9.5M16 25l2.2 2.2 3.8-3.8M25.5 25.5h9.5M16 33.5l2.2 2.2 3.8-3.8M25.5 34h6"/><path class="f" d="M46 29l11 4.4v7.8c0 6.4-4.6 11-11 12.8-6.4-1.8-11-6.4-11-12.8v-7.8z"/><path class="blink" d="M41 41.5l3.4 3.4 6.4-6.4"/></svg></span><div><h3>Store Paperwork</h3><p>Privacy labels, Data safety forms and age ratings change often. We keep them current, so your listing never gets pulled.</p></div></article>
+        <article class="ka-mcard"><span class="ka-mcard-tex" aria-hidden="true"></span><span class="ka-mcard-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect class="f" x="5" y="9" width="44" height="31" rx="4"/><path d="M19 48h16M27 40v8"/><path d="M9 27h8l3.2-8.5 5.2 16 4.2-11.5 3 4.5h12.4"/><rect class="f2" x="9" y="13" width="10" height="3" rx="1.5"/><g transform="translate(46 42)"><ellipse class="f" cx="0" cy="4" rx="7" ry="8.5"/><circle class="f" cx="0" cy="-6.2" r="3.6"/><path d="M0-4.4v17M-7 2h-4.5M7 2h4.5M-6 8.5l-3.8 3M6 8.5l3.8 3M-5.2-3.4l-3-3M5.2-3.4l3-3"/></g><circle class="blink" cx="53" cy="11" r="4.2" fill="#fff"/><path d="M53 9v2.2M53 13h.01" stroke="#7C3AED" stroke-width="1.8"/></svg></span><div><h3>Crash Monitoring</h3><p>We see crashes before the reviews do, and fix them with an instant update.</p></div></article>
+        <article class="ka-mcard"><span class="ka-mcard-tex" aria-hidden="true"></span><span class="ka-mcard-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><path class="f" d="M17 24h24a7.5 7.5 0 0 0 0-15 10 10 0 0 0-19-1.6A7.2 7.2 0 0 0 17 24z"/><path class="dash" d="M28 24v6M50 23v6"/><rect class="f" x="6" y="30" width="32" height="10.5" rx="3"/><rect class="f" x="6" y="43.5" width="32" height="10.5" rx="3"/><circle class="blink" cx="12" cy="35.2" r="1.7" fill="#fff"/><circle class="blink d2" cx="12" cy="48.7" r="1.7" fill="#fff"/><path d="M18 35.2h14M18 48.7h14"/><ellipse class="f" cx="50" cy="32" rx="8.5" ry="3.2"/><path d="M41.5 32v17c0 1.8 3.8 3.2 8.5 3.2s8.5-1.4 8.5-3.2V32M41.5 40.5c0 1.8 3.8 3.2 8.5 3.2s8.5-1.4 8.5-3.2"/></svg></span><div><h3>Hosting and Database</h3><p>Your app's backend, database and daily backups, hosted and managed for you.</p></div></article>
+        <article class="ka-mcard"><span class="ka-mcard-tex" aria-hidden="true"></span><span class="ka-mcard-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect class="f" x="7" y="9" width="34" height="45" rx="5"/><path d="M13 19h18M13 25h22M13 31h12"/><rect x="12" y="36.5" width="21" height="5.5" rx="1.6" fill="#fff" fill-opacity=".32" stroke="none"/><path d="M13 47.5h14"/><path class="f" d="M50.5 15.5l6 6L38 40l-8.2 2.2L32 34z"/><path d="M46.5 19.5l6 6"/><path d="M43 45.5l13 5.2-5.4 1.9-1.9 5.4z" fill="#fff"/><path class="spark" d="M55 6l1.1 2.8 2.8 1.1-2.8 1.1L55 13.8l-1.1-2.8-2.8-1.1 2.8-1.1z" fill="#fff"/></svg></span><div><h3>Small Changes</h3><p>New text, images and tweaks, shipped to every platform at once.</p></div></article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     PROCESS: IDEA TO STORE (line draws, dot travels)
+══════════════════════════════════════ -->
+<section id="app-process" class="ka-sec ka-flow" aria-label="From idea to store">
+  <h2 class="ka-h2" data-para>From Idea to Store</h2>
+  <p class="ka-lead" data-para>Six steps from kickoff to launch. App timelines start once your Apple and Google developer accounts are approved, so we start that paperwork on day one.</p>
+  <ol class="ka-steps">
+    <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Kickoff and accounts</h3><p>We set up your Apple and Google developer accounts and request your business number. Build time starts once they're approved, which can take up to 30 days.</p></div></li>
+    <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Design</h3><p>Screens designed around the one thing your customers come back for, in your brand.</p></div></li>
+    <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Build</h3><p>We build your app on the same code as your site, with accounts, push and offline mode from day one.</p></div></li>
+    <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Test</h3><p>You try it on your own phone through Apple's TestFlight and Google's closed testing before anyone else sees it.</p></div></li>
+    <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Store review</h3><p>Apple and Google review every app. If they ask for changes, we make them and resubmit at no charge.</p></div></li>
+    <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Launch and grow</h3><p>Your app goes live in the stores, analytics land in your dashboard, and updates keep coming every month.</p></div></li>
+  </ol>
+  <div class="ka-flow-cta" data-fade>
+    <a href="contact.html?type=App%20Development&amp;learnMore=1" class="ka-btn ka-btn--accent">Start Your App <svg class="ka-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ── App page motion. Mirrors the reference template's GSAP setup:
+   Lenis smooth scroll, SplitText line/char reveals, scrubbed ScrollTriggers. ── */
+document.addEventListener('DOMContentLoaded', function () {
+  var root = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!window.gsap || !window.ScrollTrigger || !window.SplitText) { root.classList.remove('ka-anim'); return; }
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+  var ACCENT = '#7C3AED';
+  var mm = gsap.matchMedia();
+
+  /* Smooth scroll (nav-mobile.js routes in-page anchors through window.vwLenis) */
+  if (!reduce && window.Lenis) {
+    var lenis = new Lenis({ duration: 1.35, lerp: 0.075, smoothWheel: true, wheelMultiplier: 0.8, touchMultiplier: 0.8,
+      easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
+    window.vwLenis = lenis;
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  }
+
+  /* Intro: white veil lifts, hero backdrop fades in, phone rises */
+  var intro = document.querySelector('.ka-intro');
+  if (!reduce) {
+    gsap.to(intro, { opacity: 0, duration: 0.6, delay: 0.35, ease: 'power2.out', onComplete: function () { intro.style.display = 'none'; } });
+    gsap.to('.ka-hero-bg', { opacity: 1, duration: 1.2, ease: 'power3.out' });
+    gsap.fromTo('.ka-hero-phone-enter', { yPercent: 110, y: 0 }, { yPercent: 0, duration: 1.3, ease: 'expo.out', delay: 0.15 });
+  }
+  mm.add('(min-width: 1026px) and (prefers-reduced-motion: no-preference)', function () {
+    gsap.to('.ka-hero-phone-par', { yPercent: 15, ease: 'none', scrollTrigger: { trigger: '.ka-hero', start: 'top top', end: 'bottom top', scrub: 0.2 } });
+  });
+
+  /* FadeUp */
+  if (!reduce) {
+    document.querySelectorAll('[data-fade]').forEach(function (el) {
+      var delay = parseFloat(el.dataset.delay) || 0;
+      gsap.set(el, { y: 24 });
+      var play = function () { gsap.to(el, { opacity: 1, y: 0, duration: 0.8, delay: delay, ease: 'power2.out', clearProps: 'transform' }); };
+      /* Hero CTAs always play on load, even when they sit low in the first screen */
+      if (el.closest('.ka-hero')) { play(); return; }
+      var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        play();
+      }, { rootMargin: '0px 0px -15% 0px' });
+      io.observe(el);
+    });
+  }
+
+  /* Everything that splits text waits for the fonts, like the reference */
+  function whenFonts(fn) {
+    var done = false, run = function () { if (!done) { done = true; fn(); } };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(run, run);
+    setTimeout(run, 1200);
+    if (!document.fonts) run();
+  }
+
+  whenFonts(function () {
+    /* ParaAnim: lines rise out of a mask */
+    if (!reduce) {
+      document.querySelectorAll('[data-para]').forEach(function (el) {
+        var delay = parseFloat(el.dataset.delay) || 0;
+        var split = SplitText.create(el, { type: 'lines', linesClass: 'ka-line', mask: 'lines' });
+        gsap.set(el, { opacity: 1 });
+        if (!split.lines.length) return;
+        gsap.set(split.lines, { yPercent: 150 });
+        var play = function () {
+          gsap.to(split.lines, { yPercent: 0, duration: 0.85, stagger: 0.08, ease: 'power3.out', delay: delay,
+            onComplete: function () { split.revert(); } });
+        };
+        var r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) play();
+        else ScrollTrigger.create({ trigger: el, start: 'top 85%', once: true, onEnter: play });
+      });
+    }
+
+    /* Statement: purple wave runs ahead of the black, char by char */
+    var tf = document.querySelector('.ka-tf-text');
+    if (tf) {
+      var chars = SplitText.create(tf, { type: 'words,chars', charsClass: 'ka-char' }).chars;
+      gsap.set(chars, { color: '#dddddd', opacity: 0.55 });
+      var st = { trigger: '.ka-tf', start: 'top 75%', end: 'bottom 85%', scrub: 0.6 };
+      if (reduce) gsap.to(chars, { color: '#111111', opacity: 1, ease: 'none', scrollTrigger: st });
+      else gsap.timeline({ scrollTrigger: st })
+        .to(chars, { color: ACCENT, opacity: 1, duration: 4.2, ease: 'sine.inOut', stagger: 0.5 }, 0)
+        .to(chars, { color: '#111111', duration: 5, ease: 'sine.inOut', stagger: 0.5 }, 4.8);
+    }
+    ScrollTrigger.refresh();
+  });
+
+  /* Platform phones: sides drift down, centre drifts up; connector draws in */
+  mm.add('(min-width: 1026px) and (prefers-reduced-motion: no-preference)', function () {
+    gsap.timeline({ scrollTrigger: { trigger: '#apps', start: '30% bottom', end: 'bottom 12%', scrub: 0.5 } })
+      .fromTo('.ka-phone-slot--side', { y: -72 }, { y: 72, ease: 'none' }, 0)
+      .fromTo('.ka-phone-slot--feat', { y: 72 }, { y: -72, ease: 'none' }, 0);
+  });
+  mm.add('(max-width: 1025px) and (prefers-reduced-motion: no-preference)', function () {
+    gsap.utils.toArray('.ka-phone-slot').forEach(function (s) {
+      gsap.from(s, { opacity: 0, duration: 0.8, ease: 'power2.out', scrollTrigger: { trigger: s, start: 'top 85%', once: true } });
+    });
+  });
+  if (!reduce) gsap.fromTo('.ka-phones-line', { scaleX: 0 }, { scaleX: 1, transformOrigin: 'left center', duration: 0.8, ease: 'power2.out',
+    scrollTrigger: { trigger: '.ka-phones', start: 'top 65%' } });
+
+  /* Scroll stack: each new card slides up from below, older cards ride up one step */
+  var wrap = document.querySelector('.ka-stack-wrap');
+  if (wrap && !reduce) {
+    var pin = wrap.querySelector('.ka-stack-pin');
+    var cards = gsap.utils.toArray('.ka-stack-card', wrap);
+    var stepPx = function () { var w = window.innerWidth; return w <= 768 ? 0.2 * w : w <= 1025 ? 0.15 * w : 0.03 * w + 62; };
+    var tl = gsap.timeline({ scrollTrigger: { trigger: wrap, start: 'top 5%', scrub: true, invalidateOnRefresh: true,
+      end: function () { return 'bottom ' + (pin.offsetHeight + (parseFloat(getComputedStyle(pin).top) || 0)) + 'px'; } } });
+    gsap.set(cards[0], { y: 0 });
+    cards.slice(1).forEach(function (card, t) {
+      tl.fromTo(card, { y: function () { return 0.9 * window.innerHeight - card.offsetTop; } }, { y: 0, ease: 'none', duration: 1 }, t);
+      for (var j = 0; j <= t; j++) {
+        (function (older, n) { tl.to(older, { y: function () { return -n * stepPx(); }, ease: 'none', duration: 1 }, t); })(cards[j], t + 1 - j);
+      }
+    });
+  }
+
+  /* Monthly track: starts 70% off to the right, slides through while pinned */
+  var tsec = document.querySelector('.ka-track-sec');
+  if (tsec) {
+    var track = tsec.querySelector('.ka-track');
+    var clip = tsec.querySelector('.ka-track-clip');
+    var travel = function () { return Math.max(0, track.scrollWidth - clip.clientWidth); };
+    if (reduce) {
+      tsec.classList.add('is-static');
+    } else {
+      var sizeTrack = function () { tsec.style.height = (window.innerHeight + travel()) + 'px'; };
+      sizeTrack();
+      ScrollTrigger.addEventListener('refreshInit', sizeTrack);
+      gsap.fromTo(track, { xPercent: 70, x: 0 }, { xPercent: 0, x: function () { return -travel(); }, ease: 'none',
+        scrollTrigger: { trigger: tsec, start: 'top 60%', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true } });
+    }
+    /* Pointer-following texture glow on each card */
+    if (window.matchMedia('(hover: hover)').matches) {
+      tsec.querySelectorAll('.ka-mcard').forEach(function (card) {
+        var tex = card.querySelector('.ka-mcard-tex');
+        var qx = gsap.quickTo(tex, '--tx', { unit: 'px', duration: 0.35, ease: 'power3.out' });
+        var qy = gsap.quickTo(tex, '--ty', { unit: 'px', duration: 0.35, ease: 'power3.out' });
+        var at = function (e) { var r = card.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+        card.addEventListener('pointerenter', function (e) { var p = at(e); gsap.set(tex, { '--tx': p.x + 'px', '--ty': p.y + 'px' }); gsap.to(tex, { opacity: 0.9, duration: 0.45, ease: 'power3.out', overwrite: 'auto' }); });
+        card.addEventListener('pointermove', function (e) { var p = at(e); qx(p.x); qy(p.y); });
+        card.addEventListener('pointerleave', function () { gsap.to(tex, { opacity: 0, duration: 0.45, ease: 'power3.out', overwrite: 'auto' }); });
+      });
+    }
+  }
+
+  /* Timeline: each line draws while its dot travels down, then the step lights up */
+  var flow = document.querySelector('.ka-flow');
+  if (flow) {
+    var draws = gsap.utils.toArray('.ka-step-draw', flow), dots = gsap.utils.toArray('.ka-step-dot', flow), texts = gsap.utils.toArray('.ka-step-text', flow);
+    if (reduce) {
+      gsap.set(dots, { fill: ACCENT, attr: { cy: 150 } });
+      texts.forEach(function (t) { gsap.set(t.querySelector('h3'), { color: ACCENT }); });
+    } else {
+      var ftl = gsap.timeline({ scrollTrigger: { trigger: flow, start: '10% 55%', end: '90% 70%', scrub: 0.4 } });
+      draws.forEach(function (line, i) {
+        var dot = dots[i];
+        gsap.set(line, { strokeDasharray: 150, strokeDashoffset: 150 });
+        if (i === 0) ftl.to(dot, { fill: ACCENT, duration: 0.1 });
+        ftl.to(line, { strokeDashoffset: 0, ease: 'none' });
+        ftl.fromTo(dot, { attr: { cy: 0 } }, { attr: { cy: 150 }, ease: 'none' }, '<');
+        if (i > 0) ftl.to(dot, { fill: ACCENT, duration: 0.1 }, '<0.1');
+      });
+      texts.forEach(function (t) {
+        var st = { trigger: t, start: 'top 65%', end: 'top 45%', scrub: 0.2 };
+        gsap.fromTo(t, { opacity: 0.3 }, { opacity: 1, ease: 'power2.out', scrollTrigger: st });
+        gsap.fromTo(t.querySelector('h3'), { color: '#000000' }, { color: ACCENT, ease: 'none', scrollTrigger: st });
+      });
+    }
+  }
+
+  window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+});
+</script>
+
+<script>
+/* ── Hero wave: raw-WebGL port of the reference template's gradient shader.
+   A travelling crest where the black crown meets the colour, a second crest on
+   the melt into white. Desktop only; below 1026px the CSS gradient shows. ── */
+(function () {
+  var canvas = document.querySelector('.ka-hero-wave');
+  if (!canvas) return;
+  if (!window.matchMedia('(min-width: 1026px)').matches) { canvas.remove(); return; }
+  var gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
+  if (!gl) { canvas.remove(); return; }
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var VS = 'attribute vec2 p;varying vec2 vUv;void main(){vUv=p*0.5+0.5;gl_Position=vec4(p,0.0,1.0);}';
+  var FS = [
+    'precision highp float;',
+    'varying vec2 vUv;',
+    'uniform float uTime, uBaseStart, uWaveHeight, uWaveAmplitude, uWaveCount, uWavePhase;',
+    'uniform vec3 uColorA, uColorB, uColorBase, uColorDark;',
+    'void main(){',
+    '  float invertedY = 1.0 - vUv.y;',
+    '  float wave = sin(vUv.x * uWaveCount * 6.2831853 + uTime * 1.3 + uWavePhase) * uWaveAmplitude;',
+    '  float verticalOffset = sin(uTime * 0.65) * 0.05;',
+    '  float baseWave = sin(vUv.x * uWaveCount * 6.2831853 + uTime * 1.04 + uWavePhase + 3.1415927) * uWaveAmplitude * 0.6;',
+    '  float yPos = invertedY + verticalOffset;',
+    '  float waveMask = smoothstep(uWaveHeight - 0.22, uWaveHeight + 0.46, yPos + wave);',
+    '  float finalMask = waveMask * smoothstep(0.0, 0.1, yPos);',
+    '  vec3 gradientColor = mix(uColorA, uColorB, invertedY);',
+    '  vec3 finalColor = mix(uColorDark, gradientColor, finalMask);',
+    '  finalColor *= smoothstep(0.0, uWaveHeight + 0.10, invertedY);',
+    '  float base = smoothstep(uBaseStart, 1.0, invertedY + baseWave);',
+    '  gl_FragColor = vec4(mix(finalColor, uColorBase, base), 1.0);',
+    '}'
+  ].join('\n');
+  function shader(type, src) { var sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh); return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null; }
+  var vs = shader(gl.VERTEX_SHADER, VS), fs = shader(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) { canvas.remove(); return; }
+  var prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { canvas.remove(); return; }
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  var loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  var U = {};
+  ['uTime', 'uBaseStart', 'uWaveHeight', 'uWaveAmplitude', 'uWaveCount', 'uWavePhase', 'uColorA', 'uColorB', 'uColorBase', 'uColorDark']
+    .forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+  function rgb(hex) { var n = parseInt(hex.slice(1), 16); return [(n >> 16) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]; }
+  gl.uniform3fv(U.uColorA, rgb('#6D28D9')); gl.uniform3fv(U.uColorB, rgb('#EDE7FB'));
+  gl.uniform3fv(U.uColorBase, rgb('#FFFFFF')); gl.uniform3fv(U.uColorDark, rgb('#0B0520'));
+  gl.uniform1f(U.uBaseStart, 0.58); gl.uniform1f(U.uWaveHeight, 0.35); gl.uniform1f(U.uWaveAmplitude, 0.06); gl.uniform1f(U.uWaveCount, 1.2);
+  /* The reference wanders the crest with smoothed hash noise, computed once per frame */
+  function hash(e) { var t = 43758.5453123 * Math.sin(12.9898 * e); return t - Math.floor(t); }
+  function phase(a) { var t = 0.26 * a, n = Math.floor(t), f = t - n, r = f * f * (3 - 2 * f); return (0.5 * (hash(n) * (1 - r) + hash(n + 1) * r) + 0.5) * 1.2; }
+  function size() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var w = Math.round(canvas.clientWidth * dpr), h = Math.round(canvas.clientHeight * dpr);
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
+  }
+  var t0 = performance.now(), visible = true, raf = 0;
+  function draw() {
+    var a = (performance.now() - t0) / 1000;
+    size();
+    gl.uniform1f(U.uTime, a); gl.uniform1f(U.uWavePhase, phase(a));
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+  function loop() { raf = 0; if (!visible || document.hidden) return; draw(); raf = requestAnimationFrame(loop); }
+  function wake() { if (!raf && visible && !document.hidden && !reduce) raf = requestAnimationFrame(loop); }
+  draw();
+  if (reduce) { window.addEventListener('resize', draw); return; }
+  new IntersectionObserver(function (e) { visible = e[0].isIntersecting; wake(); }, { rootMargin: '100px' }).observe(canvas);
+  document.addEventListener('visibilitychange', wake);
+  window.addEventListener('resize', function () { if (!raf) draw(); });
+  wake();
+})();
+</script>
+
+<!-- ══════════════════════════════════════
+     FAQ
+══════════════════════════════════════ -->
+<section id="wd-faq" class="ka-light ka-sec ka-faq" aria-label="Frequently asked questions">
+  <div class="wd-faq-inner">
+    <h2 class="ka-h2" data-para>App Questions, Answered</h2>
+    <div class="wd-faq-list" id="wd-faq-list">
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <span class="wd-faq-question">Will Apple approve my app?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Apple only accepts apps that offer more than a repackaged website, so every build includes real app features like push notifications, offline mode and Face ID sign-in. If a review comes back with changes, we make them and resubmit at no charge. If Apple still says no after three rounds, we refund the App Store portion of your setup fee.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <span class="wd-faq-question">Do Apple or Google take a cut of my sales?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Not on products or services. Anything your customers buy and use in the real world, like orders, bookings and deposits, is paid through Stripe, and the stores take nothing. Only digital goods, such as paid in-app content, must use the store's own billing, which charges about 15%.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M12 18h.01"/></svg></div>
+          <span class="wd-faq-question">PWA or a store app: which do I need?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">A PWA installs straight from the browser, needs no store review and updates instantly. Store apps are easier to find, can use more phone features and carry the trust of an Apple or Google listing. Many clients start with a PWA and add the stores later, on the same code.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
+          <span class="wd-faq-question">How long does an app take?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">From about 5 to 7 weeks for Bronze to 4 to 6 months for Gold. App timelines start once your Apple and Google developer accounts are approved. Business verification can take up to 30 days, so we start it on day one.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <span class="wd-faq-question">Who owns the app?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Your store listings, reviews, app name and all of your data are yours. VardWeb owns and maintains the code, which your monthly fee covers. If you ever leave, we transfer your data, domain and analytics into accounts you own, and you replace or unpublish the app within 30 days.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 .7V2l-1 .7-3-2-3 2-3-2-3 2z"/><path d="M8 8h8M8 12h8"/></svg></div>
+          <span class="wd-faq-question">What do the app store fees cost?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Apple charges about C$140 a year and Google about C$35 once. We pay them so your membership never lapses, which would pull your app from the store, then bill you at cost with no markup.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <span class="wd-faq-question">Do I need a Mac or my own developer accounts?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">No Mac needed, we build in the cloud. Your app does need Apple and Google developer accounts in your business's legal name, and we walk you through both. If you're a sole proprietor, the stores show your personal legal name as the seller, and Google adds a two-week testing period before launch.</div></div>
+      </div>
+      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
+        <button type="button" class="wd-faq-trigger" aria-expanded="false">
+          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+          <span class="wd-faq-question">How is pricing determined?</span>
+          <div class="wd-faq-toggle" aria-hidden="true">
+            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </button>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Each tier shows a flat build rate plus a monthly rate, both as starting points. The flat rate covers the build; the monthly rate covers hosting, updates, store compliance and your dashboard. Final scope and price are confirmed during a short discovery call. Custom apps are quoted individually. <a href="faq.html" class="wd-faq-more">See more general FAQs →</a></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* FAQ accordion + staggered reveal (accordion ported from ecommerce.html) */
+(function () {
+  var list = document.getElementById('wd-faq-list');
+  if (!list) return;
+  var items = Array.prototype.slice.call(list.querySelectorAll('.wd-faq-item'));
+  items.forEach(function (item, i) {
+    var btn = item.querySelector('.wd-faq-trigger');
+    var content = item.querySelector('.wd-faq-content');
+    var panelId = 'wd-faq-panel-' + (i + 1);
+    content.id = panelId;
+    btn.setAttribute('aria-controls', panelId);
+    btn.addEventListener('click', function () {
+      var isOpen = item.classList.contains('open');
+      content.style.maxHeight = isOpen ? '0' : content.scrollHeight + 'px';
+      item.classList.toggle('open', !isOpen);
+      btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+    });
+  });
+
+  var ease = 'cubic-bezier(0.22,1,0.36,1)';
+  function show(el) { el.style.opacity = ''; el.style.transform = ''; el.style.transition = ''; el.style.transitionDelay = ''; }
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { items.forEach(show); return; }
+  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  sharedObs15.watch(list, function () {
+    items.forEach(function (el, i) {
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
+      el.style.transitionDelay = (i * 50) + 'ms';
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      el.addEventListener('transitionend', function cleanup(evt) {
+        if (evt.propertyName !== 'transform') return;
+        show(el);
+        el.removeEventListener('transitionend', cleanup);
+      });
+    });
+  }, { once: true });
+})();
+</script>
+
+<!-- ══════════════════════════════════════
+     PRICING (dark band: shared tier-card format)
+══════════════════════════════════════ -->
+<div class="ka-dark">
 <!-- ══════════════════════════════════════
      YOUR WEBSITE, AS AN APP (tier-card add-ons)
 ══════════════════════════════════════ -->
@@ -2245,29 +3115,29 @@
       <div class="wa-card" style="--wa-c:#9D6BFF;">
         <p class="wa-label">PWA</p>
         <p class="wa-price"><span class="wa-amt">C$900</span><span class="wa-mo">+ C$25/mo</span></p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Install prompt, icon and splash screen</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Offline screen and cached pages</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Web push notifications</span></li></ul>
-        <p class="wa-note">On Gold Web Design and E-Commerce tiers: <b>C$500 one-time</b>, no monthly fee.</p>
+        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Home-screen icon and splash</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Offline pages and caching</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Web push notifications</span></li></ul>
+        <p class="wa-note">No store fees and no review wait.</p>
         <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=PWA" class="wa-cta">Add to my site <span aria-hidden="true">→</span></a>
       </div>
       <div class="wa-card" style="--wa-c:#34A853;">
         <p class="wa-label">Google Play</p>
         <p class="wa-price"><span class="wa-amt">C$2,000</span><span class="wa-mo">+ C$75/mo</span></p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Android app built from your site</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Push, deep links, share and haptics</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Store listing and yearly Android updates</span></li></ul>
-        <p class="wa-note">Google's one-time fee (~C$35) is billed at cost.</p>
+        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Android app from your site</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Push, deep links and haptics</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Listing and yearly updates</span></li></ul>
+        <p class="wa-note">Google’s ~C$35 fee billed at cost.</p>
         <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=Google%20Play%20App" class="wa-cta">Add to my site <span aria-hidden="true">→</span></a>
       </div>
       <div class="wa-card" style="--wa-c:#18BFFB;">
         <p class="wa-label">App Store</p>
         <p class="wa-price"><span class="wa-amt">C$2,500</span><span class="wa-mo">+ C$100/mo</span></p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>iPhone and iPad app built from your site</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Push, Face ID sign-in and offline mode</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Apple review, privacy labels and yearly iOS updates</span></li></ul>
-        <p class="wa-note">Apple's yearly fee (~C$140) is billed at cost.</p>
+        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>iPhone and iPad app</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Push, Face ID and offline</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Apple review and iOS updates</span></li></ul>
+        <p class="wa-note">Apple’s ~C$140/yr billed at cost.</p>
         <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=App%20Store%20App" class="wa-cta">Add to my site <span aria-hidden="true">→</span></a>
       </div>
       <div class="wa-card wa-card--featured" style="--wa-c:#A855F7;">
         <span class="wa-badge">Best value</span><p class="wa-label">Both stores</p>
         <p class="wa-price"><span class="wa-amt">C$3,750</span><span class="wa-mo">+ C$150/mo</span></p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Google Play and App Store apps</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>One codebase for both, kept in step</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Saves C$750 + C$25/mo vs. buying separately</span></li></ul>
-        <p class="wa-note">Add the PWA to the bundle for <b>+C$500</b>.</p>
+        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Google Play and App Store</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>One codebase, kept in step</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Saves C$750 + C$25/mo</span></li></ul>
+        <p class="wa-note">Add the PWA for <s>C$900</s> <b>+C$500</b>.</p>
         <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=Google%20Play%20%2B%20App%20Store" class="wa-cta">Add to my site <span aria-hidden="true">→</span></a>
       </div>
     </div>
@@ -2360,7 +3230,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;The same accessibility standard as our websites, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.1 AA)">?</button></span></span>
+            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;WCAG 2.2 AA, which also meets the 2.1 and 2.0 standards the law asks for, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.2 AA)">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -2454,7 +3324,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;The same accessibility standard as our websites, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.1 AA)">?</button></span></span>
+            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;WCAG 2.2 AA, which also meets the 2.1 and 2.0 standards the law asks for, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.2 AA)">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -2548,7 +3418,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;The same accessibility standard as our websites, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.1 AA)">?</button></span></span>
+            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;WCAG 2.2 AA, which also meets the 2.1 and 2.0 standards the law asks for, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.2 AA)">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -2641,7 +3511,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;The same accessibility standard as our websites, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.1 AA)">?</button></span></span>
+            <span class="compute-label">Accessible by design (WCAG 2.2 <span class="compute-nowrap">AA)<button type="button" class="tt-icon-trigger" data-tooltip="**Built for everyone.**&#10;&#10;WCAG 2.2 AA, which also meets the 2.1 and 2.0 standards the law asks for, tested with VoiceOver on iPhone and TalkBack on Android." aria-label="More about: Accessible by design (WCAG 2.2 AA)">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -2809,261 +3679,12 @@
 
   </div>
 </section>
-
-<div class="divider"></div>
-
-<!-- ══════════════════════════════════════
-     HOW WE BUILD
-══════════════════════════════════════ -->
-<section id="how-we-build" style="padding:80px 28px;background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);" aria-label="How we build your app">
-  <div style="max-width:1100px;margin:0 auto;">
-    <div style="text-align:center;max-width:620px;margin:0 auto 48px;">
-      <p class="sec-tag">// How We Build</p>
-      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Built once. <span class="grad-cyan-pink">Runs everywhere.</span>
-      </h2>
-      <p style="font-size:15px;line-height:1.78;color:var(--text-2);">Every app starts on our standard build. If your app needs the exact scroll and gesture feel of a built-in app, there's an upgrade for that.</p>
-    </div>
-    <div class="hb-grid">
-      <div class="hb-card hb-card--std">
-        <p class="hb-tag">Included on every tier</p>
-        <h3>Standard build</h3>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Shares one codebase with your website</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Instant updates without a store review</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Push, offline, Face ID, camera, haptics and share</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Fastest to build, simplest to maintain</span></li></ul>
-      </div>
-      <div class="hb-card hb-card--up">
-        <p class="hb-tag">Upgrade · +35% setup · +C$50/mo</p>
-        <h3>Native UI</h3>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Screens built with native components</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Scroll and gestures that match built-in apps</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Best when the app itself is the product</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Available on request</span></li></ul>
-      </div>
-    </div>
-    <p class="hb-foot">Fully native Swift and Kotlin builds are quoted on the Custom tier.</p>
-  </div>
-</section>
-
-<!-- ══════════════════════════════════════
-     WHAT THE MONTHLY FEE COVERS
-══════════════════════════════════════ -->
-<section id="app-monthly" style="padding:80px 28px;" aria-label="What the monthly fee covers">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;max-width:620px;margin:0 auto 48px;">
-      <p class="sec-tag">// Monthly</p>
-      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Why an app <span class="grad-cyan-pink">costs monthly.</span>
-      </h2>
-      <p style="font-size:15px;line-height:1.78;color:var(--text-2);">Apps need looking after even when nothing changes. Apple and Google move the goalposts every year, and your monthly fee keeps you on the right side of them.</p>
-    </div>
-    <div class="am-grid">
-      <div class="am-card"><span class="am-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M9 6h6"/><path d="M12 18h.01"/></svg></span><h3>Android's yearly deadline</h3><p>Every August, Google raises the minimum Android version apps must target. We update yours before the deadline, so it never stops receiving updates.</p></div>
-      <div class="am-card"><span class="am-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg></span><h3>Every new iOS</h3><p>Apple releases a new iOS each September and new tooling each spring. We test, fix and ship before your customers notice.</p></div>
-      <div class="am-card"><span class="am-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg></span><h3>Store paperwork</h3><p>Privacy labels, Data safety forms and age ratings change often. We keep them current, so your listing never gets pulled.</p></div>
-      <div class="am-card"><span class="am-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><h3>Crash monitoring</h3><p>We see crashes before the reviews do, and fix them with an instant update.</p></div>
-      <div class="am-card"><span class="am-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span><h3>Hosting and database</h3><p>Your app's backend, database and daily backups, hosted and managed for you.</p></div>
-      <div class="am-card"><span class="am-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><h3>Small changes</h3><p>New text, images and tweaks, shipped to every platform at once.</p></div>
-    </div>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ══════════════════════════════════════
-     PROCESS: IDEA TO STORE
-══════════════════════════════════════ -->
-<section id="app-process" style="padding:80px 28px;" aria-label="From idea to store">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;max-width:600px;margin:0 auto 52px;">
-      <p class="sec-tag">// How It Works</p>
-      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;color:var(--text-1);">
-        From idea <span class="grad-cyan-pink">to store.</span>
-      </h2>
-    </div>
-    <ol class="ap-steps">
-      <li class="ap-step"><span class="ap-num">01</span><h3>Kickoff &amp; accounts</h3><p>We set up your Apple and Google developer accounts and request your business number. Build time starts once they're approved, which can take up to 30 days.</p></li>
-      <li class="ap-step"><span class="ap-num">02</span><h3>Design</h3><p>Screens designed around the one thing your customers come back for, in your brand.</p></li>
-      <li class="ap-step"><span class="ap-num">03</span><h3>Build</h3><p>We build your app on the same code as your site, with accounts, push and offline mode from day one.</p></li>
-      <li class="ap-step"><span class="ap-num">04</span><h3>Test</h3><p>You try it on your own phone through Apple's TestFlight and Google's closed testing before anyone else sees it.</p></li>
-      <li class="ap-step"><span class="ap-num">05</span><h3>Store review</h3><p>Apple and Google review every app. If they ask for changes, we make them and resubmit at no charge.</p></li>
-      <li class="ap-step"><span class="ap-num">06</span><h3>Launch &amp; grow</h3><p>Your app goes live in the stores, analytics land in your dashboard, and updates keep coming every month.</p></li>
-    </ol>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ══════════════════════════════════════
-     YOU OWN YOUR APP
-══════════════════════════════════════ -->
-<section id="app-own" style="padding:80px 28px;" aria-label="Who owns what">
-  <div style="max-width:1000px;margin:0 auto;">
-    <div style="text-align:center;max-width:760px;margin:0 auto 44px;">
-      <p class="sec-tag">// Ownership</p>
-      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Your customers. <span class="grad-cyan-pink">Your listing.</span>
-      </h2>
-    </div>
-    <div class="hb-grid">
-      <div class="hb-card hb-card--std">
-        <p class="hb-tag">Yours</p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Your store listings, reviews and app name</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Your customers, orders and bookings</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Your domain and every byte of your data</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Every sale: no store cut on products or services</span></li></ul>
-      </div>
-      <div class="hb-card">
-        <p class="hb-tag">Ours to look after</p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>The code and the build pipeline</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Hosting, database and backups</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Updates, store reviews and policy changes</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Store fees, paid by us and billed at cost</span></li></ul>
-      </div>
-    </div>
-    <p class="hb-foot">Apple charges about C$140 a year and Google about C$35 once. See our <a href="terms.html" class="app-inline-link">Terms</a> for how ownership works if you ever leave.</p>
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ══════════════════════════════════════
-     FAQ
-══════════════════════════════════════ -->
-<section id="wd-faq" style="padding:80px 28px;background:var(--surface);border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);" aria-label="Frequently asked questions">
-  <div class="wd-faq-inner">
-    <p class="sec-tag">// frequently asked</p>
-    <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:900;text-transform:uppercase;letter-spacing:-0.03em;line-height:1.05;color:var(--text-1);margin-bottom:36px;">
-      App Questions, <span class="grad-cyan-pink">Answered</span>
-    </h2>
-    <div class="wd-faq-list" id="wd-faq-list">
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <span class="wd-faq-question">Will Apple approve my app?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Apple only accepts apps that offer more than a repackaged website, so every build includes real app features like push notifications, offline mode and Face ID sign-in. If a review comes back with changes, we make them and resubmit at no charge. If Apple still says no after three rounds, we refund the App Store portion of your setup fee.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <span class="wd-faq-question">Do Apple or Google take a cut of my sales?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Not on products or services. Anything your customers buy and use in the real world, like orders, bookings and deposits, is paid through Stripe, and the stores take nothing. Only digital goods, such as paid in-app content, must use the store's own billing, which charges about 15%.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M12 18h.01"/></svg></div>
-          <span class="wd-faq-question">PWA or a store app: which do I need?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">A PWA installs straight from the browser, needs no store review and updates instantly. Store apps are easier to find, can use more phone features and carry the trust of an Apple or Google listing. Many clients start with a PWA and add the stores later, on the same code.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg></div>
-          <span class="wd-faq-question">How long does an app take?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">From about 5 to 7 weeks for Bronze to 4 to 6 months for Gold. App timelines start once your Apple and Google developer accounts are approved. Business verification can take up to 30 days, so we start it on day one.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <span class="wd-faq-question">Who owns the app?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Your store listings, reviews, app name and all of your data are yours. VardWeb owns and maintains the code, which your monthly fee covers. If you ever leave, we transfer your data, domain and analytics into accounts you own, and you replace or unpublish the app within 30 days.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 .7V2l-1 .7-3-2-3 2-3-2-3 2z"/><path d="M8 8h8M8 12h8"/></svg></div>
-          <span class="wd-faq-question">What do the app store fees cost?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Apple charges about C$140 a year and Google about C$35 once. We pay them so your membership never lapses, which would pull your app from the store, then bill you at cost with no markup.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-          <span class="wd-faq-question">Do I need a Mac or my own developer accounts?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">No Mac needed, we build in the cloud. Your app does need Apple and Google developer accounts in your business's legal name, and we walk you through both. If you're a sole proprietor, the stores show your personal legal name as the seller, and Google adds a two-week testing period before launch.</div></div>
-      </div>
-      <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
-        <button type="button" class="wd-faq-trigger" aria-expanded="false">
-          <div class="wd-faq-trigger-icon"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
-          <span class="wd-faq-question">How is pricing determined?</span>
-          <div class="wd-faq-toggle" aria-hidden="true">
-            <svg class="wd-faq-plus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--lp-pink)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-        </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Each tier shows a flat build rate plus a monthly rate, both as starting points. The flat rate covers the build; the monthly rate covers hosting, updates, store compliance and your dashboard. Final scope and price are confirmed during a short discovery call. Custom apps are quoted individually. <a href="faq.html" class="wd-faq-more">See more general FAQs →</a></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<script>
-/* FAQ accordion + staggered reveal (accordion ported from ecommerce.html) */
-(function () {
-  var list = document.getElementById('wd-faq-list');
-  if (!list) return;
-  var items = Array.prototype.slice.call(list.querySelectorAll('.wd-faq-item'));
-  items.forEach(function (item, i) {
-    var btn = item.querySelector('.wd-faq-trigger');
-    var content = item.querySelector('.wd-faq-content');
-    var panelId = 'wd-faq-panel-' + (i + 1);
-    content.id = panelId;
-    btn.setAttribute('aria-controls', panelId);
-    btn.addEventListener('click', function () {
-      var isOpen = item.classList.contains('open');
-      content.style.maxHeight = isOpen ? '0' : content.scrollHeight + 'px';
-      item.classList.toggle('open', !isOpen);
-      btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-    });
-  });
-
-  var ease = 'cubic-bezier(0.22,1,0.36,1)';
-  function show(el) { el.style.opacity = ''; el.style.transform = ''; el.style.transition = ''; el.style.transitionDelay = ''; }
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { items.forEach(show); return; }
-  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
-  sharedObs15.watch(list, function () {
-    items.forEach(function (el, i) {
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-      el.style.transitionDelay = (i * 50) + 'ms';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-      el.addEventListener('transitionend', function cleanup(evt) {
-        if (evt.propertyName !== 'transform') return;
-        show(el);
-        el.removeEventListener('transitionend', cleanup);
-      });
-    });
-  }, { once: true });
-})();
-</script>
-
-<div class="divider"></div>
+</div>
 
 <!-- ══════════════════════════════════════
      CTA SECTION
 ══════════════════════════════════════ -->
-<section class="wd-cta" aria-label="Call to action">
+<section class="wd-cta ka-cta" aria-label="Call to action">
   <div class="wd-cta-inner">
     <div class="wd-cta-card" id="wd-cta-card">
       <div class="wd-cta-bg" id="wd-cta-bg"></div>
@@ -3447,34 +4068,6 @@
 
 <script>
 (function () {
-  var items = document.querySelectorAll('.hero-feat-grid > div');
-  var ease  = 'cubic-bezier(0.22,1,0.36,1)';
-  items.forEach(function (el) {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(32px)';
-  });
-  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
-  function reveal() {
-    items.forEach(function (el, i) {
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-      el.style.transitionDelay = (i * 120) + 'ms';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-      el.addEventListener('transitionend', function cleanup(evt) {
-        if (evt.propertyName !== 'transform') return;
-        el.style.opacity = '';
-        el.style.transform = '';
-        el.style.transition = '';
-        el.style.transitionDelay = '';
-        el.removeEventListener('transitionend', cleanup);
-      });
-    });
-  }
-  var grid = document.querySelector('.hero-feat-grid');
-  if (grid) sharedObs15.watch(grid, reveal, { once: true });
-})();
-
-(function () {
   var items = document.querySelectorAll('.feature-grid .feature-card');
   var ease  = 'cubic-bezier(0.22,1,0.36,1)';
   items.forEach(function (el) {
@@ -3499,34 +4092,6 @@
     });
   }
   var grid = document.querySelector('.feature-grid');
-  if (grid) sharedObs15.watch(grid, reveal, { once: true });
-})();
-
-(function () {
-  var items = document.querySelectorAll('#apps .w-card');
-  var ease  = 'cubic-bezier(0.22,1,0.36,1)';
-  items.forEach(function (el) {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(32px)';
-  });
-  var sharedObs15 = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
-  function reveal() {
-    items.forEach(function (el, i) {
-      el.style.transition = 'opacity 0.6s ease, transform 0.6s ' + ease;
-      el.style.transitionDelay = (i * 120) + 'ms';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
-      el.addEventListener('transitionend', function cleanup(evt) {
-        if (evt.propertyName !== 'transform') return;
-        el.style.opacity = '';
-        el.style.transform = '';
-        el.style.transition = '';
-        el.style.transitionDelay = '';
-        el.removeEventListener('transitionend', cleanup);
-      });
-    });
-  }
-  var grid = document.querySelector('#apps .ws-grid');
   if (grid) sharedObs15.watch(grid, reveal, { once: true });
 })();
 

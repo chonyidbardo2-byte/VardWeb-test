@@ -41,6 +41,8 @@
     .badge-pending{background:rgba(255,215,0,0.15);color:var(--gold);}
     .badge-paid{background:rgba(34,197,94,0.15);color:#22c55e;}
     .badge-overdue{background:rgba(255,45,120,0.15);color:var(--pink);}
+    .badge-processing{background:rgba(0,229,255,0.12);color:var(--cyan);}
+    .badge-failed{background:rgba(255,45,120,0.15);color:var(--pink);}
     .badge-yours{background:rgba(34,197,94,0.12);color:#22c55e;}
     .badge-transfer{background:rgba(255,215,0,0.12);color:var(--gold);}
 
@@ -485,11 +487,13 @@
               Due: ${inv.due_date || '—'}${inv.paid_date ? ' · Paid: ' + inv.paid_date : ''}
               ${inv.status === 'overdue' ? `<span style="color:var(--pink);margin-left:6px;">overdue</span>` : ''}
             </div>
+            ${inv.status === 'processing' ? `<div style="font-size:11px;margin-top:3px;color:var(--cyan);">Payment processing. Bank debits take up to 5 business days to clear.</div>` : ''}
+            ${inv.status === 'failed' ? `<div style="font-size:11px;margin-top:3px;color:var(--pink);">Your bank declined the debit. Please pay again or contact us.</div>` : ''}
             ${expiryLine}
           </div>
           <div style="display:flex;align-items:center;gap:10px;">
             <span class="badge badge-${inv.status}">${inv.status}</span>
-            ${inv.status !== 'paid' && inv.stripe_checkout_url ? `<a href="${inv.stripe_checkout_url}" target="_blank" class="btn btn-cyan" style="padding:6px 14px;font-size:12px;" title="Secure Stripe checkout. VardWeb never sees your card details">Pay Now</a>` : ''}
+            ${inv.status !== 'paid' && inv.status !== 'processing' && inv.stripe_checkout_url ? `<a href="${inv.stripe_checkout_url}" target="_blank" class="btn btn-cyan" style="padding:6px 14px;font-size:12px;" title="Secure Stripe checkout. VardWeb never sees your card details">Pay Now</a>` : ''}
           </div>
         </div>`;
       }).join('');

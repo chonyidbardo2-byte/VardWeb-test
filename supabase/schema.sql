@@ -57,13 +57,19 @@ CREATE TABLE IF NOT EXISTS invoices (
   lease_id              UUID REFERENCES leases(id) ON DELETE SET NULL,
   invoice_type          TEXT DEFAULT 'recurring',  -- flat_rate | recurring
   amount                NUMERIC NOT NULL,
-  status                TEXT DEFAULT 'pending',    -- pending | paid | overdue
+  status                TEXT DEFAULT 'pending',    -- pending | processing | paid | failed | overdue
   due_date              DATE,
   paid_date             DATE,
   stripe_checkout_url   TEXT,
   stripe_payment_intent TEXT,
+  valid_for_days        INT,                       -- optional trial/preview access window
+  expires_at            DATE,                      -- portal access ends after this date
   created_at            TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Added after the table first shipped; safe to re-run on an existing database
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS valid_for_days INT;
+ALTER TABLE invoices ADD COLUMN IF NOT EXISTS expires_at     DATE;
 
 CREATE TABLE IF NOT EXISTS domains (
   id                         UUID DEFAULT gen_random_uuid() PRIMARY KEY,

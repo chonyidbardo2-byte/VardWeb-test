@@ -34,6 +34,8 @@
     .badge-pending{background:rgba(255,215,0,0.15);color:var(--gold);}
     .badge-paid{background:rgba(34,197,94,0.15);color:#22c55e;}
     .badge-overdue{background:rgba(255,45,120,0.15);color:var(--pink);}
+    .badge-processing{background:rgba(0,229,255,0.12);color:var(--cyan);}
+    .badge-failed{background:rgba(255,45,120,0.15);color:var(--pink);}
     .btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:opacity .15s;text-decoration:none;}
     .btn:hover{opacity:.8;}
     .btn-cyan{background:var(--cyan);color:#000;}
@@ -120,8 +122,10 @@
   <div class="filter-tabs">
     <div class="ftab active" data-filter="all">All</div>
     <div class="ftab" data-filter="pending">Pending</div>
+    <div class="ftab" data-filter="processing">Processing</div>
     <div class="ftab" data-filter="paid">Paid</div>
     <div class="ftab" data-filter="overdue">Overdue</div>
+    <div class="ftab" data-filter="failed">Failed</div>
   </div>
 
   <div class="table-wrap">
@@ -250,7 +254,7 @@
         <td><span class="badge badge-${inv.status}">${inv.status}</span></td>
         <td>
           <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            ${inv.status !== 'paid' ? `<button class="btn btn-cyan btn-sm send-inv" data-id="${inv.id}" data-client="${inv.client_id}" data-amount="${inv.amount}" data-email="${inv.clients?.contact_email || ''}">Send</button>` : ''}
+            ${inv.status !== 'paid' && inv.status !== 'processing' ? `<button class="btn btn-cyan btn-sm send-inv" data-id="${inv.id}" data-client="${inv.client_id}" data-amount="${inv.amount}" data-email="${inv.clients?.contact_email || ''}">Send</button>` : ''}
             ${inv.status === 'pending' ? `<button class="btn btn-ghost btn-sm mark-overdue" data-id="${inv.id}" style="color:var(--pink);border-color:rgba(255,45,120,0.3);">Mark Overdue</button>` : ''}
             ${inv.status !== 'paid' ? `<button class="btn btn-ghost btn-sm mark-paid" data-id="${inv.id}">Mark Paid</button>` : `<span style="font-size:11px;color:#22c55e;">✓ Paid ${inv.paid_date || ''}</span>`}
           </div>
@@ -316,7 +320,7 @@
     const expiresAt = validDays
       ? new Date(Date.now() + validDays * 86400000).toISOString().slice(0, 10)
       : null;
-    await sb.from('invoices').insert({
+    const { error } = await sb.from('invoices').insert({
       client_id:    clientId,
       lease_id:     document.getElementById('inv-lease').value || null,
       invoice_type: document.getElementById('inv-type').value,
@@ -326,6 +330,7 @@
       expires_at:   expiresAt,
       status:       'pending',
     });
+    if (error) return alert('Invoice not saved: ' + error.message);
     modal.classList.remove('open');
     await loadInvoices();
   });

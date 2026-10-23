@@ -74,6 +74,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var navHeight = (document.querySelector('.nav') || {}).offsetHeight || 0;
       var top = target.getBoundingClientRect().top + window.pageYOffset - navHeight - 16;
       var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Pages running Lenis smooth scroll (app-development.html) expose it here
+      if (window.vwLenis) { window.vwLenis.scrollTo(top); return; }
       window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
     });
   });

@@ -7,6 +7,13 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
  * Accepts POST { invoice_id, amount, client_email }
  * Returns { checkout_url } or { error }
  *
+ * Charges in CAD (Terms §04: all fees are invoiced in CAD). Offers card and
+ * Canadian pre-authorized debit (acss_debit, 1% + C$0.40 capped at C$5).
+ * PADs take up to 5 business days to clear, so the invoice's paid status is
+ * set by stripe-invoice-webhook, not by the success redirect. "Canadian
+ * pre-authorized debits" must be enabled in Stripe Dashboard -> Settings ->
+ * Payment methods, or session creation fails.
+ *
  * Deploy:
  *   supabase functions deploy create-checkout
  *   supabase secrets set STRIPE_SECRET_KEY=sk_live_...
@@ -34,10 +41,18 @@ serve(async (req) => {
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') ?? '', { apiVersion: '2023-10-16' });
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
+      payment_method_types: ['card', 'acss_debit'],
+      payment_method_options: {
+        acss_debit: {
+          // One-off invoice debits authorized by a business client.
+          // Currency comes from the CAD line item; acss_debit.currency is
+          // only accepted in setup mode and is rejected in payment mode.
+          mandate_options: { payment_schedule: 'sporadic', transaction_type: 'business' },
+        },
+      },
       line_items: [{
         price_data: {
-          currency: 'usd',
+          currency: 'cad',
           product_data: { name: 'VardWeb Service Invoice', description: `Invoice #${invoice_id}` },
           unit_amount: Math.round(amount * 100), // cents
         },
@@ -48,6 +63,7 @@ serve(async (req) => {
       success_url: `${req.headers.get('origin') || 'https://vardweb.com'}/crm/portal.html?paid=1`,
       cancel_url:  `${req.headers.get('origin') || 'https://vardweb.com'}/crm/portal.html`,
       metadata: { invoice_id },
+      payment_intent_data: { metadata: { invoice_id } },
     });
 
     return new Response(JSON.stringify({ checkout_url: session.url }), {
