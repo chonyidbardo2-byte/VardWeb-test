@@ -2158,21 +2158,20 @@
     /* ── 8. Pricing stays on the dark site theme (shared tier-card format) ── */
     .ka-dark { background: var(--base); color: var(--text-1); padding: 24px 0; }
 
-    /* ── 8a. Cloth peel: a white sheet (the FAQ, continued) is pulled off the Add-Ons intro, scrubbed by scroll ── */
+    /* ── 8a. Cloth peel: the FAQ's last screen is the sheet; it tears away off the Add-Ons section pinned beneath it ── */
     .ka-peel { position: relative; }
-    .ka-peel-pin { position: relative; padding: 80px 28px 0; }
     .ka-peel-anchor { position: absolute; top: 0; left: 0; width: 1px; height: 0; }
-    .ka-peel-canvas, .ka-peel-sheet { display: none; }
-    html.ka-anim .ka-dark { padding-top: 0; }
-    html.ka-anim .ka-peel { height: 180vh; }
-    html.ka-anim .ka-peel-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; place-items: center; padding: 64px 28px 0; }
-    html.ka-anim .ka-peel-intro > div { margin-bottom: 0 !important; }
-    /* Links land where the sheet is already gone: 66% of the 80vh travel, plus the nav offset nav-mobile.js subtracts */
-    html.ka-anim .ka-peel-anchor { top: calc(66vh + 80px); }
-    html.ka-anim .ka-peel-canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
-    /* Stands in until the mesh is live, and replaces it when WebGL2 is missing */
-    html.ka-anim .ka-peel-sheet { display: block; position: absolute; inset: 0; z-index: 3; background: #fff; pointer-events: none; will-change: transform, opacity; }
-    .ka-peel.is-gl .ka-peel-sheet { display: none; }
+    .ka-peel-canvas { display: none; }
+    /* Motion only: the dark band slides up under the FAQ (JS sets the exact overlap and the wrapper height) */
+    /* At least one full screen, so its last screen (the sheet) always fills the viewport */
+    html.ka-anim #wd-faq { position: relative; z-index: 3; min-height: 100vh; }
+    html.ka-anim .ka-dark { position: relative; z-index: 1; padding-top: 0; }
+    html.ka-anim .ka-peel > .ka-wa { position: sticky; top: 0; }
+    /* Links land at the end of the 110vh pin (plus the nav offset nav-mobile.js subtracts): the FAQ is fully off screen
+       there whether or not the peel ran, and the section still sits at the top */
+    html.ka-anim .ka-peel-anchor { top: calc(110vh + 80px); }
+    html.ka-anim .ka-peel-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+    html.ka-anim .ka-peel.is-live .ka-peel-canvas { display: block; }
 
     /* ── 9. FAQ, light (overrides the shared dark accordion) ── */
     .ka-faq .wd-faq-inner { max-width: none; }
@@ -3033,32 +3032,128 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  /* Cloth peel (ported from 21st.dev cloth-peel-reveal): a WebGL2 mesh sheet with per-vertex folds,
-     torn trailing edge and tilt. Progress comes from scroll instead of a timer; drawn only when it changes. */
-  var peel = document.querySelector('.ka-peel');
-  if (peel && !reduce) {
-    var peelCanvas = peel.querySelector('.ka-peel-canvas'), peelSheet = peel.querySelector('.ka-peel-sheet');
+  /* Cloth peel (ported from 21st.dev cloth-peel-reveal). When the FAQ's bottom reaches the screen's bottom, a snapshot of
+     that last FAQ screen becomes the sheet: a WebGL2 mesh with per-vertex folds, a torn trailing edge and tilt. It tears
+     away, scrubbed by scroll, off the Add-Ons section pinned beneath it. Drawn only when progress changes. */
+  var peel = document.querySelector('.ka-peel'), faqSec = document.getElementById('wd-faq');
+  if (peel && faqSec && !reduce) {
+    var peelCanvas = peel.querySelector('.ka-peel-canvas'), darkBand = peel.closest('.ka-dark'), waSec = peel.querySelector('.ka-wa');
     var peelEase = function (t) { var p = Math.min(1, Math.max(0, t)); return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2.2) / 2; };
     var PEEL = { angleDeg: 196, tilt: 0.85, foldAmplitude: 0.13, foldFrequency: 4.2, edgeRoughness: 0.09, color: [1, 1, 1] };
-    var drawPeel = initPeelGL(peelCanvas);
-    if (drawPeel) peel.classList.add('is-gl');
-    var showPeel = function (progress) {
-      var gone = progress >= 1;
-      if (drawPeel) {
-        peelCanvas.style.visibility = gone ? 'hidden' : 'visible';
-        if (!gone) drawPeel(progress);
-      } else {
-        /* No WebGL2: the flat sheet slides off instead */
-        peelSheet.style.transform = 'translateX(' + (-100 * progress) + '%)';
-        peelSheet.style.opacity = String(1 - progress);
-      }
+    var TRAVEL = 1.1;   /* viewport heights of scroll the peel takes; fully torn at 80% of it */
+
+    /* The dark band slides up under the FAQ's last screen, and the Add-Ons section stays pinned for the peel */
+    var sizePeel = function () {
+      darkBand.style.marginTop = -window.innerHeight + 'px';
+      peel.style.height = (waSec.offsetHeight + TRAVEL * window.innerHeight) + 'px';
     };
-    showPeel(0);
+    sizePeel();
+    ScrollTrigger.addEventListener('refreshInit', sizePeel);
+
+    var sheet = initPeelGL(peelCanvas);
+    var texReady = false, dirty = true, capturing = false, engaged = false, lastP = 0;
+
+    /* The cloth only takes over if the snapshot was ready as the peel began; otherwise the FAQ just scrolls off
+       the pinned section (never swapped in mid-scroll, so nothing jumps) */
+    var render = function (p) {
+      if (p <= 0) engaged = false;
+      else if (lastP <= 0) engaged = !!sheet && texReady;
+      lastP = p;
+      var prog = peelEase(p / 0.8);
+      faqSec.style.visibility = engaged ? 'hidden' : '';
+      var drawing = engaged && prog < 1;
+      peel.classList.toggle('is-live', drawing);
+      if (drawing) sheet.draw(prog);
+    };
+
+    var faqSettled = function () {
+      return Array.prototype.every.call(faqSec.querySelectorAll('.wd-faq-item'), function (el) { return getComputedStyle(el).opacity === '1'; });
+    };
+    /* Paints the FAQ's last screen (the one on view when the peel starts) from the live layout: backgrounds, the
+       item dividers, each word at its real position in its real font, and the toggle icons. Purpose-built rather than a
+       general DOM-to-canvas library, so the sheet matches the page to the pixel. */
+    var paintFaqScreen = function () {
+      var W = document.documentElement.clientWidth, H = window.innerHeight, scale = Math.min(window.devicePixelRatio || 1, 2);
+      var fr = faqSec.getBoundingClientRect(), oy = fr.bottom - H;   /* client y of the screen's top edge */
+      var c = document.createElement('canvas'); c.width = Math.round(W * scale); c.height = Math.round(H * scale);
+      var g = c.getContext('2d'); g.scale(scale, scale);
+      g.fillStyle = getComputedStyle(faqSec).backgroundColor || '#fff'; g.fillRect(0, 0, W, H);
+      var onScreen = function (r) { return r.width > 0 && r.height > 0 && r.bottom > oy && r.top < oy + H; };
+      var shown = function (el) {
+        for (var n = el; n && n !== faqSec.parentNode; n = n.parentElement) {
+          var s = getComputedStyle(n); if (s.opacity === '0' || s.visibility === 'hidden' || s.display === 'none') return false;
+        }
+        return true;
+      };
+      var isPaint = function (col) { return col && col !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(col); };
+      var fillBox = function (x, y, w, h, rad, col) { g.fillStyle = col; g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, rad); else g.rect(x, y, w, h); g.fill(); };
+      var svgs = [];
+      Array.prototype.forEach.call(faqSec.querySelectorAll('*'), function (el) {
+        if (el.closest('svg') && el.tagName.toLowerCase() !== 'svg') return;
+        var r = el.getBoundingClientRect(); if (!onScreen(r) || !shown(el)) return;
+        var s = getComputedStyle(el);
+        if (isPaint(s.backgroundColor)) fillBox(r.left, r.top - oy, r.width, r.height, parseFloat(s.borderTopLeftRadius) || 0, s.backgroundColor);
+        var a = getComputedStyle(el, '::after');
+        if (a.content && a.content !== 'none' && a.position === 'absolute' && isPaint(a.backgroundColor) && a.opacity !== '0') {
+          var l = parseFloat(a.left) || 0, rt = parseFloat(a.right) || 0, h = parseFloat(a.height) || 1, b = parseFloat(a.bottom) || 0;
+          g.fillStyle = a.backgroundColor; g.fillRect(r.left + l, r.bottom - b - h - oy, r.width - l - rt, h);
+        }
+        if (el.tagName.toLowerCase() === 'svg') svgs.push({ el: el, r: r });
+      });
+      /* Words: one Range per word gives the browser's own position, so wrapping and spacing match exactly */
+      var tw = document.createTreeWalker(faqSec, NodeFilter.SHOW_TEXT), node, range = document.createRange();
+      while ((node = tw.nextNode())) {
+        var p = node.parentElement; if (!p || p.closest('svg') || !/\S/.test(node.data) || !shown(p)) continue;
+        var s = getComputedStyle(p);
+        g.font = s.fontStyle + ' ' + s.fontWeight + ' ' + s.fontSize + ' ' + s.fontFamily;
+        g.fillStyle = s.color; g.textBaseline = 'alphabetic';
+        if ('letterSpacing' in g) g.letterSpacing = s.letterSpacing === 'normal' ? '0px' : s.letterSpacing;
+        var underline = /underline/.test(s.textDecorationLine), re = /\S+/g, m;
+        while ((m = re.exec(node.data))) {
+          range.setStart(node, m.index); range.setEnd(node, m.index + m[0].length);
+          var wr = range.getClientRects()[0]; if (!wr || !onScreen(wr)) continue;
+          var word = s.textTransform === 'uppercase' ? m[0].toUpperCase() : m[0], mt = g.measureText(word);
+          var desc = mt.fontBoundingBoxDescent != null ? mt.fontBoundingBoxDescent : mt.actualBoundingBoxDescent;
+          var base = wr.bottom - desc - oy;
+          g.fillText(word, wr.left, base);
+          if (underline) { g.fillRect(wr.left, base + 3, wr.width, 1); }
+        }
+      }
+      /* Icons: serialise each SVG with its computed stroke/fill inlined, then draw it */
+      return Promise.all(svgs.map(function (it) {
+        var clone = it.el.cloneNode(true), src = [it.el].concat(Array.prototype.slice.call(it.el.querySelectorAll('*'))), dst = [clone].concat(Array.prototype.slice.call(clone.querySelectorAll('*')));
+        src.forEach(function (n, i) {
+          var cs = getComputedStyle(n);
+          ['stroke', 'fill', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'opacity'].forEach(function (k) { dst[i].setAttribute(k, cs.getPropertyValue(k)); });
+        });
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        clone.setAttribute('width', it.r.width); clone.setAttribute('height', it.r.height);
+        return new Promise(function (res) {
+          var img = new Image();
+          img.onload = function () { g.drawImage(img, it.r.left, it.r.top - oy, it.r.width, it.r.height); res(); };
+          img.onerror = function () { res(); };
+          img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+        });
+      })).then(function () { return c; });
+    };
+    var capture = function () {
+      if (!sheet || capturing || !dirty || engaged) return;
+      if (!faqSettled()) { setTimeout(capture, 300); return; }
+      capturing = true; dirty = false;
+      paintFaqScreen()
+        .then(function (c) { capturing = false; if (dirty || engaged) { dirty = true; return; } sheet.setTexture(c); texReady = true; })
+        .catch(function () { capturing = false; });
+    };
+    var nearPeel = ScrollTrigger.create({ trigger: peel, start: 'top 200%', end: 'top top', onToggle: capture, onUpdate: capture });
+    var markDirty = function () { dirty = true; texReady = false; if (nearPeel.isActive) capture(); };
+    faqSec.addEventListener('click', function (e) { if (e.target.closest('.wd-faq-trigger')) setTimeout(markDirty, 450); });
+    var rzT = null;
+    window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(markDirty, 300); });
+
     var peelState = { p: 0 };
     gsap.to(peelState, { p: 1, ease: 'none',
-      scrollTrigger: { trigger: peel, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
-      /* Fully peeled at 80% of the travel; the revealed intro holds for the rest */
-      onUpdate: function () { showPeel(peelEase(peelState.p / 0.8)); } });
+      scrollTrigger: { trigger: peel, start: 'top top', end: function () { return '+=' + TRAVEL * window.innerHeight; }, scrub: 0.6, invalidateOnRefresh: true },
+      onUpdate: function () { render(peelState.p); } });
   }
 
   function initPeelGL(canvas) {
@@ -3095,7 +3190,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '  gl_Position = vec4(P.xy * (camZ / wd), clamp(-P.z * 0.2, -0.99, 0.99), 1.0);\n' +
       '}';
     var FRAGMENT_SRC = '#version 300 es\nprecision highp float;\n' +
-      'in vec2 v_uv;\nin float v_shade;\nin float v_wave;\nuniform vec3 u_color;\nuniform vec2 u_dir;\nuniform float u_edge;\nout vec4 fragColor;\n' +
+      'in vec2 v_uv;\nin float v_shade;\nin float v_wave;\nuniform vec3 u_color;\nuniform vec2 u_dir;\nuniform float u_edge;\nuniform sampler2D u_tex;\nuniform int u_hasTex;\nout vec4 fragColor;\n' +
       'float hash(vec2 p) { p = fract(p * vec2(127.1, 311.7)); p += dot(p, p + 34.5); return fract(p.x * p.y); }\n' +
       'float noise(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);\n' +
       '  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y); }\n' +
@@ -3104,7 +3199,12 @@ document.addEventListener('DOMContentLoaded', function () {
       '  float trail = dot(v_uv - 0.5, -u_dir);\n' +                       // torn edge cut per fragment, crisp at any mesh density
       '  float rag = (fbm(v_uv * 6.0) - 0.5) * u_edge;\n' +
       '  if (trail + rag + v_wave * 0.45 > 0.56 + u_edge * 0.5) discard;\n' +
-      '  fragColor = vec4(u_color * v_shade, 1.0);\n' +
+      '  vec3 base = u_color;\n' +
+      '  if (u_hasTex == 1) {\n' +                                         // the 1.3x sheet maps the snapshot back onto the viewport
+      '    vec2 tuv = (v_uv - 0.11538) / 0.76923;\n' +
+      '    if (tuv.x >= 0.0 && tuv.x <= 1.0 && tuv.y >= 0.0 && tuv.y <= 1.0) { vec4 t = texture(u_tex, vec2(tuv.x, 1.0 - tuv.y)); base = mix(base, t.rgb, t.a); }\n' +
+      '  }\n' +
+      '  fragColor = vec4(base * v_shade, 1.0);\n' +
       '}';
     var compile = function (type, src) {
       var sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh);
@@ -3125,12 +3225,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var uvBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf); gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
     var idxBuf = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuf); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
     var uvAttr = gl.getAttribLocation(prog, 'a_uv');
-    var U = {}; ['u_progress', 'u_dir', 'u_amp', 'u_freq', 'u_edge', 'u_tilt', 'u_color'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+    var U = {}; ['u_progress', 'u_dir', 'u_amp', 'u_freq', 'u_edge', 'u_tilt', 'u_color', 'u_tex', 'u_hasTex'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
     gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
 
-    var dpr = Math.min(window.devicePixelRatio || 1, 2), last = 0;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), last = 0, tex = null;
     var resize = function () {
-      var w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+      var w = Math.max(1, Math.round(document.documentElement.clientWidth * dpr)), h = Math.max(1, Math.round(window.innerHeight * dpr));
       if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
       gl.viewport(0, 0, canvas.width, canvas.height);
     };
@@ -3145,11 +3245,20 @@ document.addEventListener('DOMContentLoaded', function () {
       gl.uniform1f(U.u_amp, PEEL.foldAmplitude); gl.uniform1f(U.u_freq, PEEL.foldFrequency);
       gl.uniform1f(U.u_edge, PEEL.edgeRoughness); gl.uniform1f(U.u_tilt, PEEL.tilt);
       gl.uniform3f(U.u_color, PEEL.color[0], PEEL.color[1], PEEL.color[2]);
+      gl.uniform1i(U.u_hasTex, tex ? 1 : 0);
+      if (tex) { gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, tex); gl.uniform1i(U.u_tex, 0); }
       gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0);
     };
-    new ResizeObserver(function () { resize(); draw(last); }).observe(canvas);
+    var setTexture = function (src) {
+      if (!tex) tex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+    };
+    window.addEventListener('resize', resize);
     resize();
-    return draw;
+    return { draw: draw, setTexture: setTexture };
   }
 
   /* Timeline: each line draws while its dot travels down, then the step lights up */
@@ -3412,27 +3521,20 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- ══════════════════════════════════════
      YOUR WEBSITE, AS AN APP (tier-card add-ons)
 ══════════════════════════════════════ -->
-<section class="ka-wa" aria-label="Your website as an app">
-  <!-- Cloth peel: the white sheet (continuing the FAQ) is pulled away by scroll to reveal this intro -->
-  <div class="ka-peel">
-    <span id="website-app" class="ka-peel-anchor" aria-hidden="true"></span>
-    <div class="ka-peel-pin">
-      <div class="ka-peel-intro">
-          <div style="text-align:center;max-width:640px;margin:0 auto 52px;">
-            <p class="sec-tag">// Add-Ons</p>
-            <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-              Your website, <span class="grad-cyan-pink">as an app.</span>
-            </h2>
-            <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
-              Already on a VardWeb site? We package it as an app, with the native features stores expect. You'll find the same add-ons on every <a href="web-design.html" class="app-inline-link">Web Design</a> and <a href="ecommerce.html" class="app-inline-link">E-Commerce</a> tier card.
-            </p>
-          </div>
-      </div>
-      <canvas class="ka-peel-canvas" aria-hidden="true"></canvas>
-      <div class="ka-peel-sheet" aria-hidden="true"></div>
+<div class="ka-peel">
+  <span id="website-app" class="ka-peel-anchor" aria-hidden="true"></span>
+  <canvas class="ka-peel-canvas" aria-hidden="true"></canvas>
+<section class="ka-wa" style="padding:80px 28px;" aria-label="Your website as an app">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;max-width:640px;margin:0 auto 52px;">
+      <p class="sec-tag">// Add-Ons</p>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+        Your website, <span class="grad-cyan-pink">as an app.</span>
+      </h2>
+      <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
+        Already on a VardWeb site? We package it as an app, with the native features stores expect. You'll find the same add-ons on every <a href="web-design.html" class="app-inline-link">Web Design</a> and <a href="ecommerce.html" class="app-inline-link">E-Commerce</a> tier card.
+      </p>
     </div>
-  </div>
-  <div style="max-width:1200px;margin:0 auto;padding:0 28px 80px;">
     <div class="wa-grid">
       <div class="wa-card" style="--wa-c:#9D6BFF;">
         <p class="wa-label">PWA</p>
@@ -3465,6 +3567,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
   </div>
 </section>
+</div>
 
 <div class="divider"></div>
 
