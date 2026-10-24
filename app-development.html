@@ -2158,6 +2158,22 @@
     /* ── 8. Pricing stays on the dark site theme (shared tier-card format) ── */
     .ka-dark { background: var(--base); color: var(--text-1); padding: 24px 0; }
 
+    /* ── 8a. Cloth peel: a white sheet (the FAQ, continued) is pulled off the Add-Ons intro, scrubbed by scroll ── */
+    .ka-peel { position: relative; }
+    .ka-peel-pin { position: relative; padding: 80px 28px 0; }
+    .ka-peel-anchor { position: absolute; top: 0; left: 0; width: 1px; height: 0; }
+    .ka-peel-canvas, .ka-peel-sheet { display: none; }
+    html.ka-anim .ka-dark { padding-top: 0; }
+    html.ka-anim .ka-peel { height: 180vh; }
+    html.ka-anim .ka-peel-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; place-items: center; padding: 64px 28px 0; }
+    html.ka-anim .ka-peel-intro > div { margin-bottom: 0 !important; }
+    /* Links land where the sheet is already gone: 66% of the 80vh travel, plus the nav offset nav-mobile.js subtracts */
+    html.ka-anim .ka-peel-anchor { top: calc(66vh + 80px); }
+    html.ka-anim .ka-peel-canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+    /* Stands in until the mesh is live, and replaces it when WebGL2 is missing */
+    html.ka-anim .ka-peel-sheet { display: block; position: absolute; inset: 0; z-index: 3; background: #fff; pointer-events: none; will-change: transform, opacity; }
+    .ka-peel.is-gl .ka-peel-sheet { display: none; }
+
     /* ── 9. FAQ, light (overrides the shared dark accordion) ── */
     .ka-faq .wd-faq-inner { max-width: none; }
     .ka-faq .ka-h2 { margin-bottom: clamp(32px, 4vw, 60px); }
@@ -3017,6 +3033,125 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  /* Cloth peel (ported from 21st.dev cloth-peel-reveal): a WebGL2 mesh sheet with per-vertex folds,
+     torn trailing edge and tilt. Progress comes from scroll instead of a timer; drawn only when it changes. */
+  var peel = document.querySelector('.ka-peel');
+  if (peel && !reduce) {
+    var peelCanvas = peel.querySelector('.ka-peel-canvas'), peelSheet = peel.querySelector('.ka-peel-sheet');
+    var peelEase = function (t) { var p = Math.min(1, Math.max(0, t)); return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2.2) / 2; };
+    var PEEL = { angleDeg: 196, tilt: 0.85, foldAmplitude: 0.13, foldFrequency: 4.2, edgeRoughness: 0.09, color: [1, 1, 1] };
+    var drawPeel = initPeelGL(peelCanvas);
+    if (drawPeel) peel.classList.add('is-gl');
+    var showPeel = function (progress) {
+      var gone = progress >= 1;
+      if (drawPeel) {
+        peelCanvas.style.visibility = gone ? 'hidden' : 'visible';
+        if (!gone) drawPeel(progress);
+      } else {
+        /* No WebGL2: the flat sheet slides off instead */
+        peelSheet.style.transform = 'translateX(' + (-100 * progress) + '%)';
+        peelSheet.style.opacity = String(1 - progress);
+      }
+    };
+    showPeel(0);
+    var peelState = { p: 0 };
+    gsap.to(peelState, { p: 1, ease: 'none',
+      scrollTrigger: { trigger: peel, start: 'top top', end: 'bottom bottom', scrub: 0.6 },
+      /* Fully peeled at 80% of the travel; the revealed intro holds for the rest */
+      onUpdate: function () { showPeel(peelEase(peelState.p / 0.8)); } });
+  }
+
+  function initPeelGL(canvas) {
+    var gl = canvas.getContext('webgl2', { alpha: true, antialias: true, depth: true });
+    if (!gl) return null;
+    var VERTEX_SRC = '#version 300 es\n' +
+      'in vec2 a_uv;\nuniform float u_progress;\nuniform vec2 u_dir;\nuniform float u_amp;\nuniform float u_freq;\nuniform float u_tilt;\n' +
+      'out vec2 v_uv;\nout float v_shade;\nout float v_wave;\n' +
+      'float hash(vec2 p) { p = fract(p * vec2(127.1, 311.7)); p += dot(p, p + 34.5); return fract(p.x * p.y); }\n' +
+      'float noise(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);\n' +
+      '  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y); }\n' +
+      'void main() {\n' +
+      '  v_uv = a_uv;\n' +
+      '  vec3 P = vec3((a_uv - 0.5) * 2.6, 0.0);\n' +                       // 1.3x oversized, so the torn edge starts off screen
+      '  float along = dot(a_uv - 0.5, u_dir);\n' +
+      '  float across = dot(a_uv - 0.5, vec2(-u_dir.y, u_dir.x));\n' +
+      '  float slack = smoothstep(0.0, 0.4, u_progress) * (0.4 + 0.6 * smoothstep(-0.5, 0.5, -along));\n' +
+      '  float warp = noise(a_uv * 2.4) * 2.6;\n' +                        // noise-warped phase varies fold spacing, so it reads as cloth
+      '  float ph = along * u_freq * 6.2831853 + warp - u_progress * 6.0;\n' +
+      '  float w = sin(ph) * 0.55 + sin(ph * 2.17 + 1.3) * 0.28 + sin(across * u_freq * 2.6 + warp * 1.7) * 0.3 + (noise(a_uv * 7.0) - 0.5) * 0.5;\n' +
+      '  w *= u_amp * slack;\n' +
+      '  P.z = w;\n  v_wave = w;\n' +
+      '  P.y -= slack * 0.55 * (0.45 + 0.55 * smoothstep(-0.6, 0.6, across));\n' +   // droop where the cloth has let go
+      '  float yaw = u_progress * u_tilt;\n  float cy = cos(yaw), sy = sin(yaw);\n' +
+      '  P = vec3(P.x * cy + P.z * sy, P.y, -P.x * sy + P.z * cy);\n' +
+      '  float roll = -u_progress * 0.18;\n  float cr = cos(roll), sr = sin(roll);\n' +
+      '  P = vec3(P.x * cr - P.y * sr, P.x * sr + P.y * cr, P.z);\n' +
+      '  P.xy += u_dir * u_progress * 2.9;\n' +
+      '  float dw = (cos(ph) * 0.55 + 0.608 * cos(ph * 2.17 + 1.3)) * u_freq * 6.2831853 * u_amp * slack;\n' +
+      '  vec3 n = normalize(vec3(-dw * 0.16, 0.28, 1.0));\n  vec3 L = normalize(vec3(-0.4, 0.45, 0.8));\n' +
+      // creases are soft grey, not black banding; divided by the flat-sheet shade so the sheet at rest is exactly the FAQ white
+      '  v_shade = min(1.0, (0.70 + 0.30 * max(dot(n, L), 0.0)) / (0.70 + 0.30 * dot(normalize(vec3(0.0, 0.28, 1.0)), L)));\n' +
+      '  float camZ = 3.2;\n  float wd = max(camZ - P.z, 0.2);\n' +
+      '  gl_Position = vec4(P.xy * (camZ / wd), clamp(-P.z * 0.2, -0.99, 0.99), 1.0);\n' +
+      '}';
+    var FRAGMENT_SRC = '#version 300 es\nprecision highp float;\n' +
+      'in vec2 v_uv;\nin float v_shade;\nin float v_wave;\nuniform vec3 u_color;\nuniform vec2 u_dir;\nuniform float u_edge;\nout vec4 fragColor;\n' +
+      'float hash(vec2 p) { p = fract(p * vec2(127.1, 311.7)); p += dot(p, p + 34.5); return fract(p.x * p.y); }\n' +
+      'float noise(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f);\n' +
+      '  return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y); }\n' +
+      'float fbm(vec2 p) { float s = 0.0, a = 0.5, n = 0.0; for (int i = 0; i < 4; i++) { s += a * noise(p); n += a; p *= 2.07; a *= 0.5; } return s / n; }\n' +
+      'void main() {\n' +
+      '  float trail = dot(v_uv - 0.5, -u_dir);\n' +                       // torn edge cut per fragment, crisp at any mesh density
+      '  float rag = (fbm(v_uv * 6.0) - 0.5) * u_edge;\n' +
+      '  if (trail + rag + v_wave * 0.45 > 0.56 + u_edge * 0.5) discard;\n' +
+      '  fragColor = vec4(u_color * v_shade, 1.0);\n' +
+      '}';
+    var compile = function (type, src) {
+      var sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh);
+      return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null;
+    };
+    var vs = compile(gl.VERTEX_SHADER, VERTEX_SRC), fs = compile(gl.FRAGMENT_SHADER, FRAGMENT_SRC), prog = gl.createProgram();
+    if (!vs || !fs) return null;
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+
+    /* cols x rows quad grid over the unit square: the folds are real per-vertex displacement */
+    var cols = 120, rows = 80, uvs = new Float32Array((cols + 1) * (rows + 1) * 2), idx = new Uint16Array(cols * rows * 6), k = 0, i = 0;
+    for (var y = 0; y <= rows; y++) for (var x = 0; x <= cols; x++) { uvs[k++] = x / cols; uvs[k++] = y / rows; }
+    for (y = 0; y < rows; y++) for (x = 0; x < cols; x++) {
+      var a = y * (cols + 1) + x, b = a + 1, c = a + cols + 1, d = c + 1;
+      idx[i++] = a; idx[i++] = c; idx[i++] = b; idx[i++] = b; idx[i++] = c; idx[i++] = d;
+    }
+    var uvBuf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf); gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
+    var idxBuf = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuf); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+    var uvAttr = gl.getAttribLocation(prog, 'a_uv');
+    var U = {}; ['u_progress', 'u_dir', 'u_amp', 'u_freq', 'u_edge', 'u_tilt', 'u_color'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+    gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
+
+    var dpr = Math.min(window.devicePixelRatio || 1, 2), last = 0;
+    var resize = function () {
+      var w = Math.max(1, Math.round(canvas.clientWidth * dpr)), h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    };
+    var draw = function (progress) {
+      last = progress;
+      var rad = PEEL.angleDeg * Math.PI / 180;
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      gl.useProgram(prog);
+      gl.bindBuffer(gl.ARRAY_BUFFER, uvBuf); gl.enableVertexAttribArray(uvAttr); gl.vertexAttribPointer(uvAttr, 2, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, idxBuf);
+      gl.uniform1f(U.u_progress, progress); gl.uniform2f(U.u_dir, Math.cos(rad), Math.sin(rad));
+      gl.uniform1f(U.u_amp, PEEL.foldAmplitude); gl.uniform1f(U.u_freq, PEEL.foldFrequency);
+      gl.uniform1f(U.u_edge, PEEL.edgeRoughness); gl.uniform1f(U.u_tilt, PEEL.tilt);
+      gl.uniform3f(U.u_color, PEEL.color[0], PEEL.color[1], PEEL.color[2]);
+      gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_SHORT, 0);
+    };
+    new ResizeObserver(function () { resize(); draw(last); }).observe(canvas);
+    resize();
+    return draw;
+  }
+
   /* Timeline: each line draws while its dot travels down, then the step lights up */
   var flow = document.querySelector('.ka-flow');
   if (flow) {
@@ -3277,17 +3412,27 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- ══════════════════════════════════════
      YOUR WEBSITE, AS AN APP (tier-card add-ons)
 ══════════════════════════════════════ -->
-<section id="website-app" style="padding:80px 28px;" aria-label="Your website as an app">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;max-width:640px;margin:0 auto 52px;">
-      <p class="sec-tag">// Add-Ons</p>
-      <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
-        Your website, <span class="grad-cyan-pink">as an app.</span>
-      </h2>
-      <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
-        Already on a VardWeb site? We package it as an app, with the native features stores expect. You'll find the same add-ons on every <a href="web-design.html" class="app-inline-link">Web Design</a> and <a href="ecommerce.html" class="app-inline-link">E-Commerce</a> tier card.
-      </p>
+<section class="ka-wa" aria-label="Your website as an app">
+  <!-- Cloth peel: the white sheet (continuing the FAQ) is pulled away by scroll to reveal this intro -->
+  <div class="ka-peel">
+    <span id="website-app" class="ka-peel-anchor" aria-hidden="true"></span>
+    <div class="ka-peel-pin">
+      <div class="ka-peel-intro">
+          <div style="text-align:center;max-width:640px;margin:0 auto 52px;">
+            <p class="sec-tag">// Add-Ons</p>
+            <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:16px;color:var(--text-1);">
+              Your website, <span class="grad-cyan-pink">as an app.</span>
+            </h2>
+            <p style="font-size:15px;line-height:1.78;color:var(--text-2);">
+              Already on a VardWeb site? We package it as an app, with the native features stores expect. You'll find the same add-ons on every <a href="web-design.html" class="app-inline-link">Web Design</a> and <a href="ecommerce.html" class="app-inline-link">E-Commerce</a> tier card.
+            </p>
+          </div>
+      </div>
+      <canvas class="ka-peel-canvas" aria-hidden="true"></canvas>
+      <div class="ka-peel-sheet" aria-hidden="true"></div>
     </div>
+  </div>
+  <div style="max-width:1200px;margin:0 auto;padding:0 28px 80px;">
     <div class="wa-grid">
       <div class="wa-card" style="--wa-c:#9D6BFF;">
         <p class="wa-label">PWA</p>
