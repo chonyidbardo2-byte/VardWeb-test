@@ -1076,6 +1076,8 @@
       transition: opacity 0.18s cubic-bezier(0.34,1.56,0.64,1), transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
     }
     .tt-box.is-open { opacity: 1; transform: translateY(0) scale(1); }
+    /* Centred variant (data-tooltip-align="center"): short stacked rows, e.g. the platform tiles */
+    .tt-box--center { text-align: center; max-width: 34ch; }
 
     .pricing-cta {
       display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -2010,7 +2012,8 @@
     .ka-stack-sec { padding-bottom: 0; }
     .ka-stack-wrap { position: relative; margin-top: clamp(24px, 3vw, 48px); height: calc((90 * (var(--n) - 1) + 95) * 1svh); }
     .ka-stack-pin { position: sticky; top: 100px; height: min(80vw, 86vh); }
-    .ka-stack-card { position: absolute; left: 0; right: 0; top: 100px; height: 26vw; min-height: 340px; overflow: hidden; z-index: var(--z);
+    /* Grows with its content (min 26vw) so the 2-column card never clips on shorter or narrower screens */
+    .ka-stack-card { position: absolute; left: 0; right: 0; top: 100px; min-height: max(340px, 26vw); overflow: hidden; z-index: var(--z);
       display: flex; flex-direction: column; padding: 3vw 2.4vw; background: #fff; color: #000; border: 1px solid #000; border-radius: 28px;
       scroll-margin-top: 120px; will-change: transform; }
     .ka-stack-card:not(:first-child) { transform: translateY(90vh); }
@@ -2027,8 +2030,11 @@
     .ka-stack-side p { font-size: clamp(14px, 1.05vw, 16.5px); line-height: 1.5; color: #000; max-width: 25em; }
     .ka-stack-side p + p { margin-top: 8px; color: var(--ka-ink-2); }
     .ka-stack-side .ka-btn { margin-top: 20px; }
-    @media (max-width: 1025px) {
-      .ka-stack-card { top: calc(50% - 35vh); height: 72vh; padding: 5vh 5vw 6vh; }
+    /* Single-column cards for phones and portrait tablets; landscape tablets keep the 2-column card, which fits their height.
+       Keep in sync with stackMQ in the stack script. */
+    @media (max-width: 768px), (max-width: 1025px) and (orientation: portrait) {
+      .ka-stack-pin { height: calc(100svh - 116px); }
+      .ka-stack-card { top: calc(50% - 36vh); height: 72vh; padding: 5vh 5vw 6vh; }
       .ka-stack-rule { margin-top: 3vw; }
       .ka-stack-body { grid-template-columns: 1fr; gap: 4vw; margin-top: 4vw; }
       .ka-stack-side { order: -1; }
@@ -2037,8 +2043,9 @@
       .ka-feat + .ka-feat { border-top: 1px solid rgba(0,0,0,0.18); }
     }
     @media (max-width: 768px) {
-      .ka-stack-pin { top: 76px; }
-      .ka-stack-card { top: 0; height: auto; max-height: 82vh; padding: 7vw 6vw; border-radius: 22px; }
+      /* The pin spans the screen below its 76px top, so the card always ends inside it */
+      .ka-stack-pin { top: 76px; height: calc(100svh - 92px); }
+      .ka-stack-card { top: 0; height: auto; max-height: 100%; padding: 7vw 6vw; border-radius: 22px; }
       .ka-feat, .ka-feat:nth-child(odd), .ka-feat:nth-child(even) { width: 100%; padding: 2.5vw 0; gap: 4vw; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -2048,11 +2055,9 @@
     }
 
     /* ── 4b. Platform orbit: 8 logo tiles fan out from a stacked pile onto the outer ring (scrubbed) ── */
-    /* Rides up over the released stack so the gap matches the reference (last card to heading ~350px) */
+    /* Rides up over the released stack by a JS-measured tuck (see sizeOrbTuck) that never reaches the last card */
     .ka-orb-sec { position: relative; z-index: 2; background: #fff; }
-    html.ka-anim .ka-orb-sec { height: 200vh; margin-top: -26vh; }
-    /* Tablet/phone stack cards fill more of the pin, so the orb must not ride up over them */
-    @media (max-width: 1025px) { html.ka-anim .ka-orb-sec { margin-top: 0; } }
+    html.ka-anim .ka-orb-sec { height: 200vh; }
     .ka-orb-pin { display: grid; place-items: center; padding: 120px var(--ka-pad-x); }
     html.ka-anim .ka-orb-pin { position: sticky; top: 0; height: 100vh; padding: 64px 0 0; overflow: hidden; }
     /* Sized so the orb plus one tile (half a tile past each side) still fits the viewport */
@@ -2765,14 +2770,14 @@
       </div>
       <!-- Paired around the ring: each store sits beside its own browser. The pile stacks with the App Store on top. -->
       <ul class="ka-orb-tiles" role="list">
-        <li class="ka-orb-tile" style="--a:0deg;--z:8"><img src="brand_assets/icons/platforms/app-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Apple App Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**App Store**&#10;Apple · iPhone and iPad&#10;Add-on" aria-label="About App Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:45deg;--z:7"><img src="brand_assets/icons/platforms/safari.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Safari, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Safari**&#10;Apple · iPhone, iPad and Mac&#10;Included" aria-label="About Safari"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:90deg;--z:6"><img src="brand_assets/icons/platforms/google-play.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Play, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Google Play**&#10;Google · Android phones and tablets&#10;Add-on" aria-label="About Google Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:135deg;--z:5"><img src="brand_assets/icons/platforms/chrome.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Chrome, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Chrome**&#10;Google · Windows, Mac, Linux and Android&#10;Included" aria-label="About Chrome"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:180deg;--z:4"><img src="brand_assets/icons/platforms/microsoft-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Microsoft Store**&#10;Microsoft · Windows 10 and 11&#10;Add-on" aria-label="About Microsoft Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:225deg;--z:3"><img src="brand_assets/icons/platforms/edge.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Edge, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Edge**&#10;Microsoft · Windows, Mac and Linux&#10;Included" aria-label="About Edge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:270deg;--z:2"><img src="brand_assets/icons/platforms/galaxy-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Samsung Galaxy Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Galaxy Store**&#10;Samsung · Galaxy phones and tablets&#10;Add-on" aria-label="About Galaxy Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
-        <li class="ka-orb-tile" style="--a:315deg;--z:1"><img src="brand_assets/icons/platforms/firefox.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Firefox, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Firefox**&#10;Mozilla · Windows, Mac, Linux and Android&#10;Included" aria-label="About Firefox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:0deg;--z:8"><img src="brand_assets/icons/platforms/app-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Apple App Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**App Store**&#10;By Apple&#10;iPhone and iPad&#10;[Add-on]" aria-label="About App Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:45deg;--z:7"><img src="brand_assets/icons/platforms/safari.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Safari, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Safari**&#10;By Apple&#10;iPhone, iPad and Mac&#10;[Included]" aria-label="About Safari"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:90deg;--z:6"><img src="brand_assets/icons/platforms/google-play.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Play, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Google Play**&#10;By Google&#10;Android phones and tablets&#10;[Add-on]" aria-label="About Google Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:135deg;--z:5"><img src="brand_assets/icons/platforms/chrome.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Chrome, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Chrome**&#10;By Google&#10;Windows, Mac, Linux, Android&#10;[Included]" aria-label="About Chrome"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:180deg;--z:4"><img src="brand_assets/icons/platforms/microsoft-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Microsoft Store**&#10;By Microsoft&#10;Windows 10 and 11&#10;[Add-on]" aria-label="About Microsoft Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:225deg;--z:3"><img src="brand_assets/icons/platforms/edge.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Edge, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Edge**&#10;By Microsoft&#10;Windows, Mac and Linux&#10;[Included]" aria-label="About Edge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:270deg;--z:2"><img src="brand_assets/icons/platforms/galaxy-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Samsung Galaxy Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Galaxy Store**&#10;By Samsung&#10;Galaxy phones and tablets&#10;[Add-on]" aria-label="About Galaxy Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:315deg;--z:1"><img src="brand_assets/icons/platforms/firefox.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Firefox, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip-align="center" data-tooltip="**Firefox**&#10;By Mozilla&#10;Windows, Mac, Linux, Android&#10;[Included]" aria-label="About Firefox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
       </ul>
     </div>
   </div>
@@ -2931,7 +2936,9 @@ document.addEventListener('DOMContentLoaded', function () {
   if (wrap && !reduce) {
     var pin = wrap.querySelector('.ka-stack-pin');
     var cards = gsap.utils.toArray('.ka-stack-card', wrap);
-    var stepPx = function () { var w = window.innerWidth; return w <= 768 ? 0.2 * w : w <= 1025 ? 0.15 * w : 0.03 * w + 62; };
+    /* Same query as the single-column card CSS */
+    var stackMQ = window.matchMedia('(max-width: 768px), (max-width: 1025px) and (orientation: portrait)');
+    var stepPx = function () { var w = window.innerWidth; return w <= 768 ? 0.2 * w : stackMQ.matches ? 0.15 * w : 0.03 * w + 62; };
     var tl = gsap.timeline({ scrollTrigger: { trigger: wrap, start: 'top 5%', scrub: true, invalidateOnRefresh: true,
       end: function () { return 'bottom ' + (pin.offsetHeight + (parseFloat(getComputedStyle(pin).top) || 0)) + 'px'; } } });
     gsap.set(cards[0], { y: 0 });
@@ -2947,6 +2954,17 @@ document.addEventListener('DOMContentLoaded', function () {
      Thresholds follow the source component (spread done at 500px; mid ring 100, copy 250, outer ring 300). */
   var orbSec = document.querySelector('.ka-orb-sec');
   if (orbSec && !reduce) {
+    /* Tuck the orb up into the stack's empty tail (up to 26vh), stopping 40px short of the last card */
+    var stackPin = document.querySelector('.ka-stack-pin');
+    var sizeOrbTuck = function () {
+      var cardsEl = stackPin ? stackPin.querySelectorAll('.ka-stack-card') : [];
+      if (!cardsEl.length) return;
+      var last = cardsEl[cardsEl.length - 1];
+      var spare = stackPin.offsetHeight - (last.offsetTop + last.offsetHeight);
+      orbSec.style.marginTop = -Math.max(0, Math.min(spare - 40, 0.26 * window.innerHeight)) + 'px';
+    };
+    sizeOrbTuck();
+    ScrollTrigger.addEventListener('refreshInit', sizeOrbTuck);
     var orb = orbSec.querySelector('.ka-orb');
     var radius = function () { return orb.offsetWidth / 2; };
     var otl = gsap.timeline({ defaults: { ease: 'none' },
@@ -3025,6 +3043,17 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   window.addEventListener('load', function () { ScrollTrigger.refresh(); });
+  /* Late layout shifts (split text reverting, lazy content) leave every trigger below them stale,
+     so re-measure whenever the page height actually changes */
+  if ('ResizeObserver' in window) {
+    var lastH = document.documentElement.scrollHeight, rt = null;
+    new ResizeObserver(function () {
+      var h = document.documentElement.scrollHeight;
+      if (h === lastH) return;
+      lastH = h; clearTimeout(rt);
+      rt = setTimeout(function () { ScrollTrigger.refresh(); }, 250);
+    }).observe(document.body);
+  }
 });
 </script>
 
@@ -4680,6 +4709,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // **text** becomes <strong>text</strong>; content is developer-authored, escaped first.
     box.innerHTML = escapeTooltipHtml(trigger.getAttribute('data-tooltip') || '')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    box.classList.toggle('tt-box--center', trigger.getAttribute('data-tooltip-align') === 'center');
     box.classList.add('is-open');
     position(trigger);
     trigger.setAttribute('aria-expanded', 'true');
