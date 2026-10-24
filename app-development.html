@@ -2047,9 +2047,43 @@
       .ka-stack-card { position: relative; top: auto; height: auto; min-height: 0; transform: none !important; margin-bottom: 3vw; }
     }
 
-    /* ── 5. Horizontal card track (pinned, scrubbed) ── */
+    /* ── 4b. Platform orbit: 8 logo tiles fan out from a stacked pile onto the outer ring (scrubbed) ── */
     /* Rides up over the released stack so the gap matches the reference (last card to heading ~350px) */
-    .ka-track-sec { position: relative; z-index: 2; margin-top: -11vh; background: #fff; }
+    .ka-orb-sec { position: relative; z-index: 2; background: #fff; }
+    html.ka-anim .ka-orb-sec { height: 200vh; margin-top: -26vh; }
+    /* Tablet/phone stack cards fill more of the pin, so the orb must not ride up over them */
+    @media (max-width: 1025px) { html.ka-anim .ka-orb-sec { margin-top: 0; } }
+    .ka-orb-pin { display: grid; place-items: center; padding: 120px var(--ka-pad-x); }
+    html.ka-anim .ka-orb-pin { position: sticky; top: 0; height: 100vh; padding: 64px 0 0; overflow: hidden; }
+    .ka-orb { --orb: min(600px, 80vw, 74vh); --tile: calc(var(--orb) * 0.16); position: relative; width: var(--orb); height: var(--orb); }
+    .ka-orb-ring { position: absolute; border-radius: 50%; pointer-events: none; }
+    .ka-orb-ring--outer { inset: 0; border: 2px solid #E9E9E9; }
+    .ka-orb-ring--mid { inset: calc(var(--orb) * 0.0833); border: 2px solid rgba(124,58,237,0.2); }
+    /* Gradient border in one paint (white padding-box over the gradient border-box), so no purple disc sits under the copy */
+    .ka-orb-core { position: absolute; inset: calc(var(--orb) * 0.1667); border-radius: 50%; border: 2px solid transparent;
+      background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #D8B4FE 0%, #A855F7 50%, #7C3AED 100%) border-box; }
+    .ka-orb-copy { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 0 12%; text-align: center; }
+    .ka-orb-copy .ka-h2 { font-size: calc(var(--orb) * 0.064); line-height: 1.1; }
+    .ka-orb-copy p { margin-top: calc(var(--orb) * 0.026); font-size: max(12px, calc(var(--orb) * 0.026)); line-height: 1.55; color: var(--ka-ink-2); }
+    .ka-orb-tiles { list-style: none; }
+    .ka-orb-tile { position: absolute; left: 50%; top: 50%; width: var(--tile); height: var(--tile); margin: calc(var(--tile) / -2) 0 0 calc(var(--tile) / -2);
+      z-index: var(--z); display: grid; place-items: center; border-radius: calc(var(--tile) * 0.22);
+      background: var(--ka-black); border: calc(var(--tile) * 0.04) solid #fff;
+      box-shadow: 0 2px 4px rgba(12,10,18,0.12), 0 18px 34px -16px rgba(91,33,182,0.5);
+      /* Resting spot on the outer ring; GSAP drives the same transform when motion is on */
+      transform: translate(calc(cos(var(--a)) * var(--orb) / 2), calc(sin(var(--a)) * var(--orb) / 2)); }
+    .ka-orb-tile img { width: 58%; height: 58%; object-fit: contain; }
+    .ka-orb-tag { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); white-space: nowrap;
+      font-size: max(9px, calc(var(--orb) * 0.019)); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+      padding: 0.35em 0.8em; border-radius: 999px; color: var(--ka-ink); background: #fff; border: 1px solid var(--ka-line); }
+    .ka-orb-tag--inc { color: #fff; background: var(--ka-accent); border-color: var(--ka-accent); }
+    html.ka-anim .ka-orb-tile { transform: rotate(var(--r)); }
+    html.ka-anim .ka-orb-ring--outer, html.ka-anim .ka-orb-ring--mid, html.ka-anim .ka-orb-copy > *, html.ka-anim .ka-orb-tag { opacity: 0; }
+
+    /* ── 5. Horizontal card track (pinned, scrubbed) ── */
+    .ka-track-sec { position: relative; z-index: 2; margin-top: 16vh; background: #fff; }
+    @media (max-width: 768px) { .ka-track-sec { margin-top: 0; } }
     .ka-track-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
       padding: 64px 0 0; }
     .ka-track-head { padding: 0 var(--ka-pad-x); }
@@ -2453,6 +2487,7 @@
             <a href="#apps" class="dropdown-item" role="menuitem">Pick Your Platform</a>
             <a href="#how-we-build" class="dropdown-item" role="menuitem">How We Build</a>
             <a href="#app-own" class="dropdown-item" role="menuitem">You Own Your App</a>
+            <a href="#app-platforms" class="dropdown-item" role="menuitem">Platform Support</a>
             <a href="#app-monthly" class="dropdown-item" role="menuitem">What Monthly Covers</a>
             <a href="#app-process" class="dropdown-item" role="menuitem">From Idea to Store</a>
             <a href="#website-app" class="dropdown-item" role="menuitem">Your Website as an App</a>
@@ -2702,6 +2737,35 @@
 </section>
 
 <!-- ══════════════════════════════════════
+     PLATFORM SUPPORT (logo tiles fan out onto the ring)
+══════════════════════════════════════ -->
+<section id="app-platforms" class="ka-orb-sec" aria-label="Platforms we build for">
+  <div class="ka-orb-pin">
+    <div class="ka-orb">
+      <div class="ka-orb-ring ka-orb-ring--outer" aria-hidden="true"></div>
+      <div class="ka-orb-ring ka-orb-ring--mid" aria-hidden="true"></div>
+      <div class="ka-orb-core">
+        <div class="ka-orb-copy">
+          <h2 class="ka-h2">Wherever Your Customers Tap</h2>
+          <p>Your PWA runs in every major browser at no extra cost. Store listings are add-ons when you're ready.</p>
+        </div>
+      </div>
+      <!-- Paired around the ring: each store sits beside its own browser. Pile order puts the App Store on top. -->
+      <ul class="ka-orb-tiles" role="list">
+        <li class="ka-orb-tile" style="--a:0deg;--r:-4deg;--z:8"><img src="brand_assets/icons/platforms/app-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Apple App Store, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
+        <li class="ka-orb-tile" style="--a:45deg;--r:5deg;--z:7"><img src="brand_assets/icons/platforms/safari.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Safari, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
+        <li class="ka-orb-tile" style="--a:90deg;--r:-7deg;--z:6"><img src="brand_assets/icons/platforms/google-play.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Play, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
+        <li class="ka-orb-tile" style="--a:135deg;--r:3deg;--z:5"><img src="brand_assets/icons/platforms/chrome.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Chrome, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
+        <li class="ka-orb-tile" style="--a:180deg;--r:-2deg;--z:4"><img src="brand_assets/icons/platforms/microsoft-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Store, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
+        <li class="ka-orb-tile" style="--a:225deg;--r:7deg;--z:3"><img src="brand_assets/icons/platforms/edge.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Edge, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
+        <li class="ka-orb-tile" style="--a:270deg;--r:-5deg;--z:2"><img src="brand_assets/icons/platforms/galaxy-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Samsung Galaxy Store, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
+        <li class="ka-orb-tile" style="--a:315deg;--r:4deg;--z:1"><img src="brand_assets/icons/platforms/firefox.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Firefox, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
      WHAT THE MONTHLY FEE COVERS (pinned horizontal track)
 ══════════════════════════════════════ -->
 <section id="app-monthly" class="ka-track-sec" aria-label="What the monthly fee covers">
@@ -2864,6 +2928,28 @@ document.addEventListener('DOMContentLoaded', function () {
         (function (older, n) { tl.to(older, { y: function () { return -n * stepPx(); }, ease: 'none', duration: 1 }, t); })(cards[j], t + 1 - j);
       }
     });
+  }
+
+  /* Platform orbit: the pile fans out onto the ring over the first 60%, then holds.
+     Thresholds follow the source component (spread done at 500px; mid ring 100, copy 250, outer ring 300). */
+  var orbSec = document.querySelector('.ka-orb-sec');
+  if (orbSec && !reduce) {
+    var orb = orbSec.querySelector('.ka-orb');
+    var radius = function () { return orb.offsetWidth / 2; };
+    var otl = gsap.timeline({ defaults: { ease: 'none' },
+      scrollTrigger: { trigger: orbSec, start: 'top top', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true } });
+    gsap.utils.toArray('.ka-orb-tile', orbSec).forEach(function (tile, i) {
+      var a = i * Math.PI / 4, r = parseFloat(getComputedStyle(tile).getPropertyValue('--r')) || 0;
+      otl.fromTo(tile, { x: 0, y: 0, rotation: r },
+        { x: function () { return radius() * Math.cos(a); }, y: function () { return radius() * Math.sin(a); }, rotation: 0, duration: 0.6 }, 0);
+    });
+    otl.to('.ka-orb-ring--mid', { opacity: 1, duration: 0.08 }, 0.12)
+      .fromTo('.ka-orb-copy h2', { y: 16 }, { opacity: 1, y: 0, duration: 0.1 }, 0.3)
+      /* Opacity only: a transformed paragraph rasterises with a stray 1px seam beside its last line */
+      .to('.ka-orb-copy p', { opacity: 1, duration: 0.1 }, 0.33)
+      .to('.ka-orb-ring--outer', { opacity: 1, duration: 0.08 }, 0.36)
+      .to('.ka-orb-tag', { opacity: 1, duration: 0.1 }, 0.5)
+      .to({}, { duration: 0.4 }, 0.6);
   }
 
   /* Monthly track: starts 70% off to the right, slides through while pinned */
