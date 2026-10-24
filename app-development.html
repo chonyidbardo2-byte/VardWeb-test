@@ -2055,13 +2055,15 @@
     @media (max-width: 1025px) { html.ka-anim .ka-orb-sec { margin-top: 0; } }
     .ka-orb-pin { display: grid; place-items: center; padding: 120px var(--ka-pad-x); }
     html.ka-anim .ka-orb-pin { position: sticky; top: 0; height: 100vh; padding: 64px 0 0; overflow: hidden; }
-    .ka-orb { --orb: min(600px, 80vw, 74vh); --tile: calc(var(--orb) * 0.16); position: relative; width: var(--orb); height: var(--orb); }
+    /* Sized so the orb plus one tile (half a tile past each side) still fits the viewport */
+    .ka-orb { --orb: min(600px, 76vw, 70vh); --tile: calc(var(--orb) * 0.22); position: relative; width: var(--orb); height: var(--orb); }
     .ka-orb-ring { position: absolute; border-radius: 50%; pointer-events: none; }
-    .ka-orb-ring--outer { inset: 0; border: 2px solid #E9E9E9; }
-    .ka-orb-ring--mid { inset: calc(var(--orb) * 0.0833); border: 2px solid rgba(124,58,237,0.2); }
-    /* Gradient border in one paint (white padding-box over the gradient border-box), so no purple disc sits under the copy */
+    /* Three purples, deepest inside, lightest on the outer ring */
+    .ka-orb-ring--outer { inset: 0; border: 2px solid #DDD6FE; }
+    .ka-orb-ring--mid { inset: calc(var(--orb) * 0.0833); border: 2px solid #A855F7; }
+    /* Border and white fill in one paint (padding-box over border-box), so no purple disc sits under the copy */
     .ka-orb-core { position: absolute; inset: calc(var(--orb) * 0.1667); border-radius: 50%; border: 2px solid transparent;
-      background: linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, #D8B4FE 0%, #A855F7 50%, #7C3AED 100%) border-box; }
+      background: linear-gradient(#fff, #fff) padding-box, linear-gradient(#6D28D9, #6D28D9) border-box; }
     .ka-orb-copy { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 0 12%; text-align: center; }
     .ka-orb-copy .ka-h2 { font-size: calc(var(--orb) * 0.064); line-height: 1.1; }
@@ -2074,12 +2076,23 @@
       /* Resting spot on the outer ring; GSAP drives the same transform when motion is on */
       transform: translate(calc(cos(var(--a)) * var(--orb) / 2), calc(sin(var(--a)) * var(--orb) / 2)); }
     .ka-orb-tile img { width: 58%; height: 58%; object-fit: contain; }
-    .ka-orb-tag { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); white-space: nowrap;
-      font-size: max(9px, calc(var(--orb) * 0.019)); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-      padding: 0.35em 0.8em; border-radius: 999px; color: var(--ka-ink); background: #fff; border: 1px solid var(--ka-line); }
-    .ka-orb-tag--inc { color: #fff; background: var(--ka-accent); border-color: var(--ka-accent); }
-    html.ka-anim .ka-orb-tile { transform: rotate(var(--r)); }
-    html.ka-anim .ka-orb-ring--outer, html.ka-anim .ka-orb-ring--mid, html.ka-anim .ka-orb-copy > *, html.ka-anim .ka-orb-tag { opacity: 0; }
+    /* "?" in the tile corner; uses the page's shared .tt-icon-trigger tooltip */
+    .ka-orb-tip.tt-icon-trigger { position: absolute; top: 7%; right: 7%; width: max(20px, calc(var(--tile) * 0.18)); height: max(20px, calc(var(--tile) * 0.18));
+      border: 1.5px solid rgba(255,255,255,0.7); color: #fff; background: rgba(255,255,255,0.04); cursor: pointer;
+      transition: transform 0.3s var(--ka-spring), background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease; }
+    .ka-orb-tip svg { width: 58%; height: 58%; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+    .ka-orb-tip.tt-icon-trigger:hover { background: rgba(255,255,255,0.16); border-color: #fff; color: #fff; transform: scale(1.08); }
+    .ka-orb-tip.tt-icon-trigger:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 2px; }
+    .ka-orb-tip.tt-icon-trigger:active { transform: scale(0.92); }
+    /* Small phone tiles: tuck the "?" into the corner so it clears the logo */
+    @media (max-width: 768px) {
+      .ka-orb-tile img { width: 52%; height: 52%; }
+      .ka-orb-tip.tt-icon-trigger { top: 3px; right: 3px; width: 20px; height: 20px; }
+    }
+    html.ka-anim .ka-orb-tile { transform: none; }
+    html.ka-anim .ka-orb-ring--outer, html.ka-anim .ka-orb-ring--mid, html.ka-anim .ka-orb-copy > * { opacity: 0; }
+    /* Hidden (and out of the tab order) until the tiles finish spreading */
+    html.ka-anim .ka-orb-tip { opacity: 0; visibility: hidden; }
 
     /* ── 5. Horizontal card track (pinned, scrubbed) ── */
     .ka-track-sec { position: relative; z-index: 2; margin-top: 16vh; background: #fff; }
@@ -2750,16 +2763,16 @@
           <p>Your PWA runs in every major browser at no extra cost. Store listings are add-ons when you're ready.</p>
         </div>
       </div>
-      <!-- Paired around the ring: each store sits beside its own browser. Pile order puts the App Store on top. -->
+      <!-- Paired around the ring: each store sits beside its own browser. The pile stacks with the App Store on top. -->
       <ul class="ka-orb-tiles" role="list">
-        <li class="ka-orb-tile" style="--a:0deg;--r:-4deg;--z:8"><img src="brand_assets/icons/platforms/app-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Apple App Store, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
-        <li class="ka-orb-tile" style="--a:45deg;--r:5deg;--z:7"><img src="brand_assets/icons/platforms/safari.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Safari, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
-        <li class="ka-orb-tile" style="--a:90deg;--r:-7deg;--z:6"><img src="brand_assets/icons/platforms/google-play.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Play, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
-        <li class="ka-orb-tile" style="--a:135deg;--r:3deg;--z:5"><img src="brand_assets/icons/platforms/chrome.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Chrome, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
-        <li class="ka-orb-tile" style="--a:180deg;--r:-2deg;--z:4"><img src="brand_assets/icons/platforms/microsoft-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Store, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
-        <li class="ka-orb-tile" style="--a:225deg;--r:7deg;--z:3"><img src="brand_assets/icons/platforms/edge.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Edge, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
-        <li class="ka-orb-tile" style="--a:270deg;--r:-5deg;--z:2"><img src="brand_assets/icons/platforms/galaxy-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Samsung Galaxy Store, add-on</span><span class="ka-orb-tag" aria-hidden="true">Add-on</span></li>
-        <li class="ka-orb-tile" style="--a:315deg;--r:4deg;--z:1"><img src="brand_assets/icons/platforms/firefox.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Firefox, included</span><span class="ka-orb-tag ka-orb-tag--inc" aria-hidden="true">Included</span></li>
+        <li class="ka-orb-tile" style="--a:0deg;--z:8"><img src="brand_assets/icons/platforms/app-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Apple App Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**App Store**&#10;Apple · iPhone and iPad&#10;Add-on" aria-label="About App Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:45deg;--z:7"><img src="brand_assets/icons/platforms/safari.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Safari, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Safari**&#10;Apple · iPhone, iPad and Mac&#10;Included" aria-label="About Safari"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:90deg;--z:6"><img src="brand_assets/icons/platforms/google-play.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Play, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Google Play**&#10;Google · Android phones and tablets&#10;Add-on" aria-label="About Google Play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:135deg;--z:5"><img src="brand_assets/icons/platforms/chrome.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Google Chrome, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Chrome**&#10;Google · Windows, Mac, Linux and Android&#10;Included" aria-label="About Chrome"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:180deg;--z:4"><img src="brand_assets/icons/platforms/microsoft-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Microsoft Store**&#10;Microsoft · Windows 10 and 11&#10;Add-on" aria-label="About Microsoft Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:225deg;--z:3"><img src="brand_assets/icons/platforms/edge.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Microsoft Edge, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Edge**&#10;Microsoft · Windows, Mac and Linux&#10;Included" aria-label="About Edge"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:270deg;--z:2"><img src="brand_assets/icons/platforms/galaxy-store.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Samsung Galaxy Store, add-on</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Galaxy Store**&#10;Samsung · Galaxy phones and tablets&#10;Add-on" aria-label="About Galaxy Store"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
+        <li class="ka-orb-tile" style="--a:315deg;--z:1"><img src="brand_assets/icons/platforms/firefox.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span class="sr-only">Firefox, included</span><button type="button" class="tt-icon-trigger ka-orb-tip" data-tooltip="**Firefox**&#10;Mozilla · Windows, Mac, Linux and Android&#10;Included" aria-label="About Firefox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.6-3 4.5"/><path d="M12 18.2h.01"/></svg></button></li>
       </ul>
     </div>
   </div>
@@ -2939,16 +2952,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var otl = gsap.timeline({ defaults: { ease: 'none' },
       scrollTrigger: { trigger: orbSec, start: 'top top', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true } });
     gsap.utils.toArray('.ka-orb-tile', orbSec).forEach(function (tile, i) {
-      var a = i * Math.PI / 4, r = parseFloat(getComputedStyle(tile).getPropertyValue('--r')) || 0;
-      otl.fromTo(tile, { x: 0, y: 0, rotation: r },
-        { x: function () { return radius() * Math.cos(a); }, y: function () { return radius() * Math.sin(a); }, rotation: 0, duration: 0.6 }, 0);
+      var a = i * Math.PI / 4;
+      otl.fromTo(tile, { x: 0, y: 0 },
+        { x: function () { return radius() * Math.cos(a); }, y: function () { return radius() * Math.sin(a); }, duration: 0.6 }, 0);
     });
     otl.to('.ka-orb-ring--mid', { opacity: 1, duration: 0.08 }, 0.12)
       .fromTo('.ka-orb-copy h2', { y: 16 }, { opacity: 1, y: 0, duration: 0.1 }, 0.3)
       /* Opacity only: a transformed paragraph rasterises with a stray 1px seam beside its last line */
       .to('.ka-orb-copy p', { opacity: 1, duration: 0.1 }, 0.33)
       .to('.ka-orb-ring--outer', { opacity: 1, duration: 0.08 }, 0.36)
-      .to('.ka-orb-tag', { opacity: 1, duration: 0.1 }, 0.5)
+      /* The "?" only appears once every tile has landed (autoAlpha keeps it untabbable until then) */
+      .to('.ka-orb-tip', { autoAlpha: 1, duration: 0.05 }, 0.58)
       .to({}, { duration: 0.4 }, 0.6);
   }
 
