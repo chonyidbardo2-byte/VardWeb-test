@@ -24,14 +24,6 @@
     } catch (e) {}
   </script>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
   <script>
     tailwind.config = {
       theme: {
@@ -328,9 +320,8 @@
     }
     .wd-cta-bg {
       position: absolute; inset: 0; z-index: 0; pointer-events: none;
-      opacity: 0.95;
     }
-    .wd-cta-bg canvas { display: block; }
+    .wd-cta-bg canvas { display: block; width: 100%; height: 100%; }
     .wd-cta-content { position: relative; z-index: 1; max-width: 720px; width: 100%; min-width: 0; text-align: center; display: flex; flex-direction: column; align-items: center; }
     .wd-cta-pill {
       display: inline-flex; align-items: center; gap: 8px;
@@ -5130,182 +5121,279 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 
-<script type="module">
+<script>
   /* ── CTA animated background ──
-     Vanilla port of the supplied React NeuralNoise component: 15 rotated
-     sine layers summed into thin glowing filaments. Tinted with this page's
-     --lp-pink; bright cores clamp toward violet-white. Not interactive: the
-     original's mouse-driven glow point instead follows a self-driven wander
-     path across the card, so the animation just plays. Lazily initialized
-     once the CTA card scrolls into view. */
-  import * as THREE from 'three';
+     Vanilla port of the 21st.dev "Mesh drift" ShaderBackground: eight soft colour blobs on slow Lissajous paths,
+     domain-warped and graded, with a twirl that follows the cursor over the card. Recoloured from teal/cyan/green
+     to this page's purples. No dependencies: one WebGL1 canvas, lazily started when the CTA card scrolls into view
+     and paused off-screen via PerfUtils.gatedLoop. Reduced motion gets one still frame. */
+  function initMeshDriftBackground(bgEl) {
+    var VERT = 'attribute vec2 a_position;\nvoid main() {\n  gl_Position = vec4(a_position, 0.0, 1.0);\n}';
+    var FRAG = [
+      '#ifdef GL_FRAGMENT_PRECISION_HIGH',
+      'precision highp float;',
+      '#else',
+      'precision mediump float;',
+      '#endif',
+      'uniform vec3 u_colors[8];',
+      'uniform vec4 u_scene;',
+      'uniform vec4 u_shape;',
+      'uniform vec4 u_surface;',
+      'uniform vec4 u_finish;',
+      'uniform vec4 u_transform;',
+      'uniform vec4 u_space;',
+      'uniform vec4 u_cursor;',
+      '#define u_resolution u_scene.xy',
+      '#define u_time u_scene.z',
+      '#define u_colorCount u_scene.w',
+      '#define u_scale u_shape.x',
+      '#define u_intensity u_shape.y',
+      '#define u_paramA u_shape.z',
+      '#define u_warp u_shape.w',
+      '#define u_detail u_surface.x',
+      '#define u_contrast u_surface.y',
+      '#define u_brightness u_surface.z',
+      '#define u_saturation u_surface.w',
+      '#define u_hue u_finish.x',
+      '#define u_vignette u_finish.y',
+      '#define u_blur u_finish.z',
+      '#define u_grain u_finish.w',
+      '#ifdef GL_FRAGMENT_PRECISION_HIGH',
+      '#define u_seed u_transform.x',
+      '#else',
+      '#define u_seed mod(u_transform.x, 31.0)',
+      '#endif',
+      '#define u_rotate u_transform.y',
+      '#define u_drift u_transform.z',
+      '#define u_oklab u_transform.w',
+      '#define u_offset u_space.xy',
+      '#define u_mouse u_space.zw',
+      '#define u_cursorPresence u_cursor.x',
+      '#define u_cursorEffect u_cursor.y',
+      '#define u_cursorStrength u_cursor.z',
+      '#define u_cursorRadius u_cursor.w',
+      'float hash21(vec2 p) {',
+      '#ifndef GL_FRAGMENT_PRECISION_HIGH',
+      '  p = mod(p, 31.0);',
+      '#endif',
+      '  p = fract(p * vec2(234.34, 435.345));',
+      '  p += dot(p, p + 34.23);',
+      '  return fract(p.x * p.y);',
+      '}',
+      'float grainHash(vec2 p) {',
+      '  vec3 p3 = fract(vec3(p.xyx) * 0.1031);',
+      '  p3 += dot(p3, p3.yzx + 33.33);',
+      '  return fract((p3.x + p3.y) * p3.z);',
+      '}',
+      'float noise(vec2 p) {',
+      '  vec2 i = floor(p);',
+      '  vec2 f = fract(p);',
+      '  vec2 u = f * f * (3.0 - 2.0 * f);',
+      '  return mix(mix(hash21(i), hash21(i + vec2(1.0, 0.0)), u.x),',
+      '    mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), u.x), u.y);',
+      '}',
+      'float fbm(vec2 p) {',
+      '  float v = 0.0;',
+      '  float a = 0.5;',
+      '  for (int i = 0; i < 5; i++) {',
+      '    v += a * noise(p);',
+      '    p = p * 2.03 + vec2(17.0, 9.2);',
+      '    a *= 0.5;',
+      '  }',
+      '  return v;',
+      '}',
+      'vec3 hueRotate(vec3 col, float a) {',
+      '  const mat3 toYIQ = mat3(0.299, 0.596, 0.211, 0.587, -0.274, -0.523, 0.114, -0.322, 0.312);',
+      '  const mat3 toRGB = mat3(1.0, 1.0, 1.0, 0.956, -0.272, -1.106, 0.621, -0.647, 1.703);',
+      '  vec3 yiq = toYIQ * col;',
+      '  float ca = cos(a), sa = sin(a);',
+      '  yiq = vec3(yiq.x, yiq.y * ca - yiq.z * sa, yiq.y * sa + yiq.z * ca);',
+      '  return toRGB * yiq;',
+      '}',
+      'vec3 shade(vec2 uv, vec2 p, float t) {',
+      '  vec3 acc = u_colors[0] * 0.15;',
+      '  float total = 0.15;',
+      '  for (int i = 0; i < 8; i++) {',
+      '    if (float(i) >= u_colorCount) break;',
+      '    float fi = float(i);',
+      '    vec2 c = vec2(sin(t * (0.21 + fi * 0.071) + fi * 2.4 + u_seed),',
+      '      cos(t * (0.17 + fi * 0.093) + fi * 1.7)) * (0.45 + u_intensity * 0.35);',
+      '    float w = exp(-dot(p - c, p - c) * 6.0);',
+      '    acc += u_colors[i] * w;',
+      '    total += w;',
+      '  }',
+      '  return acc / total;',
+      '}',
+      'void main() {',
+      '  vec2 uv = gl_FragCoord.xy / u_resolution.xy;',
+      '  vec2 screenUv = uv;',
+      '  vec2 p = (gl_FragCoord.xy - 0.5 * u_resolution.xy) / min(u_resolution.x, u_resolution.y);',
+      '  float cursorMask = 0.0;',
+      '  if (u_cursorPresence > 0.001) {',
+      '    vec2 cursor = (0.5 * u_mouse * u_resolution.xy) / min(u_resolution.x, u_resolution.y);',
+      '    vec2 cursorDelta = p - cursor;',
+      '    if (u_cursorEffect < 0.5) {',
+      '      p += cursor * u_cursorPresence * u_cursorStrength * 0.55;',
+      '    } else {',
+      '      float cursorDistance = length(cursorDelta);',
+      '      vec2 cursorDirection = cursorDelta / max(cursorDistance, 0.0001);',
+      '      cursorMask = u_cursorPresence * (1.0 - smoothstep(0.0, u_cursorRadius, cursorDistance));',
+      '      if (u_cursorEffect < 1.5) {',
+      '        p -= cursorDirection * cursorMask * u_cursorStrength * 0.24;',
+      '      } else if (u_cursorEffect < 2.5) {',
+      '        float cursorAngle = cursorMask * u_cursorStrength * 2.2;',
+      '        float cc = cos(cursorAngle), cs = sin(cursorAngle);',
+      '        p = cursor + mat2(cc, -cs, cs, cc) * cursorDelta;',
+      '      } else if (u_cursorEffect < 3.5) {',
+      '        float ripple = sin(cursorDistance / max(u_cursorRadius, 0.001) * 18.0 - u_time * 5.0);',
+      '        p -= cursorDirection * ripple * cursorMask * u_cursorStrength * 0.07;',
+      '      }',
+      '    }',
+      '  }',
+      '  uv = p * min(u_resolution.x, u_resolution.y) / u_resolution.xy + 0.5;',
+      '  p *= u_scale;',
+      '  if (abs(u_rotate) > 0.0001) {',
+      '    float cr = cos(u_rotate), sr = sin(u_rotate);',
+      '    p = mat2(cr, -sr, sr, cr) * p;',
+      '  }',
+      '  p += u_offset;',
+      '  if (u_drift > 0.0001) p += u_drift * vec2(sin(u_time * 0.31), cos(u_time * 0.23));',
+      '  if (u_warp > 0.0) {',
+      '    p += u_warp * (vec2(fbm(p * u_detail + u_seed), fbm(p * u_detail + vec2(5.2, 1.3))) - 0.5);',
+      '  }',
+      '  vec3 col;',
+      '  if (u_blur > 0.0) {',
+      '    float e = u_blur;',
+      '    float pe = e * u_scale;',
+      '    vec2 uvE = vec2(e) * min(u_resolution.x, u_resolution.y) / u_resolution.xy;',
+      '    col  = shade(uv, p, u_time) * 0.36;',
+      '    col += shade(uv + vec2(uvE.x, 0.0), p + vec2(pe, 0.0), u_time) * 0.16;',
+      '    col += shade(uv - vec2(uvE.x, 0.0), p - vec2(pe, 0.0), u_time) * 0.16;',
+      '    col += shade(uv + vec2(0.0, uvE.y), p + vec2(0.0, pe), u_time) * 0.16;',
+      '    col += shade(uv - vec2(0.0, uvE.y), p - vec2(0.0, pe), u_time) * 0.16;',
+      '  } else {',
+      '    col = shade(uv, p, u_time);',
+      '  }',
+      '  if (abs(u_contrast - 1.0) > 0.0001) col = (col - 0.5) * u_contrast + 0.5;',
+      '  if (abs(u_saturation - 1.0) > 0.0001) {',
+      '    float luma = dot(col, vec3(0.299, 0.587, 0.114));',
+      '    col = mix(vec3(luma), col, u_saturation);',
+      '  }',
+      '  if (abs(u_hue) > 0.0001) col = hueRotate(col, u_hue);',
+      '  if (abs(u_brightness) > 0.0001) col += u_brightness;',
+      '  if (u_vignette > 0.0001) {',
+      '    float vd = length(screenUv - 0.5) * 1.41421356;',
+      '    col *= 1.0 - u_vignette * smoothstep(0.35, 1.0, vd);',
+      '  }',
+      '  if (u_cursorPresence > 0.001 && u_cursorEffect > 3.5) col += (vec3(0.18) + col * 0.12) * cursorMask * u_cursorStrength;',
+      '  if (u_grain > 0.0001) col += (grainHash(gl_FragCoord.xy + vec2(u_seed * 17.0, u_seed * 31.0)) - 0.5) * u_grain;',
+      '  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);',
+      '}'
+    ].join('\n');
 
-  function initWebDesignCtaBackground(bgEl) {
-    const renderer = new THREE.WebGLRenderer({
-      antialias: false,
-      alpha: true,
-      powerPreference: 'low-power'
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x000000, 0);
-    bgEl.appendChild(renderer.domElement);
+    /* Recipe as supplied; only the palette is retinted. #0B0814 base, #A855F7 brand purple, #6D28D9 deep violet,
+       #2A2238 muted violet-slate (the original's teal/cyan/green/slate in the same roles) */
+    var MID = [0.1647, 0.1333, 0.2196];
+    var U = {
+      colors: [[0.0431, 0.0314, 0.0784], [0.6588, 0.3333, 0.9686], [0.4275, 0.1569, 0.8510], MID, MID, MID, MID, MID],
+      colorCount: 4, scale: 1.3, intensity: 0.56, paramA: 0.67, warp: 0.192, detail: 2.016, contrast: 1.167,
+      brightness: 0.0, saturation: 1.0, hue: 0.0, vignette: 0.15, blur: 0.0072, grain: 0.098, seed: 5069.0,
+      rotate: 2.7227, offsetX: 0.09, offsetY: 0.15, drift: 0.148, cursorEffect: 2.0, cursorStrength: 0.73,
+      cursorRadius: 0.365, oklab: 0.0, timeScale: -1.373
+    };
+    var idle = { start: function () {}, stop: function () {} };
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    var canvas = document.createElement('canvas');
+    canvas.setAttribute('aria-hidden', 'true');
+    canvas.style.cssText = 'display:block;width:100%;height:100%;';
+    var gl = canvas.getContext('webgl', { antialias: false });
+    if (!gl) return idle;
+    var compile = function (type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    var program = gl.createProgram();
+    gl.attachShader(program, compile(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return idle;
+    gl.useProgram(program);
+    bgEl.appendChild(canvas);
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const material = new THREE.ShaderMaterial({
-      transparent: true,
-      uniforms: {
-        uTime:       { value: 0 },
-        uResolution: { value: new THREE.Vector2(1, 1) },
-        uPointer:    { value: new THREE.Vector2(0.5, 0.5) },
-        uZoom:       { value: 1.0 },
-        uSwirl:      { value: 0.0 },
-        uVig:        { value: 1.0 },
-        uFloor:      { value: 0.5 },
-        uColor:      { value: new THREE.Vector3(0.659, 0.333, 0.969) } // --lp-pink #A855F7
-      },
-      vertexShader: `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = vec4(position.xy, 0.0, 1.0);
-        }
-      `,
-      fragmentShader: `
-        precision highp float;
-        varying vec2 vUv;
-        uniform float uTime;
-        uniform vec2  uResolution;
-        uniform vec2  uPointer;
-        uniform vec3  uColor;
-        uniform float uZoom;
-        uniform float uSwirl;
-        uniform float uVig;
-        uniform float uFloor;
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
 
-        vec2 rotate(vec2 uv, float th) {
-          return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
-        }
-        float neuro_shape(vec2 uv, float t, float p) {
-          vec2 sine_acc = vec2(0.0);
-          vec2 res = vec2(0.0);
-          float scale = 8.0;
-          for (int j = 0; j < 15; j++) {
-            uv = rotate(uv, 1.0);
-            sine_acc = rotate(sine_acc, 1.0);
-            vec2 layer = uv * scale + float(j) + sine_acc - t;
-            sine_acc += sin(layer) + 2.4 * p;
-            res += (0.5 + 0.5 * cos(layer)) / scale;
-            scale *= 1.2;
-          }
-          return res.x + res.y;
-        }
+    var uni = {};
+    ['colors', 'scene', 'shape', 'surface', 'finish', 'transform', 'space', 'cursor'].forEach(function (k) { uni[k] = gl.getUniformLocation(program, 'u_' + k); });
+    gl.uniform3fv(uni.colors, new Float32Array([].concat.apply([], U.colors)));
+    gl.uniform4f(uni.shape, U.scale, U.intensity, U.paramA, U.warp);
+    gl.uniform4f(uni.surface, U.detail, U.contrast, U.brightness, U.saturation);
+    gl.uniform4f(uni.finish, U.hue, U.vignette, U.blur, U.grain);
+    gl.uniform4f(uni.transform, U.seed, U.rotate, U.drift, U.oklab);
 
-        void main() {
-          float ratio = uResolution.x / uResolution.y;
-          vec2 uv = 0.5 * vUv * uZoom;
-          uv.x *= ratio;
-          // Mobile only (uSwirl > 0): slowly sway the flow direction so the
-          // field doesn't read as one straight, repeating slide.
-          vec2 c = vec2(0.25 * uZoom * ratio, 0.25 * uZoom);
-          uv = rotate(uv - c, uSwirl * sin(uTime * 0.11)) + c;
-          vec2 pointer = vUv - uPointer;
-          pointer.x *= ratio;
-          float p = clamp(length(pointer), 0.0, 1.0);
-          p = 0.5 * pow(1.0 - p, 2.0);
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var targetX = 0, targetY = 0, targetPresence = 0, mouseX = 0, mouseY = 0, presence = 0;
+    var pointerKnown = false, pX = 0, pY = 0, bounds = canvas.getBoundingClientRect();
+    var rafId = null, running = false, lastNow = null, simTime = reduceMotion ? 3.0 : 0;
 
-          float noise = neuro_shape(uv, uTime, p);
-          noise = 1.2 * pow(noise, 3.0);
-          noise += pow(noise, 10.0);
-          noise = max(0.0, noise - uFloor);
-          noise *= (1.0 - length((vUv - 0.5) * vec2(1.0, uVig)));
+    var resizeCanvas = function () {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var rawW = Math.max(1, Math.round(bounds.width * dpr)), rawH = Math.max(1, Math.round(bounds.height * dpr));
+      var k = Math.min(1, Math.sqrt(2000000 / Math.max(1, rawW * rawH)));
+      var w = Math.max(1, Math.round(rawW * k)), h = Math.max(1, Math.round(rawH * k));
+      if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; gl.viewport(0, 0, w, h); }
+    };
+    var draw = function () {
+      resizeCanvas();
+      gl.uniform4f(uni.scene, canvas.width, canvas.height, simTime * U.timeScale, U.colorCount);
+      gl.uniform4f(uni.space, U.offsetX, U.offsetY, mouseX, mouseY);
+      gl.uniform4f(uni.cursor, presence, U.cursorEffect, U.cursorStrength, U.cursorRadius);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+    var frame = function (now) {
+      rafId = null;
+      if (!running) return;
+      var dt = lastNow === null ? 0 : Math.min((now - lastNow) / 1000, 0.1);
+      lastNow = now;
+      simTime += dt;
+      var follow = 1 - Math.exp(-12 * dt);
+      mouseX += (targetX - mouseX) * follow;
+      mouseY += (targetY - mouseY) * follow;
+      presence += (targetPresence - presence) * follow;
+      draw();
+      rafId = requestAnimationFrame(frame);
+    };
 
-          gl_FragColor = vec4(uColor * noise, noise);
-        }
-      `
-    });
-
-    scene.add(new THREE.Mesh(geometry, material));
-
-    let speed = 1.0;
-    let targetSpeed = 1.0;
-    let idleSpeed = 1.0;
-    let wanderA = 0.42, wanderB = 0.38;
-    let simTime = 0;
-    const clock = new THREE.Clock();
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Mobile tuning: the tall card only shows a sliver of the field, so the
-    // motion reads as one short loop. Widen the sample window, sway the
-    // flow, soften the vignette and lower the glow floor. Desktop gets a
-    // lighter version of each (smaller swirl, wider wander for the wide card).
-    const mobileMq = window.matchMedia('(hover: none), (max-width: 640px)');
-    let isMobile = mobileMq.matches;
-    function applyTuning() {
-      isMobile = mobileMq.matches;
-      material.uniforms.uZoom.value  = isMobile ? 1.5  : 1.15;
-      material.uniforms.uSwirl.value = isMobile ? 0.6  : 0.4;
-      material.uniforms.uVig.value   = isMobile ? 0.6  : 0.8;
-      material.uniforms.uFloor.value = isMobile ? 0.35 : 0.38;
-      wanderA = isMobile ? 0.38 : 0.42;
-      wanderB = isMobile ? 0.42 : 0.38;
-      idleSpeed = isMobile ? 1.3 : 1.0;
-      targetSpeed = idleSpeed;
+    /* Twirl follows the cursor while it is over the card */
+    var updatePointer = function () {
+      if (!pointerKnown || !bounds.width || !bounds.height) return;
+      var inside = pX >= bounds.left && pX <= bounds.right && pY >= bounds.top && pY <= bounds.bottom;
+      if (!inside) { targetPresence = 0; return; }
+      var nx = ((pX - bounds.left) / bounds.width) * 2 - 1, ny = -(((pY - bounds.top) / bounds.height) * 2 - 1);
+      if (targetPresence === 0 && presence < 0.01) { mouseX = nx; mouseY = ny; }
+      targetX = nx; targetY = ny; targetPresence = 1;
+    };
+    var onLeave = function () { pointerKnown = false; targetPresence = 0; };
+    var onLayout = function () { bounds = canvas.getBoundingClientRect(); updatePointer(); if (reduceMotion) draw(); };
+    if (!reduceMotion) {
+      window.addEventListener('pointermove', function (e) { pointerKnown = true; pX = e.clientX; pY = e.clientY; bounds = canvas.getBoundingClientRect(); updatePointer(); }, { passive: true });
+      window.addEventListener('pointercancel', onLeave);
+      window.addEventListener('blur', onLeave);
+      document.documentElement.addEventListener('pointerleave', onLeave);
+      window.addEventListener('scroll', onLayout, { passive: true, capture: true });
     }
-    applyTuning();
+    window.addEventListener('resize', onLayout);
+    new ResizeObserver(onLayout).observe(canvas);
+    draw();
 
-    // Card-local glow point (0..1, Y up) on a Lissajous wander path, eased
-    // like the original's 0.2 pointer lerp.
-    const pointer = { x: 0.5, y: 0.5, tX: 0.5, tY: 0.5 };
-
-    function renderFrame() {
-      const delta = reduceMotion ? 0 : clock.getDelta();
-      speed += (targetSpeed - speed) * 0.05;
-      simTime += delta * speed;
-      pointer.tX = 0.5 + wanderA * Math.sin(simTime * 0.37);
-      pointer.tY = 0.5 + wanderB * Math.sin(simTime * 0.23 + 1.3);
-      pointer.x += (pointer.tX - pointer.x) * 0.2;
-      pointer.y += (pointer.tY - pointer.y) * 0.2;
-      material.uniforms.uTime.value = simTime;
-      material.uniforms.uPointer.value.set(pointer.x, pointer.y);
-      renderer.render(scene, camera);
-    }
-
-    let rafId = null;
-    function animate() {
-      rafId = requestAnimationFrame(animate);
-      renderFrame();
-    }
-
-    function resize() {
-      const w = Math.max(1, bgEl.clientWidth);
-      const h = Math.max(1, bgEl.clientHeight);
-      renderer.setSize(w, h);
-      material.uniforms.uResolution.value.set(w, h);
-      if (mobileMq.matches !== isMobile) applyTuning();
-      if (reduceMotion) renderFrame();
-    }
-
-    const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(bgEl);
-    resize();
-
-    if (reduceMotion) {
-      simTime = 1.0;
-      renderFrame();
-    }
-
-    // One-time GL/shader/buffer setup is done above. Only the RAF chain is
-    // start/stop-able from here on (no resource disposal), so scrolling the
-    // CTA in and out of view never re-creates the WebGL context.
     return {
       start: function () {
-        if (reduceMotion) return; // static frame already rendered, nothing to (re)start
-        if (rafId == null) rafId = requestAnimationFrame(animate);
+        if (reduceMotion) return;   /* the still frame is already drawn */
+        running = true; lastNow = null;
+        if (rafId == null) rafId = requestAnimationFrame(frame);
       },
       stop: function () {
+        running = false;
         if (rafId != null) { cancelAnimationFrame(rafId); rafId = null; }
       }
     };
@@ -5318,7 +5406,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let ctaLoop = null;
     window.PerfUtils.gatedLoop(card, {
       start: function () {
-        if (!ctaLoop) ctaLoop = initWebDesignCtaBackground(bg);
+        if (!ctaLoop) ctaLoop = initMeshDriftBackground(bg);
         ctaLoop.start();
       },
       stop: function () {
