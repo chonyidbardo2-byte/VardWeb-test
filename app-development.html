@@ -2192,6 +2192,34 @@
     html.ka-anim .ka-peel-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
     html.ka-anim .ka-peel.is-live .ka-peel-canvas { display: block; }
 
+    /* ── 8b. Consultation strip under the FAQ (blog.html's newsletter panel, recoloured purple) ── */
+    #ka-consult {
+      margin-top: 72px; padding: 56px 44px; position: relative; overflow: hidden;
+      background: #0a0a0a; border: 1px solid rgba(255,255,255,0.14); border-radius: 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap;
+      box-shadow: 0 24px 60px -24px rgba(0,0,0,0.65);
+    }
+    .kc-bg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .kc-text { position: relative; z-index: 1; flex: 1 1 360px; }
+    .kc-text h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(26px, 3.2vw, 38px); font-weight: 800;
+      color: var(--text-1); margin-bottom: 14px; letter-spacing: -0.03em; line-height: 1.1; }
+    .kc-text p { font-size: 14.5px; color: var(--text-2); max-width: 400px; line-height: 1.7; }
+    .kc-action { position: relative; z-index: 1; flex: 0 0 auto; }
+    .kc-btn {
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13.5px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: #fff; color: #0a0a12; border: none; border-radius: 10px; text-decoration: none;
+      padding: 13px 26px; white-space: nowrap; min-width: 160px; cursor: pointer;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+    .kc-btn:hover, .kc-btn:active { background: #e6e7eb; }
+    .kc-btn:focus-visible { outline: 2px solid rgba(168,85,247,0.7); outline-offset: 3px; }
+    .kc-btn:active { transform: scale(0.97); }
+    @media (max-width: 640px) {
+      #ka-consult { padding: 40px 24px; }
+      .kc-action, .kc-btn { width: 100%; }
+    }
+
     /* ── 9. FAQ, light (overrides the shared dark accordion) ── */
     .ka-faq .wd-faq-inner { max-width: none; }
     .ka-faq .ka-h2 { margin-bottom: clamp(32px, 4vw, 60px); }
@@ -2690,7 +2718,7 @@
       </div>
     </div>
   </div>
-  <p class="ka-also" data-fade>Also available: <b>Microsoft Store</b> and <b>Samsung Galaxy Store</b> listings, C$150 each.</p>
+  <p class="ka-also" data-fade>Also available: <b>Microsoft Store</b> and <b>Samsung Galaxy Store</b> listings, C$150 each, one-time.</p>
 </section>
 
 <!-- ══════════════════════════════════════
@@ -2854,7 +2882,7 @@
     <li class="ka-step"><svg class="ka-step-svg" width="20" height="150" viewBox="0 0 20 150" aria-hidden="true" focusable="false"><line x1="10" y1="0" x2="10" y2="150" stroke="#D1D5DB" stroke-width="1"/><line class="ka-step-draw" x1="10" y1="0" x2="10" y2="150" stroke="#7C3AED" stroke-width="1"/><circle class="ka-step-dot" cx="10" cy="0" r="6" fill="#f8f8f8" stroke="#7C3AED" stroke-width="1"/></svg><div class="ka-step-text"><h3>Launch and grow</h3><p>Your app goes live in the stores, analytics land in your dashboard, and updates keep coming every month.</p></div></li>
   </ol>
   <div class="ka-flow-cta" data-fade>
-    <a href="contact.html?type=App%20Development&amp;learnMore=1" class="ka-btn ka-btn--accent">Start Your App <svg class="ka-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    <a href="#website-app" class="ka-btn ka-btn--accent">Start Your App <svg class="ka-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
   </div>
 </section>
 
@@ -3116,41 +3144,65 @@ document.addEventListener('DOMContentLoaded', function () {
         return false;
       };
       var isPaint = function (col) { return col && col !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(col); };
-      var fillBox = function (x, y, w, h, rad, col) { g.fillStyle = col; g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, rad); else g.rect(x, y, w, h); g.fill(); };
-      var svgs = [];
+      var boxPath = function (x, y, w, h, rad) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, rad); else g.rect(x, y, w, h); };
+      var fillBox = function (x, y, w, h, rad, col) { g.fillStyle = col; boxPath(x, y, w, h, rad); g.fill(); };
+      /* First box-shadow layer, cast from a copy drawn off canvas so only the shadow lands (spread shrinks or grows it) */
+      var shadowBox = function (x, y, w, h, rad, sh) {
+        var first = sh.split(/,(?![^(]*\))/)[0];
+        var m = /^(rgba?\([^)]*\)|#[0-9a-f]+)\s+(-?[\d.]+)px\s+(-?[\d.]+)px\s+([\d.]+)px(?:\s+(-?[\d.]+)px)?/i.exec(first);
+        if (!m || /inset/.test(first)) return;
+        var sp = parseFloat(m[5]) || 0, off = 100000;
+        g.save(); g.shadowColor = m[1]; g.shadowBlur = parseFloat(m[4]); g.shadowOffsetX = parseFloat(m[2]) + off; g.shadowOffsetY = parseFloat(m[3]);
+        g.fillStyle = '#000'; boxPath(x - sp - off, y - sp, w + 2 * sp, h + 2 * sp, Math.max(0, rad + sp)); g.fill(); g.restore();
+      };
+      /* Boxes are queued in DOM order so a background SVG (the consultation smoke) lands under the boxes after it */
+      var ops = [], svgs = [], borders = [];
       Array.prototype.forEach.call(faqSec.querySelectorAll('*'), function (el) {
         if (el.closest('svg') && el.tagName.toLowerCase() !== 'svg') return;
         var r = el.getBoundingClientRect(); if (!onScreen(r) || !shown(el) || clipped(el, r)) return;
         var s = getComputedStyle(el);
-        if (isPaint(s.backgroundColor)) fillBox(r.left, r.top - oy, r.width, r.height, parseFloat(s.borderTopLeftRadius) || 0, s.backgroundColor);
+        var rad = parseFloat(s.borderTopLeftRadius) || 0, bw = parseFloat(s.borderTopWidth) || 0;
+        if (isPaint(s.backgroundColor)) ops.push(function () {
+          if (s.boxShadow && s.boxShadow !== 'none') shadowBox(r.left, r.top - oy, r.width, r.height, rad, s.boxShadow);
+          fillBox(r.left, r.top - oy, r.width, r.height, rad, s.backgroundColor);
+        });
         var a = getComputedStyle(el, '::after');
         if (a.content && a.content !== 'none' && a.position === 'absolute' && isPaint(a.backgroundColor) && a.opacity !== '0') {
           var l = parseFloat(a.left) || 0, rt = parseFloat(a.right) || 0, h = parseFloat(a.height) || 1, b = parseFloat(a.bottom) || 0;
-          g.fillStyle = a.backgroundColor; g.fillRect(r.left + l, r.bottom - b - h - oy, r.width - l - rt, h);
+          ops.push(function () { g.fillStyle = a.backgroundColor; g.fillRect(r.left + l, r.bottom - b - h - oy, r.width - l - rt, h); });
         }
-        if (el.tagName.toLowerCase() === 'svg') svgs.push({ el: el, r: r });
+        if (el.tagName.toLowerCase() === 'svg') {
+          if (el.classList.contains('kc-bg')) ops.push(function () { return drawSvgs([{ el: el, r: r }]); });
+          else svgs.push({ el: el, r: r });
+        }
+        if (bw > 0 && s.borderTopStyle !== 'none' && isPaint(s.borderTopColor)) borders.push({ r: r, rad: rad, bw: bw, col: s.borderTopColor });
       });
+      var strokeBorders = function () {
+        borders.forEach(function (b) { g.strokeStyle = b.col; g.lineWidth = b.bw; boxPath(b.r.left + b.bw / 2, b.r.top - oy + b.bw / 2, b.r.width - b.bw, b.r.height - b.bw, Math.max(0, b.rad - b.bw / 2)); g.stroke(); });
+      };
       /* Words: one Range per word gives the browser's own position, so wrapping and spacing match exactly */
-      var tw = document.createTreeWalker(faqSec, NodeFilter.SHOW_TEXT), node, range = document.createRange();
-      while ((node = tw.nextNode())) {
-        var p = node.parentElement; if (!p || p.closest('svg') || !/\S/.test(node.data) || !shown(p)) continue;
-        var s = getComputedStyle(p);
-        g.font = s.fontStyle + ' ' + s.fontWeight + ' ' + s.fontSize + ' ' + s.fontFamily;
-        g.fillStyle = s.color; g.textBaseline = 'alphabetic';
-        if ('letterSpacing' in g) g.letterSpacing = s.letterSpacing === 'normal' ? '0px' : s.letterSpacing;
-        var underline = /underline/.test(s.textDecorationLine), re = /\S+/g, m;
-        while ((m = re.exec(node.data))) {
-          range.setStart(node, m.index); range.setEnd(node, m.index + m[0].length);
-          var wr = range.getClientRects()[0]; if (!wr || !onScreen(wr) || clipped(node, wr)) continue;
-          var word = s.textTransform === 'uppercase' ? m[0].toUpperCase() : m[0], mt = g.measureText(word);
-          var desc = mt.fontBoundingBoxDescent != null ? mt.fontBoundingBoxDescent : mt.actualBoundingBoxDescent;
-          var base = wr.bottom - desc - oy;
-          g.fillText(word, wr.left, base);
-          if (underline) { g.fillRect(wr.left, base + 3, wr.width, 1); }
+      var paintWords = function () {
+        var tw = document.createTreeWalker(faqSec, NodeFilter.SHOW_TEXT), node, range = document.createRange();
+        while ((node = tw.nextNode())) {
+          var p = node.parentElement; if (!p || p.closest('svg') || !/\S/.test(node.data) || !shown(p)) continue;
+          var s = getComputedStyle(p);
+          g.font = s.fontStyle + ' ' + s.fontWeight + ' ' + s.fontSize + ' ' + s.fontFamily;
+          g.fillStyle = s.color; g.textBaseline = 'alphabetic';
+          if ('letterSpacing' in g) g.letterSpacing = s.letterSpacing === 'normal' ? '0px' : s.letterSpacing;
+          var underline = /underline/.test(s.textDecorationLine), re = /\S+/g, m;
+          while ((m = re.exec(node.data))) {
+            range.setStart(node, m.index); range.setEnd(node, m.index + m[0].length);
+            var wr = range.getClientRects()[0]; if (!wr || !onScreen(wr) || clipped(node, wr)) continue;
+            var word = s.textTransform === 'uppercase' ? m[0].toUpperCase() : m[0], mt = g.measureText(word);
+            var desc = mt.fontBoundingBoxDescent != null ? mt.fontBoundingBoxDescent : mt.actualBoundingBoxDescent;
+            var base = wr.bottom - desc - oy;
+            g.fillText(word, wr.left, base);
+            if (underline) { g.fillRect(wr.left, base + 3, wr.width, 1); }
+          }
         }
-      }
-      /* Icons: serialise each SVG with its computed stroke/fill inlined, then draw it */
-      return Promise.all(svgs.map(function (it) {
+      };
+      /* SVGs: serialise each with its computed stroke/fill inlined, then draw it */
+      var drawSvgs = function (list) { return Promise.all(list.map(function (it) {
         var clone = it.el.cloneNode(true), src = [it.el].concat(Array.prototype.slice.call(it.el.querySelectorAll('*'))), dst = [clone].concat(Array.prototype.slice.call(clone.querySelectorAll('*')));
         src.forEach(function (n, i) {
           var cs = getComputedStyle(n);
@@ -3164,7 +3216,9 @@ document.addEventListener('DOMContentLoaded', function () {
           img.onerror = function () { res(); };
           img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(clone));
         });
-      })).then(function () { return c; });
+      })); };
+      return ops.reduce(function (done, op) { return done.then(op); }, Promise.resolve())
+        .then(function () { strokeBorders(); paintWords(); return drawSvgs(svgs); }).then(function () { return c; });
     };
     var capture = function () {
       if (!sheet || capturing || !dirty || engaged) return;
@@ -3511,10 +3565,83 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="wd-faq-content"><div class="wd-faq-content-inner">Each tier shows a flat build rate plus a monthly rate, both as starting points. The flat rate covers the build; the monthly rate covers hosting, updates, store compliance and your dashboard. Final scope and price are confirmed during a short discovery call. Custom apps are quoted individually. <a href="faq.html" class="wd-faq-more">See more general FAQs →</a></div></div>
       </div>
     </div>
+
+    <!-- Consultation strip (blog.html's newsletter panel, purple). Its smoke is one inline SVG rather than CSS mask
+         layers, so the peel's snapshot of this screen paints it exactly as the page does. -->
+    <div id="ka-consult">
+      <svg class="kc-bg" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="kc-cloud" cx=".65" cy=".42" r="1" gradientTransform="translate(.65 .42) scale(.7 .9) translate(-.65 -.42)">
+            <stop offset="0" stop-color="#A855F7"/><stop offset=".45" stop-color="#7C3AED" stop-opacity=".95"/><stop offset="1" stop-color="#4C1D95" stop-opacity=".8"/>
+          </radialGradient>
+          <radialGradient id="kc-band" cx=".5" cy="0" r="1" gradientTransform="translate(.5 0) scale(.9 .7) translate(-.5 0)">
+            <stop offset="0" stop-color="#9348F0" stop-opacity=".85"/><stop offset=".6" stop-color="#6D28D9" stop-opacity=".5"/><stop offset="1" stop-color="#3B1878" stop-opacity=".3"/>
+          </radialGradient>
+          <linearGradient id="kc-cloud-fade">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".18" stop-color="#fff" stop-opacity=".03"/><stop offset=".28" stop-color="#fff" stop-opacity=".15"/><stop offset=".36" stop-color="#fff" stop-opacity=".4"/><stop offset=".44" stop-color="#fff" stop-opacity=".72"/><stop offset=".52" stop-color="#fff" stop-opacity=".92"/><stop offset=".62" stop-color="#fff"/>
+          </linearGradient>
+          <radialGradient id="kc-band-fade" cx=".5" cy="-.05" r="1" gradientTransform="translate(.5 -.05) scale(.9 .45) translate(-.5 .05)">
+            <stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#fff" stop-opacity=".8"/><stop offset=".6" stop-color="#fff" stop-opacity=".4"/><stop offset=".85" stop-color="#fff" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="kc-dark-tl" cx="0" cy="0" r="1" gradientTransform="scale(.55 .6)">
+            <stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset=".65" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="kc-dark-bl" cx="0" cy="1" r="1" gradientTransform="translate(0 1) scale(.6 .65) translate(0 -1)">
+            <stop offset="0" stop-color="#000" stop-opacity=".65"/><stop offset=".65" stop-color="#000" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="kc-tint" cx=".09" cy=".03" r="1" gradientTransform="translate(.09 .03) scale(.38 .34) translate(-.09 -.03)">
+            <stop offset="0" stop-color="#8B5CF6" stop-opacity=".12"/><stop offset=".7" stop-color="#8B5CF6" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="kc-noise-a" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".007" numOctaves="5" seed="11" stitchTiles="stitch"/></filter>
+          <filter id="kc-noise-b" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".007" numOctaves="5" seed="23" stitchTiles="stitch"/></filter>
+          <filter id="kc-grain" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/></filter>
+          <filter id="kc-soft" x="-.1" y="-.1" width="1.2" height="1.2"><feGaussianBlur stdDeviation="15"/></filter>
+          <!-- The blog's masks read the noise's alpha, cut by a fade; alpha masks intersected the same way -->
+          <mask id="kc-cloud-fade-m" style="mask-type:alpha"><rect class="kc-fill" width="1200" height="300" fill="url(#kc-cloud-fade)"/></mask>
+          <mask id="kc-cloud-m" style="mask-type:alpha"><g mask="url(#kc-cloud-fade-m)"><rect class="kc-fill" width="1200" height="300" filter="url(#kc-noise-a)"/></g></mask>
+          <mask id="kc-band-fade-m" style="mask-type:alpha"><rect class="kc-fill" width="1200" height="300" fill="url(#kc-band-fade)"/></mask>
+          <mask id="kc-band-m" style="mask-type:alpha"><g mask="url(#kc-band-fade-m)"><rect class="kc-fill" width="1200" height="300" filter="url(#kc-noise-b)"/></g></mask>
+          <clipPath id="kc-round"><rect class="kc-fill kc-round" width="1200" height="300" rx="20"/></clipPath>
+        </defs>
+        <g clip-path="url(#kc-round)">
+          <rect class="kc-fill" width="1200" height="300" fill="#0a0a0a"/>
+          <g mask="url(#kc-cloud-m)"><rect class="kc-fill" width="1200" height="300" fill="url(#kc-cloud)" filter="url(#kc-soft)"/></g>
+          <g mask="url(#kc-band-m)"><rect class="kc-fill" width="1200" height="300" fill="url(#kc-band)" filter="url(#kc-soft)"/></g>
+          <rect class="kc-fill" width="1200" height="300" filter="url(#kc-grain)" opacity=".5" style="mix-blend-mode:overlay"/>
+          <rect class="kc-fill" width="1200" height="300" fill="url(#kc-dark-tl)"/>
+          <rect class="kc-fill" width="1200" height="300" fill="url(#kc-dark-bl)"/>
+          <rect class="kc-fill" width="1200" height="300" fill="url(#kc-tint)"/>
+        </g>
+      </svg>
+      <div class="kc-text">
+        <h3>Book a free 1-hour consultation</h3>
+        <p>Tell us about your app idea and we'll map out the features, timeline and cost together. No obligation, no sales pitch.</p>
+      </div>
+      <div class="kc-action">
+        <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=Free%201h%20Consultation" class="kc-btn">Book a Call <span aria-hidden="true" style="font-size:1.5em;line-height:0;">→</span></a>
+      </div>
+    </div>
   </div>
 </section>
 
 <script>
+/* Consultation strip: draw the smoke SVG in the card's own px. Like blog.html's masks, the smoke noise is a 760x260
+   texture stretched to the card on desktop, and kept at its natural scale on narrow (stacked, tall) cards. */
+(function () {
+  var card = document.getElementById('ka-consult');
+  if (!card || !('ResizeObserver' in window)) return;
+  var svg = card.querySelector('.kc-bg'), fills = svg.querySelectorAll('.kc-fill');
+  var smoke = svg.querySelectorAll('#kc-noise-a feTurbulence, #kc-noise-b feTurbulence');
+  new ResizeObserver(function () {
+    var w = Math.round(card.clientWidth), h = Math.round(card.clientHeight);
+    if (!w || !h) return;
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    Array.prototype.forEach.call(fills, function (r) { r.setAttribute('width', w); r.setAttribute('height', h); });
+    var stretch = window.innerWidth > 860, fx = stretch ? 0.007 * 760 / w : 0.007, fy = stretch ? 0.007 * 260 / h : 0.007;
+    Array.prototype.forEach.call(smoke, function (t) { t.setAttribute('baseFrequency', fx.toFixed(5) + ' ' + fy.toFixed(5)); });
+  }).observe(card);
+})();
+
 /* FAQ accordion + staggered reveal (accordion ported from ecommerce.html) */
 (function () {
   var list = document.getElementById('wd-faq-list');
