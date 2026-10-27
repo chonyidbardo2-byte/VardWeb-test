@@ -2186,9 +2186,9 @@
     html.ka-anim #wd-faq { position: relative; z-index: 3; min-height: 100vh; }
     html.ka-anim .ka-dark { position: relative; z-index: 1; padding-top: 0; }
     html.ka-anim .ka-peel > .ka-wa { position: sticky; top: 0; padding-top: 168px !important; }  /* 64px nav + the 104px left below the cards */
-    /* Links land at the end of the 140vh pin (30vh hold + 110vh tear, plus the nav offset nav-mobile.js subtracts): the FAQ
+    /* Links land at the end of the 130vh pin (20vh hold + 110vh tear, plus the nav offset nav-mobile.js subtracts): the FAQ
        is fully off screen there whether or not the peel ran, and the section still sits at the top */
-    html.ka-anim .ka-peel-anchor { top: calc(140vh + 80px); }
+    html.ka-anim .ka-peel-anchor { top: calc(130vh + 80px); }
     html.ka-anim .ka-peel-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
     html.ka-anim .ka-peel.is-live .ka-peel-canvas { display: block; }
 
@@ -3089,7 +3089,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var peelEase = function (t) { var p = Math.min(1, Math.max(0, t)); return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2.2) / 2; };
     var PEEL = { angleDeg: 196, tilt: 0.85, foldAmplitude: 0.13, foldFrequency: 4.2, edgeRoughness: 0.09, color: [1, 1, 1] };
     var TRAVEL = 1.1;   /* viewport heights of scroll the tear takes; fully torn at 80% of it */
-    var HOLD = 0.3;     /* viewport heights first spent with the sheet held still, so the FAQ comes to rest before it tears */
+    var HOLD = 0.2;     /* viewport heights first spent with the live FAQ held still (and still clickable) before it tears */
+    var WAIT = 0.2;     /* extra hold allowed, in TRAVELs, for a fresh snapshot after a toggle; past it the FAQ scrolls off */
 
     /* The dark band slides up under the FAQ's last screen, and the Add-Ons section stays pinned for the peel */
     var sizePeel = function () {
@@ -3100,15 +3101,31 @@ document.addEventListener('DOMContentLoaded', function () {
     ScrollTrigger.addEventListener('refreshInit', sizePeel);
 
     var sheet = initPeelGL(peelCanvas);
-    var texReady = false, dirty = true, capturing = false, engaged = false, lastP = 0;
+    var texReady = false, dirty = true, capturing = false, engaged = false, fallback = false, tearFrom = 0, holdPx = 0;
 
-    /* The cloth only takes over if the snapshot was ready as the peel began; otherwise the FAQ just scrolls off
-       the pinned section (never swapped in mid-scroll, so nothing jumps) */
+    /* Through the hold the live FAQ is held in place by a transform that cancels the scroll, its bottom on the screen's
+       bottom edge: exactly the frame the snapshot shows, and everything in it stays clickable. In the fallback it
+       stops following, so the FAQ simply scrolls off from where it was. */
+    var pinST = null;
+    var applyPin = function () {
+      if (!pinST) return;
+      var off = pinST.scroll() - pinST.start;
+      if (off <= 0) holdPx = 0;
+      else if (!fallback) holdPx = Math.min(off, (HOLD + WAIT * TRAVEL) * window.innerHeight);
+      faqSec.style.transform = holdPx ? 'translate3d(0,' + holdPx + 'px,0)' : '';
+    };
+
+    /* The cloth takes over the moment the tear starts, and only from a fresh snapshot. If a toggle left it stale, the
+       hold waits for it (up to WAIT); past that the FAQ just scrolls off the pinned section, never swapped mid-scroll */
     var render = function (p) {
-      if (p <= 0) engaged = false;
-      else if (lastP <= 0) engaged = !!sheet && texReady;
-      lastP = p;
-      var prog = peelEase(Math.max(0, p * (HOLD + TRAVEL) - HOLD) / (0.8 * TRAVEL));
+      var raw = p * (HOLD + TRAVEL) - HOLD;
+      if (raw <= 0) { engaged = false; fallback = false; }
+      else if (!engaged && !fallback) {
+        if (sheet && texReady && !dirty && !capturing) { engaged = true; tearFrom = raw; }
+        else if (raw >= WAIT * TRAVEL) fallback = true;
+      }
+      applyPin();
+      var prog = engaged ? peelEase((raw - tearFrom) / (0.8 * TRAVEL)) : 0;
       faqSec.style.visibility = engaged ? 'hidden' : '';
       var drawing = engaged && prog < 1;
       peel.classList.toggle('is-live', drawing);
@@ -3229,7 +3246,8 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(function (c) { capturing = false; if (dirty || engaged) { dirty = true; return; } sheet.setTexture(c); texReady = true; })
         .catch(function () { capturing = false; });
     };
-    var nearPeel = ScrollTrigger.create({ trigger: peel, start: 'top 200%', end: 'top top', onToggle: capture, onUpdate: capture });
+    var nearPeel = ScrollTrigger.create({ trigger: peel, start: 'top 200%', end: function () { return 'top top-=' + HOLD * window.innerHeight; },
+      invalidateOnRefresh: true, onToggle: capture, onUpdate: capture });
     var markDirty = function () { dirty = true; texReady = false; if (nearPeel.isActive) capture(); };
     /* A toggled item makes the snapshot stale at once, so it can never be used; re-measure and recapture once the
        accordion has settled. Until then a peel that starts falls back to plain scrolling. */
@@ -3238,7 +3256,14 @@ document.addEventListener('DOMContentLoaded', function () {
       var trig = e.target.closest('.wd-faq-trigger'); if (!trig || engaged) return;
       dirty = true; texReady = false;
       var content = trig.closest('.wd-faq-item').querySelector('.wd-faq-content'), done = false;
-      var settle = function () { if (done) return; done = true; clearTimeout(settleT); ScrollTrigger.refresh(); markDirty(); };
+      /* A toggle mid-hold grows or shrinks the held FAQ: step back by the hold so it stays where the reader sees it */
+      var settle = function () {
+        if (done) return; done = true; clearTimeout(settleT);
+        var back = holdPx > 0 && pinST ? pinST.scroll() - holdPx : null;
+        ScrollTrigger.refresh();
+        if (back != null && window.vwLenis) window.vwLenis.scrollTo(back, { immediate: true, force: true });
+        applyPin(); markDirty();
+      };
       clearTimeout(settleT); settleT = setTimeout(settle, 600);
       if (content) content.addEventListener('transitionend', function te(ev) { if (ev.propertyName !== 'max-height') return; content.removeEventListener('transitionend', te); settle(); });
     });
@@ -3249,6 +3274,8 @@ document.addEventListener('DOMContentLoaded', function () {
     gsap.to(peelState, { p: 1, ease: 'none',
       scrollTrigger: { trigger: peel, start: 'top top', end: function () { return '+=' + (HOLD + TRAVEL) * window.innerHeight; }, scrub: 0.6, invalidateOnRefresh: true },
       onUpdate: function () { render(peelState.p); } });
+    pinST = ScrollTrigger.create({ trigger: peel, start: 'top top', end: function () { return '+=' + (HOLD + TRAVEL) * window.innerHeight; },
+      invalidateOnRefresh: true, onUpdate: applyPin, onLeaveBack: applyPin, onRefresh: applyPin });
   }
 
   function initPeelGL(canvas) {
