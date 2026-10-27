@@ -3101,17 +3101,23 @@ document.addEventListener('DOMContentLoaded', function () {
     ScrollTrigger.addEventListener('refreshInit', sizePeel);
 
     var sheet = initPeelGL(peelCanvas);
-    var texReady = false, dirty = true, capturing = false, engaged = false, fallback = false, tearFrom = 0, holdPx = 0;
+    var texReady = false, dirty = true, capturing = false, engaged = false, fallback = false, tearFrom = 0, holdPx = 0, freeze = null;
 
     /* Through the hold the live FAQ is held in place by a transform that cancels the scroll, its bottom on the screen's
-       bottom edge: exactly the frame the snapshot shows, and everything in it stays clickable. In the fallback it
-       stops following, so the FAQ simply scrolls off from where it was. */
+       bottom edge: exactly the frame the snapshot shows, and everything in it stays clickable. Without the cloth (the
+       fallback, or scrolling past the hold) it lets go: the hold unwinds as the reader scrolls, so the FAQ leaves at
+       double speed from where it was and ends with no transform, where links expect it. */
     var pinST = null;
     var applyPin = function () {
       if (!pinST) return;
-      var off = pinST.scroll() - pinST.start;
-      if (off <= 0) holdPx = 0;
-      else if (!fallback) holdPx = Math.min(off, (HOLD + WAIT * TRAVEL) * window.innerHeight);
+      var off = pinST.scroll() - pinST.start, max = (HOLD + WAIT * TRAVEL) * window.innerHeight;
+      if (off <= 0) { holdPx = 0; freeze = null; }
+      else if (engaged) holdPx = Math.min(off, max);
+      else if (fallback || off > max) {
+        if (!freeze) freeze = { off: Math.min(off, max), px: Math.min(holdPx || off, max) };
+        holdPx = Math.max(0, freeze.px - (off - freeze.off));
+      }
+      else { holdPx = off; freeze = null; }
       faqSec.style.transform = holdPx ? 'translate3d(0,' + holdPx + 'px,0)' : '';
     };
 
