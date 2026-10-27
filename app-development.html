@@ -1706,6 +1706,8 @@
     .wa-note b { color: var(--text-1); font-weight: 600; }
     .wa-note s, .wa-list s { color: var(--text-2); text-decoration-color: rgba(255,90,95,0.75); text-decoration-thickness: 1.5px; }
     @media (min-width: 1240px) { .wa-list li span, .wa-note { white-space: nowrap; } }
+    .wa-note--toggle { display: flex; align-items: center; gap: 10px; }
+    .wa-note--toggle .addon-toggle { margin-top: 0; }
     /* Store-badge CTAs: black badge, logo left, small "Add" over the store name */
     .wa-cta { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 16px; border-radius: 10px;
       color: #fff; text-decoration: none; background: #000; border: 1px solid rgba(255,255,255,0.28);
@@ -2184,9 +2186,9 @@
     html.ka-anim #wd-faq { position: relative; z-index: 3; min-height: 100vh; }
     html.ka-anim .ka-dark { position: relative; z-index: 1; padding-top: 0; }
     html.ka-anim .ka-peel > .ka-wa { position: sticky; top: 0; padding-top: 168px !important; }  /* 64px nav + the 104px left below the cards */
-    /* Links land at the end of the 110vh pin (plus the nav offset nav-mobile.js subtracts): the FAQ is fully off screen
-       there whether or not the peel ran, and the section still sits at the top */
-    html.ka-anim .ka-peel-anchor { top: calc(110vh + 80px); }
+    /* Links land at the end of the 140vh pin (30vh hold + 110vh tear, plus the nav offset nav-mobile.js subtracts): the FAQ
+       is fully off screen there whether or not the peel ran, and the section still sits at the top */
+    html.ka-anim .ka-peel-anchor { top: calc(140vh + 80px); }
     html.ka-anim .ka-peel-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
     html.ka-anim .ka-peel.is-live .ka-peel-canvas { display: block; }
 
@@ -3057,12 +3059,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var peelCanvas = peel.querySelector('.ka-peel-canvas'), darkBand = peel.closest('.ka-dark'), waSec = peel.querySelector('.ka-wa');
     var peelEase = function (t) { var p = Math.min(1, Math.max(0, t)); return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2.2) / 2; };
     var PEEL = { angleDeg: 196, tilt: 0.85, foldAmplitude: 0.13, foldFrequency: 4.2, edgeRoughness: 0.09, color: [1, 1, 1] };
-    var TRAVEL = 1.1;   /* viewport heights of scroll the peel takes; fully torn at 80% of it */
+    var TRAVEL = 1.1;   /* viewport heights of scroll the tear takes; fully torn at 80% of it */
+    var HOLD = 0.3;     /* viewport heights first spent with the sheet held still, so the FAQ comes to rest before it tears */
 
     /* The dark band slides up under the FAQ's last screen, and the Add-Ons section stays pinned for the peel */
     var sizePeel = function () {
       darkBand.style.marginTop = -window.innerHeight + 'px';
-      peel.style.height = (waSec.offsetHeight + TRAVEL * window.innerHeight) + 'px';
+      peel.style.height = (waSec.offsetHeight + (HOLD + TRAVEL) * window.innerHeight) + 'px';
     };
     sizePeel();
     ScrollTrigger.addEventListener('refreshInit', sizePeel);
@@ -3076,7 +3079,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (p <= 0) engaged = false;
       else if (lastP <= 0) engaged = !!sheet && texReady;
       lastP = p;
-      var prog = peelEase(p / 0.8);
+      var prog = peelEase(Math.max(0, p * (HOLD + TRAVEL) - HOLD) / (0.8 * TRAVEL));
       faqSec.style.visibility = engaged ? 'hidden' : '';
       var drawing = engaged && prog < 1;
       peel.classList.toggle('is-live', drawing);
@@ -3102,12 +3105,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return true;
       };
+      /* Collapsed answers keep their text in flow, clipped by overflow: hidden; skip anything a clipping ancestor hides */
+      var clipped = function (el, r) {
+        for (var n = el.parentElement; n && n !== faqSec.parentNode; n = n.parentElement) {
+          var s = getComputedStyle(n);
+          if (s.overflowX === 'visible' && s.overflowY === 'visible') continue;
+          var cr = n.getBoundingClientRect();
+          if (r.bottom <= cr.top + 0.5 || r.top >= cr.bottom - 0.5 || r.right <= cr.left + 0.5 || r.left >= cr.right - 0.5) return true;
+        }
+        return false;
+      };
       var isPaint = function (col) { return col && col !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(col); };
       var fillBox = function (x, y, w, h, rad, col) { g.fillStyle = col; g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, rad); else g.rect(x, y, w, h); g.fill(); };
       var svgs = [];
       Array.prototype.forEach.call(faqSec.querySelectorAll('*'), function (el) {
         if (el.closest('svg') && el.tagName.toLowerCase() !== 'svg') return;
-        var r = el.getBoundingClientRect(); if (!onScreen(r) || !shown(el)) return;
+        var r = el.getBoundingClientRect(); if (!onScreen(r) || !shown(el) || clipped(el, r)) return;
         var s = getComputedStyle(el);
         if (isPaint(s.backgroundColor)) fillBox(r.left, r.top - oy, r.width, r.height, parseFloat(s.borderTopLeftRadius) || 0, s.backgroundColor);
         var a = getComputedStyle(el, '::after');
@@ -3128,7 +3141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var underline = /underline/.test(s.textDecorationLine), re = /\S+/g, m;
         while ((m = re.exec(node.data))) {
           range.setStart(node, m.index); range.setEnd(node, m.index + m[0].length);
-          var wr = range.getClientRects()[0]; if (!wr || !onScreen(wr)) continue;
+          var wr = range.getClientRects()[0]; if (!wr || !onScreen(wr) || clipped(node, wr)) continue;
           var word = s.textTransform === 'uppercase' ? m[0].toUpperCase() : m[0], mt = g.measureText(word);
           var desc = mt.fontBoundingBoxDescent != null ? mt.fontBoundingBoxDescent : mt.actualBoundingBoxDescent;
           var base = wr.bottom - desc - oy;
@@ -3163,13 +3176,23 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     var nearPeel = ScrollTrigger.create({ trigger: peel, start: 'top 200%', end: 'top top', onToggle: capture, onUpdate: capture });
     var markDirty = function () { dirty = true; texReady = false; if (nearPeel.isActive) capture(); };
-    faqSec.addEventListener('click', function (e) { if (e.target.closest('.wd-faq-trigger')) setTimeout(markDirty, 450); });
+    /* A toggled item makes the snapshot stale at once, so it can never be used; re-measure and recapture once the
+       accordion has settled. Until then a peel that starts falls back to plain scrolling. */
+    var settleT = null;
+    faqSec.addEventListener('click', function (e) {
+      var trig = e.target.closest('.wd-faq-trigger'); if (!trig || engaged) return;
+      dirty = true; texReady = false;
+      var content = trig.closest('.wd-faq-item').querySelector('.wd-faq-content'), done = false;
+      var settle = function () { if (done) return; done = true; clearTimeout(settleT); ScrollTrigger.refresh(); markDirty(); };
+      clearTimeout(settleT); settleT = setTimeout(settle, 600);
+      if (content) content.addEventListener('transitionend', function te(ev) { if (ev.propertyName !== 'max-height') return; content.removeEventListener('transitionend', te); settle(); });
+    });
     var rzT = null;
     window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(markDirty, 300); });
 
     var peelState = { p: 0 };
     gsap.to(peelState, { p: 1, ease: 'none',
-      scrollTrigger: { trigger: peel, start: 'top top', end: function () { return '+=' + TRAVEL * window.innerHeight; }, scrub: 0.6, invalidateOnRefresh: true },
+      scrollTrigger: { trigger: peel, start: 'top top', end: function () { return '+=' + (HOLD + TRAVEL) * window.innerHeight; }, scrub: 0.6, invalidateOnRefresh: true },
       onUpdate: function () { render(peelState.p); } });
   }
 
@@ -3557,7 +3580,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <p class="wa-label">PWA</p>
         <p class="wa-price"><span class="wa-amt">C$900</span><span class="wa-mo">+ C$25/mo</span></p>
         <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Home-screen icon and splash</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Offline pages and caching</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Web push notifications</span></li></ul>
-        <p class="wa-note">No store fees and no review wait.</p>
+        <p class="wa-note">Installs right from your site.</p>
         <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=PWA" class="wa-cta" aria-label="Add PWA to my site"><svg class="wa-cta-logo" viewBox="0 0 24 24" fill="none" stroke="var(--wa-c)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 7v7"/><path d="m8.5 11 3.5 3.5 3.5-3.5"/><path d="M10 18.5h4"/></svg><span class="wa-cta-txt"><small>Add</small><strong>PWA</strong></span></a>
       </div>
       <div class="wa-card" style="--wa-c:#34A853;">
@@ -3577,8 +3600,8 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="wa-card wa-card--featured" style="--wa-c:#A855F7;">
         <span class="wa-badge">Best value</span><p class="wa-label">Both stores</p>
         <p class="wa-price"><span class="wa-amt">C$3,750</span><span class="wa-mo">+ C$150/mo</span></p>
-        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Google Play and App Store</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>One codebase, kept in step</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Saves C$750 + C$25/mo</span></li></ul>
-        <p class="wa-note">Add the PWA for <s>C$900</s> <b>C$500</b>.</p>
+        <ul class="wa-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Google Play and App Store</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Updates ship to both at once</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg><span>Saves C$750 + C$25/mo</span></li></ul>
+        <p class="wa-note wa-note--toggle"><button type="button" class="addon-toggle wa-addon" style="--tier-color:#A855F7;" data-addon-label="PWA (C$500 with store bundle)" data-add-amt="C$4,250" aria-pressed="false" aria-label="Add the PWA for C$500"><svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg><svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></button><span>Add the PWA for <s>C$900</s> <b>C$500</b>.</span></p>
         <a href="contact.html?type=App%20Development&amp;typeColor=%23A855F7&amp;service=Google%20Play%20%2B%20App%20Store" class="wa-cta" aria-label="Add Both Stores to my site"><span class="wa-cta-logos"><svg class="wa-cta-logo" viewBox="-1.5 0 31.99 31.99" aria-hidden="true"><path fill="#EA4335" d="M13.54 15.28.12 29.34a3.66 3.66 0 0 0 5.33 2.16l15.1-8.6Z"/><path fill="#FBBC04" d="m27.11 12.89-6.53-3.74-7.35 6.45 7.38 7.28 6.48-3.7a3.54 3.54 0 0 0 1.5-4.79 3.62 3.62 0 0 0-1.5-1.5z"/><path fill="#4285F4" d="M.12 2.66a3.57 3.57 0 0 0-.12.92v24.840a3.57 3.57 0 0 0 .12.92L14 15.64Z"/><path fill="#34A853" d="m13.64 16 6.94-6.85L5.5.51A3.73 3.73 0 0 0 3.63 0 3.64 3.64 0 0 0 .12 2.65Z"/></svg><svg class="wa-cta-logo" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg></span><span class="wa-cta-txt"><small>Add</small><strong>Both Stores</strong></span></a>
       </div>
     </div>
@@ -4690,6 +4713,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     card._updateAddonsHref = updateHref;
     updateHref();
+  });
+})();
+
+/* ── Add-Ons cards: an optional add-on toggle (Both Stores + PWA) swaps the card's price and its CTA's addons= ── */
+(function () {
+  document.querySelectorAll('.wa-card').forEach(function (card) {
+    var btn = card.querySelector('.wa-addon'), cta = card.querySelector('.wa-cta'), amt = card.querySelector('.wa-amt');
+    if (!btn || !cta || !amt) return;
+    var baseAmt = amt.textContent, baseHref = cta.getAttribute('href');
+    btn.addEventListener('click', function () {
+      var on = btn.classList.toggle('selected');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      amt.textContent = on ? btn.getAttribute('data-add-amt') : baseAmt;
+      var parts = baseHref.split('?'), params = new URLSearchParams(parts[1] || '');
+      if (on) params.set('addons', btn.getAttribute('data-addon-label'));
+      cta.href = parts[0] + '?' + params.toString();
+    });
   });
 })();
 </script>
