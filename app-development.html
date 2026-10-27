@@ -375,6 +375,10 @@
     /* Desktop: a half-cut phone between Contact Us and the card's right edge; the JS sizer sets its box */
     .wd-cta-phone { display: none; }
     @media (min-width: 1025px) {
+      /* Desktop: copy and buttons sit left (still vertically centred), the phone takes the right column */
+      .wd-cta-card { align-items: flex-start; padding-left: 88px; }
+      .wd-cta-content { align-items: flex-start; text-align: left; width: auto; }
+      .wd-cta-row { justify-content: flex-start; width: auto; }
       .wd-cta-phone.is-placed { display: block; position: absolute; z-index: 1; pointer-events: none;
         left: var(--ph-left); top: var(--ph-top); width: var(--ph-w); }
     }
@@ -5437,7 +5441,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const card = document.getElementById('wd-cta-card');
     if (!bg || !card) return;
 
-    /* Desktop phone: centred in the gap right of the sub-copy and Contact Us, top kept below the heading, sized
+    /* Desktop phone: centred in the gap right of the copy and Contact Us, top level with the heading, sized
        so about half of it shows above the card's bottom edge (and never wider than the gap allows) */
     const phone = card.querySelector('.wd-cta-phone');
     const heading = card.querySelector('.wd-cta-heading');
@@ -5445,17 +5449,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const contact = card.querySelector('.wd-cta-btn-outline');
     if (phone && heading && sub && contact) {
       const desktop = window.matchMedia('(min-width: 1025px)');
-      const subRange = document.createRange();
+      const subRange = document.createRange(), headRange = document.createRange();
       subRange.selectNodeContents(sub);
+      headRange.selectNodeContents(heading);
+      const rightOf = function (range) {
+        return Math.max.apply(null, Array.prototype.map.call(range.getClientRects(), function (r) { return r.right; }));
+      };
       const placePhone = function () {
         if (!desktop.matches) { phone.classList.remove('is-placed'); return; }
         const c = card.getBoundingClientRect();
-        /* the sub-copy's lines are narrower than its box, so measure the text itself */
-        const textR = Math.max.apply(null, Array.prototype.map.call(subRange.getClientRects(), function (r) { return r.right; }));
-        const gapL = Math.max(contact.getBoundingClientRect().right, textR) - c.left, gap = c.width - gapL, pad = 40;
-        const top = heading.getBoundingClientRect().bottom - c.top + 32;
-        const w = Math.min((c.height - top) * 2 * 433 / 882, gap - 2 * pad);
-        if (w < 170) { phone.classList.remove('is-placed'); return; }
+        /* the text lines are narrower than their boxes, so measure the text itself */
+        const textR = Math.max(rightOf(subRange), rightOf(headRange));
+        const gapL = Math.max(contact.getBoundingClientRect().right, textR) - c.left, gap = c.width - gapL, pad = 48;
+        const headTop = heading.getBoundingClientRect().top - c.top;
+        const w = Math.min((c.height - headTop) * 2 * 433 / 882, gap - 2 * pad);
+        if (w < 220) { phone.classList.remove('is-placed'); return; }
+        /* a narrower gap shrinks the phone, so drop it to keep about half cut off by the bottom edge */
+        const top = Math.max(headTop, c.height - w * 882 / 433 / 2);
         phone.style.setProperty('--ph-w', w + 'px');
         phone.style.setProperty('--ph-top', top + 'px');
         phone.style.setProperty('--ph-left', (gapL + (gap - w) / 2) + 'px');
