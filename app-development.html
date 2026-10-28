@@ -1984,7 +1984,7 @@
     .ka-hero-proof i { width: 7px; height: 7px; border-radius: 50%; background: var(--ka-accent); box-shadow: 0 0 0 3px rgba(124,58,237,0.18); flex-shrink: 0; }
     @media (max-width: 860px) {
       .ka-hero { align-items: stretch; min-height: 0; }
-      /* No parallax below 1026px, so the hero crops its phone again instead of overlapping the next section */
+      /* Parallax here is gentle (8%), so the hero still contains its phone instead of overlapping the next section */
       .ka-hero { background: #fff; overflow: hidden; }
       .ka-hero-bg { height: auto; bottom: 0; background:
           radial-gradient(70% 30% at 50% 74%, rgba(168,85,247,0.45) 0%, transparent 70%),
@@ -2000,10 +2000,14 @@
       .ka-hero-phone { order: 1; position: relative; margin-top: calc(18vw + 32px); }
       .ka-hero-word--m { display: block; top: -18vw; font-size: 30vw; letter-spacing: -0.05em; z-index: 0; }
       .ka-hero-phone-enter { position: relative; z-index: 1; width: min(300px, 72vw); margin-bottom: 0; }
-      .ka-hero-ctas { order: 2; margin-top: 40px; }
-      .ka-hero-proof { order: 3; }
+      .ka-hero-ctas { order: 2; margin-top: 40px; justify-content: center; }
+      /* Block, not flex, so the dot sits inline with the centred first line */
+      .ka-hero-proof { order: 3; display: block; text-align: center; }
+      .ka-hero-proof i { display: inline-block; vertical-align: middle; margin: -2px 8px 0 0; }
+      .ka-hero .ka-hero-proof .proof-br { display: inline; }
     }
     .ka-hero-word--m { display: none; }
+    .ka-hero .proof-br { display: none; }
     @media (max-width: 860px) { .ka-hero-word--m { display: block; } }
 
     /* ── 2. Platforms: three phones on a dashed connector ── */
@@ -2025,6 +2029,10 @@
       /* Pinned and scrubbed left to right (see the phones script); bottom room lets the purple glow fade out instead of clipping */
       .ka-phones { justify-content: flex-start; gap: 16px; padding: 8px var(--ka-pad-x) 130px; margin-bottom: -80px; }
       .ka-phones > .ka-phone-slot { width: min(76vw, 320px); }
+      /* The big purple shadow layer clips inside pinned, transformed slots on some phones; a gradient glow behind each phone can't */
+      .ka-phones .ka-device { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35), 0 2px 4px rgba(12,10,18,0.22), 0 24px 48px -18px rgba(28,10,60,0.55); }
+      .ka-phones > .ka-phone-slot::after { content: ''; position: absolute; z-index: -1; left: -6%; right: -6%; top: 78%; height: 36%; pointer-events: none;
+        background: radial-gradient(closest-side, rgba(124,58,237,0.38), rgba(124,58,237,0.12) 55%, transparent); }
       .ka-phones > .ka-phone-slot--side { margin-top: 0; }
       .ka-phones-line { display: none; }
     }
@@ -2040,7 +2048,10 @@
     .ka-tf-text { width: 80%; text-align: center; font-family: 'Host Grotesk', sans-serif; font-weight: 500; font-size: 5vw; line-height: 1.4;
       letter-spacing: -0.03em; color: #111; }
     @media (max-width: 1025px) { .ka-tf-text { width: 88%; font-size: 6.5vw; } }
-    @media (max-width: 768px) { .ka-tf-text { width: 95%; font-size: 8vw; } }
+    @media (max-width: 768px) { .ka-tf-text { width: 95%; font-size: 8vw; }
+      /* Mobile: no centring box (it never pinned), just the section rhythm */
+      .ka-tf, .ka-tf-pin { height: auto; }
+      .ka-tf-pin { position: static; padding: var(--ka-pad-y) 0; } }
 
     /* ── 4. Scroll stack (cards slide in, older cards ride up) ── */
     .ka-stack-head .ka-lead { margin-top: 22px; max-width: 26em; }
@@ -2125,6 +2136,12 @@
     .ka-orb-tip.tt-icon-trigger:focus-visible { outline: 2px solid #C4B5FD; outline-offset: 2px; }
     .ka-orb-tip.tt-icon-trigger:active { transform: scale(0.92); }
     /* Small phone tiles: tuck the "?" into the corner so it clears the logo */
+    /* Mobile: the sticky box hugs the orb and its tiles (93vw) and sticks centred, so no empty screen sits above or below it */
+    @media (max-width: 768px) {
+      html.ka-anim .ka-orb-sec { height: calc(100vh + 93vw + 64px); }
+      /* Room below only, for the tiles' shadows; the sticky top keeps the orb itself centred under the nav */
+      html.ka-anim .ka-orb-pin { height: calc(93vw + 64px); top: calc(50vh + 24px - 46.5vw); padding: 0 0 48px; overflow: visible; }
+    }
     @media (max-width: 768px) {
       .ka-orb-tile img { width: 52%; height: 52%; }
       .ka-orb-tip.tt-icon-trigger { top: 3px; right: 3px; width: 20px; height: 20px; }
@@ -2136,7 +2153,8 @@
 
     /* ── 5. Horizontal card track (pinned, scrubbed) ── */
     .ka-track-sec { position: relative; z-index: 2; margin-top: 16vh; background: #fff; }
-    @media (max-width: 768px) { .ka-track-sec { margin-top: 0; } }
+    /* Mobile: top-align the pinned heading and cards instead of centring, so the gap above matches the other sections */
+    @media (max-width: 768px) { .ka-track-sec { margin-top: 0; } .ka-track-sec .ka-track-pin { justify-content: flex-start; padding-top: 104px; } }
     .ka-track-pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
       padding: 64px 0 0; }
     .ka-track-head { padding: 0 var(--ka-pad-x); }
@@ -2181,6 +2199,8 @@
 
     /* ── 6. Timeline: line draws, dot travels, text lights (scrubbed) ── */
     .ka-flow { text-align: center; }
+    /* Mobile: ride up into the pinned track's empty bottom so this gap matches the rest */
+    @media (max-width: 768px) and (prefers-reduced-motion: no-preference) { html.ka-anim .ka-flow { position: relative; z-index: 3; margin-top: -96px; } }
     .ka-flow .ka-lead { margin: 22px auto 0; max-width: 46em; }
     .ka-steps { margin-top: clamp(24px, 3vw, 48px); display: flex; flex-direction: column; align-items: center; list-style: none; }
     .ka-step { display: flex; flex-direction: column; align-items: center; max-width: 30em; }
@@ -2594,7 +2614,7 @@
           </div>
         </div>
       </div>
-      <p class="ka-hero-proof" data-fade data-delay="0.3"><i aria-hidden="true"></i>Push, offline and Face ID on every tier. Built to WCAG 2.2 AA.</p>
+      <p class="ka-hero-proof" data-fade data-delay="0.3"><i aria-hidden="true"></i>Push, offline and Face ID on every tier.<br class="proof-br"> Built to WCAG 2.2 AA.</p>
     </div>
   </div>
 </section>
@@ -2954,6 +2974,12 @@ document.addEventListener('DOMContentLoaded', function () {
   mm.add('(min-width: 1026px) and (prefers-reduced-motion: no-preference)', function () {
     gsap.to('.ka-hero-phone-par', { yPercent: 15, ease: 'none', scrollTrigger: { trigger: '.ka-hero', start: 'top top', end: 'bottom top', scrub: 0.2 } });
   });
+  /* Smaller screens get a gentler version: the phone sinks and the APPS behind it rises, for the same depth */
+  mm.add('(max-width: 1025px) and (prefers-reduced-motion: no-preference)', function () {
+    var heroST = { trigger: '.ka-hero', start: 'top top', end: 'bottom top', scrub: 0.2 };
+    gsap.to('.ka-hero-phone-par', { yPercent: 8, ease: 'none', scrollTrigger: heroST });
+    gsap.to('.ka-hero-word--m', { yPercent: -12, ease: 'none', scrollTrigger: heroST });
+  });
 
   /* FadeUp */
   if (!reduce) {
@@ -3004,7 +3030,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (tf) {
       var chars = SplitText.create(tf, { type: 'words,chars', charsClass: 'ka-char' }).chars;
       gsap.set(chars, { color: '#dddddd', opacity: 0.55 });
-      var st = { trigger: '.ka-tf', start: 'top 75%', end: 'bottom 85%', scrub: 0.6 };
+      var tfNarrow = window.matchMedia('(max-width: 768px)').matches;
+      var st = { trigger: '.ka-tf', start: tfNarrow ? 'top 85%' : 'top 75%', end: tfNarrow ? 'bottom 40%' : 'bottom 85%', scrub: 0.6 };
       if (reduce) gsap.to(chars, { color: '#111111', opacity: 1, ease: 'none', scrollTrigger: st });
       else gsap.timeline({ scrollTrigger: st })
         .to(chars, { color: ACCENT, opacity: 1, duration: 4.2, ease: 'sine.inOut', stagger: 0.5 }, 0)
@@ -3032,7 +3059,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var travel = function () { var last = slots[slots.length - 1];
       var right = last.getBoundingClientRect().right - gsap.getProperty(last, 'x');
       return Math.max(0, right - (document.documentElement.clientWidth - parseFloat(getComputedStyle(row).paddingRight))); };
-    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 72px', end: function () { return '+=' + (travel() + 0.15 * window.innerHeight); },
+    /* Pin with the phone centred in the space under the nav */
+    var pinAt = function () { var nav = 64, dev = slots[0].querySelector('.ka-device').offsetHeight;
+      return 'top ' + Math.max(72, Math.round(nav + (window.innerHeight - nav - dev) / 2 - parseFloat(getComputedStyle(row).paddingTop))) + 'px'; };
+    gsap.timeline({ scrollTrigger: { trigger: row, start: pinAt, end: function () { return '+=' + (travel() + 0.15 * window.innerHeight); },
         pin: true, scrub: 0.5, invalidateOnRefresh: true } })
       .to(slots, { x: function () { return -travel(); }, ease: 'none', duration: 1 })
       .to({}, { duration: 0.15 });
@@ -3076,8 +3106,12 @@ document.addEventListener('DOMContentLoaded', function () {
     ScrollTrigger.addEventListener('refreshInit', sizeOrbTuck);
     var orb = orbSec.querySelector('.ka-orb');
     var radius = function () { return orb.offsetWidth / 2; };
+    /* Scrub while the pin is stuck: at desktop that is top top / bottom bottom; on mobile the pin is a smaller, centred box */
+    var orbPin = orbSec.querySelector('.ka-orb-pin');
+    var pinTop = function () { return parseFloat(getComputedStyle(orbPin).top) || 0; };
     var otl = gsap.timeline({ defaults: { ease: 'none' },
-      scrollTrigger: { trigger: orbSec, start: 'top top', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true } });
+      scrollTrigger: { trigger: orbSec, start: function () { return 'top ' + pinTop() + 'px'; },
+        end: function () { return 'bottom ' + (pinTop() + orbPin.offsetHeight) + 'px'; }, scrub: 0.5, invalidateOnRefresh: true } });
     gsap.utils.toArray('.ka-orb-tile', orbSec).forEach(function (tile, i) {
       var a = i * Math.PI / 4;
       otl.fromTo(tile, { x: 0, y: 0 },
@@ -3483,11 +3517,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <script>
 /* ── Hero wave: raw-WebGL port of the reference template's gradient shader.
    A travelling crest where the black crown meets the colour, a second crest on
-   the melt into white. Desktop only; below 1026px the CSS gradient shows. ── */
+   the melt into white. Runs at every width; the CSS gradient shows only without WebGL. ── */
 (function () {
   var canvas = document.querySelector('.ka-hero-wave');
   if (!canvas) return;
-  if (!window.matchMedia('(min-width: 1026px)').matches) { canvas.remove(); return; }
   var gl = canvas.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
   if (!gl) { canvas.remove(); return; }
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
