@@ -2022,12 +2022,16 @@
     @media (max-width: 768px) {
       .ka-split-head { flex-direction: column; gap: 20px; }
       .ka-split-head .ka-lead { text-align: left; }
-      .ka-phones { justify-content: flex-start; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 8px var(--ka-pad-x) 24px;
-        scroll-padding-left: var(--ka-pad-x); scrollbar-width: none; }
-      .ka-phones::-webkit-scrollbar { display: none; }
-      .ka-phones > .ka-phone-slot { width: min(76vw, 320px); scroll-snap-align: center; }
+      /* Pinned and scrubbed left to right (see the phones script); bottom room lets the purple glow fade out instead of clipping */
+      .ka-phones { justify-content: flex-start; gap: 16px; padding: 8px var(--ka-pad-x) 130px; margin-bottom: -80px; }
+      .ka-phones > .ka-phone-slot { width: min(76vw, 320px); }
       .ka-phones > .ka-phone-slot--side { margin-top: 0; }
       .ka-phones-line { display: none; }
+    }
+    @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+      .ka-phones { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: var(--ka-pad-x); scrollbar-width: none; }
+      .ka-phones::-webkit-scrollbar { display: none; }
+      .ka-phones > .ka-phone-slot { scroll-snap-align: center; }
     }
 
     /* ── 3. Statement: per-character colour wave (scrubbed) ── */
@@ -3020,6 +3024,19 @@ document.addEventListener('DOMContentLoaded', function () {
       gsap.from(s, { opacity: 0, duration: 0.8, ease: 'power2.out', scrollTrigger: { trigger: s, start: 'top 85%', once: true } });
     });
   });
+  /* Mobile: the phones pin and slide left to right, then the page carries on */
+  mm.add('(max-width: 768px) and (prefers-reduced-motion: no-preference)', function () {
+    var row = document.querySelector('.ka-phones');
+    var slots = gsap.utils.toArray('.ka-phone-slot', row);
+    /* Slide until the last phone's right edge meets the right gutter */
+    var travel = function () { var last = slots[slots.length - 1];
+      var right = last.getBoundingClientRect().right - gsap.getProperty(last, 'x');
+      return Math.max(0, right - (document.documentElement.clientWidth - parseFloat(getComputedStyle(row).paddingRight))); };
+    gsap.timeline({ scrollTrigger: { trigger: row, start: 'top 72px', end: function () { return '+=' + (travel() + 0.15 * window.innerHeight); },
+        pin: true, scrub: 0.5, invalidateOnRefresh: true } })
+      .to(slots, { x: function () { return -travel(); }, ease: 'none', duration: 1 })
+      .to({}, { duration: 0.15 });
+  });
   if (!reduce) gsap.fromTo('.ka-phones-line', { scaleX: 0 }, { scaleX: 1, transformOrigin: 'left center', duration: 0.8, ease: 'power2.out',
     scrollTrigger: { trigger: '.ka-phones', start: 'top 65%' } });
 
@@ -3091,8 +3108,13 @@ document.addEventListener('DOMContentLoaded', function () {
       sizeTrack();
       ScrollTrigger.addEventListener('refreshInit', sizeTrack);
       /* Slide, then hold the last card still before the pin releases */
+      /* Desktop starts 70% of the track off to the right. Mobile's track is far wider than the screen, so it starts a
+         screen-relative distance instead and the first card enters at the same point it does on desktop */
+      var narrow = window.matchMedia('(max-width: 768px)');
+      var from = function () { var cs = getComputedStyle(clip); return 2.6 * (clip.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)); };
       gsap.timeline({ scrollTrigger: { trigger: tsec, start: 'top 60%', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true } })
-        .fromTo(track, { xPercent: 70, x: 0 }, { xPercent: 0, x: function () { return -travel(); }, ease: 'none', duration: 1 })
+        .fromTo(track, { xPercent: function () { return narrow.matches ? 0 : 70; }, x: function () { return narrow.matches ? from() : 0; } },
+          { xPercent: 0, x: function () { return -travel(); }, ease: 'none', duration: 1 })
         .to({}, { duration: 0.25 });
     }
     /* Pointer-following texture glow on each card */
