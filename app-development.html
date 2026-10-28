@@ -2143,6 +2143,8 @@
       html.ka-anim .ka-orb-pin { height: calc(93vw + 64px); top: calc(50vh + 24px - 46.5vw); padding: 0 0 48px; overflow: visible; }
     }
     @media (max-width: 768px) {
+      /* Glow scaled to the small tile so it sits centred under it, not 18px below */
+      .ka-orb-tile { box-shadow: 0 1px 3px rgba(12,10,18,0.12), 0 calc(var(--tile) * 0.05) calc(var(--tile) * 0.45) calc(var(--tile) * -0.1) rgba(91,33,182,0.4); }
       .ka-orb-tile img { width: 52%; height: 52%; }
       .ka-orb-tip.tt-icon-trigger { top: 3px; right: 3px; width: 20px; height: 20px; }
     }
@@ -3138,18 +3140,32 @@ document.addEventListener('DOMContentLoaded', function () {
     if (reduce) {
       tsec.classList.add('is-static');
     } else {
-      var sizeTrack = function () { tsec.style.height = (window.innerHeight + travel() + hold()) + 'px'; };
+      /* Mobile cards are nearly screen-wide, so the slide is paced per card (screen heights of scroll each) to stay readable */
+      var narrow = window.matchMedia('(max-width: 768px)');
+      var CARD = 0.45, DWELL = 0.1;
+      var mSlide = function () { return (track.querySelectorAll('.ka-mcard').length - 1) * CARD * window.innerHeight; };
+      var sizeTrack = function () {
+        tsec.style.height = (window.innerHeight + (narrow.matches ? DWELL * window.innerHeight + mSlide() : travel()) + hold()) + 'px';
+      };
       sizeTrack();
       ScrollTrigger.addEventListener('refreshInit', sizeTrack);
-      /* Slide, then hold the last card still before the pin releases */
-      /* Desktop starts 70% of the track off to the right. Mobile's track is far wider than the screen, so it starts a
-         screen-relative distance instead and the first card enters at the same point it does on desktop */
-      var narrow = window.matchMedia('(max-width: 768px)');
-      var from = function () { var cs = getComputedStyle(clip); return 2.6 * (clip.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)); };
-      gsap.timeline({ scrollTrigger: { trigger: tsec, start: 'top 60%', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true } })
-        .fromTo(track, { xPercent: function () { return narrow.matches ? 0 : 70; }, x: function () { return narrow.matches ? from() : 0; } },
-          { xPercent: 0, x: function () { return -travel(); }, ease: 'none', duration: 1 })
-        .to({}, { duration: 0.25 });
+      var trackST = { trigger: tsec, start: 'top 60%', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true };
+      /* Desktop: starts 70% of the track off to the right, slides, then holds the last card still before the pin releases */
+      mm.add('(min-width: 769px)', function () {
+        gsap.timeline({ scrollTrigger: trackST })
+          .fromTo(track, { xPercent: 70, x: 0 }, { xPercent: 0, x: function () { return -travel(); }, ease: 'none', duration: 1 })
+          .to({}, { duration: 0.25 });
+      });
+      /* Mobile: the first card enters from the right as the section rises and lands on the gutter as the pin engages.
+         Durations are in screen heights of scroll, matching the section height above */
+      mm.add('(max-width: 768px)', function () {
+        var n = track.querySelectorAll('.ka-mcard').length;
+        gsap.timeline({ scrollTrigger: trackST })
+          .fromTo(track, { x: function () { return clip.clientWidth; } }, { x: 0, ease: 'none', duration: 0.6 })
+          .to({}, { duration: DWELL })
+          .to(track, { x: function () { return -travel(); }, ease: 'none', duration: (n - 1) * CARD })
+          .to({}, { duration: 0.2 });
+      });
     }
     /* Pointer-following texture glow on each card */
     if (window.matchMedia('(hover: hover)').matches) {
