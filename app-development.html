@@ -2123,7 +2123,8 @@
     .ka-orb-tile { position: absolute; left: 50%; top: 50%; width: var(--tile); height: var(--tile); margin: calc(var(--tile) / -2) 0 0 calc(var(--tile) / -2);
       z-index: var(--z); display: grid; place-items: center; border-radius: calc(var(--tile) * 0.22);
       background: var(--ka-black); border: calc(var(--tile) * 0.04) solid #fff;
-      box-shadow: 0 2px 4px rgba(12,10,18,0.12), 0 18px 34px -16px rgba(91,33,182,0.5);
+      /* Purple halo has no offset and scales with the tile, so it sits centred on the pile at every size */
+      box-shadow: 0 2px 4px rgba(12,10,18,0.12), 0 0 calc(var(--tile) * 0.3) calc(var(--tile) * -0.02) rgba(91,33,182,0.45);
       /* Resting spot on the outer ring; GSAP drives the same transform when motion is on */
       transform: translate(calc(cos(var(--a)) * var(--orb) / 2), calc(sin(var(--a)) * var(--orb) / 2)); }
     .ka-orb-tile img { width: 58%; height: 58%; object-fit: contain; }
@@ -2143,8 +2144,6 @@
       html.ka-anim .ka-orb-pin { height: calc(93vw + 64px); top: calc(50vh + 24px - 46.5vw); padding: 0 0 48px; overflow: visible; }
     }
     @media (max-width: 768px) {
-      /* Glow scaled to the small tile so it sits centred under it, not 18px below */
-      .ka-orb-tile { box-shadow: 0 1px 3px rgba(12,10,18,0.12), 0 calc(var(--tile) * 0.05) calc(var(--tile) * 0.45) calc(var(--tile) * -0.1) rgba(91,33,182,0.4); }
       .ka-orb-tile img { width: 52%; height: 52%; }
       .ka-orb-tip.tt-icon-trigger { top: 3px; right: 3px; width: 20px; height: 20px; }
     }
