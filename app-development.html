@@ -1989,14 +1989,22 @@
       .ka-hero-bg { height: auto; bottom: 0; background:
           radial-gradient(70% 30% at 50% 74%, rgba(168,85,247,0.45) 0%, transparent 70%),
           linear-gradient(180deg, #000 0%, #000 22%, #1C0B3D 44%, #4C1D95 66%, #8B5CF6 86%, #C4B5FD 100%); }
-      .ka-hero-word { top: max(92px, 12vh); font-size: 30vw; letter-spacing: -0.05em; padding-left: 0; }
-      .ka-hero-grid { grid-template-columns: 1fr; padding-top: calc(92px + 25vw); }
-      .ka-hero-copy { order: -1; padding-bottom: 48px; }
+      /* Mobile reads top to bottom: copy on the dark, APPS behind a whole phone, the dark fading to white, then the CTAs */
+      .ka-hero { padding-bottom: 56px; }
+      .ka-hero-bg { bottom: auto; height: var(--ka-hero-bg-h, 75%);
+        -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent); mask-image: linear-gradient(180deg, #000 72%, transparent); }
+      .ka-hero-bg .ka-hero-word { display: none; }
+      .ka-hero-grid { grid-template-columns: 1fr; padding-top: 120px; }
+      .ka-hero-copy { display: contents; }
       .ka-hero h1, .ka-hero-sub { color: #fff; }
-      .ka-hero-proof { color: rgba(255,255,255,0.86); }
-      .ka-hero-proof i { background: #D8B4FE; }
-      .ka-hero-phone-enter { width: min(300px, 72vw); margin-bottom: -40vw; }
+      .ka-hero-phone { order: 1; position: relative; margin-top: calc(18vw + 32px); }
+      .ka-hero-word--m { display: block; top: -18vw; font-size: 30vw; letter-spacing: -0.05em; z-index: 0; }
+      .ka-hero-phone-enter { position: relative; z-index: 1; width: min(300px, 72vw); margin-bottom: 0; }
+      .ka-hero-ctas { order: 2; margin-top: 40px; }
+      .ka-hero-proof { order: 3; }
     }
+    .ka-hero-word--m { display: none; }
+    @media (max-width: 860px) { .ka-hero-word--m { display: block; } }
 
     /* ── 2. Platforms: three phones on a dashed connector ── */
     .ka-plat { padding-bottom: clamp(56px, 6vw, 100px); overflow: hidden; }
@@ -2496,6 +2504,7 @@
   <div class="ka-hero-grid">
     <!-- Sample app UI built in HTML (illustrative, not a client app) -->
     <div class="ka-hero-phone" aria-hidden="true">
+      <p class="ka-hero-word ka-hero-word--m">APPS</p>
       <div class="ka-hero-phone-enter">
         <div class="ka-hero-phone-par">
           <div class="ka-device">
@@ -2585,6 +2594,22 @@
     </div>
   </div>
 </section>
+<script>
+/* ── Mobile hero: end the dark backdrop just past the phone so it fades out under it ── */
+(function () {
+  var hero = document.querySelector('.ka-hero'), phone = hero && hero.querySelector('.ka-hero-phone');
+  if (!phone) return;
+  var size = function () {
+    if (window.innerWidth > 860) { hero.style.removeProperty('--ka-hero-bg-h'); return; }
+    var h = phone.getBoundingClientRect().bottom - hero.getBoundingClientRect().top + 40;
+    hero.style.setProperty('--ka-hero-bg-h', Math.round(h) + 'px');
+  };
+  size();
+  window.addEventListener('resize', size);
+  window.addEventListener('load', size);
+  if (window.ResizeObserver) new ResizeObserver(size).observe(hero);
+})();
+</script>
 
 <div class="ka-light">
 
