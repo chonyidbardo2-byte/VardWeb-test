@@ -1048,38 +1048,60 @@
        mockup, built from the user-supplied reference screenshot (real Instagram
        chrome: white app background, blue link button) rather than the page's own
        dark theme, since it depicts a screenshot of a real light-mode app. */
-    .content-2col-visual {
-      position: relative; width: 100%; min-width: 0;
-      aspect-ratio: 9 / 19; max-width: 360px; justify-self: center;
-      overflow: visible; border-radius: 44px;
-      background: linear-gradient(155deg, #262a34, #0a0b0f 60%);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 24px 60px -14px rgba(0,0,0,0.7), inset 0 0 0 2px rgba(255,255,255,0.05);
-      display: flex; align-items: center; justify-content: center;
-      padding: 13px; text-align: center;
-    }
-    .content-2col-visual::before {
-      content: ''; position: absolute; left: -2px; top: 128px;
-      width: 3px; height: 20px; border-radius: 2px 0 0 2px;
-      background: #05060a;
-      box-shadow: 0 100px 0 0 #05060a, 0 160px 0 0 #05060a;
-    }
-    @media (max-width: 640px) {
-      .content-2col-visual { max-width: 280px; border-radius: 36px; padding: 10px; }
-    }
+    .content-2col-visual { position: relative; width: 100%; min-width: 0; max-width: 360px; justify-self: center; }
+    @media (max-width: 640px) { .content-2col-visual { max-width: 280px; } }
+
+    /* ── Device: iPhone-style frame (titanium rim, bezel, island, buttons, glass) ──
+       Shared frame, copied from app-development.html; keep the two in sync. */
+    .ka-device { position: relative; aspect-ratio: 433 / 882; border-radius: 16.5% / 8.1%;
+      background: linear-gradient(90deg, #3A3A3F 0%, #C9C9CF 1.6%, #77777D 3.6%, #2B2B30 9%, #1E1E22 50%, #2B2B30 91%, #77777D 96.4%, #C9C9CF 98.4%, #3A3A3F 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35),
+        0 2px 4px rgba(12,10,18,0.22), 0 24px 48px -18px rgba(28,10,60,0.55), 0 70px 120px -50px rgba(124,58,237,0.45); }
+    .ka-dev-btn { position: absolute; width: 1.3%; border-radius: 2px;
+      background: linear-gradient(90deg, #2A2A2E 0%, #A9A9AF 45%, #3A3A3F 100%); }
+    .ka-dev-btn--action { left: -1%; top: 18%; height: 4.2%; }
+    .ka-dev-btn--vup { left: -1%; top: 25.5%; height: 7.6%; }
+    .ka-dev-btn--vdown { left: -1%; top: 34.6%; height: 7.6%; }
+    .ka-dev-btn--power { right: -1%; top: 28%; height: 11.5%; transform: scaleX(-1); }
+    .ka-dev-body { position: absolute; inset: 0.95% 1.95%; border-radius: 15.4% / 7.6%; background: #050506;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .ka-dev-screen { position: absolute; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; container-type: inline-size;
+      /* clip-path, not overflow:hidden: rounded overflow masks leave a 1px seam inside the moving phone layers */
+      clip-path: inset(0 round 13.4% / 6.3%);
+      background: #fff; isolation: isolate; }
+    .ka-dev-island { position: absolute; z-index: 3; top: 2.9%; left: 50%; transform: translateX(-50%); width: 30.5%; height: 4.1%;
+      border-radius: 999px; background: linear-gradient(180deg, #0C0C0F 0%, #000 55%, #060607 100%);
+      box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.06), inset 0 -1px 1px rgba(255,255,255,0.03); }
+    /* Front camera: graphite rim, black barrel, coated glass iris, pupil and two glints */
+    .ka-dev-island::after { content: ''; position: absolute; right: 10%; top: 50%; height: 64%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background:
+        radial-gradient(circle at 33% 31%, rgba(255,255,255,0.95) 0 5%, rgba(255,255,255,0) 10%),
+        radial-gradient(circle at 66% 70%, rgba(176,196,255,0.4) 0 5%, rgba(176,196,255,0) 13%),
+        radial-gradient(circle at 50% 50%, #010208 0 15%, rgba(1,2,8,0) 17%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 17%, rgba(108,92,231,0.6) 24%, rgba(46,36,128,0.65) 34%, rgba(14,52,72,0.7) 44%, rgba(0,0,0,0) 54%),
+        radial-gradient(circle at 50% 50%, #0B1028 0 50%, #06070E 58%, #000 68%);
+      box-shadow: 0 0 0 1px #1C1C21, 0 0 0 1.6px #040405, inset 0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 1.5px rgba(255,255,255,0.1); }
+    /* Face ID flood/proximity sensor, barely visible like on the real hardware */
+    .ka-dev-island::before { content: ''; position: absolute; left: 22%; top: 50%; height: 22%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #2A1F3D 0%, #0C0812 70%); opacity: 0.8; }
+    .ka-dev-glare { position: absolute; z-index: 4; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; pointer-events: none;
+      background: linear-gradient(118deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.05) 24%, rgba(255,255,255,0) 38%); }
+    /* Status bar, from app-development.html's in-screen UI (sizes in cqw of the screen width) */
+    .ka-ui-status { position: absolute; top: 4.6cqw; left: 9.5cqw; right: 7.5cqw; display: flex; justify-content: space-between; align-items: center;
+      font-size: 3.7cqw; font-weight: 600; letter-spacing: 0.01em; }
+    .ka-ui-status-icons { display: flex; align-items: center; gap: 1.4cqw; }
+    .ka-ui-status-icons svg { height: 3cqw; width: auto; fill: currentColor; }
+    /* SMM: dark drop shadow in place of the App page's purple glow */
+    .content-2col-visual .ka-device { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35), 0 24px 60px -14px rgba(0,0,0,0.7); }
+    .content-2col-visual .ka-ui-status { color: #111; z-index: 2; }
 
     .viz-igfeed {
-      position: relative; z-index: 1; width: 100%; height: 100%;
-      background: #ffffff; border-radius: 32px; overflow: hidden;
+      position: absolute; inset: 0;
+      background: #ffffff; overflow: hidden;
       display: flex; flex-direction: column; text-align: left;
     }
-    .viz-igfeed::before {
-      content: ''; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
-      width: 32%; height: 18px; background: #0a0b0f; border-radius: 10px; z-index: 5;
-    }
-    @media (max-width: 640px) { .viz-igfeed { border-radius: 26px; } }
 
-    .ig-app-header { display: flex; align-items: center; justify-content: flex-start; gap: 3px; padding: 20px 14px 10px; border-bottom: 1px solid #efefef; flex-shrink: 0; }
+    .ig-app-header { display: flex; align-items: center; justify-content: flex-start; gap: 3px; padding: 15.5cqw 14px 10px; border-bottom: 1px solid #efefef; flex-shrink: 0; }
     .ig-wordmark { font-family: 'Grand Hotel', cursive; font-size: 24px; font-weight: 400; color: #111; line-height: 1; }
     .ig-chevron { width: 14px; height: 14px; color: #111; margin-top: 3px; }
 
@@ -1090,7 +1112,8 @@
     .ig-post-sponsored { font-family: 'Inter', sans-serif; font-size: 10.5px; color: #8e8e8e; }
     .mock-kebab { color: #262626; font-size: 15px; line-height: 1; }
 
-    .ig-post-media { position: relative; width: 100%; aspect-ratio: 1 / 1; flex-shrink: 0; overflow: hidden; background: linear-gradient(135deg, var(--smm-rose), #7C3AED 55%, var(--cyan)); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; }
+    /* The ad image takes whatever height the phone screen has left, so the feed always fits the frame */
+    .ig-post-media { position: relative; width: 100%; flex: 1 1 0; min-height: 0; overflow: hidden; background: linear-gradient(135deg, var(--smm-rose), #7C3AED 55%, var(--cyan)); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; }
     .ig-media-badge { position: absolute; top: 14px; right: 14px; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: #fff; background: rgba(0,0,0,0.22); border-radius: 5px; padding: 4px 8px; }
     .ig-media-headline { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 21px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 1.12; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.25); margin: 0; }
 
@@ -1117,14 +1140,15 @@
     .ig-next-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 700; color: #111; }
     .ig-next-audio { display: flex; align-items: center; gap: 4px; font-family: 'Inter', sans-serif; font-size: 10.5px; color: #8e8e8e; }
     .ig-next-audio svg { width: 9px; height: 9px; flex-shrink: 0; }
-    .ig-next-peek { flex: 1; min-height: 22px; margin-top: 8px; background: linear-gradient(120deg, rgba(244,114,182,0.4), rgba(124,58,237,0.32) 50%, rgba(0,229,255,0.35)); }
+    .ig-next-peek { flex: none; height: 22px; margin-top: 8px; background: linear-gradient(120deg, rgba(244,114,182,0.4), rgba(124,58,237,0.32) 50%, rgba(0,229,255,0.35)); }
 
-    .ig-nav-hint { display: flex; align-items: center; justify-content: space-around; padding: 10px 20px; border-top: 1px solid #efefef; background: #fff; flex-shrink: 0; }
+    /* Extra bottom padding keeps the icons clear of the screen's rounded corners */
+    .ig-nav-hint { display: flex; align-items: center; justify-content: space-around; padding: 10px 20px calc(10px + 4cqw); border-top: 1px solid #efefef; background: #fff; flex-shrink: 0; }
     .ig-nav-hint svg { width: 17px; height: 17px; color: #111; }
     .ig-nav-hint svg:nth-child(3) { color: #fff; background: #111; border-radius: 6px; padding: 2px; box-sizing: content-box; width: 15px; height: 15px; }
 
     @media (max-width: 480px) {
-      .ig-app-header { padding: 16px 12px 8px; }
+      .ig-app-header { padding: 15.5cqw 12px 8px; }
       .ig-wordmark { font-size: 15px; }
       .ig-post-header { padding: 8px 10px; }
       .ig-media-headline { font-size: 17px; }
@@ -1136,7 +1160,7 @@
       .ig-post-attribution { padding: 5px 10px 8px; }
       .ig-next-post { padding: 6px 10px 0; gap: 6px; }
       .ig-next-avatar { width: 22px; height: 22px; }
-      .ig-nav-hint { padding: 8px 16px; }
+      .ig-nav-hint { padding: 8px 16px calc(8px + 4cqw); }
     }
 
     /* ── Closing CTA (card container, ported from email-marketing.html's
@@ -1916,58 +1940,67 @@
     </div>
 
     <div class="content-2col-visual reveal-fade" style="transition-delay:0.1s">
-      <div class="viz-igfeed" role="img" aria-label="Mockup of a phone showing an Instagram sponsored post: app header, Your Brand ad with a promotional image, a Learn More link button, like/comment/share/save icons, and a caption">
-        <div class="ig-app-header">
-          <span class="ig-wordmark">Instagram</span>
-          <svg class="ig-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ig-post-header">
-          <div class="ig-avatar">YB</div>
-          <div class="ig-post-who">
-            <span class="ig-post-name">Your Brand</span>
-            <span class="ig-post-sponsored badge-pulse">Sponsored</span>
+      <div class="ka-device">
+        <span class="ka-dev-btn ka-dev-btn--action" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vup" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--vdown" aria-hidden="true"></span><span class="ka-dev-btn ka-dev-btn--power" aria-hidden="true"></span>
+        <div class="ka-dev-body">
+          <div class="ka-dev-screen">
+            <div class="viz-igfeed" role="img" aria-label="Mockup of a phone showing an Instagram sponsored post: app header, Your Brand ad with a promotional image, a Learn More link button, like/comment/share/save icons, and a caption">
+              <div class="ka-ui-status" aria-hidden="true"><span>9:41</span><span class="ka-ui-status-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM2.8 6.2a7.4 7.4 0 0 1 10.4 0l-1.4 1.4a5.4 5.4 0 0 0-7.6 0zM0 3.4a11.3 11.3 0 0 1 16 0l-1.4 1.4a9.3 9.3 0 0 0-13.2 0z"/></svg><svg viewBox="0 0 27 12"><rect x=".5" y=".5" width="23" height="11" rx="3" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="18" height="8" rx="1.8"/><path d="M25 4v4a2 2 0 0 0 0-4z" opacity=".45"/></svg></span></div>
+              <div class="ig-app-header">
+                <span class="ig-wordmark">Instagram</span>
+                <svg class="ig-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="ig-post-header">
+                <div class="ig-avatar">YB</div>
+                <div class="ig-post-who">
+                  <span class="ig-post-name">Your Brand</span>
+                  <span class="ig-post-sponsored badge-pulse">Sponsored</span>
+                </div>
+                <span class="mock-kebab">⋮</span>
+              </div>
+              <div class="ig-post-media">
+                <span class="ig-media-badge">YOUR BRAND</span>
+                <p class="ig-media-headline">Grow Your<br>Business Today</p>
+              </div>
+              <div class="ig-cta-bar">
+                <span>Learn More</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
+              </div>
+              <div class="ig-post-actions">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <svg class="ig-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <p class="ig-post-likes">1,204 likes</p>
+              <p class="ig-post-caption"><b>yourbrand</b> Helping local businesses grow online, one campaign at a time.</p>
+              <p class="ig-post-attribution">
+                <span class="ig-mini-avatar"></span> yourbrand
+                <svg class="ig-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                Original audio
+              </p>
+              <div class="ig-next-post">
+                <div class="ig-next-avatar"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" loading="lazy" /></div>
+                <div class="ig-next-who">
+                  <span class="ig-next-name">VardWeb</span>
+                  <span class="ig-next-audio">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    Original audio
+                  </span>
+                </div>
+                <span class="mock-kebab">⋮</span>
+              </div>
+              <div class="ig-next-peek" aria-hidden="true"></div>
+              <div class="ig-nav-hint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
+              </div>
+            </div>
           </div>
-          <span class="mock-kebab">⋮</span>
-        </div>
-        <div class="ig-post-media">
-          <span class="ig-media-badge">YOUR BRAND</span>
-          <p class="ig-media-headline">Grow Your<br>Business Today</p>
-        </div>
-        <div class="ig-cta-bar">
-          <span>Learn More</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 6 15 12 9 18"/></svg>
-        </div>
-        <div class="ig-post-actions">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          <svg class="ig-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <p class="ig-post-likes">1,204 likes</p>
-        <p class="ig-post-caption"><b>yourbrand</b> Helping local businesses grow online, one campaign at a time.</p>
-        <p class="ig-post-attribution">
-          <span class="ig-mini-avatar"></span> yourbrand
-          <svg class="ig-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-          Original audio
-        </p>
-        <div class="ig-next-post">
-          <div class="ig-next-avatar"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="" loading="lazy" /></div>
-          <div class="ig-next-who">
-            <span class="ig-next-name">VardWeb</span>
-            <span class="ig-next-audio">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-              Original audio
-            </span>
-          </div>
-          <span class="mock-kebab">⋮</span>
-        </div>
-        <div class="ig-next-peek" aria-hidden="true"></div>
-        <div class="ig-nav-hint" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>
+          <span class="ka-dev-island" aria-hidden="true"></span><span class="ka-dev-glare" aria-hidden="true"></span>
         </div>
       </div>
     </div>
