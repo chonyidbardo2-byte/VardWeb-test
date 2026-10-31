@@ -270,6 +270,70 @@
     }
     .browser-body { overflow: hidden; }
 
+    /* ── Device: iPhone-style frame (titanium rim, bezel, island, buttons, glass) ──
+       Shared frame, copied from app-development.html (also in index.html); keep them in sync. */
+    .ka-device { position: relative; aspect-ratio: 433 / 882; border-radius: 16.5% / 8.1%;
+      background: linear-gradient(90deg, #3A3A3F 0%, #C9C9CF 1.6%, #77777D 3.6%, #2B2B30 9%, #1E1E22 50%, #2B2B30 91%, #77777D 96.4%, #C9C9CF 98.4%, #3A3A3F 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35),
+        0 2px 4px rgba(12,10,18,0.22), 0 24px 48px -18px rgba(28,10,60,0.55), 0 70px 120px -50px rgba(124,58,237,0.45); }
+    .ka-dev-btn { position: absolute; width: 1.3%; border-radius: 2px;
+      background: linear-gradient(90deg, #2A2A2E 0%, #A9A9AF 45%, #3A3A3F 100%); }
+    .ka-dev-btn--action { left: -1%; top: 18%; height: 4.2%; }
+    .ka-dev-btn--vup { left: -1%; top: 25.5%; height: 7.6%; }
+    .ka-dev-btn--vdown { left: -1%; top: 34.6%; height: 7.6%; }
+    .ka-dev-btn--power { right: -1%; top: 28%; height: 11.5%; transform: scaleX(-1); }
+    .ka-dev-body { position: absolute; inset: 0.95% 1.95%; border-radius: 15.4% / 7.6%; background: #050506;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .ka-dev-screen { position: absolute; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; container-type: inline-size;
+      /* clip-path, not overflow:hidden: rounded overflow masks leave a 1px seam inside the moving phone layers */
+      clip-path: inset(0 round 13.4% / 6.3%);
+      background: #fff; isolation: isolate; }
+    .ka-dev-island { position: absolute; z-index: 3; top: 2.9%; left: 50%; transform: translateX(-50%); width: 30.5%; height: 4.1%;
+      border-radius: 999px; background: linear-gradient(180deg, #0C0C0F 0%, #000 55%, #060607 100%);
+      box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.06), inset 0 -1px 1px rgba(255,255,255,0.03); }
+    /* Front camera: graphite rim, black barrel, coated glass iris, pupil and two glints */
+    .ka-dev-island::after { content: ''; position: absolute; right: 10%; top: 50%; height: 64%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background:
+        radial-gradient(circle at 33% 31%, rgba(255,255,255,0.95) 0 5%, rgba(255,255,255,0) 10%),
+        radial-gradient(circle at 66% 70%, rgba(176,196,255,0.4) 0 5%, rgba(176,196,255,0) 13%),
+        radial-gradient(circle at 50% 50%, #010208 0 15%, rgba(1,2,8,0) 17%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 17%, rgba(108,92,231,0.6) 24%, rgba(46,36,128,0.65) 34%, rgba(14,52,72,0.7) 44%, rgba(0,0,0,0) 54%),
+        radial-gradient(circle at 50% 50%, #0B1028 0 50%, #06070E 58%, #000 68%);
+      box-shadow: 0 0 0 1px #1C1C21, 0 0 0 1.6px #040405, inset 0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 1.5px rgba(255,255,255,0.1); }
+    /* Face ID flood/proximity sensor, barely visible like on the real hardware */
+    .ka-dev-island::before { content: ''; position: absolute; left: 22%; top: 50%; height: 22%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #2A1F3D 0%, #0C0812 70%); opacity: 0.8; }
+    .ka-dev-glare { position: absolute; z-index: 4; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; pointer-events: none;
+      background: linear-gradient(118deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.05) 24%, rgba(255,255,255,0) 38%); }
+
+    /* Phone mock: the shared frame with a dark drop shadow instead of the App page's purple glow */
+    .phone-mock { position: relative; width: 100%; }
+    .phone-mock .ka-device { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35),
+      0 45px 90px -20px rgba(0,0,0,0.85), 0 18px 32px -10px rgba(0,0,0,0.7); }
+    .phone-mock .ka-dev-screen { background: #000; }
+    .phone-mock .ka-dev-screen img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top;
+    }
+
+    /* VardedVeins mocks link out to the live site: lift on hover */
+    .mock-link {
+      display: block;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .mock-link:hover {
+      transform: translateY(-6px);
+    }
+    .mock-link:focus-visible { outline: 2px solid rgba(0,229,255,0.55); outline-offset: 4px; }
+
+    /* VardedVeins: desktop mock with the phone stacked over its bottom-right corner, pushed off-centre */
+    .vv-stack { position: relative; margin: 0 6% 14% 0; }
+    .browser-mock img { display: block; width: 100%; height: auto; }
+    .vv-desktop { position: relative; z-index: 1; }
+    .vv-phone { position: absolute; z-index: 2; width: 27%; right: -9%; bottom: -16%; }
+
+
     /* ── Project Cards ── */
     .project-section {
       padding: 100px 28px;
@@ -913,53 +977,96 @@
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════════════
-     PROJECT 01: Ember & Oak  |  text LEFT · mockup RIGHT
+     PROJECT 01: VardedVeins  |  text LEFT · mockup RIGHT
 ══════════════════════════════════════════════ -->
 <section class="project-section">
   <div style="position:absolute;inset:0;pointer-events:none;
-    background: radial-gradient(ellipse 60% 70% at 90% 50%, rgba(232,133,77,0.045) 0%, transparent 65%);"></div>
+    background: radial-gradient(ellipse 60% 70% at 90% 50%, rgba(79,107,255,0.05) 0%, transparent 65%);"></div>
 
   <div class="project-grid" style="position:relative;z-index:1;">
 
     <!-- Project Info (LEFT) -->
     <div>
-      <div class="project-num">// 01 &nbsp;·&nbsp; Restaurant &amp; Hospitality</div>
-      <h2 class="project-name">Ember &amp; Oak</h2>
-      <div class="industry-tag">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/></svg>
-        Restaurant &amp; Bar
+      <div class="project-num">// 01 &nbsp;·&nbsp; E-commerce &amp; Gaming</div>
+      <h2 class="project-name">VardedVeins</h2>
+      <div class="industry-tag" style="background:rgba(79,107,255,0.08);border-color:rgba(79,107,255,0.22);color:#4F6BFF;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4"/><path d="M15 11h.01M18 13h.01"/></svg>
+        Online Store
       </div>
       <p class="project-desc">
-        A cinematic dining experience online. We built a full reservation system, menu showcase,
-        and event gallery that matched the atmosphere of their physical space: premium, warm,
-        and deeply intentional. The result spoke for itself.
+        A storefront for retro to modern gaming handhelds, with the full range from Anbernic
+        to AYN. Brand carousels, category tiles, and review-backed product pages make a deep
+        catalogue easy to browse on <code style="background:rgba(79,107,255,0.08);border:1px solid rgba(79,107,255,0.16);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#4F6BFF;white-space:nowrap;">desktop and mobile.</code>
       </p>
       <div class="metrics-row">
         <div class="metric">
-          <span class="metric-val" data-target="340" data-suffix="%">340<span>%</span></span>
-          <span class="metric-label">More Online Bookings</span>
+          <span class="metric-val" style="color:#4F6BFF;" data-target="92">92<span></span></span>
+          <span class="metric-label">SEO Score</span>
         </div>
         <div class="metric">
-          <span class="metric-val" data-target="2.1" data-suffix="s" data-decimals="1">2.1<span>s</span></span>
-          <span class="metric-label">Page Load Time</span>
+          <span class="metric-val" style="color:#4F6BFF;" data-target="89">89<span></span></span>
+          <span class="metric-label">Mobile Accessibility</span>
         </div>
         <div class="metric">
-          <span class="metric-val" data-target="98">98<span></span></span>
-          <span class="metric-label">PageSpeed Score</span>
+          <span class="metric-val" style="color:#4F6BFF;" data-target="1.9" data-suffix="s" data-decimals="1">1.9<span>s</span></span>
+          <span class="metric-label">Desktop Load (LCP)</span>
         </div>
       </div>
       <div class="stack-row">
-        <span class="stack-tag">Next.js</span>
-        <span class="stack-tag">Tailwind CSS</span>
-        <span class="stack-tag">Supabase</span>
-        <span class="stack-tag">Stripe</span>
+        <span class="stack-tag">Shopify</span>
+        <span class="stack-tag">Liquid</span>
+        <span class="stack-tag">Judge.me</span>
       </div>
-      <a href="contact.html" class="btn btn-primary">
+      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(79,107,255,0.4);color:#4F6BFF;">
         Build Something Like This <span aria-hidden="true">→</span>
       </a>
     </div>
 
-    <!-- Browser Mockup (RIGHT) -->
+    <!-- Stacked Mockup (RIGHT): desktop with the phone overlapping its bottom-right corner -->
+    <div class="vv-stack">
+      <a href="https://vardedveins.com" target="_blank" rel="noopener noreferrer" class="browser-mock mock-link vv-desktop" aria-label="Visit VardedVeins (opens in a new tab)">
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <div class="browser-dot" style="background:#FF5F56;"></div>
+            <div class="browser-dot" style="background:#FFBD2E;"></div>
+            <div class="browser-dot" style="background:#27C93F;"></div>
+          </div>
+          <div class="browser-url-bar">vardedveins.com</div>
+        </div>
+        <div class="browser-body">
+          <img src="brand_assets/vardedveins.com_Desktop.webp" alt="VardedVeins desktop site preview" loading="lazy">
+        </div>
+      </a>
+
+      <a href="https://vardedveins.com" target="_blank" rel="noopener noreferrer" class="phone-mock mock-link vv-phone" tabindex="-1" aria-hidden="true">
+        <div class="ka-device">
+          <span class="ka-dev-btn ka-dev-btn--action"></span><span class="ka-dev-btn ka-dev-btn--vup"></span><span class="ka-dev-btn ka-dev-btn--vdown"></span><span class="ka-dev-btn ka-dev-btn--power"></span>
+          <div class="ka-dev-body">
+            <div class="ka-dev-screen">
+              <img src="brand_assets/vardedveins.com_Mobile_cropped.webp" alt="" loading="lazy">
+            </div>
+            <span class="ka-dev-island"></span>
+            <span class="ka-dev-glare"></span>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════
+     PROJECT 02: Ember & Oak  |  mockup LEFT · text RIGHT
+══════════════════════════════════════════════ -->
+<section class="project-section">
+  <div style="position:absolute;inset:0;pointer-events:none;
+    background: radial-gradient(ellipse 60% 70% at 10% 50%, rgba(232,133,77,0.045) 0%, transparent 65%);"></div>
+
+  <div class="project-grid flip" style="position:relative;z-index:1;">
+
+    <!-- Browser Mockup (LEFT) -->
     <div class="browser-mock">
       <div class="browser-bar">
         <div class="browser-dots">
@@ -1010,21 +1117,97 @@
       </div>
     </div>
 
+    <!-- Project Info (RIGHT) -->
+    <div>
+      <div class="project-num">// 02 &nbsp;·&nbsp; Restaurant &amp; Hospitality</div>
+      <h2 class="project-name">Ember &amp; Oak</h2>
+      <div class="industry-tag">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/></svg>
+        Restaurant &amp; Bar
+      </div>
+      <p class="project-desc">
+        A cinematic dining experience online. We built a full reservation system, menu showcase,
+        and event gallery that matched the atmosphere of their physical space: premium, warm,
+        and <code style="background:rgba(232,133,77,0.08);border:1px solid rgba(232,133,77,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#E8854D;white-space:nowrap;">deeply intentional.</code> The result spoke for itself.
+      </p>
+      <div class="metrics-row">
+        <div class="metric">
+          <span class="metric-val" data-target="340" data-suffix="%">340<span>%</span></span>
+          <span class="metric-label">More Online Bookings</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" data-target="2.1" data-suffix="s" data-decimals="1">2.1<span>s</span></span>
+          <span class="metric-label">Page Load Time</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" data-target="98">98<span></span></span>
+          <span class="metric-label">PageSpeed Score</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <span class="stack-tag">Next.js</span>
+        <span class="stack-tag">Tailwind CSS</span>
+        <span class="stack-tag">Supabase</span>
+        <span class="stack-tag">Stripe</span>
+      </div>
+      <a href="contact.html" class="btn btn-primary">
+        Build Something Like This <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
   </div>
 </section>
 
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════════════
-     PROJECT 02: Peak Form Fitness  |  mockup LEFT · text RIGHT
+     PROJECT 03: Peak Form Fitness  |  text LEFT · mockup RIGHT
 ══════════════════════════════════════════════ -->
 <section class="project-section">
   <div style="position:absolute;inset:0;pointer-events:none;
-    background: radial-gradient(ellipse 60% 70% at 10% 50%, rgba(255,45,120,0.04) 0%, transparent 65%);"></div>
+    background: radial-gradient(ellipse 60% 70% at 90% 50%, rgba(255,45,120,0.04) 0%, transparent 65%);"></div>
 
-  <div class="project-grid flip" style="position:relative;z-index:1;">
+  <div class="project-grid" style="position:relative;z-index:1;">
 
-    <!-- Browser Mockup (LEFT) -->
+    <!-- Project Info (LEFT) -->
+    <div>
+      <div class="project-num">// 03 &nbsp;·&nbsp; Health &amp; Fitness</div>
+      <h2 class="project-name">Peak Form<br>Fitness</h2>
+      <div class="industry-tag" style="background:rgba(255,45,120,0.07);border-color:rgba(255,45,120,0.2);color:var(--pink);">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Fitness Studio
+      </div>
+      <p class="project-desc">
+        A class scheduling platform and membership portal built to scale. We redesigned
+        their entire digital presence, from brand identity to checkout flow, cutting admin
+        overhead <code style="background:rgba(255,45,120,0.08);border:1px solid rgba(255,45,120,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--pink);white-space:nowrap;">by half</code> and driving a massive spike in online memberships.
+      </p>
+      <div class="metrics-row">
+        <div class="metric">
+          <span class="metric-val" style="color:var(--pink);" data-target="220" data-suffix="%">220<span>%</span></span>
+          <span class="metric-label">Sign-Up Increase</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" style="color:var(--pink);" data-target="50" data-suffix="%">50<span>%</span></span>
+          <span class="metric-label">Less Admin Time</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" style="color:var(--pink);" data-target="4.9" data-suffix="★" data-decimals="1">4.9<span>★</span></span>
+          <span class="metric-label">Client Rating</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <span class="stack-tag">React</span>
+        <span class="stack-tag">Node.js</span>
+        <span class="stack-tag">Stripe</span>
+        <span class="stack-tag">PostgreSQL</span>
+      </div>
+      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(255,45,120,0.35);color:var(--pink);">
+        Build Something Like This <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <!-- Browser Mockup (RIGHT) -->
     <div class="browser-mock">
       <div class="browser-bar">
         <div class="browser-dots">
@@ -1091,97 +1274,21 @@
       </div>
     </div>
 
-    <!-- Project Info (RIGHT) -->
-    <div>
-      <div class="project-num">// 02 &nbsp;·&nbsp; Health &amp; Fitness</div>
-      <h2 class="project-name">Peak Form<br>Fitness</h2>
-      <div class="industry-tag" style="background:rgba(255,45,120,0.07);border-color:rgba(255,45,120,0.2);color:var(--pink);">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Fitness Studio
-      </div>
-      <p class="project-desc">
-        A class scheduling platform and membership portal built to scale. We redesigned
-        their entire digital presence, from brand identity to checkout flow, cutting admin
-        overhead by half and driving a massive spike in online memberships.
-      </p>
-      <div class="metrics-row">
-        <div class="metric">
-          <span class="metric-val" style="color:var(--pink);" data-target="220" data-suffix="%">220<span>%</span></span>
-          <span class="metric-label">Sign-Up Increase</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:var(--pink);" data-target="50" data-suffix="%">50<span>%</span></span>
-          <span class="metric-label">Less Admin Time</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:var(--pink);" data-target="4.9" data-suffix="★" data-decimals="1">4.9<span>★</span></span>
-          <span class="metric-label">Client Rating</span>
-        </div>
-      </div>
-      <div class="stack-row">
-        <span class="stack-tag">React</span>
-        <span class="stack-tag">Node.js</span>
-        <span class="stack-tag">Stripe</span>
-        <span class="stack-tag">PostgreSQL</span>
-      </div>
-      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(255,45,120,0.35);color:var(--pink);">
-        Build Something Like This <span aria-hidden="true">→</span>
-      </a>
-    </div>
-
   </div>
 </section>
 
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════════════
-     PROJECT 03: Meridian Law Group  |  text LEFT · mockup RIGHT
+     PROJECT 04: Meridian Law Group  |  mockup LEFT · text RIGHT
 ══════════════════════════════════════════════ -->
 <section class="project-section">
   <div style="position:absolute;inset:0;pointer-events:none;
-    background: radial-gradient(ellipse 60% 70% at 90% 50%, rgba(74,158,204,0.04) 0%, transparent 65%);"></div>
+    background: radial-gradient(ellipse 60% 70% at 10% 50%, rgba(74,158,204,0.04) 0%, transparent 65%);"></div>
 
-  <div class="project-grid" style="position:relative;z-index:1;">
+  <div class="project-grid flip" style="position:relative;z-index:1;">
 
-    <!-- Project Info (LEFT) -->
-    <div>
-      <div class="project-num">// 03 &nbsp;·&nbsp; Legal Services</div>
-      <h2 class="project-name">Meridian<br>Law Group</h2>
-      <div class="industry-tag" style="background:rgba(74,158,204,0.07);border-color:rgba(74,158,204,0.2);color:#4A9ECC;">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Law Firm
-      </div>
-      <p class="project-desc">
-        Trust is everything in legal services. We built a precision-crafted website that
-        communicates authority from the first pixel: case results, attorney profiles,
-        and a frictionless consultation booking flow. Google rated it perfect.
-      </p>
-      <div class="metrics-row">
-        <div class="metric">
-          <span class="metric-val" style="color:#4A9ECC;" data-target="99">99<span></span></span>
-          <span class="metric-label">PageSpeed Score</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:#4A9ECC;" data-target="4" data-suffix="x">4<span>x</span></span>
-          <span class="metric-label">More Consultations</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:#4A9ECC;" data-target="62" data-suffix="%">62<span>%</span></span>
-          <span class="metric-label">Lower Bounce Rate</span>
-        </div>
-      </div>
-      <div class="stack-row">
-        <span class="stack-tag">Next.js</span>
-        <span class="stack-tag">Framer Motion</span>
-        <span class="stack-tag">Sanity CMS</span>
-        <span class="stack-tag">Vercel</span>
-      </div>
-      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(74,158,204,0.38);color:#4A9ECC;">
-        Build Something Like This <span aria-hidden="true">→</span>
-      </a>
-    </div>
-
-    <!-- Browser Mockup (RIGHT) -->
+    <!-- Browser Mockup (LEFT) -->
     <div class="browser-mock">
       <div class="browser-bar">
         <div class="browser-dots">
@@ -1230,21 +1337,97 @@
       </div>
     </div>
 
+    <!-- Project Info (RIGHT) -->
+    <div>
+      <div class="project-num">// 04 &nbsp;·&nbsp; Legal Services</div>
+      <h2 class="project-name">Meridian<br>Law Group</h2>
+      <div class="industry-tag" style="background:rgba(74,158,204,0.07);border-color:rgba(74,158,204,0.2);color:#4A9ECC;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Law Firm
+      </div>
+      <p class="project-desc">
+        Trust is everything in legal services. We built a precision-crafted website that
+        communicates authority from the first pixel: case results, attorney profiles,
+        and a frictionless consultation booking flow. Google <code style="background:rgba(74,158,204,0.08);border:1px solid rgba(74,158,204,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#4A9ECC;white-space:nowrap;">rated it</code> perfect.
+      </p>
+      <div class="metrics-row">
+        <div class="metric">
+          <span class="metric-val" style="color:#4A9ECC;" data-target="99">99<span></span></span>
+          <span class="metric-label">PageSpeed Score</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" style="color:#4A9ECC;" data-target="4" data-suffix="x">4<span>x</span></span>
+          <span class="metric-label">More Consultations</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" style="color:#4A9ECC;" data-target="62" data-suffix="%">62<span>%</span></span>
+          <span class="metric-label">Lower Bounce Rate</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <span class="stack-tag">Next.js</span>
+        <span class="stack-tag">Framer Motion</span>
+        <span class="stack-tag">Sanity CMS</span>
+        <span class="stack-tag">Vercel</span>
+      </div>
+      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(74,158,204,0.38);color:#4A9ECC;">
+        Build Something Like This <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
   </div>
 </section>
 
 <div class="divider"></div>
 
 <!-- ══════════════════════════════════════════════
-     PROJECT 04: Luxe Realty Co.  |  mockup LEFT · text RIGHT
+     PROJECT 05: Luxe Realty Co.  |  text LEFT · mockup RIGHT
 ══════════════════════════════════════════════ -->
 <section class="project-section">
   <div style="position:absolute;inset:0;pointer-events:none;
-    background: radial-gradient(ellipse 60% 70% at 10% 50%, rgba(212,168,67,0.04) 0%, transparent 65%);"></div>
+    background: radial-gradient(ellipse 60% 70% at 90% 50%, rgba(212,168,67,0.04) 0%, transparent 65%);"></div>
 
-  <div class="project-grid flip" style="position:relative;z-index:1;">
+  <div class="project-grid" style="position:relative;z-index:1;">
 
-    <!-- Browser Mockup (LEFT) -->
+    <!-- Project Info (LEFT) -->
+    <div>
+      <div class="project-num">// 05 &nbsp;·&nbsp; Real Estate</div>
+      <h2 class="project-name">Luxe<br>Realty Co.</h2>
+      <div class="industry-tag" style="background:rgba(212,168,67,0.07);border-color:rgba(212,168,67,0.2);color:#D4A843;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Real Estate
+      </div>
+      <p class="project-desc">
+        Property search, virtual tour integration, and MLS data, delivered in a
+        premium aesthetic that elevated their brand above the competition. Mobile-first
+        execution that converts at <code style="background:rgba(212,168,67,0.08);border:1px solid rgba(212,168,67,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:#D4A843;white-space:nowrap;">three times</code> the industry average.
+      </p>
+      <div class="metrics-row">
+        <div class="metric">
+          <span class="metric-val" style="color:#D4A843;" data-target="3" data-suffix="x">3<span>x</span></span>
+          <span class="metric-label">Industry Avg. CVR</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" style="color:#D4A843;" data-target="180" data-suffix="%">180<span>%</span></span>
+          <span class="metric-label">More Listing Views</span>
+        </div>
+        <div class="metric">
+          <span class="metric-val" style="color:#D4A843;" data-target="1.8" data-suffix="s" data-decimals="1">1.8<span>s</span></span>
+          <span class="metric-label">Page Load Time</span>
+        </div>
+      </div>
+      <div class="stack-row">
+        <span class="stack-tag">Next.js</span>
+        <span class="stack-tag">Mapbox</span>
+        <span class="stack-tag">PostgreSQL</span>
+        <span class="stack-tag">Cloudflare</span>
+      </div>
+      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(212,168,67,0.35);color:#D4A843;">
+        Build Something Like This <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <!-- Browser Mockup (RIGHT) -->
     <div class="browser-mock">
       <div class="browser-bar">
         <div class="browser-dots">
@@ -1284,154 +1467,6 @@
                 <div style="width:70%;height:7px;background:rgba(255,255,255,0.3);border-radius:3px;margin-bottom:4px;"></div>
                 <div style="width:40%;height:7px;background:rgba(212,168,67,0.35);border-radius:3px;"></div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Project Info (RIGHT) -->
-    <div>
-      <div class="project-num">// 04 &nbsp;·&nbsp; Real Estate</div>
-      <h2 class="project-name">Luxe<br>Realty Co.</h2>
-      <div class="industry-tag" style="background:rgba(212,168,67,0.07);border-color:rgba(212,168,67,0.2);color:#D4A843;">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Real Estate
-      </div>
-      <p class="project-desc">
-        Property search, virtual tour integration, and MLS data, delivered in a
-        premium aesthetic that elevated their brand above the competition. Mobile-first
-        execution that converts at three times the industry average.
-      </p>
-      <div class="metrics-row">
-        <div class="metric">
-          <span class="metric-val" style="color:#D4A843;" data-target="3" data-suffix="x">3<span>x</span></span>
-          <span class="metric-label">Industry Avg. CVR</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:#D4A843;" data-target="180" data-suffix="%">180<span>%</span></span>
-          <span class="metric-label">More Listing Views</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:#D4A843;" data-target="1.8" data-suffix="s" data-decimals="1">1.8<span>s</span></span>
-          <span class="metric-label">Page Load Time</span>
-        </div>
-      </div>
-      <div class="stack-row">
-        <span class="stack-tag">Next.js</span>
-        <span class="stack-tag">Mapbox</span>
-        <span class="stack-tag">PostgreSQL</span>
-        <span class="stack-tag">Cloudflare</span>
-      </div>
-      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(212,168,67,0.35);color:#D4A843;">
-        Build Something Like This <span aria-hidden="true">→</span>
-      </a>
-    </div>
-
-  </div>
-</section>
-
-<div class="divider"></div>
-
-<!-- ══════════════════════════════════════════════
-     PROJECT 05: Nova Systems  |  text LEFT · mockup RIGHT
-══════════════════════════════════════════════ -->
-<section class="project-section">
-  <div style="position:absolute;inset:0;pointer-events:none;
-    background: radial-gradient(ellipse 60% 70% at 90% 50%, rgba(139,92,246,0.04) 0%, transparent 65%);"></div>
-
-  <div class="project-grid" style="position:relative;z-index:1;">
-
-    <!-- Project Info (LEFT) -->
-    <div>
-      <div class="project-num">// 05 &nbsp;·&nbsp; B2B SaaS</div>
-      <h2 class="project-name">Nova<br>Systems</h2>
-      <div class="industry-tag" style="background:rgba(139,92,246,0.07);border-color:rgba(139,92,246,0.2);color:#8B5CF6;">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        SaaS Platform
-      </div>
-      <p class="project-desc">
-        Enterprise landing page with interactive product demo and lead capture. We
-        rearchitected their entire acquisition funnel, from first impression to demo
-        request, and slashed their bounce rate from 74% down to 31%.
-      </p>
-      <div class="metrics-row">
-        <div class="metric">
-          <span class="metric-val" style="color:#8B5CF6;" data-target="-57" data-suffix="%">-57<span>%</span></span>
-          <span class="metric-label">Bounce Rate Drop</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:#8B5CF6;" data-target="290" data-suffix="%">290<span>%</span></span>
-          <span class="metric-label">More Demo Requests</span>
-        </div>
-        <div class="metric">
-          <span class="metric-val" style="color:#8B5CF6;" data-target="99">99<span></span></span>
-          <span class="metric-label">PageSpeed Score</span>
-        </div>
-      </div>
-      <div class="stack-row">
-        <span class="stack-tag">Next.js</span>
-        <span class="stack-tag">GSAP</span>
-        <span class="stack-tag">HubSpot</span>
-        <span class="stack-tag">Vercel</span>
-      </div>
-      <a href="contact.html" class="btn btn-primary" style="border-color:rgba(139,92,246,0.38);color:#8B5CF6;">
-        Build Something Like This <span aria-hidden="true">→</span>
-      </a>
-    </div>
-
-    <!-- Browser Mockup (RIGHT) -->
-    <div class="browser-mock">
-      <div class="browser-bar">
-        <div class="browser-dots">
-          <div class="browser-dot" style="background:#FF5F56;"></div>
-          <div class="browser-dot" style="background:#FFBD2E;"></div>
-          <div class="browser-dot" style="background:#27C93F;"></div>
-        </div>
-        <div class="browser-url-bar">novasystems.io</div>
-      </div>
-      <div class="browser-body">
-        <div style="background:linear-gradient(160deg,#0c0616 0%,#140a20 100%); min-height: 340px; overflow:hidden;">
-          <div style="display:flex;align-items:center;padding:14px 24px;gap:14px;border-bottom:1px solid rgba(139,92,246,0.12);">
-            <div style="width:76px;height:13px;background:rgba(139,92,246,0.7);border-radius:3px;"></div>
-            <div style="flex:1;"></div>
-            <div style="width:36px;height:9px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-            <div style="width:36px;height:9px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-            <div style="width:36px;height:9px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-            <div style="width:68px;height:28px;background:rgba(139,92,246,0.25);border:1px solid rgba(139,92,246,0.4);border-radius:5px;"></div>
-          </div>
-          <div style="margin:20px 24px 0;height:110px;border-radius:10px;overflow:hidden;position:relative;
-            background:linear-gradient(135deg,#1a0c28 0%,#0e0818 100%);
-            display:flex;align-items:center;padding:0 20px;">
-            <div>
-              <div style="width:150px;height:16px;background:rgba(255,255,255,0.72);border-radius:4px;margin-bottom:8px;"></div>
-              <div style="width:110px;height:9px;background:rgba(255,255,255,0.28);border-radius:3px;margin-bottom:14px;"></div>
-              <div style="display:flex;gap:8px;">
-                <div style="width:80px;height:28px;background:rgba(139,92,246,0.5);border-radius:5px;"></div>
-              </div>
-            </div>
-            <div style="flex:1;display:flex;justify-content:flex-end;">
-              <div style="width:100px;height:80px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.15);border-radius:10px;
-                display:flex;flex-direction:column;gap:6px;padding:10px;">
-                <div style="width:100%;height:8px;background:rgba(139,92,246,0.3);border-radius:3px;"></div>
-                <div style="width:85%;height:8px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-                <div style="width:90%;height:8px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-                <div style="width:70%;height:8px;background:rgba(139,92,246,0.2);border-radius:3px;"></div>
-              </div>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:16px 24px;">
-            <div style="height:52px;background:rgba(255,255,255,0.02);border:1px solid rgba(139,92,246,0.1);border-radius:8px;padding:10px 12px;">
-              <div style="width:55%;height:8px;background:rgba(139,92,246,0.35);border-radius:3px;margin-bottom:6px;"></div>
-              <div style="width:80%;height:7px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-            </div>
-            <div style="height:52px;background:rgba(255,255,255,0.02);border:1px solid rgba(139,92,246,0.1);border-radius:8px;padding:10px 12px;">
-              <div style="width:60%;height:8px;background:rgba(139,92,246,0.35);border-radius:3px;margin-bottom:6px;"></div>
-              <div style="width:70%;height:7px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
-            </div>
-            <div style="height:52px;background:rgba(255,255,255,0.02);border:1px solid rgba(139,92,246,0.1);border-radius:8px;padding:10px 12px;">
-              <div style="width:50%;height:8px;background:rgba(139,92,246,0.35);border-radius:3px;margin-bottom:6px;"></div>
-              <div style="width:75%;height:7px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
             </div>
           </div>
         </div>
