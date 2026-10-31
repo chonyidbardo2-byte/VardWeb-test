@@ -317,36 +317,53 @@
       border-bottom: 1px solid rgba(0,229,255,0.07);
       padding: 52px 28px;
     }
+    /* Stat card: big white value with a muted unit, title, then a context row whose
+       tinted icon and bold lead take the card's accent (--stat-c) */
     .stat-card {
+      --stat-c: var(--cyan);
+      display: flex; flex-direction: column; gap: 8px;
       background: var(--raised);
-      border: 1px solid rgba(0,229,255,0.09);
-      border-radius: 14px;
-      padding: 28px 20px;
-      text-align: center;
+      border: 1px solid rgba(200,212,232,0.08);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: left;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.35), 0 12px 32px -16px rgba(0,0,0,0.6);
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .stat-card:hover {
       border-color: rgba(0,229,255,0.28);
       box-shadow: 0 0 24px rgba(0,229,255,0.07), inset 0 1px 0 rgba(0,229,255,0.08);
     }
+    .stat-value { display: flex; align-items: baseline; gap: 4px; }
     .stat-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(30px,4vw,46px);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(40px, 4.4vw, 52px);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1;
-      margin-bottom: 10px;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-unit {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 24px; font-weight: 600;
+      color: rgba(200,212,232,0.45);
     }
     .stat-label {
-      font-size: 11px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      color: rgba(200,212,232,0.45);
+      font-size: 16px;
+      color: rgba(200,212,232,0.6);
       line-height: 1.4;
-      min-height: 31px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
+    .stat-meta { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 16px; }
+    .stat-icon {
+      flex: none; width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--stat-c);
+      background: color-mix(in srgb, var(--stat-c) 15%, transparent);
+    }
+    .stat-icon svg { width: 16px; height: 16px; }
+    .stat-meta p { font-size: 14px; line-height: 1.4; color: rgba(200,212,232,0.6); }
+    .stat-meta b { font-weight: 600; color: var(--stat-c); }
 
     /* ── Industry marquee ── */
     .industry-marquee-wrap {
@@ -1000,7 +1017,7 @@
     }
     @media (max-width: 560px) {
       .features-grid { grid-template-columns: 1fr; }
-      .stats-grid    { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .stats-grid    { grid-template-columns: 1fr; gap: 16px; }
       .footer-grid   { grid-template-columns: 1fr; gap: 36px; }
       .logo-card img { height: 64px; }
       .logo-card     { padding: 14px 24px; }
@@ -1683,21 +1700,37 @@
 <!-- ────────────────────── STATS ────────────────────── -->
 <section class="stats-wrap">
   <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--cyan);" data-target="25" data-suffix="+">25+</div>
-      <div class="stat-label">Sites Launched</div>
+    <div class="stat-card" role="group" aria-label="Sites launched: 25 plus, across 15 plus industries">
+      <div class="stat-value" aria-hidden="true"><div class="stat-num" data-target="25">25</div><span class="stat-unit">+</span></div>
+      <div class="stat-label" aria-hidden="true">Sites launched</div>
+      <div class="stat-meta" aria-hidden="true">
+        <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></span>
+        <p><b>15+</b> industries served</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--pink);" data-target="97" data-suffix="%">97%</div>
-      <div class="stat-label">Client Satisfaction</div>
+    <div class="stat-card" style="--stat-c:var(--gold);" role="group" aria-label="Average load time: 1.8 seconds, 0.7 seconds under Google's 2.5 second good mark">
+      <div class="stat-value" aria-hidden="true"><div class="stat-num" data-target="1.8" data-decimals="1">1.8</div><span class="stat-unit">s</span></div>
+      <div class="stat-label" aria-hidden="true">Average load time</div>
+      <div class="stat-meta" aria-hidden="true">
+        <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 7 10 10"/><path d="M17 7v10H7"/></svg></span>
+        <p><b>0.7s</b> under Google's 2.5s "good" mark</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:var(--gold);" data-target="1.8" data-suffix="s" data-decimals="1">1.8s</div>
-      <div class="stat-label">Avg Load Speed</div>
+    <div class="stat-card" style="--stat-c:var(--pink);" role="group" aria-label="Emergency fix time: 4 hours, with general support requests answered within 24 hours">
+      <div class="stat-value" aria-hidden="true"><div class="stat-num" data-target="4">4</div><span class="stat-unit">h</span></div>
+      <div class="stat-label" aria-hidden="true">Emergency fix time</div>
+      <div class="stat-meta" aria-hidden="true">
+        <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+        <p><b>24h</b> for general support requests</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-num" style="color:#00E5FF;" data-target="15" data-suffix="+">15+</div>
-      <div class="stat-label">Industries Served</div>
+    <div class="stat-card" role="group" aria-label="Client satisfaction: 97 percent, with one point of contact from start to finish">
+      <div class="stat-value" aria-hidden="true"><div class="stat-num" data-target="97">97</div><span class="stat-unit">%</span></div>
+      <div class="stat-label" aria-hidden="true">Client satisfaction</div>
+      <div class="stat-meta" aria-hidden="true">
+        <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+        <p><b>1</b> point of contact, start to finish</p>
+      </div>
     </div>
   </div>
 </section>
