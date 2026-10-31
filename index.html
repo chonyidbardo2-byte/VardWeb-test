@@ -889,39 +889,54 @@
     .browser-body { overflow: hidden; }
 
     .hero-mock-wrap { width: 100%; max-width: 860px; margin: 56px auto 0; position: relative; z-index: 1; }
-    .hero-mock-row { display: grid; grid-template-columns: 1fr 220px; gap: 20px; align-items: start; }
+    /* --phone-w is set by the sync script so the phone stands as tall as the browser mock */
+    .hero-mock-row { display: grid; grid-template-columns: 1fr var(--phone-w, 214px); gap: 20px; align-items: start; }
     .browser-mock img { display: block; width: 100%; height: auto; }
 
-    /* Phone chassis: layered inset shadows simulate a metal frame + black bezel
-       around an inset screen, instead of a flat bordered box. */
-    .phone-mock {
-      background: linear-gradient(165deg, #2a2a2e 0%, #0a0a0c 60%);
-      border-radius: 36px;
-      overflow: hidden;
-      position: relative;
-      width: 220px;
-      aspect-ratio: 756 / 1732;
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,0.14),
-        inset 0 0 0 8px #050505,
-        0 45px 90px -20px rgba(0,0,0,0.85),
-        0 18px 32px -10px rgba(0,0,0,0.7);
-    }
-    .phone-mock-screen {
-      position: absolute; inset: 8px;
-      border-radius: 28px;
-      overflow: hidden;
-      background: #000;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
-    }
-    .phone-mock-notch {
-      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-      width: 72px; height: 20px; background: #000; border-radius: 9999px; z-index: 2;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
-    }
-    .phone-mock-screen img {
-      position: absolute; inset: 30px 0 0 0;
-      width: 100%; height: calc(100% - 30px);
+    /* ── Device: iPhone-style frame (titanium rim, bezel, island, buttons, glass) ──
+       Shared frame, copied from app-development.html; keep the two in sync. */
+    .ka-device { position: relative; aspect-ratio: 433 / 882; border-radius: 16.5% / 8.1%;
+      background: linear-gradient(90deg, #3A3A3F 0%, #C9C9CF 1.6%, #77777D 3.6%, #2B2B30 9%, #1E1E22 50%, #2B2B30 91%, #77777D 96.4%, #C9C9CF 98.4%, #3A3A3F 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35),
+        0 2px 4px rgba(12,10,18,0.22), 0 24px 48px -18px rgba(28,10,60,0.55), 0 70px 120px -50px rgba(124,58,237,0.45); }
+    .ka-dev-btn { position: absolute; width: 1.3%; border-radius: 2px;
+      background: linear-gradient(90deg, #2A2A2E 0%, #A9A9AF 45%, #3A3A3F 100%); }
+    .ka-dev-btn--action { left: -1%; top: 18%; height: 4.2%; }
+    .ka-dev-btn--vup { left: -1%; top: 25.5%; height: 7.6%; }
+    .ka-dev-btn--vdown { left: -1%; top: 34.6%; height: 7.6%; }
+    .ka-dev-btn--power { right: -1%; top: 28%; height: 11.5%; transform: scaleX(-1); }
+    .ka-dev-body { position: absolute; inset: 0.95% 1.95%; border-radius: 15.4% / 7.6%; background: #050506;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+    .ka-dev-screen { position: absolute; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; container-type: inline-size;
+      /* clip-path, not overflow:hidden: rounded overflow masks leave a 1px seam inside the moving phone layers */
+      clip-path: inset(0 round 13.4% / 6.3%);
+      background: #fff; isolation: isolate; }
+    .ka-dev-island { position: absolute; z-index: 3; top: 2.9%; left: 50%; transform: translateX(-50%); width: 30.5%; height: 4.1%;
+      border-radius: 999px; background: linear-gradient(180deg, #0C0C0F 0%, #000 55%, #060607 100%);
+      box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.06), inset 0 -1px 1px rgba(255,255,255,0.03); }
+    /* Front camera: graphite rim, black barrel, coated glass iris, pupil and two glints */
+    .ka-dev-island::after { content: ''; position: absolute; right: 10%; top: 50%; height: 64%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background:
+        radial-gradient(circle at 33% 31%, rgba(255,255,255,0.95) 0 5%, rgba(255,255,255,0) 10%),
+        radial-gradient(circle at 66% 70%, rgba(176,196,255,0.4) 0 5%, rgba(176,196,255,0) 13%),
+        radial-gradient(circle at 50% 50%, #010208 0 15%, rgba(1,2,8,0) 17%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 17%, rgba(108,92,231,0.6) 24%, rgba(46,36,128,0.65) 34%, rgba(14,52,72,0.7) 44%, rgba(0,0,0,0) 54%),
+        radial-gradient(circle at 50% 50%, #0B1028 0 50%, #06070E 58%, #000 68%);
+      box-shadow: 0 0 0 1px #1C1C21, 0 0 0 1.6px #040405, inset 0 0 0 1px rgba(255,255,255,0.07), inset 0 1px 1.5px rgba(255,255,255,0.1); }
+    /* Face ID flood/proximity sensor, barely visible like on the real hardware */
+    .ka-dev-island::before { content: ''; position: absolute; left: 22%; top: 50%; height: 22%; aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #2A1F3D 0%, #0C0812 70%); opacity: 0.8; }
+    .ka-dev-glare { position: absolute; z-index: 4; inset: 1.15% 2.6%; border-radius: 13.4% / 6.3%; pointer-events: none;
+      background: linear-gradient(118deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.05) 24%, rgba(255,255,255,0) 38%); }
+
+    /* Hero phone: the shared frame with this page's own dark drop shadow instead of the App page's purple glow */
+    .phone-mock { position: relative; width: 100%; }
+    .phone-mock .ka-device { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22), inset 0 1px 1px rgba(255,255,255,0.35),
+      0 45px 90px -20px rgba(0,0,0,0.85), 0 18px 32px -10px rgba(0,0,0,0.7); }
+    .phone-mock .ka-dev-screen { background: #000; }
+    .phone-mock .ka-dev-screen img {
+      position: absolute; inset: 12cqw 0 0 0;
+      width: 100%; height: calc(100% - 12cqw);
       object-fit: cover; object-position: top;
     }
 
@@ -938,7 +953,7 @@
     @media (max-width: 860px) {
       .hero-mock-row { grid-template-columns: 1fr; justify-content: center; }
       .hero-mock-desktop { display: none; }
-      .phone-mock { width: min(300px, 100%); margin: 0 auto; aspect-ratio: 756 / 1500; }
+      .phone-mock { width: min(300px, 100%); margin: 0 auto; }
     }
     @media (max-width: 480px) {
       .hero-mock-wrap { margin-top: 40px; }
@@ -1649,9 +1664,15 @@
       </a>
 
       <a href="https://vardedveins.com" target="_blank" rel="noopener noreferrer" class="phone-mock mock-link" aria-label="Visit VardedVeins (opens in a new tab)">
-        <div class="phone-mock-screen">
-          <div class="phone-mock-notch"></div>
-          <img src="brand_assets/vardedveins.com_Mobile_cropped.webp" alt="VardedVeins mobile site preview" loading="lazy">
+        <div class="ka-device">
+          <span class="ka-dev-btn ka-dev-btn--action"></span><span class="ka-dev-btn ka-dev-btn--vup"></span><span class="ka-dev-btn ka-dev-btn--vdown"></span><span class="ka-dev-btn ka-dev-btn--power"></span>
+          <div class="ka-dev-body">
+            <div class="ka-dev-screen">
+              <img src="brand_assets/vardedveins.com_Mobile_cropped.webp" alt="VardedVeins mobile site preview" loading="lazy">
+            </div>
+            <span class="ka-dev-island"></span>
+            <span class="ka-dev-glare"></span>
+          </div>
         </div>
       </a>
     </div>
@@ -4784,13 +4805,18 @@
   var desktop = document.querySelector('.hero-mock-desktop');
   var phone = document.querySelector('.phone-mock');
   if (!desktop || !phone) return;
+  var row = phone.parentNode;
 
+  /* The frame has a fixed 433:882 shape, so size the phone column from the browser
+     mock's height. Widening the column shrinks the browser, so repeat until it settles. */
   function sync() {
     if (getComputedStyle(desktop).display === 'none') {
-      phone.style.height = '';
+      row.style.removeProperty('--phone-w');
       return;
     }
-    phone.style.height = desktop.getBoundingClientRect().height + 'px';
+    for (var i = 0; i < 4; i++) {
+      row.style.setProperty('--phone-w', (desktop.getBoundingClientRect().height * 433 / 882) + 'px');
+    }
   }
 
   window.addEventListener('resize', sync);
