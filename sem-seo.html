@@ -46,7 +46,9 @@
       background: var(--base);
       color: var(--text-1);
       font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
+      /* clip, not hidden: with html also hiding overflow-x, hidden here turns
+         body into its own scroll box and breaks the sticky SEO prism stage */
+      overflow-x: clip;
       line-height: 1.6;
     }
 
@@ -1696,6 +1698,85 @@
     @media (prefers-reduced-motion: reduce) {
       .nav-link:hover .ni, .nav-link:focus-visible .ni { transform: none; }
     }
+
+    /* SEO hero: glass prism (vanilla port of the GlassPrismHero component).
+       The section is tall so the sticky stage stays pinned while scrolling
+       turns the prism and dims the light. The shader reads the stage's
+       background and color as its scene colors. */
+    .seo-prism { position: relative; width: 100%; height: calc(100svh + 90vh); background: var(--base); }
+    .seo-prism-stage {
+      position: sticky; top: 0; height: 100svh; min-height: 560px; width: 100%; overflow: hidden;
+      background: var(--base); color: var(--text-1); font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .seo-prism-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .seo-prism-title {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+    .seo-prism-stage.no-gl .seo-prism-title {
+      position: absolute; inset: 22vh 0 auto; width: auto; height: auto; margin: 0; padding: 0 20px;
+      clip: auto; white-space: normal; overflow: visible; text-align: center;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(40px, 8vw, 112px); font-weight: 700;
+      line-height: 1; letter-spacing: -0.05em; color: var(--text-1);
+    }
+    .seo-prism-copy { position: absolute; inset: 0; pointer-events: none; }
+    .seo-prism-eyebrow { position: absolute; inset: 9vh 0 auto; display: flex; justify-content: center; }
+    .seo-prism-eyebrow span {
+      display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px;
+      border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(22,27,39,0.6);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: -0.01em; color: var(--text-2);
+    }
+    .seo-prism-eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: var(--hero-orange); box-shadow: 0 0 10px var(--hero-orange); }
+    .seo-prism-bottom {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      padding: 0 20px max(15vh, 104px); text-align: center;
+    }
+    .seo-prism-bottom p {
+      margin: 0; max-width: 600px; font-family: 'Inter', sans-serif; font-size: 17px; line-height: 25px;
+      letter-spacing: -0.02em; color: var(--text-2);
+    }
+    .seo-prism-actions { pointer-events: auto; margin-top: 22px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .seo-prism-pill {
+      display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: -0.02em; text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.1); background: rgba(22,27,39,0.6); color: var(--text-1);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+    }
+    .seo-prism-pill.is-solid { background: var(--text-1); border-color: var(--text-1); color: var(--base); }
+    .seo-prism-pill:hover { transform: translateY(-2px); }
+    .seo-prism-pill:active { transform: scale(0.97); }
+    .seo-prism-pill:focus-visible { outline: 2px solid var(--hero-orange); outline-offset: 2px; }
+    .seo-prism-fade {
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 1s cubic-bezier(.2,.9,.25,1), transform 1s cubic-bezier(.2,.9,.25,1);
+    }
+    .seo-prism-bottom p.seo-prism-fade { transition-delay: 0.1s; }
+    .seo-prism-actions.seo-prism-fade { transition-delay: 0.2s; }
+    .seo-prism-stage.is-ready .seo-prism-fade { opacity: 1; transform: none; }
+    .seo-prism-hint {
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; letter-spacing: 0.02em; color: var(--text-2);
+      opacity: 0; transition: opacity 0.7s ease;
+    }
+    .seo-prism-wheel {
+      position: relative; width: 22px; height: 34px; border-radius: 11px;
+      border: 1.5px solid color-mix(in oklab, var(--text-1) 28%, transparent);
+      transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .seo-prism-hint[data-up="true"] .seo-prism-wheel { transform: rotate(180deg); }
+    .seo-prism-wheel span {
+      position: absolute; left: 50%; top: 7px; margin-left: -1.5px; width: 3px; height: 7px; border-radius: 2px;
+      background: var(--hero-orange); box-shadow: 0 0 8px var(--hero-orange);
+      animation: seo-prism-wheel 1.8s cubic-bezier(.6,0,.3,1) infinite;
+    }
+    @keyframes seo-prism-wheel { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 70% { transform: translateY(10px); opacity: 0; } 100% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .seo-prism-wheel span { animation: none; opacity: 1; }
+      .seo-prism-fade, .seo-prism-wheel { transition: none; }
+    }
   </style>
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
@@ -3001,6 +3082,28 @@
 
 <div class="divider"></div>
 
+<!-- ── SEO HERO: glass prism (vanilla port of GlassPrismHero) ── -->
+<section class="seo-prism" id="seo-prism" aria-labelledby="seo-prism-title">
+  <div class="seo-prism-stage">
+    <canvas class="seo-prism-canvas" aria-hidden="true"></canvas>
+    <h2 id="seo-prism-title" class="seo-prism-title">Found in a new light.</h2>
+    <div class="seo-prism-copy">
+      <div class="seo-prism-eyebrow seo-prism-fade"><span><i aria-hidden="true"></i>Search engine optimization</span></div>
+      <div class="seo-prism-bottom">
+        <p class="seo-prism-fade">On-page, off-page and technical SEO that turns a half-finished site into one Google can crawl, trust and rank.</p>
+        <div class="seo-prism-actions seo-prism-fade">
+          <a href="#seo-pillars" class="seo-prism-pill is-solid">See the pillars</a>
+          <a href="contact.html?type=Free+SEO+Check&amp;typeColor=%23f97316" class="seo-prism-pill">Free SEO check</a>
+        </div>
+      </div>
+    </div>
+    <div class="seo-prism-hint" aria-hidden="true" data-up="false">
+      <div class="seo-prism-wheel"><span></span></div>
+      <span class="seo-prism-hint-label">Scroll to rotate</span>
+    </div>
+  </div>
+</section>
+
 <!-- ── CONTENT: SEO Pillars (3-card grid) ── -->
 <section class="seo-pillars" id="seo-pillars">
   <svg width="0" height="0" style="position:absolute;" aria-hidden="true">
@@ -4203,6 +4306,345 @@
   }, { passive: true });
 
   window.addEventListener('scroll', closeAllOpen, { passive: true });
+})();
+</script>
+<script>
+/* ── SEO hero: glass prism. A glass prism splits a beam of white light into
+   a spectrum that falls across a dot grid. The cursor moves the light
+   source, scrolling turns the prism and dims the light. Plain WebGL, a
+   vanilla port of the GlassPrismHero component; shader and optics unchanged. ── */
+(function () {
+  var section = document.getElementById('seo-prism');
+  if (!section) return;
+  var stage = section.querySelector('.seo-prism-stage'), cv = section.querySelector('.seo-prism-canvas');
+  var copyEl = section.querySelector('.seo-prism-copy'), hint = section.querySelector('.seo-prism-hint');
+  var hintLabel = section.querySelector('.seo-prism-hint-label');
+  var headline = 'Found in a new light.';
+  var fontFamily = "'Plus Jakarta Sans', sans-serif", fontWeight = 700;
+  var scrollHint = { rotate: 'Scroll to rotate', back: 'Scroll up' };
+  var NR = 16; // wavelengths in the fan
+
+  var FS = 'precision highp float;\n#define NR ' + NR + '\n' + [
+    'uniform vec2 uRes;uniform float uDpr,uT,uDark,uFade,uTime;',
+    'uniform vec3 uBg,uFg;',
+    'uniform sampler2D uText;',
+    'uniform vec2 uV0,uV1,uV2;',
+    'uniform float uRound;',
+    'uniform vec2 uDepth;',
+    'uniform vec2 uS,uE,uDir0;',
+    'uniform vec2 uX[NR];uniform vec2 uD[NR];uniform float uOk[NR];uniform vec3 uC[NR];',
+    'uniform vec2 uShift;',
+    'uniform vec2 uC0;',
+    'uniform float uHeadIn,uFanLen;',
+    'float sdTri(vec2 p,vec2 p0,vec2 p1,vec2 p2){',
+    '  vec2 e0=p1-p0,e1=p2-p1,e2=p0-p2,v0=p-p0,v1=p-p1,v2=p-p2;',
+    '  vec2 pq0=v0-e0*clamp(dot(v0,e0)/dot(e0,e0),0.,1.);',
+    '  vec2 pq1=v1-e1*clamp(dot(v1,e1)/dot(e1,e1),0.,1.);',
+    '  vec2 pq2=v2-e2*clamp(dot(v2,e2)/dot(e2,e2),0.,1.);',
+    '  float s=sign(e0.x*e2.y-e0.y*e2.x);',
+    '  vec2 d=min(min(vec2(dot(pq0,pq0),s*(v0.x*e0.y-v0.y*e0.x)),vec2(dot(pq1,pq1),s*(v1.x*e1.y-v1.y*e1.x))),vec2(dot(pq2,pq2),s*(v2.x*e2.y-v2.y*e2.x)));',
+    '  return -sqrt(d.x)*sign(d.y);',
+    '}',
+    'float prism(vec2 p){return sdTri(p,uV0,uV1,uV2)-uRound;}',
+    'float seg(vec2 p,vec2 a,vec2 b){vec2 pa=p-a,ba=b-a;float h=clamp(dot(pa,ba)/dot(ba,ba),0.,1.);return length(pa-ba*h);}',
+    'float dotMask(vec2 p){vec2 g=vec2(20.,13.);vec2 q=mod(p+vec2(6.,1.)+g*.5,g)-g*.5;return 1.-smoothstep(.45,1.15,length(q));}',
+    'vec3 scene(vec2 p){',
+    '  vec3 c=uBg;',
+    '  c=mix(c,uFg,(uDark>.5?.12:.14)*dotMask(p));',
+    '  float t=texture2D(uText,clamp(p/uRes,0.,1.)).a;',
+    '  return mix(c,uFg,t*.97);',
+    '}',
+    'vec3 beams(vec2 p,out float white){',
+    '  vec3 L=vec3(0.);white=0.;',
+    '  vec2 head=uS+uDir0*uHeadIn;',
+    '  float di=seg(p,uS,head);',
+    '  float wi=exp(-di*di/1.6)+.16*exp(-di*di/120.);',
+    '  white=wi;L+=vec3(wi);',
+    '  for(int i=0;i<NR;i++){',
+    '    if(uOk[i]<.5)continue;',
+    '    vec2 q=p-uX[i];float t=dot(q,uD[i]);',
+    '    if(t<0.)continue;',
+    '    float d=abs(q.x*uD[i].y-q.y*uD[i].x);',
+    '    float w=1.2+t*.022;',
+    '    float f=(exp(-d*d/(w*w))+.22*exp(-d*d/(w*w*16.)))*smoothstep(uFanLen,uFanLen-120.,t)/(1.+t*.0011);',
+    '    L+=uC[i]*f*(2.4/float(NR));',
+    '  }',
+    '  return L*uFade;',
+    '}',
+    'vec3 inner(vec2 p){',
+    '  vec3 L=vec3(0.);',
+    '  if(uFanLen<=0.)return L;',
+    '  for(int i=0;i<NR;i++){if(uOk[i]<.5)continue;float d=seg(p,uE,uX[i]);L+=mix(vec3(1.),uC[i],.75)*exp(-d*d/3.)*(.9/float(NR));}',
+    '  float de=length(p-uE);L+=vec3(1.)*exp(-de*de/90.)*.55;',
+    '  return L*uFade;',
+    '}',
+    'void main(){',
+    '  vec2 p=vec2(gl_FragCoord.x,uRes.y*uDpr-gl_FragCoord.y)/uDpr;',
+    '  float aa=.8/uDpr+.35;',
+    '  float dF=prism(p);',
+    '  float dH=dF;for(int k=1;k<=4;k++){dH=min(dH,prism(p-uDepth*float(k)*.25));}',
+    '  vec3 col;',
+    '  float wb;vec3 B=beams(p,wb);',
+    '  vec3 outside=scene(p);',
+    '  float dm=dotMask(p);',
+    '  if(uDark>.5){outside+=B*(.2+2.6*dm);}',
+    '  else{float I=max(B.r,max(B.g,B.b));vec3 hue=B/max(I,1e-4);hue=mix(hue,vec3(.32),wb/max(I,1e-4)*.9);outside=mix(outside,hue*.92,clamp(I*(.3+1.7*dm),0.,.85));}',
+    '  vec3 side=scene(p-uDepth*.6)*(uDark>.5?.92:.97)+(uDark>.5?.028:-.015);',
+    '  if(uDark>.5)side+=B*.25;',
+    '  col=mix(side,outside,smoothstep(-aa,aa,dH));',
+    '  if(dF<2.){',
+    '    float e=1.;',
+    '    vec2 g=vec2(prism(p+vec2(e,0.))-prism(p-vec2(e,0.)),prism(p+vec2(0.,e))-prism(p-vec2(0.,e)));g=g/max(length(g),1e-4);',
+    '    float bevel=16.;float h=clamp(-dF/bevel,0.,1.);float slope=pow(1.-h,1.6);',
+    '    vec3 N=normalize(vec3(g*slope*1.35,1.));',
+    '    vec2 off=-N.xy*30.-(p-uC0)*.22+uShift;',
+    '    vec3 refr=vec3(scene(p+off*1.).r,scene(p+off*1.07).g,scene(p+off*1.15).b);',
+    '    vec3 glass=refr*(uDark>.5?vec3(.9,.92,1.):vec3(.96,.97,1.))+(uDark>.5?.03:.0);',
+    '    float fr=pow(1.-N.z,1.5);',
+    '    vec3 Ld=normalize(vec3(-uDir0,.9));vec3 H=normalize(Ld+vec3(0.,0.,1.));',
+    '    float sp=pow(max(dot(N,H),0.),48.);',
+    '    float band=exp(-pow(dot(p-uC0,vec2(.8,-.6))/(length(uV0-uC0)*.22)-.35,2.));',
+    '    vec3 iri=.5+.5*cos(6.2831*(dot(p-uC0,vec2(.004,.003))+vec3(0.,.33,.67)));',
+    '    glass+=vec3(1.)*(fr*.3+sp*.85+band*(uDark>.5?.05:.03))+iri*fr*(uDark>.5?.14:.08);',
+    '    if(uDark<.5)glass-=vec3(fr*.10);',
+    '    vec3 IN=inner(p);',
+    '    if(uDark>.5)glass+=IN;',
+    '    else{float I=max(IN.r,max(IN.g,IN.b));vec3 hue=IN/max(I,1e-4);hue=mix(vec3(.45),hue,clamp((I-min(IN.r,min(IN.g,IN.b)))/max(I,1e-4)*2.,0.,1.));glass=mix(glass,hue*.85,clamp(I*.7,0.,.7));}',
+    '    col=mix(glass,col,smoothstep(-aa,aa,dF));',
+    '  }',
+    '  vec2 b0=uV0+uDepth,b1=uV1+uDepth,b2=uV2+uDepth;',
+    '  vec3 lineC=uDark>.5?vec3(1.):vec3(0.);',
+    '  float ef=abs(dF);float lf=1.-smoothstep(.0,aa*1.6,ef);',
+    '  float eb=min(min(seg(p,b0,b1),seg(p,b1,b2)),seg(p,b2,b0))-uRound;eb=abs(eb);float lb=1.-smoothstep(0.,aa*1.6,eb);',
+    '  float ec=min(min(seg(p,uV0+normalize(uV0-uC0)*uRound,b0+normalize(uV0-uC0)*uRound),seg(p,uV1+normalize(uV1-uC0)*uRound,b1+normalize(uV1-uC0)*uRound)),seg(p,uV2+normalize(uV2-uC0)*uRound,b2+normalize(uV2-uC0)*uRound));float lc=1.-smoothstep(.2,.2+aa*1.6,ec);',
+    '  col=mix(col,lineC,lb*(uDark>.5?.16:.14));',
+    '  col=mix(col,lineC,lc*(uDark>.5?.22:.18));',
+    '  col=mix(col,lineC,lf*(uDark>.5?.55:.45));',
+    '  gl_FragColor=vec4(col,1.);',
+    '}'
+  ].join('\n');
+  var VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
+
+  /* wavelength (nm) to a saturated rgb; the blue band leans toward #3c2cff */
+  function spectrum(l) {
+    var g = function (x, m, s) { return Math.exp(-Math.pow((x - m) / s, 2)); };
+    var r = g(l, 610, 55) + 0.35 * g(l, 415, 28), gg = g(l, 540, 50);
+    var b = g(l, 455, 38), blue = g(l, 455, 22);
+    r += blue * 0.12; gg -= blue * 0.1;
+    var m = Math.max(r, gg, b, 1e-3);
+    return [(r / m) * 0.9 + 0.1 * r, (gg / m) * 0.9 + 0.1 * gg, b / m];
+  }
+  var LAMBDA = [], IOR = [], colors = [];
+  for (var li = 0; li < NR; li++) LAMBDA.push(700 - li * (300 / (NR - 1)));
+  LAMBDA.forEach(function (l) { IOR.push(1.33 + 0.03 / Math.pow(l / 1000, 2)); colors.push.apply(colors, spectrum(l)); }); // exaggerated Cauchy, so the fan opens wide
+  var COLORS = new Float32Array(colors);
+
+  function sub(a, b) { return [a[0] - b[0], a[1] - b[1]]; }
+  function add(a, b) { return [a[0] + b[0], a[1] + b[1]]; }
+  function mul(a, s) { return [a[0] * s, a[1] * s]; }
+  function dot(a, b) { return a[0] * b[0] + a[1] * b[1]; }
+  function norm(a) { var l = Math.hypot(a[0], a[1]) || 1; return [a[0] / l, a[1] / l]; }
+
+  function hitEdges(o, d, V, skip) {
+    var best = null;
+    for (var k = 0; k < 3; k++) {
+      if (k === skip) continue;
+      var a = V[k], e = sub(V[(k + 1) % 3], a), den = d[0] * e[1] - d[1] * e[0];
+      if (Math.abs(den) < 1e-9) continue;
+      var w = sub(a, o), t = (w[0] * e[1] - w[1] * e[0]) / den, u = (w[0] * d[1] - w[1] * d[0]) / den;
+      if (t > 1e-4 && u >= 0 && u <= 1 && (!best || t < best.t)) best = { t: t, k: k, p: add(o, mul(d, t)) };
+    }
+    return best;
+  }
+  function outward(V, k, C) {
+    var a = V[k], b = V[(k + 1) % 3];
+    var n = norm([b[1] - a[1], -(b[0] - a[0])]);
+    if (dot(n, sub(a, C)) < 0) n = mul(n, -1);
+    return n;
+  }
+  function refract(d, n, eta) {
+    var ci = -dot(n, d), k = 1 - eta * eta * (1 - ci * ci);
+    if (k < 0) return null;
+    return norm(add(mul(d, eta), mul(n, eta * ci - Math.sqrt(k))));
+  }
+  /* any CSS color to 0..1 rgb via a 1px canvas */
+  function makeColorReader() {
+    var c = document.createElement('canvas'); c.width = c.height = 1;
+    var g = c.getContext('2d', { willReadFrequently: true });
+    return function (css) {
+      g.clearRect(0, 0, 1, 1); g.fillStyle = '#000'; g.fillStyle = css; g.fillRect(0, 0, 1, 1);
+      var d = g.getImageData(0, 0, 1, 1).data;
+      return [d[0] / 255, d[1] / 255, d[2] / 255];
+    };
+  }
+
+  function setReady(on) { stage.classList.toggle('is-ready', on); }
+  function noGL() { stage.classList.add('no-gl'); setReady(true); }
+
+  var gl = cv.getContext('webgl', { antialias: false, premultipliedAlpha: false, alpha: false });
+  if (!gl || gl.isContextLost()) { noGL(); return; }
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function shader(type, src) {
+    var o = gl.createShader(type);
+    if (!o) return null;
+    gl.shaderSource(o, src); gl.compileShader(o);
+    if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) { console.warn(gl.getShaderInfoLog(o)); gl.deleteShader(o); return null; }
+    return o;
+  }
+  var vs = shader(gl.VERTEX_SHADER, VS), fsh = shader(gl.FRAGMENT_SHADER, FS), pr = gl.createProgram();
+  if (!vs || !fsh || !pr) { noGL(); return; }
+  gl.attachShader(pr, vs); gl.attachShader(pr, fsh);
+  gl.linkProgram(pr);
+  if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { noGL(); return; }
+  gl.useProgram(pr);
+  var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var al = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(al); gl.vertexAttribPointer(al, 2, gl.FLOAT, false, 0, 0);
+  var U = {};
+  ['uRes','uDpr','uT','uDark','uFade','uTime','uBg','uFg','uText','uV0','uV1','uV2','uRound','uDepth','uS','uE','uDir0','uX','uD','uOk','uC','uShift','uC0','uHeadIn','uFanLen']
+    .forEach(function (n) { U[n] = gl.getUniformLocation(pr, n); });
+  var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.uniform3fv(U.uC, COLORS); gl.uniform1i(U.uText, 0);
+
+  var readColor = makeColorReader();
+  var textBottom = 0, W = 0, H = 0, DPR = 1, bg = [0, 0, 0], fg = [1, 1, 1], dark = true;
+  function readTheme() {
+    var cs = getComputedStyle(stage);
+    bg = readColor(cs.backgroundColor); fg = readColor(cs.color);
+    dark = 0.2126 * bg[0] + 0.7152 * bg[1] + 0.0722 * bg[2] < 0.5;
+  }
+
+  function drawText() {
+    var c = document.createElement('canvas'); c.width = W * DPR; c.height = H * DPR;
+    var g = c.getContext('2d'); g.scale(DPR, DPR);
+    var font = function (px) { return fontWeight + ' ' + px + 'px ' + fontFamily; };
+    var words = headline.split(/\s+/);
+    var size = Math.min(W * 0.085, H * 0.14, 128), lines = [];
+    for (;;) {
+      g.font = font(size); try { g.letterSpacing = (-size * 0.05) + 'px'; } catch (e) {}
+      lines = []; var cur = '';
+      for (var i = 0; i < words.length; i++) { var t = cur ? cur + ' ' + words[i] : words[i]; if (g.measureText(t).width > W * 0.88 && cur) { lines.push(cur); cur = words[i]; } else cur = t; }
+      lines.push(cur);
+      if ((lines.length <= 2 && lines.every(function (l) { return g.measureText(l).width <= W * 0.9; })) || size < 28) break;
+      size *= 0.92;
+    }
+    g.font = font(size); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#fff';
+    try { g.letterSpacing = (-size * 0.05) + 'px'; } catch (e) {}
+    var lh = size, top = H * 0.29 - ((lines.length - 1) * lh) / 2;
+    lines.forEach(function (l, i) { g.fillText(l, W / 2, top + i * lh); });
+    textBottom = top + (lines.length - 1) * lh + size * 0.36;
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+  }
+
+  function resize() {
+    var r = stage.getBoundingClientRect();
+    W = Math.max(1, Math.round(r.width)); H = Math.max(1, Math.round(r.height)); DPR = Math.min(2, window.devicePixelRatio || 1);
+    cv.width = W * DPR; cv.height = H * DPR; gl.viewport(0, 0, cv.width, cv.height);
+    drawText();
+  }
+
+  var src = 0.3, ang = 0, tilt = [0, 0], SCR = 0, t0 = performance.now(), isReady = false, readyTimer = 0;
+  var mouse = { x: 0.5, y: 0.5, on: false };
+
+  /* prism and light path, solved on the CPU with Snell's law for every wavelength */
+  function geometry() {
+    var R = Math.min(W * 0.15, H * 0.22, 200), C = [W * 0.5, Math.min(H * 0.56, Math.max(H * 0.46, textBottom + R * 0.72))], a = ang + 0.4;
+    var V = [0, 1, 2].map(function (k) { var t = a + (k * 2 * Math.PI) / 3; return [C[0] + R * Math.sin(t), C[1] - R * Math.cos(t)]; });
+    var rr = Math.max(4, R * 0.045);
+    var Vs = V.map(function (v) { return add(C, mul(sub(v, C), 1 - (2 * rr) / R)); });
+    var S = [-60, H * src], d0 = norm(sub([C[0] - R * 0.4, C[1] - R * 0.2], S));
+    var h = hitEdges(S, d0, V, -1);
+    var X = [], D = [], ok = [];
+    for (var i = 0; i < NR; i++) {
+      var good = 0, x = [0, 0], dir = [1, 0];
+      if (h) {
+        var d = refract(d0, outward(V, h.k, C), 1 / IOR[i]), o = h.p, skip = h.k;
+        for (var b = 0; b < 4 && d; b++) {
+          var g = hitEdges(o, d, V, skip); if (!g) break;
+          var N = outward(V, g.k, C), t = refract(d, mul(N, -1), IOR[i]);
+          if (t) { x = g.p; dir = t; good = 1; break; }
+          d = norm(sub(d, mul(N, 2 * dot(d, N)))); o = g.p; skip = g.k; // total internal reflection
+        }
+      }
+      X.push(x[0], x[1]); D.push(dir[0], dir[1]); ok.push(good);
+    }
+    return { R: R, C: C, Vs: Vs, rr: rr, S: S, d0: d0, E: h ? h.p : C, X: X, D: D, ok: ok };
+  }
+
+  function setCopy() {
+    copyEl.style.opacity = isReady ? String(Math.max(0, 1 - SCR * 1.6)) : '';
+    var up = SCR > 0.85;
+    hint.dataset.up = up ? 'true' : 'false';
+    hintLabel.textContent = up ? scrollHint.back : scrollHint.rotate;
+    hint.style.opacity = isReady ? String(up ? 1 : Math.max(0, 1 - SCR * 5)) : '0';
+  }
+  function onScroll() {
+    var r = section.getBoundingClientRect();
+    SCR = Math.min(1, Math.max(0, -r.top / (window.innerHeight * 0.7)));
+    setCopy();
+  }
+  function restart() {
+    t0 = performance.now(); isReady = false; setReady(false); setCopy();
+    clearTimeout(readyTimer);
+    readyTimer = setTimeout(function () { isReady = true; setReady(true); setCopy(); }, reduce ? 0 : 1500);
+  }
+
+  var visible = false, started = false, played = false, frameNo = 0;
+  function ease(x) { return 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3); }
+  function frame(now) {
+    requestAnimationFrame(frame);
+    if (!visible) return;
+    if (frameNo++ % 30 === 0) readTheme();
+    var t = reduce ? 99 : (now - t0) / 1000;
+    // the cursor moves the light source (y) and turns the prism a touch (x)
+    var angT = (mouse.on ? (mouse.x - 0.5) * 0.2 : 0) + SCR * 1.35;
+    var srcT = mouse.on ? 0.2 + Math.min(1, Math.max(0, mouse.y / 0.8)) * 0.3 : 0.3 + (reduce ? 0 : Math.sin(now / 1000 * 0.45) * 0.04);
+    var tiltT = mouse.on ? [(mouse.x - 0.5) * 16, (mouse.y - 0.5) * 10] : [0, 0];
+    ang += (angT - ang) * 0.06; src += (srcT - src) * 0.05;
+    tilt = [tilt[0] + (tiltT[0] - tilt[0]) * 0.06, tilt[1] + (tiltT[1] - tilt[1]) * 0.06];
+    var G = geometry();
+    var L0 = Math.hypot(G.E[0] - G.S[0], G.E[1] - G.S[1]);
+    gl.uniform2f(U.uRes, W, H); gl.uniform1f(U.uDpr, DPR); gl.uniform1f(U.uT, t); gl.uniform1f(U.uDark, dark ? 1 : 0);
+    gl.uniform1f(U.uFade, (1 - SCR) * (reduce ? 1 : 0.96 + 0.04 * Math.sin((now / 1000) * 2.1))); gl.uniform1f(U.uTime, now / 1000);
+    gl.uniform3fv(U.uBg, bg); gl.uniform3fv(U.uFg, fg);
+    gl.uniform2fv(U.uV0, G.Vs[0]); gl.uniform2fv(U.uV1, G.Vs[1]); gl.uniform2fv(U.uV2, G.Vs[2]); gl.uniform1f(U.uRound, G.rr);
+    gl.uniform2f(U.uDepth, G.R * 0.12 + tilt[0], -G.R * 0.13 + tilt[1]); gl.uniform2fv(U.uC0, G.C);
+    gl.uniform2fv(U.uS, G.S); gl.uniform2fv(U.uE, G.E); gl.uniform2fv(U.uDir0, G.d0);
+    gl.uniform2fv(U.uX, G.X); gl.uniform2fv(U.uD, G.D); gl.uniform1fv(U.uOk, G.ok);
+    var sa = ang + 0.6; gl.uniform2f(U.uShift, Math.cos(sa) * G.R * 0.04, Math.sin(sa) * G.R * 0.03);
+    gl.uniform1f(U.uHeadIn, L0 * ease(t / 0.9));
+    gl.uniform1f(U.uFanLen, t < 0.9 ? 0 : Math.hypot(W, H) * 1.2 * ease((t - 0.9) / 1.4) + 120);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  stage.addEventListener('pointermove', function (e) {
+    var r = stage.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) / r.width; mouse.y = (e.clientY - r.top) / r.height; mouse.on = true;
+  });
+  stage.addEventListener('pointerleave', function () { mouse.on = false; });
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  var rt = 0;
+  var ro = new ResizeObserver(function () { clearTimeout(rt); rt = setTimeout(resize, 120); });
+  /* The section sits far down a long page, so the intro (beam in, fan out,
+     copy fades up) plays the first time it scrolls into view, not on load. */
+  var io = new IntersectionObserver(function (entries) {
+    visible = entries[0].isIntersecting;
+    if (visible && started && !played) { played = true; restart(); }
+  });
+
+  var fontReady = document.fonts && document.fonts.load ? document.fonts.load(fontWeight + ' 100px ' + fontFamily).catch(function () { return []; }) : Promise.resolve([]);
+  fontReady.then(function () {
+    readTheme(); resize(); onScroll();
+    started = true;
+    if (visible && !played) { played = true; restart(); }
+    ro.observe(stage); io.observe(stage);
+    requestAnimationFrame(frame);
+  });
 })();
 </script>
 </body>
