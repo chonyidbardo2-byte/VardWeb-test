@@ -58,6 +58,8 @@
     .zoom img { transform: translateZ(0) scale(1); backface-visibility: hidden; transition: transform .7s var(--ease); }
     .zoom:hover img { transform: translateZ(0) scale(1.04); }
     .zoom:active img { transform: translateZ(0) scale(1.02); }
+    .cat-hover { opacity: 0; transition: opacity .3s var(--ease); }
+    .cat-tile:hover .cat-hover, .cat-tile:focus-visible .cat-hover { opacity: 1; }
 
     /* Section chip */
     .chip { display: inline-block; background: #fff; color: #555; font-size: 14px; line-height: 20px; padding: 4px 16px; }
@@ -429,86 +431,63 @@
 
   <script>
   /* =====================================================================
-     IMAGE SLOTS (31 total). Every slot uses one temporary placeholder.
-     Swap each path for a real image when available.
+     IMAGE SLOTS (63 total). All files live in brand_assets/demo-store/
+     and are named after their key. Each product has a hero plus 4
+     gallery shots: A rear, B side, C top, D detail.
      ===================================================================== */
-  const PH = 'brand_assets/icons/svc-ecommerce.webp';
-  const IMG = {
-    // Home category tiles (4), ~900x900
-    catOutdoor: PH,
-    catSound: PH,
-    catVideo: PH,
-    catBestSellers: PH,
-    // Product photos (9), ~800x800 on a light/white background
-    prodSurfboard: PH,
-    prodPocketLight: PH,
-    prodCharger: PH,
-    prodSynth: PH,
-    prodHeadphones: PH,
-    prodMixer: PH,
-    prodCoolingFan: PH,
-    prodCamera: PH,
-    prodController: PH,
-    // Extra gallery shots on the product page (4), ~800x800
-    gallery1: PH,
-    gallery2: PH,
-    gallery3: PH,
-    gallery4: PH,
-    // About section photo (1), ~1200x1400
-    about: PH,
-    // Blog covers (7), ~1200x800. The post page reuses its cover.
-    blogPhotography: PH,
-    blogDesk: PH,
-    blogAboutProducts: PH,
-    blogBuyersGuide: PH,
-    blogTesting: PH,
-    blogModernDesign: PH,
-    blogTechSetup: PH,
-    // Testimonial avatars (6), 80x80
-    avatarAva: PH,
-    avatarEthanW: PH,
-    avatarEthanB: PH,
-    avatarIsabella: PH,
-    avatarEmily: PH,
-    avatarJames: PH,
-  };
+  const D = k => 'brand_assets/demo-store/' + k + '.webp';
+  const gallery = id => ['A', 'B', 'C', 'D'].map(l => D('gallery' + id + l));
+  const IMG = Object.fromEntries([
+    // Home category tiles (4)
+    'catAudio', 'catDesk', 'catVideo', 'catBest',
+    // Product heroes (9), white background
+    'prodSpeaker', 'prodKeypad', 'prodLamp', 'prodCharger', 'prodSynth',
+    'prodHeadphones', 'prodProjector', 'prodCamera', 'prodThermostat',
+    // About section photo (1)
+    'about',
+    // Blog covers (7). The post page reuses its cover.
+    'blogPhotography', 'blogDesk', 'blogAboutProducts', 'blogBuyersGuide',
+    'blogTesting', 'blogModernDesign', 'blogTechSetup',
+    // Testimonial avatars (6)
+    'avatarAva', 'avatarEthanW', 'avatarEthanB', 'avatarIsabella', 'avatarEmily', 'avatarJames',
+  ].map(k => [k, D(k)]));
 
   /* ============================ DATA ============================ */
   const CATEGORIES = [
-    { name: 'Outdoor', count: 4, img: IMG.catOutdoor },
-    { name: 'Sound Essentials', count: 4, img: IMG.catSound },
-    { name: 'Video Gear', count: 4, img: IMG.catVideo },
-    { name: 'Best Sellers', count: 8, img: IMG.catBestSellers },
+    { slug: 'audio', name: 'Audio', img: IMG.catAudio, products: ['pulse-mini-speaker', 'field-synth-one', 'clear-studio-headphones'] },
+    { slug: 'desk', name: 'Desk', img: IMG.catDesk, products: ['grid-12-macro-keypad', 'arc-desk-lamp', 'halo-wireless-charger'] },
+    { slug: 'video', name: 'Video', img: IMG.catVideo, products: ['cube-mini-projector', 'trail-action-camera'] },
+    { slug: 'best-sellers', name: 'Best Sellers', img: IMG.catBest, products: null }, // null = every product
   ];
 
   const PRODUCTS = [
-    { slug: 'swell-25-surfboard', name: 'Swell 25 Surfboard', price: 750, isNew: true, img: IMG.prodSurfboard,
-      label: 'Outdoor Pick', tag: 'Lightweight shortboard', stock: 'Only 3 left, hurry up!',
-      desc: 'A responsive, lightweight shortboard shaped for quick turns and clean lines on everyday waves.' },
-    { slug: 'lumen-m40-pocket-light', name: 'Lumen M40 Pocket Light', price: 84, isNew: false, img: IMG.prodPocketLight,
-      label: 'Creator Essential', tag: 'Compact 40W video light', stock: 'Only 5 left, hurry up!',
-      desc: 'A palm-sized 40W light with adjustable color temperature for portable shoots and on-the-go content.' },
-    { slug: 'pixel-67w-charger', name: 'Pixel 67W Charger', price: 49, isNew: false, img: IMG.prodCharger,
-      label: 'Everyday Carry', tag: 'Retro display fast charger', stock: 'Only 8 left, hurry up!',
-      desc: 'A 67W fast charger with a retro pixel display that shows live power output while you charge.' },
-    { slug: 'field-synth-one', name: 'Field Synth One', price: 1990, isNew: true, img: IMG.prodSynth,
+    { slug: 'pulse-mini-speaker', name: 'Pulse Mini Speaker', price: 129, isNew: true, img: IMG.prodSpeaker, gallery: gallery('Speaker'),
+      label: 'Audio Pick', tag: 'Portable wireless speaker', stock: 'Only 3 left, hurry up!',
+      desc: 'A compact wireless speaker wrapped in woven fabric, with full, clear sound and all-day battery life. USB-C charging and simple top controls.' },
+    { slug: 'grid-12-macro-keypad', name: 'Grid 12 Macro Keypad', price: 149, isNew: false, img: IMG.prodKeypad, gallery: gallery('Keypad'),
+      label: 'Creator Essential', tag: '12-key mechanical macro pad', stock: 'Only 5 left, hurry up!',
+      desc: 'A machined metal macro pad with 12 mechanical keys and a knurled control knob for shortcuts, editing and volume.' },
+    { slug: 'arc-desk-lamp', name: 'Arc Desk Lamp', price: 89, isNew: false, img: IMG.prodLamp, gallery: gallery('Lamp'),
+      label: 'Desk Favorite', tag: 'Adjustable LED desk lamp', stock: 'Only 8 left, hurry up!',
+      desc: 'A slim LED desk lamp with a weighted base and an adjustable elbow joint, giving soft, even light across your workspace.' },
+    { slug: 'halo-wireless-charger', name: 'Halo Wireless Charger', price: 49, isNew: false, img: IMG.prodCharger, gallery: gallery('Charger'),
+      label: 'Everyday Carry', tag: 'Fast wireless charging pad', stock: 'Only 8 left, hurry up!',
+      desc: 'A low-profile charging pad with a soft silicone surface and a small status light. Set your phone down and it charges.' },
+    { slug: 'field-synth-one', name: 'Field Synth One', price: 1290, isNew: true, img: IMG.prodSynth, gallery: gallery('Synth'),
       label: 'Studio Favorite', tag: 'Portable synth and sampler', stock: 'Only 2 left, hurry up!',
       desc: 'A premium all-in-one music workstation for composing, sampling, and performing anywhere.' },
-    { slug: 'clear-over-ear-headphones', name: 'Clear Over-Ear Headphones', price: 249, isNew: false, img: IMG.prodHeadphones,
-      label: 'Sound Essential', tag: 'Wireless noise-cancelling', stock: 'Only 4 left, hurry up!',
-      desc: 'Transparent-design wireless headphones with active noise cancelling and all-day comfort.' },
-    { slug: 'pocket-mixer-m6', name: 'Pocket Mixer M6', price: 1199, isNew: true, img: IMG.prodMixer,
-      label: 'Studio Favorite', tag: 'Six-channel digital mixer', stock: 'Only 2 left, hurry up!',
-      desc: 'A compact six-channel digital mixer with built-in effects for studio sessions and live sets.' },
-    { slug: 'arc-camera-cooling-fan', name: 'Arc Camera Cooling Fan', price: 69, isNew: true, img: IMG.prodCoolingFan,
-      label: 'Video Gear', tag: 'Clip-on cooling for long shoots', stock: 'Only 6 left, hurry up!',
-      desc: 'A quiet clip-on fan that keeps mirrorless cameras cool during long recording sessions.' },
-    { slug: 'prime-full-frame-camera', name: 'Prime Full-Frame Camera', price: 2499, isNew: true, img: IMG.prodCamera,
-      label: 'Pro Pick', tag: 'Compact full-frame body', stock: 'Only 1 left, hurry up!',
-      desc: 'A compact full-frame camera body built for stills and cinema-grade video in a minimal form.' },
-    { slug: 'glide-motion-controller', name: 'Glide Motion Controller', price: 189, isNew: true, img: IMG.prodController,
-      label: 'Video Gear', tag: 'One-handed drone controller', stock: 'Only 3 left, hurry up!',
-      desc: 'An intuitive one-handed motion controller for smooth, cinematic flight and camera moves.' },
+    { slug: 'clear-studio-headphones', name: 'Clear Studio Headphones', price: 249, isNew: false, img: IMG.prodHeadphones, gallery: gallery('Headphones'),
+      label: 'Sound Essential', tag: 'Over-ear studio headphones', stock: 'Only 4 left, hurry up!',
+      desc: 'Over-ear studio headphones with memory foam cushions and aluminium sliders, tuned for accurate mixing and long sessions.' },
+    { slug: 'cube-mini-projector', name: 'Cube Mini Projector', price: 399, isNew: true, img: IMG.prodProjector, gallery: gallery('Projector'),
+      label: 'Video Gear', tag: 'Compact home projector', stock: 'Only 6 left, hurry up!',
+      desc: 'A compact projector with a built-in fabric-wrapped speaker, HDMI and USB-C inputs, and a smooth manual focus ring.' },
+    { slug: 'trail-action-camera', name: 'Trail Action Camera', price: 329, isNew: true, img: IMG.prodCamera, gallery: gallery('Camera'),
+      label: 'Pro Pick', tag: 'Rugged 4K action camera', stock: 'Only 1 left, hurry up!',
+      desc: 'A rugged, pocket-sized action camera with a wide lens, front and rear screens, and a sealed port door for any weather.' },
+    { slug: 'dial-smart-thermostat', name: 'Dial Smart Thermostat', price: 199, isNew: true, img: IMG.prodThermostat, gallery: gallery('Thermostat'),
+      label: 'Smart Home', tag: 'Learning smart thermostat', stock: 'Only 3 left, hurry up!',
+      desc: 'A round smart thermostat with a knurled metal ring and a glass display. Turn to adjust and it learns your schedule.' },
   ];
 
   const TESTIMONIALS = [
@@ -648,7 +627,7 @@
     productGrid: () => `<div class="product-grid mt-10 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3"></div>`,
 
     productCard: p => `
-      <a href="#/product/${p.slug}" data-new="${p.isNew}" class="zoom group relative flex aspect-[405/457] flex-col bg-white transition-opacity duration-200 hover:z-10 active:opacity-90" style="box-shadow:0 0 0 0 rgba(0,0,0,0)">
+      <a href="#/product/${p.slug}" data-new="${p.isNew}" data-slug="${p.slug}" class="zoom group relative flex aspect-[405/457] flex-col bg-white transition-opacity duration-200 hover:z-10 active:opacity-90" style="box-shadow:0 0 0 0 rgba(0,0,0,0)">
         ${p.isNew ? '<span class="absolute left-4 top-4 z-10 bg-accent px-2.5 py-1 text-xs font-semibold text-white">New</span>' : ''}
         <div class="flex flex-1 items-center justify-center overflow-hidden p-12">
           <img src="${p.img}" alt="${p.name}" loading="lazy" class="max-h-[240px] w-auto object-contain">
@@ -672,7 +651,7 @@
           </div>
           <div class="mt-10 grid md:grid-cols-2">
             <div class="zoom aspect-[616/716] overflow-hidden bg-sunk">
-              <img src="${IMG.about}" alt="Our team" loading="lazy" class="h-full w-full object-cover">
+              <img src="${IMG.about}" alt="Two team members looking at an action camera" loading="lazy" class="h-full w-full object-cover">
             </div>
             <div class="bg-white">
               <div class="border-b border-line p-8">
@@ -766,16 +745,30 @@
 
   // Category tiles
   document.getElementById('categoryGrid').innerHTML = CATEGORIES.map(c => `
-    <a href="#/products" class="zoom group relative block aspect-square overflow-hidden bg-sunk active:opacity-90">
+    <a href="#/products/${c.slug}" class="cat-tile zoom group relative block aspect-square overflow-hidden bg-sunk outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 active:opacity-90">
       <img src="${c.img}" alt="${c.name}" loading="lazy" class="absolute inset-0 h-full w-full object-cover">
-      <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
-      <div class="absolute bottom-5 left-5 text-white">
-        <h3 class="text-base font-semibold">${c.name}</h3>
-        <p class="text-xs opacity-70">${c.count} pcs</p>
+      <div class="absolute inset-x-0 bottom-0 p-5 text-white">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#252525]/70 to-transparent"></div>
+        <div class="cat-hover absolute inset-0 bg-gradient-to-t from-accent/90 to-transparent"></div>
+        <div class="relative">
+          <h3 class="text-base font-semibold">${c.name}</h3>
+          <p class="text-xs text-white/70">${(c.products || PRODUCTS).length} pcs</p>
+        </div>
       </div>
     </a>`).join('');
 
-  // Product grids + filters (home and products view each get their own)
+  // Product grids + filters (home and products view each get their own).
+  // A grid can also carry a category (set by the router from #/products/<slug>).
+  function applyFilters(grid) {
+    const f = grid.dataset.filter || 'all';
+    const cat = CATEGORIES.find(c => c.slug === grid.dataset.cat);
+    grid.querySelectorAll('a').forEach(card => {
+      const isNew = card.dataset.new === 'true';
+      const inTab = f === 'all' || (f === 'new' && isNew) || (f === 'classic' && !isNew);
+      const inCat = !cat || !cat.products || cat.products.includes(card.dataset.slug);
+      card.style.display = inTab && inCat ? '' : 'none';
+    });
+  }
   document.querySelectorAll('.product-grid').forEach(grid => {
     grid.innerHTML = PRODUCTS.map(T.productCard).join('');
     const tabs = grid.previousElementSibling.querySelectorAll('[data-filter]');
@@ -785,11 +778,8 @@
         b.setAttribute('aria-selected', on);
         b.className = 'press flex items-center gap-2 border px-4 py-2 text-sm font-medium ' + (on ? 'border-accent bg-accent text-white' : 'border-line bg-white hover:border-[#bdbdbd]');
       });
-      const f = btn.dataset.filter;
-      grid.querySelectorAll('a').forEach(card => {
-        const isNew = card.dataset.new === 'true';
-        card.style.display = (f === 'all' || (f === 'new' && isNew) || (f === 'classic' && !isNew)) ? '' : 'none';
-      });
+      grid.dataset.filter = btn.dataset.filter;
+      applyFilters(grid);
     }));
   });
 
@@ -860,8 +850,9 @@
 
   /* =========================== ROUTER =========================== */
   function renderProduct(slug) {
-    const p = PRODUCTS.find(x => x.slug === slug) || PRODUCTS[3];
-    const shots = [p.img, IMG.gallery1, IMG.gallery2, IMG.gallery3, IMG.gallery4];
+    const p = PRODUCTS.find(x => x.slug === slug) || PRODUCTS[4];
+    const shots = [p.img, ...p.gallery];
+    const views = ['Front', 'Rear', 'Side', 'Top', 'Detail'];
     const main = document.getElementById('pdpMain');
     main.src = p.img; main.alt = p.name;
     document.getElementById('pdpLabel').textContent = p.label;
@@ -872,11 +863,11 @@
     document.getElementById('pdpDesc').textContent = p.desc;
     const thumbs = document.getElementById('pdpThumbs');
     thumbs.innerHTML = shots.map((s, i) => `
-      <button data-i="${i}" class="press flex aspect-square items-center justify-center border bg-white p-2 ${i===0?'border-accent':'border-transparent hover:border-line'}" aria-label="View image ${i+1}">
+      <button data-i="${i}" class="press flex aspect-square items-center justify-center border bg-white p-2 ${i===0?'border-accent':'border-transparent hover:border-line'}" aria-label="${views[i]} view">
         <img src="${s}" alt="" class="max-h-full object-contain">
       </button>`).join('');
     thumbs.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-      main.src = shots[b.dataset.i];
+      main.src = shots[b.dataset.i]; main.alt = p.name + ', ' + views[b.dataset.i].toLowerCase() + ' view';
       thumbs.querySelectorAll('button').forEach(x => {
         x.classList.toggle('border-accent', x === b);
         x.classList.toggle('border-transparent', x !== b);
@@ -914,6 +905,8 @@
     if (view === 'product') renderProduct(arg);
     else if (view === 'post') renderPost(arg);
     else if (view === 'privacy' || view === 'terms') { renderLegal(view); view = 'legal'; }
+    const pGrid = document.querySelector('[data-view="products"] .product-grid');
+    if (pGrid) { pGrid.dataset.cat = view === 'products' && arg ? arg : ''; applyFilters(pGrid); }
     if (!document.querySelector(`[data-view="${view}"]`)) view = 'home';
     document.querySelectorAll('[data-view]').forEach(v => v.classList.toggle('is-active', v.dataset.view === view));
     document.querySelectorAll('[data-nav]').forEach(a => {

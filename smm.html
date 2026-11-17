@@ -699,6 +699,7 @@
     @media (hover: hover) {
       .free-item:hover { transform: translateY(-4px); }
     }
+    @media (hover: none) { .free-item.is-scroll-active { transform: translateY(-4px); } }
     .free-item-content {
       position: relative; z-index: 1;
       background: linear-gradient(180deg, #060606, #000000);
@@ -785,6 +786,7 @@
     @media (hover: hover) {
       .widget-card:hover { transform: translateY(-4px); }
     }
+    @media (hover: none) { .widget-card.is-scroll-active { transform: translateY(-4px); } }
     .widget-card-content {
       position: relative; z-index: 1;
       background: linear-gradient(180deg, #060606, #000000);
@@ -866,6 +868,12 @@
       box-shadow: 0 18px 44px -14px rgba(0,0,0,0.55), 0 0 26px var(--kit-glow, rgba(244,114,182,0.14));
     }
     .kit-card:hover::before { opacity: 1; }
+    @media (hover: none) {
+      .kit-card.is-scroll-active { transform: translateY(-6px); border-color: var(--kit-border-hover, rgba(244,114,182,0.4)); box-shadow: 0 18px 44px -14px rgba(0,0,0,0.55), 0 0 26px var(--kit-glow, rgba(244,114,182,0.14)); }
+      .kit-card.is-scroll-active::before { opacity: 1; }
+      .kit-card.is-scroll-active .kit-card-side, .kit-card.is-scroll-active .kit-testimonial-box { border-color: var(--kit-border-hover, rgba(244,114,182,0.4)); }
+      .kit-card.is-scroll-active .kit-divider { background: var(--kit-border-hover, rgba(244,114,182,0.4)); }
+    }
     .kit-card.is-full { --kit-color: var(--gold); --kit-border: rgba(255,215,0,0.3); --kit-glow: rgba(255,215,0,0.18); --kit-border-hover: rgba(255,215,0,0.45); --kit-tag-bg: rgba(255,215,0,0.08); }
     #master-template { scroll-margin-top: 60px; }
     .kit-card .btn { width: 100%; margin-top: auto; }
@@ -2140,7 +2148,10 @@
       entries.forEach(function (entry) {
         if (entry.isIntersecting) entry.target.classList.add('is-visible');
       });
-    }, { threshold: 0.2 });
+    }, window.matchMedia('(max-width: 768px), (pointer: coarse)').matches
+      /* Phones: tall cards can exceed viewport / threshold, so reveal once 10% into the screen instead */
+      ? { threshold: 0, rootMargin: '0px 0px -10% 0px' }
+      : { threshold: 0.2 });
     document.querySelectorAll('.reveal-fade').forEach(function (el) { obs.observe(el); });
   })();
 </script>
@@ -2447,5 +2458,20 @@
   })();
 </script>
 
+<script>
+  /* Scroll-triggered hover equivalent for touch devices (same mechanism as
+     content-creation.html and web-design.html): cards with a hover effect get
+     .is-scroll-active while they cross the middle of the screen, standing in
+     for the mouse hover a touch screen can never trigger. Desktop keeps hover. */
+  (function () {
+    if (!window.matchMedia("(hover: none)").matches) return;
+    var targets = [].slice.call(document.querySelectorAll(".free-item, .widget-card, .kit-card"));
+    if (!targets.length) return;
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { entry.target.classList.toggle("is-scroll-active", entry.isIntersecting); });
+    }, { rootMargin: "-35% 0px -35% 0px", threshold: 0 });
+    targets.forEach(function (el) { obs.observe(el); });
+  })();
+</script>
 </body>
 </html>

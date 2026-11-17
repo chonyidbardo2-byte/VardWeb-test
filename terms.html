@@ -1297,7 +1297,10 @@
     entries.forEach(function (entry) {
       if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
     });
-  }, { threshold: 0.15 });
+  }, window.matchMedia('(max-width: 768px), (pointer: coarse)').matches
+    /* Phones: long cards can be taller than viewport / threshold, so reveal once 10% into the screen instead */
+    ? { threshold: 0, rootMargin: '0px 0px -10% 0px' }
+    : { threshold: 0.15 });
   els.forEach(function (el) { io.observe(el); });
 })();
 

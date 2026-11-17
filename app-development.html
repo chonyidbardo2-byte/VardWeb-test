@@ -19,7 +19,8 @@
     try {
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         document.documentElement.classList.add('ka-anim');
-        setTimeout(function () { if (!window.gsap || !window.SplitText) document.documentElement.classList.remove('ka-anim'); }, 4000);
+        /* Also un-hide if the motion script threw partway, so content can never stay blank */
+        setTimeout(function () { if (!window.gsap || !window.SplitText || !window.__kaReady) document.documentElement.classList.remove('ka-anim'); }, 4000);
       }
     } catch (e) {}
   </script>
@@ -3533,6 +3534,7 @@ document.addEventListener('DOMContentLoaded', function () {
       rt = setTimeout(function () { ScrollTrigger.refresh(); }, 250);
     }).observe(document.body);
   }
+  window.__kaReady = true;
 });
 </script>
 

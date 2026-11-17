@@ -55,7 +55,20 @@ window.PerfUtils = (function () {
   // callback receives the IntersectionObserverEntry; when once is true
   // (default) the element is auto-unobserved right before the callback runs,
   // matching the existing one-shot scroll-reveal pattern used across the site.
+  // Desktop keeps the requested threshold. On phones and touch screens a
+  // ratio threshold can never be met by a container taller than
+  // viewport / threshold (a long pricing grid on a 568px screen), so reveal
+  // thresholds of 0.1 and up switch to "10% into the screen" instead, which
+  // always fires and still starts the motion inside the viewport.
+  // Thresholds under 0.1 (hero entrances, loops) are left exactly as asked.
+  var isMobile = false;
+  try { isMobile = window.matchMedia('(max-width: 768px), (pointer: coarse)').matches; } catch (e) {}
+
   function sharedObserver(threshold) {
+    var t = typeof threshold === 'number' ? threshold : 0.15;
+    var ioOpts = (isMobile && t >= 0.1)
+      ? { threshold: 0, rootMargin: '0px 0px -10% 0px' }
+      : { threshold: t };
     var callbacks = new WeakMap();
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
@@ -68,7 +81,7 @@ window.PerfUtils = (function () {
         }
         entry_cb.fn(entry);
       });
-    }, { threshold: typeof threshold === 'number' ? threshold : 0.15 });
+    }, ioOpts);
 
     return {
       watch: function (el, fn, opts) {

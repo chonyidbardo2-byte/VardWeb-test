@@ -758,7 +758,7 @@
     ::selection { background: rgba(0,229,255,0.2); color: var(--cyan); }
 
     /* ── Hero: rotating word ── always sits on its own line below "designed to" */
-    .hero-rotate { display: inline-block; position: relative; color: var(--cyan); }
+    .hero-rotate { display: inline-block; position: relative; color: var(--word, var(--cyan)); }
     .hero-rotate .ch {
       display: inline-block;
       transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
@@ -865,59 +865,53 @@
     }
     .ent-hero-media { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 
-    /* Hero wall: a tilted board of VardWeb's own builds drifting past, with phones floating in front.
-       The script adds a pre-blurred copy of each layer; fading those copies in and out pulls focus
-       between the wall and the phones, so only opacity and transform ever animate */
-    .ent-wall { position: absolute; inset: 0; --tile: max(360px, 22vw); --gap: calc(var(--tile) * 0.075); }
-    .ent-wall-drift {
-      position: absolute; left: 50%; top: 50%;
-      transform: translate(-50%, -50%) perspective(1600px) rotateX(22deg) rotateZ(-9deg) scale(1.12);
-      animation: ent-wall-drift 48s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+    /* Hero loops: one 5 s Blender loop per rotating word, two stacked videos so the next scene is
+       already decoded when the word changes. Only opacity animates */
+    .ent-loops { position: absolute; inset: 0; background: #000; }
+    .ent-loops video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; opacity: 0;
+      transition: opacity 0.3s ease;
     }
-    /* A touch of blur even in focus keeps the wall's own headlines from competing with ours */
-    .ent-wall-plane { display: flex; gap: var(--gap); filter: blur(1.2px); }
-    .ent-wall-col { display: flex; flex-direction: column; gap: var(--gap); width: var(--tile); }
-    .ent-wall-col:nth-child(odd) { margin-top: calc(var(--tile) * -0.32); }
-    .ent-wall-col img, .ent-float img {
-      display: block; width: 100%; height: auto;
-      border-radius: calc(var(--tile) * 0.028);
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 24px 48px -18px rgba(0,0,0,0.8), 0 8px 18px -8px rgba(0,0,0,0.6);
+    .ent-loops video.is-on { opacity: 1; }
+    /* Loop this scene / play all: shows on hover or focus, always faintly on touch screens */
+    .ent-loop-btn {
+      position: absolute; z-index: 2; top: 84px; right: 24px;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; padding: 0; border-radius: 50%;
+      color: #fff;
+      background: rgba(0,0,0,0.42); border: 1px solid rgba(255,255,255,0.18);
+      -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      cursor: pointer; opacity: 0;
+      transition: opacity 0.25s ease, transform 0.35s var(--ent-spring);
     }
-    .ent-wall-plane.is-blur { position: absolute; inset: 0; filter: blur(7px); opacity: 0; animation: ent-wall-pull 14s ease-in-out infinite; }
-
-    .ent-wall-float { position: absolute; inset: 0; }
-    .ent-float {
-      position: absolute; width: clamp(150px, 12vw, 210px);
-      transform: perspective(900px) rotateY(var(--y0)) rotate(var(--r0));
-      animation: ent-float var(--t) cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+    .ent-loop-btn svg { width: 18px; height: 18px; flex: none; }
+    .ent-loop-btn .ic-play { display: none; }
+    .ent-loop-btn[aria-pressed="true"] .ic-loop { display: none; }
+    .ent-loop-btn[aria-pressed="true"] .ic-play { display: block; }
+    .ent-hero:hover .ent-loop-btn, .ent-loop-btn:focus-visible, .ent-loop-btn[aria-pressed="true"] { opacity: 1; }
+    .ent-loop-btn:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.4); }
+    .ent-loop-btn:active { transform: scale(0.96); }
+    .ent-loop-btn:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+    @media (hover: none) { .ent-loop-btn { opacity: 0.7; } }
+    /* While a scene loops, the held word rides a gentle wave */
+    /* A true sine that starts and ends at rest, so a letter waiting out its stagger never jumps;
+       composited while it waves so the few-pixel travel moves smoothly instead of in 1px steps */
+    .hero-rotate.is-looping .ch {
+      animation: ent-wave 2.4s linear infinite; animation-delay: calc(var(--i) * 90ms);
+      will-change: transform; backface-visibility: hidden;
     }
-    .ent-float img { border-radius: 22px; box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 40px 70px -24px rgba(0,0,0,0.9), 0 14px 28px -12px rgba(0,0,0,0.7); }
-    .ent-float img.is-blur { position: absolute; inset: 0; filter: blur(8px); opacity: 1; animation: ent-wall-pull 14s ease-in-out -7s infinite; }
-    .ent-float--a { right: 7%;  top: 17%; --y0: -16deg; --y1: 14deg;  --r0: 6deg;  --r1: 2deg;  --t: 11s; }
-    .ent-float--b { right: 23%; top: 40%; --y0: 12deg;  --y1: -14deg; --r0: -7deg; --r1: -3deg; --t: 13s; width: clamp(120px, 9.5vw, 170px); }
-    .ent-float--c { right: 2%;  top: 54%; --y0: -10deg; --y1: 16deg;  --r0: -3deg; --r1: 4deg;  --t: 9.5s; width: clamp(130px, 10.5vw, 185px); }
-    .ent-wall.is-paused * { animation-play-state: paused; }
-
-    @keyframes ent-wall-drift {
-      from { transform: translate(-50%, -50%) perspective(1600px) rotateX(22deg) rotateZ(-9deg) scale(1.12) translate3d(-4%, 3%, 0); }
-      to   { transform: translate(-50%, -50%) perspective(1600px) rotateX(22deg) rotateZ(-9deg) scale(1.12) translate3d(4%, -3%, 0); }
+    @keyframes ent-wave {
+      0%, 50%  { transform: translate3d(0, 0, 0); animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1); }
+      25%      { transform: translate3d(0, -0.06em, 0); animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0); }
+      75%      { transform: translate3d(0, 0.06em, 0); animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0); }
+      100%     { transform: translate3d(0, 0, 0); }
     }
-    @keyframes ent-wall-pull { 0%, 38% { opacity: 0; } 50%, 88% { opacity: 1; } 100% { opacity: 0; } }
-    @keyframes ent-float {
-      from { transform: perspective(900px) translate3d(0, 0, 0) rotateY(var(--y0)) rotate(var(--r0)); }
-      to   { transform: perspective(900px) translate3d(0, -22px, 0) rotateY(var(--y1)) rotate(var(--r1)); }
-    }
-    /* The wall scrolls away slower than the page */
-    @supports (animation-timeline: scroll()) {
-      .ent-wall { animation: ent-wall-par linear both; animation-timeline: scroll(root); animation-range: 0 100lvh; }
-      @keyframes ent-wall-par { to { transform: translate3d(0, 28lvh, 0); } }
-    }
-    .ent-hero-tint { position: absolute; inset: 0; background: #0b2a3a; mix-blend-mode: multiply; opacity: 0.55; }
     .ent-hero-shade {
       position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 65% 75% at 15% 40%, rgba(0,0,0,0.72) 0%, transparent 72%),
-        linear-gradient(to top, var(--base) 0%, rgba(0,0,0,0.55) 30%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.5) 100%);
+        radial-gradient(ellipse 65% 75% at 15% 40%, rgba(0,0,0,0.62) 0%, transparent 72%),
+        linear-gradient(to top, var(--base) 0%, rgba(0,0,0,0.47) 30%, rgba(0,0,0,0.25) 70%, rgba(0,0,0,0.42) 100%);
     }
     .ent-hero-content { position: relative; z-index: 1; width: 100%; padding-top: 84px; }
     .ent-h1 {
@@ -1151,6 +1145,9 @@
     .ent-dial svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
     .ent-dial-comet { transform-box: view-box; transform-origin: 200px 200px; transition: opacity 0.6s ease; }
     .ent-dial-comet.is-done { opacity: 0; }
+    .ent-dial-pulse { opacity: 0; transform-box: fill-box; transform-origin: center; transform: scale(0.6); }
+    .ent-dial-pulse.is-pulse { animation: ent-dial-pulse 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+    @keyframes ent-dial-pulse { 0% { opacity: 0; transform: scale(0.6); } 25% { opacity: 1; } 100% { opacity: 0; transform: scale(1.8); } }
     .ent-dial-read { position: absolute; left: 0; right: 0; bottom: -36px; text-align: center; }
     .ent-dial-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(64px, 7vw, 104px); font-weight: 200; line-height: 1; letter-spacing: -0.04em; color: #fff; font-variant-numeric: tabular-nums; }
     .ent-dial-label { margin-top: 6px; font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.85); }
@@ -1249,9 +1246,7 @@
       .ent-hero { min-height: 640px; }
       .ent-hero-content { padding-top: 56px; }
       .ent-hero-actions { margin-top: 40px; }
-      .ent-wall { --tile: 210px; }
-      .ent-wall-drift { transform: translate(-50%, -50%) scale(1.1); animation-name: ent-wall-drift-m; }
-      .ent-wall-plane.is-blur, .ent-wall-float { display: none; }
+      .ent-loop-btn { top: 76px; right: 16px; width: 36px; height: 36px; }
       .ent-strip { padding: 56px 0 32px; }
       .ent-strip-item { font-size: 22px; margin-right: 48px; gap: 10px; }
       .ent-strip-item svg { width: 22px; height: 22px; }
@@ -1271,13 +1266,8 @@
       .ent-cta { padding: 80px 20px; gap: 36px; }
       .ent-btn { font-size: 16px; height: 50px; padding: 0 16px 0 20px; }
     }
-    @keyframes ent-wall-drift-m {
-      from { transform: translate(-50%, -50%) scale(1.1) translate3d(-6%, 2%, 0); }
-      to   { transform: translate(-50%, -50%) scale(1.1) translate3d(6%, -2%, 0); }
-    }
     @media (prefers-reduced-motion: reduce) {
-      .ent-wall, .ent-wall *, .ent-float { animation: none !important; }
-      .ent-wall-plane.is-blur, .ent-float img.is-blur { display: none; }
+      .hero-rotate.is-looping .ch { animation: none; }
       .ent-strip-track { animation: none; width: 100%; }
       .ent-strip { -webkit-mask-image: none; mask-image: none; }
       .ent-strip-set:not(:first-child) { display: none; }
@@ -1922,51 +1912,24 @@
 <!-- ────────────────────── HERO ────────────────────── -->
 <section class="ent ent-hero" id="hero">
   <div class="ent-hero-media" aria-hidden="true">
-    <!-- Screenshots of pages and client sites VardWeb built -->
-    <div class="ent-wall">
-      <div class="ent-wall-drift">
-        <div class="ent-wall-plane">
-          <div class="ent-wall-col">
-            <img src="brand_assets/hero-wall/web-design.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/landing.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/email.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/apps.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-          </div>
-          <div class="ent-wall-col">
-            <img src="brand_assets/hero-wall/vardedveins.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/smm.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/demo.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/sem-seo.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-          </div>
-          <div class="ent-wall-col">
-            <img src="brand_assets/hero-wall/sem-seo.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/content.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/ecommerce.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/landing.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-          </div>
-          <div class="ent-wall-col">
-            <img src="brand_assets/hero-wall/apps.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/domain.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/vardedveins.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/web-design.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-          </div>
-          <div class="ent-wall-col">
-            <img src="brand_assets/hero-wall/ecommerce.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/email.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/content.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-            <img src="brand_assets/hero-wall/smm.webp" width="640" height="400" alt="" decoding="async" fetchpriority="low">
-          </div>
-        </div>
-      </div>
-      <div class="ent-wall-float">
-        <div class="ent-float ent-float--a"><img src="brand_assets/hero-wall/m-vardedveins.webp" width="390" height="760" alt="" decoding="async" fetchpriority="low"></div>
-        <div class="ent-float ent-float--b"><img src="brand_assets/hero-wall/m-apps.webp" width="390" height="760" alt="" decoding="async" fetchpriority="low"></div>
-        <div class="ent-float ent-float--c"><img src="brand_assets/hero-wall/m-ecom.webp" width="390" height="760" alt="" decoding="async" fetchpriority="low"></div>
-      </div>
+    <!-- One Blender loop per rotating word; the script fills both and swaps them in step with the word -->
+    <div class="ent-loops">
+      <video class="is-on" muted playsinline preload="auto"></video>
+      <video muted playsinline preload="none"></video>
     </div>
-    <div class="ent-hero-tint"></div>
+    <script>
+      /* Start the first scene now, not when the page's scripts run: phone or desktop cut, AV1 or H.264 */
+      (function () {
+        var v = document.querySelector('.ent-loops video'), d = 'brand_assets/hero-loops/converting';
+        var m = matchMedia('(max-width: 768px) and (orientation: portrait)').matches ? '-m' : '';
+        v.poster = d + m + '.webp';
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData)) return;
+        v.src = d + m + (v.canPlayType('video/webm; codecs="av01.0.08M.08"') ? '.webm' : '.mp4');
+      })();
+    </script>
     <div class="ent-hero-shade"></div>
   </div>
+  <button type="button" class="ent-loop-btn" aria-pressed="false" aria-label="Loop this scene" title="Loop this scene"><svg class="ic-loop" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7V6a2.5 2.5 0 0 1 2.5-2.5h8M11 1.5l2 2-2 2M13.5 9v1a2.5 2.5 0 0 1-2.5 2.5H3M5 14.5l-2-2 2-2"/></svg><svg class="ic-play" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.5 2.8v10.4a.6.6 0 0 0 .9.5l8.3-5.2a.6.6 0 0 0 0-1L5.4 2.3a.6.6 0 0 0-.9.5z"/></svg></button>
 
   <div class="ent-wrap ent-hero-content">
     <h1 class="ent-h1">
@@ -2003,7 +1966,7 @@
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#FF9900"><path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726a17.617 17.617 0 01-10.951-.577 17.88 17.88 0 01-5.43-3.35c-.1-.074-.151-.15-.151-.22 0-.047.021-.09.051-.13zm6.565-6.218c0-1.005.247-1.863.743-2.577.495-.71 1.17-1.25 2.04-1.615.796-.335 1.756-.575 2.912-.72.39-.046 1.033-.103 1.92-.174v-.37c0-.93-.105-1.558-.3-1.875-.302-.43-.78-.65-1.44-.65h-.182c-.48.046-.896.196-1.246.46-.35.27-.575.63-.675 1.096-.06.3-.206.465-.435.51l-2.52-.315c-.248-.06-.372-.18-.372-.39 0-.046.007-.09.022-.15.247-1.29.855-2.25 1.82-2.88.976-.616 2.1-.975 3.39-1.05h.54c1.65 0 2.957.434 3.888 1.29.135.15.27.3.405.48.12.165.224.314.283.45.075.134.15.33.195.57.06.254.105.42.135.51.03.104.062.3.076.615.01.313.02.493.02.553v5.28c0 .376.06.72.165 1.036.105.313.21.54.315.674l.51.674c.09.136.136.256.136.36 0 .12-.06.226-.18.314-1.2 1.05-1.86 1.62-1.963 1.71-.165.135-.375.15-.63.045a6.062 6.062 0 01-.526-.496l-.31-.347a9.391 9.391 0 01-.317-.42l-.3-.435c-.81.886-1.603 1.44-2.4 1.665-.494.15-1.093.227-1.83.227-1.11 0-2.04-.343-2.76-1.034-.72-.69-1.08-1.665-1.08-2.94l-.05-.076zm3.753-.438c0 .566.14 1.02.425 1.364.285.34.675.512 1.155.512.045 0 .106-.007.195-.02.09-.016.134-.023.166-.023.614-.16 1.08-.553 1.424-1.178.165-.28.285-.58.36-.91.09-.32.12-.59.135-.8.015-.195.015-.54.015-1.005v-.54c-.84 0-1.484.06-1.92.18-1.275.36-1.92 1.17-1.92 2.43l-.035-.02zm9.162 7.027c.03-.06.075-.11.132-.17.362-.243.714-.41 1.05-.5a8.094 8.094 0 011.612-.24c.14-.012.28 0 .41.03.65.06 1.05.168 1.172.33.063.09.099.228.099.39v.15c0 .51-.149 1.11-.424 1.8-.278.69-.664 1.248-1.156 1.68-.073.06-.14.09-.197.09-.03 0-.06 0-.09-.012-.09-.044-.107-.12-.064-.24.54-1.26.806-2.143.806-2.64 0-.15-.03-.27-.087-.344-.145-.166-.55-.257-1.224-.257-.243 0-.533.016-.87.046-.363.045-.7.09-1 .135-.09 0-.148-.014-.18-.044-.03-.03-.036-.047-.02-.077 0-.017.006-.03.02-.063v-.06z"/></svg>Amazon</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#F16521"><path d="M8.559 2.445c0-.325.033-.52.59-.52h7.465c1.3 0 2.02 1.11 2.54 3.193l.42 1.666h1.27c.23-4.728.43-6.784.43-6.784s-3.196.36-5.09.36H6.635L1.521.196v1.37l1.725.326c1.21.24 1.5.496 1.6 1.606 0 0 .11 3.27.11 8.64 0 5.385-.09 8.61-.09 8.61 0 .973-.39 1.333-1.59 1.573l-1.722.33V24l5.13-.165h8.55c1.935 0 6.39.165 6.39.165.105-1.17.75-6.48.855-7.064h-1.2l-1.284 2.91c-1.005 2.28-2.476 2.445-4.11 2.445h-4.906c-1.63 0-2.415-.64-2.415-2.05V12.8s3.62 0 4.79.096c.912.064 1.463.325 1.76 1.598l.39 1.695h1.41l-.09-4.278.192-4.305h-1.391l-.45 1.89c-.283 1.244-.48 1.47-1.754 1.6-1.666.17-4.815.14-4.815.14V2.45h-.05z"/></svg>Etsy</span>
           <span class="ent-strip-item"><svg class="ent-strip-wide ent-strip-ebay" viewBox="0 7.2 24 9.6"><linearGradient id="s1i20eb" gradientUnits="userSpaceOnUse" x1="0" x2="24"><stop offset="0" stop-color="#E53238"/><stop offset="0.252" stop-color="#E53238"/><stop offset="0.252" stop-color="#0064D2"/><stop offset="0.5" stop-color="#0064D2"/><stop offset="0.5" stop-color="#F5AF02"/><stop offset="0.735" stop-color="#F5AF02"/><stop offset="0.735" stop-color="#86B817"/><stop offset="1" stop-color="#86B817"/></linearGradient><path fill="url(#s1i20eb)" d="M6.056 12.132v-4.92h1.2v3.026c.59-.703 1.402-.906 2.202-.906 1.34 0 2.828.904 2.828 2.855 0 .233-.015.457-.06.668.24-.953 1.274-1.305 2.896-1.344.51-.018 1.095-.018 1.56-.018v-.135c0-.885-.556-1.244-1.53-1.244-.72 0-1.245.3-1.305.81h-1.275c.136-1.29 1.5-1.62 2.686-1.62 1.064 0 1.995.27 2.415 1.02l-.436-.84h1.41l2.055 4.125 2.055-4.126H24l-3.72 7.305h-1.346l1.07-2.04-2.33-4.38c.13.255.2.555.2.93v2.46c0 .346.01.69.04 1.005H16.8a6.543 6.543 0 01-.046-.765c-.603.734-1.32.96-2.32.96-1.48 0-2.272-.78-2.272-1.695 0-.15.015-.284.037-.405-.3 1.246-1.36 2.086-2.767 2.086-.87 0-1.694-.315-2.2-.93 0 .24-.015.494-.04.734h-1.18c.02-.39.04-.855.04-1.245v-1.05h-4.83c.065 1.095.818 1.74 1.853 1.74.718 0 1.355-.3 1.568-.93h1.24c-.24 1.29-1.61 1.725-2.79 1.725C.95 15.009 0 13.822 0 12.232c0-1.754.982-2.91 3.116-2.91 1.688 0 2.93.886 2.94 2.806v.005zm9.137.183c-1.095.034-1.77.233-1.77.95 0 .465.36.97 1.305.97 1.26 0 1.935-.69 1.935-1.814v-.13c-.45 0-.99.006-1.484.022h.012zm-6.06 1.875c1.11 0 1.876-.806 1.876-2.02s-.768-2.02-1.893-2.02c-1.11 0-1.89.806-1.89 2.02s.765 2.02 1.875 2.02h.03zm-4.35-2.514c-.044-1.125-.854-1.546-1.725-1.546-.944 0-1.694.474-1.815 1.546z"/></svg></span>
-          <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 9 6 9-6"/></svg>Email</span>
+          <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>Email</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="#2FDF4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>SMS</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#FF0069"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>Instagram</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#0866FF"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>Facebook</span>
@@ -2036,7 +1999,7 @@
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#FF9900"><path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.743-2.64 1.316-4.185 1.726a17.617 17.617 0 01-10.951-.577 17.88 17.88 0 01-5.43-3.35c-.1-.074-.151-.15-.151-.22 0-.047.021-.09.051-.13zm6.565-6.218c0-1.005.247-1.863.743-2.577.495-.71 1.17-1.25 2.04-1.615.796-.335 1.756-.575 2.912-.72.39-.046 1.033-.103 1.92-.174v-.37c0-.93-.105-1.558-.3-1.875-.302-.43-.78-.65-1.44-.65h-.182c-.48.046-.896.196-1.246.46-.35.27-.575.63-.675 1.096-.06.3-.206.465-.435.51l-2.52-.315c-.248-.06-.372-.18-.372-.39 0-.046.007-.09.022-.15.247-1.29.855-2.25 1.82-2.88.976-.616 2.1-.975 3.39-1.05h.54c1.65 0 2.957.434 3.888 1.29.135.15.27.3.405.48.12.165.224.314.283.45.075.134.15.33.195.57.06.254.105.42.135.51.03.104.062.3.076.615.01.313.02.493.02.553v5.28c0 .376.06.72.165 1.036.105.313.21.54.315.674l.51.674c.09.136.136.256.136.36 0 .12-.06.226-.18.314-1.2 1.05-1.86 1.62-1.963 1.71-.165.135-.375.15-.63.045a6.062 6.062 0 01-.526-.496l-.31-.347a9.391 9.391 0 01-.317-.42l-.3-.435c-.81.886-1.603 1.44-2.4 1.665-.494.15-1.093.227-1.83.227-1.11 0-2.04-.343-2.76-1.034-.72-.69-1.08-1.665-1.08-2.94l-.05-.076zm3.753-.438c0 .566.14 1.02.425 1.364.285.34.675.512 1.155.512.045 0 .106-.007.195-.02.09-.016.134-.023.166-.023.614-.16 1.08-.553 1.424-1.178.165-.28.285-.58.36-.91.09-.32.12-.59.135-.8.015-.195.015-.54.015-1.005v-.54c-.84 0-1.484.06-1.92.18-1.275.36-1.92 1.17-1.92 2.43l-.035-.02zm9.162 7.027c.03-.06.075-.11.132-.17.362-.243.714-.41 1.05-.5a8.094 8.094 0 011.612-.24c.14-.012.28 0 .41.03.65.06 1.05.168 1.172.33.063.09.099.228.099.39v.15c0 .51-.149 1.11-.424 1.8-.278.69-.664 1.248-1.156 1.68-.073.06-.14.09-.197.09-.03 0-.06 0-.09-.012-.09-.044-.107-.12-.064-.24.54-1.26.806-2.143.806-2.64 0-.15-.03-.27-.087-.344-.145-.166-.55-.257-1.224-.257-.243 0-.533.016-.87.046-.363.045-.7.09-1 .135-.09 0-.148-.014-.18-.044-.03-.03-.036-.047-.02-.077 0-.017.006-.03.02-.063v-.06z"/></svg>Amazon</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#F16521"><path d="M8.559 2.445c0-.325.033-.52.59-.52h7.465c1.3 0 2.02 1.11 2.54 3.193l.42 1.666h1.27c.23-4.728.43-6.784.43-6.784s-3.196.36-5.09.36H6.635L1.521.196v1.37l1.725.326c1.21.24 1.5.496 1.6 1.606 0 0 .11 3.27.11 8.64 0 5.385-.09 8.61-.09 8.61 0 .973-.39 1.333-1.59 1.573l-1.722.33V24l5.13-.165h8.55c1.935 0 6.39.165 6.39.165.105-1.17.75-6.48.855-7.064h-1.2l-1.284 2.91c-1.005 2.28-2.476 2.445-4.11 2.445h-4.906c-1.63 0-2.415-.64-2.415-2.05V12.8s3.62 0 4.79.096c.912.064 1.463.325 1.76 1.598l.39 1.695h1.41l-.09-4.278.192-4.305h-1.391l-.45 1.89c-.283 1.244-.48 1.47-1.754 1.6-1.666.17-4.815.14-4.815.14V2.45h-.05z"/></svg>Etsy</span>
           <span class="ent-strip-item"><svg class="ent-strip-wide ent-strip-ebay" viewBox="0 7.2 24 9.6"><linearGradient id="s2i20eb" gradientUnits="userSpaceOnUse" x1="0" x2="24"><stop offset="0" stop-color="#E53238"/><stop offset="0.252" stop-color="#E53238"/><stop offset="0.252" stop-color="#0064D2"/><stop offset="0.5" stop-color="#0064D2"/><stop offset="0.5" stop-color="#F5AF02"/><stop offset="0.735" stop-color="#F5AF02"/><stop offset="0.735" stop-color="#86B817"/><stop offset="1" stop-color="#86B817"/></linearGradient><path fill="url(#s2i20eb)" d="M6.056 12.132v-4.92h1.2v3.026c.59-.703 1.402-.906 2.202-.906 1.34 0 2.828.904 2.828 2.855 0 .233-.015.457-.06.668.24-.953 1.274-1.305 2.896-1.344.51-.018 1.095-.018 1.56-.018v-.135c0-.885-.556-1.244-1.53-1.244-.72 0-1.245.3-1.305.81h-1.275c.136-1.29 1.5-1.62 2.686-1.62 1.064 0 1.995.27 2.415 1.02l-.436-.84h1.41l2.055 4.125 2.055-4.126H24l-3.72 7.305h-1.346l1.07-2.04-2.33-4.38c.13.255.2.555.2.93v2.46c0 .346.01.69.04 1.005H16.8a6.543 6.543 0 01-.046-.765c-.603.734-1.32.96-2.32.96-1.48 0-2.272-.78-2.272-1.695 0-.15.015-.284.037-.405-.3 1.246-1.36 2.086-2.767 2.086-.87 0-1.694-.315-2.2-.93 0 .24-.015.494-.04.734h-1.18c.02-.39.04-.855.04-1.245v-1.05h-4.83c.065 1.095.818 1.74 1.853 1.74.718 0 1.355-.3 1.568-.93h1.24c-.24 1.29-1.61 1.725-2.79 1.725C.95 15.009 0 13.822 0 12.232c0-1.754.982-2.91 3.116-2.91 1.688 0 2.93.886 2.94 2.806v.005zm9.137.183c-1.095.034-1.77.233-1.77.95 0 .465.36.97 1.305.97 1.26 0 1.935-.69 1.935-1.814v-.13c-.45 0-.99.006-1.484.022h.012zm-6.06 1.875c1.11 0 1.876-.806 1.876-2.02s-.768-2.02-1.893-2.02c-1.11 0-1.89.806-1.89 2.02s.765 2.02 1.875 2.02h.03zm-4.35-2.514c-.044-1.125-.854-1.546-1.725-1.546-.944 0-1.694.474-1.815 1.546z"/></svg></span>
-          <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 9 6 9-6"/></svg>Email</span>
+          <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg>Email</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="none" stroke="#2FDF4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.4A8.5 8.5 0 1 1 21 12z"/><path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>SMS</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#FF0069"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg>Instagram</span>
           <span class="ent-strip-item"><svg viewBox="0 0 24 24" fill="#0866FF"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>Facebook</span>
@@ -2132,8 +2095,8 @@
         <div class="ent-bento">
           <article class="ent-card ent-card--split ent-c-12" style="--rise:290px">
             <div class="ent-card-text">
-              <h3 class="ent-h3">Get found in AI answers</h3>
-              <p>Structured data, fast pages, and clear content help Google AI Overviews and AI assistants find, trust, and cite your business.</p>
+              <h3 class="ent-h3">Sell in AI chats</h3>
+              <p>Buyers now ask AI first. We make your site easy for AI to cite. Be the name it gives.</p>
             </div>
             <div class="ent-card-media">
               <!-- TEMP: Shopify reference media, replace before deploy -->
@@ -2146,8 +2109,8 @@
 
           <article class="ent-card ent-c-8" style="--rise:380px">
             <div class="ent-card-text">
-              <h3 class="ent-h3">Run it all from one dashboard</h3>
-              <p>Quotes, invoices, and project updates live in your own client portal, so you always know where things stand.</p>
+              <h3 class="ent-h3">Everything in one portal</h3>
+              <p>Quotes, invoices and updates live in your own client portal. Approve and pay from any device. Always know where things stand.</p>
             </div>
             <div class="ent-card-media ent-media-bleed">
               <!-- TEMP: Shopify reference media, replace before deploy -->
@@ -2160,8 +2123,8 @@
 
           <article class="ent-card ent-c-10" style="--rise:320px">
             <div class="ent-card-text">
-              <h3 class="ent-h3">Reach customers on every channel</h3>
-              <p>Email, SMS, social, and Google Ads, set up and run by the same team that built your site.</p>
+              <h3 class="ent-h3">Every channel, one team</h3>
+              <p>Email, SMS, social and Google Ads, run by one team. Every campaign lands on a site built to convert it.</p>
             </div>
             <div class="ent-card-media ent-media-cover">
               <!-- TEMP: Shopify reference media, replace before deploy -->
@@ -2175,7 +2138,7 @@
           <article class="ent-card ent-c-10" style="--rise:410px">
             <div class="ent-card-text">
               <h3 class="ent-h3">Cut costs, not ambitions</h3>
-              <p>You own your code, and your site runs on your own Cloudflare and Supabase accounts, often on their free tiers. No platform fees eating into growth.</p>
+              <p>No fees skimming your sales, no surprise bills as you grow. Lean hosting keeps your running costs low.</p>
             </div>
             <div class="ent-card-media ent-media-cover">
               <!-- TEMP: Shopify reference media, replace before deploy -->
@@ -2188,13 +2151,13 @@
 
           <article class="ent-card ent-c-11" style="--rise:350px">
             <div class="ent-card-text">
-              <h3 class="ent-h3">Blink and your site's loaded</h3>
-              <p>VardWeb sites load in 1.8s on average, well inside every speed line Google draws for a good page.</p>
+              <h3 class="ent-h3">Loaded in a blink</h3>
+              <p><em>VardWeb</em> sites load in 1.8 seconds on average, clearing every Google speed mark. Faster pages keep visitors around. Google rewards them in search.</p>
             </div>
             <div class="ent-speed" role="img" aria-label="VardWeb sites load in 1.8 seconds on average: 0.7 seconds faster than Google's 2.5 second good LCP mark, 1.2 seconds faster than the 3 second mobile drop-off point, and 2.2 seconds faster than Google's 4 second poor LCP mark">
               <div class="ent-speed-row ent-speed-brand">
                 <span class="ent-speed-fill"></span>
-                <span class="ent-speed-content"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt="">VardWeb</span>
+                <span class="ent-speed-content"><img src="brand_assets/VardWeb_Favicon_2_Transparent.png" alt=""><em>VardWeb</em></span>
               </div>
               <div class="ent-speed-row ent-speed-cmp">
                 <span class="ent-speed-fill" style="--w:72%;--d:.2s"></span>
@@ -2214,7 +2177,7 @@
           <article class="ent-card ent-card--dial ent-c-9" style="--rise:470px">
             <div class="ent-card-text">
               <h3 class="ent-h3">Launch fast, grow faster</h3>
-              <p>Fixed scopes and one point of contact from kickoff to launch keep projects moving, so you start growing sooner.</p>
+              <p>Fixed scopes and one point of contact keep projects on schedule. Less waiting, more growing.</p>
             </div>
             <!-- TEMP: 20% "faster migration" mirrors the reference; replace with a sourced VardWeb figure -->
             <div class="ent-dial" role="img" aria-label="20% faster migration">
@@ -2223,6 +2186,8 @@
                 <defs>
                   <linearGradient id="entDialTrack" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#4a4a4e"/><stop offset="1" stop-color="#c8c8cc"/></linearGradient>
                   <clipPath id="entDialClip"><rect x="0" y="0" width="400" height="200"/></clipPath>
+                  <radialGradient id="entDialGlowG"><stop offset="0" stop-color="#2FDF4A"/><stop offset="0.35" stop-color="#2FDF4A" stop-opacity="0.75"/><stop offset="1" stop-color="#2FDF4A" stop-opacity="0"/></radialGradient>
+                  <radialGradient id="entDialGlowW"><stop offset="0" stop-color="#fff"/><stop offset="0.35" stop-color="#fff" stop-opacity="0.75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
                 </defs>
                 <path d="M20 200A180 180 0 0 1 380 200" fill="none" stroke="url(#entDialTrack)" stroke-width="5" stroke-linecap="round"/>
                 <g clip-path="url(#entDialClip)">
@@ -2230,6 +2195,9 @@
                     <path d="M168.74 377.27A180 180 0 0 1 20 200" fill="none" stroke="#2FDF4A" stroke-width="7" stroke-linecap="round"/>
                   </g>
                 </g>
+                <!-- Pulses at the arc's right end: green as the comet head arrives, white as its tail leaves -->
+                <circle class="ent-dial-pulse ent-dial-pulse--g" cx="380" cy="200" r="16" fill="url(#entDialGlowG)"/>
+                <circle class="ent-dial-pulse ent-dial-pulse--w" cx="380" cy="200" r="16" fill="url(#entDialGlowW)"/>
               </svg>
               <div class="ent-dial-read" aria-hidden="true">
                 <div class="ent-dial-num"><span data-dial>20</span>%</div>
@@ -2335,7 +2303,7 @@
   <div class="ent-wrap ent-globe-text">
     <svg class="ent-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5c2.6 2.6 3.9 5.8 3.9 9.5s-1.3 6.9-3.9 9.5c-2.6-2.6-3.9-5.8-3.9-9.5S9.4 5.1 12 2.5z"/></svg>
     <h2 class="ent-h2" id="ent-globe-h">Built on the network behind the world's fastest sites</h2>
-    <p>Every VardWeb site is served from Cloudflare's global edge network, so your pages load close to your customers, wherever they are.</p>
+    <p>Every VardWeb site is served from a global edge network, so your pages load close to your customers, wherever they are.</p>
   </div>
 </section>
 
@@ -5190,38 +5158,56 @@
 </div>
 
 <script>
-/* ── Hero: rotating headline word ── */
+/* ── Hero: rotating headline word, driven by the background loops ──
+   Each word has its own 5 s Blender loop. The active clip's clock drives everything: near its end the word
+   exits, the next clip (already buffered in the second video) fades in, and the new word lands on the cut.
+   The loop button holds the current scene (the word waves while it is held); pressing it again carries on. */
 (function () {
   var wrap = document.getElementById('hero-rotate');
   if (!wrap) return;
   var wordEl = wrap.querySelector('.word');
 
-  var words = ['CONVERTING', 'RANKING', 'SELLING', 'GROWING', 'SCALING', 'ENGAGING', 'AUTOMATING', 'LAUNCHING'];
+  /* Order: most valuable result first, arranged so no two neighbouring scenes share a main colour */
+  var SCENES = ['converting', 'selling', 'ranking', 'growing', 'automating', 'scaling', 'optimizing', 'engaging', 'launching', 'designing'];
+  var words = SCENES.map(function (s) { return s.toUpperCase(); });
+  /* Each word wears its own scene's main colour, lifted until it reads clearly over the shaded clip */
+  var COLORS = ['#AEB6FF', '#7FE0A4', '#FFE07A', '#FF9A5C', '#4FD8C4', '#E8C49A', '#B0F7DF', '#FF6B7D', '#7CC4FF', '#DDAAA5'];
+  function tint(i) { wrap.style.setProperty('--word', COLORS[i % COLORS.length]); }
+  tint(0);
   var idx = 0;
   var CHAR_STAGGER_MS = 18;
   var TRANSITION_MS   = 400;
+  var FADE_AT = 4.7;   /* seconds into a 5 s clip when the next one starts fading in */
+  var LAND_AT = 4.85;  /* when the new word should land */
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var saveData = navigator.connection && navigator.connection.saveData;
 
   function toChars(word) {
-    return word.split('').map(function (c) { return '<span class="ch">' + c + '</span>'; }).join('');
+    return word.split('').map(function (c, i) { return '<span class="ch" style="--i:' + i + '">' + c + '</span>'; }).join('');
+  }
+  function exitWait(word) { return (word.length - 1) * CHAR_STAGGER_MS + TRANSITION_MS; }
+
+  /* Ends the held-word wave by letting each letter glide home from wherever it is, instead of snapping:
+     pin each letter where the wave left it, drop the wave, then let the letter's own transform transition carry it to rest */
+  function stopWave() {
+    if (!wrap.classList.contains('is-looping')) return;
+    var chs = Array.prototype.slice.call(wordEl.querySelectorAll('.ch'));
+    var from = chs.map(function (ch) { return getComputedStyle(ch).transform; });
+    chs.forEach(function (ch, i) { if (from[i] !== 'none') ch.style.transform = from[i]; });
+    wrap.classList.remove('is-looping');
+    void wrap.offsetWidth;
+    chs.forEach(function (ch) { ch.style.transform = ''; });
   }
 
-  wordEl.innerHTML = toChars(words[0]);
-  if (reduceMotion || words.length <= 1) return;
-
-  function swap() {
-    if (document.hidden) return;
-    idx = (idx + 1) % words.length;
-
+  function showWord(to) {
     var current = wordEl.querySelectorAll('.ch');
     current.forEach(function (ch, i) {
       ch.style.transitionDelay = (i * CHAR_STAGGER_MS) + 'ms';
       ch.classList.add('exit');
     });
-
-    var exitWait = (current.length - 1) * CHAR_STAGGER_MS + TRANSITION_MS;
     setTimeout(function () {
-      wordEl.innerHTML = toChars(words[idx]);
+      wordEl.innerHTML = toChars(words[to]);
+      tint(to);
       var next = wordEl.querySelectorAll('.ch');
       next.forEach(function (ch, i) {
         ch.style.transitionDelay = (i * CHAR_STAGGER_MS) + 'ms';
@@ -5232,10 +5218,96 @@
           next.forEach(function (ch) { ch.classList.remove('enter'); });
         });
       });
-    }, exitWait);
+    }, exitWait(words[(to - 1 + words.length) % words.length]));
   }
 
-  setInterval(swap, 2400);
+  wordEl.innerHTML = toChars(words[0]);
+
+  var vids = Array.prototype.slice.call(document.querySelectorAll('.ent-loops video'));
+  var btn = document.querySelector('.ent-loop-btn');
+  if (vids.length < 2) return;
+
+  var phone = window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches;
+  var ext = document.createElement('video').canPlayType('video/webm; codecs="av01.0.08M.08"') ? '.webm' : '.mp4';
+  function src(i) { return 'brand_assets/hero-loops/' + SCENES[i % SCENES.length] + (phone ? '-m' : '') + ext; }
+  /* Vertical framing per scene where the default centre crop cuts something off (ENGAGING's top beam) */
+  var POS = { engaging: phone ? '50% 0%' : '50% 12%' };
+  function frame(v, i) { v.style.objectPosition = POS[SCENES[i % SCENES.length]] || ''; }
+
+  var cur = vids[0], nxt = vids[1];
+  if (!cur.getAttribute('src')) cur.src = src(0);
+
+  var holding = false;       /* loop button pressed: stay on this scene */
+  var running = !(reduceMotion || saveData);
+  var inView = true, wordFired = false, fading = false;
+  var wordAt = LAND_AT - exitWait(words[0]) / 1000;
+
+  function setBtn() {
+    if (!btn) return;
+    var pressed = holding || !running;
+    btn.setAttribute('aria-pressed', String(pressed));
+    var tip = pressed ? 'Play all scenes' : 'Loop this scene';
+    btn.setAttribute('aria-label', tip);
+    btn.title = tip;
+  }
+  function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  function shouldPlay() { return running && inView && !document.hidden; }
+  function sync() { if (shouldPlay()) play(cur); else { cur.pause(); if (fading) nxt.pause(); } }
+
+  function prepNext() {
+    nxt.src = src(idx + 1);
+    frame(nxt, idx + 1);
+    nxt.preload = 'auto';
+    nxt.load();
+  }
+
+  function cut() {
+    fading = true;
+    nxt.currentTime = 0;
+    play(nxt);
+    nxt.classList.add('is-on');
+    cur.classList.remove('is-on');
+    setTimeout(function () {
+      var old = cur;
+      cur = nxt; nxt = old;
+      old.pause();
+      idx = (idx + 1) % SCENES.length;
+      cur.loop = holding;
+      wordFired = false; fading = false;
+      /* let the new word finish landing before it starts to wave */
+      if (holding) setTimeout(function () { wrap.classList.toggle('is-looping', holding); }, 700);
+      wordAt = LAND_AT - exitWait(words[idx]) / 1000;
+      prepNext();
+    }, 320);
+  }
+
+  function tick() {
+    requestAnimationFrame(tick);
+    if (!shouldPlay() || fading) return;
+    var t = cur.currentTime;
+    if (!holding && !wordFired && t >= wordAt) { wordFired = true; showWord((idx + 1) % words.length); }
+    if (wordFired && (t >= FADE_AT || cur.ended)) cut();
+  }
+
+  if (btn) btn.addEventListener('click', function () {
+    if (!running) { running = true; holding = false; }
+    else holding = !holding;
+    /* a word already on its way out finishes the change; the next scene is the one that holds */
+    cur.loop = holding && !wordFired;
+    if (holding && !wordFired) wrap.classList.add('is-looping');
+    else stopWave();
+    setBtn();
+    sync();
+  });
+
+  setBtn();
+  prepNext();
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) { inView = entries[0].isIntersecting; sync(); }).observe(wrap.closest('section') || wrap);
+  }
+  document.addEventListener('visibilitychange', sync);
+  sync();
+  requestAnimationFrame(tick);
 })();
 </script>
 
@@ -5253,25 +5325,6 @@
       fn();
     }, { threshold: threshold });
     io.observe(el);
-  }
-
-  /* Hero wall: pre-blurred copies for the focus pulls, and no animation while the hero is off screen */
-  var wall = document.querySelector('.ent-wall');
-  if (wall && !reduceMotion) {
-    var plane = wall.querySelector('.ent-wall-plane');
-    var blur = plane.cloneNode(true);
-    blur.classList.add('is-blur');
-    plane.parentNode.appendChild(blur);
-    wall.querySelectorAll('.ent-float img').forEach(function (img) {
-      var b = img.cloneNode();
-      b.classList.add('is-blur');
-      img.parentNode.appendChild(b);
-    });
-    if (hasIO) {
-      new IntersectionObserver(function (entries) {
-        wall.classList.toggle('is-paused', !entries[0].isIntersecting);
-      }).observe(wall);
-    }
   }
 
   /* Reduced motion keeps every video on its poster frame */
@@ -5302,7 +5355,9 @@
   if (dial) {
     var comet = dial.querySelector('.ent-dial-comet');
     var num = dial.querySelector('[data-dial]');
-    var END = 262, DURATION = 2600, TARGET = 20;
+    var pulseG = dial.querySelector('.ent-dial-pulse--g');
+    var pulseW = dial.querySelector('.ent-dial-pulse--w');
+    var END = 262, DURATION = 3640, TARGET = 20, hitG = false;
     var draw = function (deg) {
       comet.style.transform = 'rotate(' + deg + 'deg)';
       num.textContent = Math.round(Math.min(deg / 180, 1) * TARGET);
@@ -5317,9 +5372,12 @@
         requestAnimationFrame(function frame(ts) {
           if (start === null) start = ts;
           var t = Math.min((ts - start) / DURATION, 1);
-          draw(ease(t) * END);
+          var deg = ease(t) * END;
+          draw(deg);
+          /* Head reaches the right end at 180deg: green pulse, once */
+          if (!hitG && deg >= 180) { hitG = true; pulseG.classList.add('is-pulse'); }
           if (t < 1) requestAnimationFrame(frame);
-          else comet.classList.add('is-done');
+          else { comet.classList.add('is-done'); pulseW.classList.add('is-pulse'); }
         });
       });
     }
