@@ -36,7 +36,8 @@ const SEQ = { arrival: { frames: 64, clips: ['arrival.mp4'] }, walk: { frames: 1
 const COVER = 'scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,setsar=1';
 const MOBILE = 'crop=606:1080:(iw-606)/2:0'; // centre crop of the 1920x1080 frame: the subject must sit in the middle 32%
 
-const ff = args => execFileSync(FFMPEG, ['-hide_banner', '-loglevel', 'error', '-y', ...args], { stdio: 'inherit' });
+// Every output is written without metadata (no source tags, no encoder version), so the shipped files stay clean.
+const ff = args => execFileSync(FFMPEG, ['-hide_banner', '-loglevel', 'error', '-y', ...args.slice(0, -1), '-map_metadata', '-1', '-fflags', '+bitexact', args[args.length - 1]], { stdio: 'inherit' });
 const duration = f => +execFileSync(FFPROBE, ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', f]).toString().trim();
 const fresh = d => { fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d, { recursive: true }); };
 const need = f => { if (!fs.existsSync(f)) throw new Error(`Missing ${f}`); return f; };
