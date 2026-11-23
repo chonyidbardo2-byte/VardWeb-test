@@ -24,9 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var panelId = trigger.getAttribute('aria-controls');
     var panel   = panelId ? menu.querySelector('#' + panelId) : null;
     if (!panel) return;
+    // Single-open accordion: opening one section collapses the others
     trigger.addEventListener('click', function () {
-      var open = panel.classList.toggle('open');
-      trigger.setAttribute('aria-expanded', open);
+      var willOpen = !panel.classList.contains('open');
+      closeAllAccordions();
+      if (willOpen) {
+        panel.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
     });
   });
 

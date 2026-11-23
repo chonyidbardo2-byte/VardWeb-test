@@ -77,24 +77,54 @@
 
     /* ── Nav ── */
     .nav {
+      --nav-edge: clamp(24px, 10vw, 144px);   /* distance from the screen edge at the top */
+      --nav-shift: clamp(12px, calc(13.4vw - 96px), 96px);  /* how far each side moves in once scrolled */
+      --nav-ease: cubic-bezier(0.34,1.56,0.64,1);
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: rgba(7,9,16,0.78);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(0,229,255,0.07);
       height: 64px;
       display: flex; align-items: center;
+      transform: translateY(0);
+      transition: transform 0.5s var(--nav-ease);
+    }
+    /* Floating surface: same geometry in both states, only opacity + transform animate */
+    .nav::before {
+      content: ''; position: absolute; z-index: -1; pointer-events: none;
+      top: 4px; bottom: 4px;
+      left: calc(var(--nav-edge) + var(--nav-shift) - 20px);
+      right: calc(var(--nav-edge) + var(--nav-shift) - 20px);
+      background: rgba(10,10,10,0.80);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+      border: 1px solid #262626;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px -2px rgba(0,0,0,0.4), 0 12px 32px -14px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.03);
+      opacity: 0;
+      transform: scaleX(1.04);
+      transition: opacity 0.35s cubic-bezier(0.22,1,0.36,1), transform 0.5s var(--nav-ease);
+    }
+    .nav.is-scrolled { transform: translateY(8px); }
+    .nav.is-scrolled::before { opacity: 1; transform: scaleX(1); }
+    .nav:has(.nav-mobile-menu.open)::before { opacity: 1; transform: scaleX(1); }
+    @media (min-width: 1025px) {
+      .nav-inner > a[aria-label="VardWeb Home"], .nav-links, .nav-right {
+        transform: translateX(0);
+        transition: transform 0.5s var(--nav-ease);
+      }
+      .nav.is-scrolled .nav-inner > a[aria-label="VardWeb Home"] { transform: translateX(var(--nav-shift)); }
+      .nav.is-scrolled .nav-links, .nav.is-scrolled .nav-right { transform: translateX(calc(-1 * var(--nav-shift))); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nav, .nav::before, .nav-inner > a[aria-label="VardWeb Home"], .nav-links, .nav-right { transition: none !important; }
     }
     .nav-inner {
-      max-width: 1200px; width: 100%; margin: 0 auto;
-      padding: 0 28px;
+      width: 100%;
+      padding: 0 var(--nav-edge);
       display: flex; align-items: center; justify-content: space-between;
     }
     .nav-logo { height: 34px; width: auto; display: block; }
-    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-links { display: flex; align-items: center; gap: 28px; margin-left: auto; margin-right: 28px; }
     .nav-link {
       font-size: 13.5px; font-weight: 500;
-      color: rgba(200,212,232,0.58);
+      color: rgba(255,255,255,0.92);
       text-decoration: none;
       position: relative;
       padding-bottom: 2px;
@@ -116,6 +146,9 @@
     /* ── Nav Dropdown ── */
     .nav-dropdown { position: relative; display: flex; align-items: center; }
     .nav-dropdown-trigger { display: flex; align-items: center; gap: 5px; }
+    button.nav-dropdown-trigger { background: none; border: none; padding: 0 0 2px; margin: 0; font-family: inherit; cursor: pointer; -webkit-appearance: none; appearance: none; }
+    .dropdown-item.active { color: var(--cyan); }
+    .nav-links .nav-link.active:not(:hover)::after { width: 0; }
     .nav-dropdown-trigger .chevron { transition: transform 0.2s ease; flex-shrink: 0; }
     .nav-dropdown:hover .chevron,
     .nav-dropdown:focus-within .chevron { transform: rotate(180deg); }
@@ -582,6 +615,8 @@
       .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); -webkit-transform: scaleX(0); }
       .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); -webkit-transform: translateY(-8px) rotate(-45deg); }
       .nav-mobile-menu { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(7,9,16,0.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,229,255,0.1); padding: 12px 0 20px; box-shadow: 0 24px 64px rgba(0,0,0,0.6); max-height: calc(100vh - 64px); overflow-y: auto; }
+      .nav::before { left: 12px; right: 12px; }
+      .nav-mobile-menu { left: 12px !important; right: 12px !important; top: 64px !important; border: 1px solid #262626 !important; background: rgba(10,10,10,0.96); border-radius: 8px; max-height: calc(100vh - 84px) !important; box-shadow: 0 12px 32px -14px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04) !important; }
       .nav-mobile-menu.open { display: block; animation: mobSlideIn 0.22s cubic-bezier(0.34,1,0.64,1); }
       @keyframes mobSlideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
       .mob-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,229,255,0.45); padding: 10px 24px 6px; }
@@ -807,6 +842,7 @@
   </style>
   <script src="/supabase-config.js"></script>
   <script src="/nav-mobile.js"></script>
+  <script src="/nav-float.js"></script>
   <script src="/perf-utils.js"></script>
   <script src="/contribution-skyline.js"></script>
   <script type="module" src="/nav-auth.js"></script>
@@ -896,10 +932,17 @@
           <a href="index.html#roadmap"  class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-roadmap"/></svg>Roadmap</a>
         </div>
       </div>
-      <a href="faq.html"      class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-faq"/></svg>FAQ</a>
-      <a href="blog.html"     class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-blog"/></svg>Blog</a>
-      <a href="our-work.html" class="nav-link"><svg class="ni" aria-hidden="true"><use href="#ni-work"/></svg>Our Work</a>
-      <a href="about.html"    class="nav-link active"><svg class="ni" aria-hidden="true"><use href="#ni-about"/></svg>About</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-link nav-dropdown-trigger active" aria-haspopup="true" aria-expanded="false" aria-controls="dd-company-menu">
+          <svg class="ni" aria-hidden="true"><use href="#ni-company"/></svg>Company <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="dropdown-menu" id="dd-company-menu" role="menu">
+          <a href="faq.html"      class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-faq"/></svg>FAQ</a>
+          <a href="blog.html"     class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-blog"/></svg>Blog</a>
+          <a href="our-work.html" class="dropdown-item" role="menuitem"><svg class="ni" aria-hidden="true"><use href="#ni-work"/></svg>Our Work</a>
+          <a href="about.html"    class="dropdown-item active" role="menuitem" aria-current="page"><svg class="ni" aria-hidden="true"><use href="#ni-about"/></svg>About</a>
+        </div>
+      </div>
       <div class="nav-dropdown">
         <a href="services.html" class="nav-link nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="dd-services-menu">
           <svg class="ni" aria-hidden="true"><use href="#ni-services"/></svg>Services <svg class="chevron" aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
