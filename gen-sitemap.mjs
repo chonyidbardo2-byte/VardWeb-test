@@ -5,7 +5,7 @@ import { statSync, writeFileSync } from 'node:fs';
 
 const BASE = 'https://vardweb.com';
 // Transactional or placeholder pages that shouldn't be indexed
-const EXCLUDE = new Set(['checkout.html', 'ecommerce-demo.html']);
+const EXCLUDE = new Set(['checkout.html', 'ecommerce-demo.html', 'web-design-demo.html']);
 
 const tracked = execSync('git ls-files -- "*.html"', { encoding: 'utf8' })
   .split('\n')
