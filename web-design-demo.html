@@ -49,7 +49,6 @@ function phSeq(img, key) { phImg(img, `${key} frame 0001`, 1920, 1080); }
 </style>
 <style id="bigmark-m">@media (max-width: 767px) { #bigMark { font-size: 22vw; } }</style>
 <style id="credit-row">@media (max-width: 767px) { .foot-left { display: contents; } .foot-right { order: 1; } .demo-note { order: 2; width: 100%; margin-top: 4px; } }</style>
-<style id="replay">@media (max-width: 767px) { .replay-btn { left: 50%; right: auto; transform: translateX(-50%); } }</style>
 <style id="fonts">
 /* vietnamese */
 @font-face {
@@ -159,6 +158,47 @@ function phSeq(img, key) { phImg(img, `${key} frame 0001`, 1920, 1080); }
   :root { --font-fraunces: "Fraunces", "fraunces Fallback", Georgia, serif; --font-geist: "Geist", "geist Fallback", system-ui, sans-serif; }
   /* Placeholder notes for media slots that have not been generated yet */
   .ph-tag { position: absolute; z-index: 5; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+  /* Roll hover: a bigger clip box (layout unchanged) so the italic slant and deep descenders never get cut, and the outgoing word clears fully */
+  .roll { padding: .12em .2em .26em .06em; margin: -.12em -.2em -.26em -.06em; }
+  .roll-b { inset: .12em .2em .26em .06em; transform: translateY(calc(100% + .6em)); }
+  :is(a,button):hover .roll-a, :is(a,button):focus-visible .roll-a { transform: translateY(calc(-100% - .6em)); }
+  /* Night mode: readable guest options, and the date icon in the booking-button colour */
+  :root[data-theme=night] #guestSel option { color: #000; background-color: #fff; }
+  :root[data-theme=night] input[type=date]::-webkit-calendar-picker-indicator {
+    filter: none; opacity: 1; background: hsl(var(--primary));
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4.5' width='18' height='16.5' rx='2'/%3E%3Cpath d='M3 9.5h18M8 2.5v4M16 2.5v4'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4.5' width='18' height='16.5' rx='2'/%3E%3Cpath d='M3 9.5h18M8 2.5v4M16 2.5v4'/%3E%3C/svg%3E") center / 16px 16px no-repeat;
+  }
+  /* Menu list: its reveal mask gets room for the roll's italic and descenders */
+  .menu-li { font-size: clamp(2.6rem,6.5vw,5.75rem); padding: 0 .3em .3em 0; margin-bottom: -.3em; }
+  /* Show all photos: big photos fill a 2x2 block on desktop, the two singles stack beside them */
+  @media (min-width: 1024px) { .ph-big { grid-column: span 2 / span 2; grid-row: span 2 / span 2; } .ph-big img { aspect-ratio: auto; } }
+  /* Play again */
+  .replay-btn { transition: background-color .3s, color .3s, transform .3s var(--ease-spring); }
+  .replay-btn:hover, .replay-btn:focus-visible { background: var(--color-screen-foreground); color: var(--color-screen); }
+  .replay-btn:active { transform: scale(.96); }
+  /* Legal sheet */
+  .lg-bar { min-height: 3.5rem; } @media (min-width: 768px) { .lg-bar { min-height: 4rem; } }
+  .lg-tabs { padding: .25rem; }
+  .lg-tab { height: 2.25rem; transition: background-color .3s, color .3s, transform .3s var(--ease-spring); }
+  .lg-tab:hover, .lg-tab:focus-visible { background: hsl(var(--muted)); }
+  .lg-tab[aria-selected=true] { background: hsl(var(--foreground)); color: hsl(var(--background)); }
+  .lg-tab:active, .lg-close:active { transform: scale(.96); }
+  .lg-close { transition: background-color .3s, transform .3s var(--ease-spring); }
+  .lg-close:hover, .lg-close:focus-visible { background: hsl(var(--muted)); }
+  .lg-body { max-width: 48rem; padding-top: 2.5rem; padding-bottom: calc(3rem + env(safe-area-inset-bottom)); }
+  @media (min-width: 768px) { .lg-body { padding-top: 4rem; padding-bottom: 6rem; } }
+  .lg-title { font-size: clamp(2.6rem, 6vw, 4.5rem); line-height: .95; font-weight: 340; }
+  .lg-lead { max-width: 48ch; line-height: 1.7; }
+  .lg-list { margin-top: 3rem; padding-top: 2.5rem; gap: 2.5rem; }
+  .lg-clause { gap: .75rem; }
+  .lg-clause h3 { align-self: start; align-items: flex-start; letter-spacing: .01em; }
+  .lg-clause h3 .rule { margin-top: .62rem; }
+  @media (max-width: 639px) { .lg-bar { column-gap: .5rem; } .lg-tab { padding-inline: .85rem; } .lg-close { padding-inline: .75rem; } .lg-close-txt { display: none; } }
+  .lg-clause h3 .rule { opacity: .4; }
+  .lg-clause p { max-width: 62ch; line-height: 1.7; }
+  @media (min-width: 768px) { .lg-list { margin-top: 4rem; padding-top: 3.5rem; gap: 3rem; } .lg-clause { grid-template-columns: 13rem 1fr; gap: 2.5rem; } }
+  .lg-link { transition: opacity .2s; } .lg-link:hover { opacity: .7; } .lg-link:active { opacity: .5; }
 </style>
 </head>
 <body>
@@ -297,6 +337,24 @@ function phSeq(img, key) { phImg(img, `${key} frame 0001`, 1920, 1080); }
     </div>
   </dialog>
 
+  <!-- Privacy notice + Terms of stay: a bottom sheet in the house style -->
+  <dialog id="legal" aria-labelledby="legalTitle" class="fixed inset-0 m-0 h-dvh w-screen overflow-hidden">
+    <div id="legalPanel" class="absolute inset-x-0 top-[calc(0.75rem+env(safe-area-inset-top))] bottom-0 overflow-y-auto overscroll-contain rounded-t-[2rem] bg-background text-foreground transition-transform duration-[650ms] [transition-timing-function:var(--ease-door)] md:top-6 md:inset-x-6" style="transform:translateY(105%)">
+      <div class="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur-xl">
+        <div class="mx-auto mt-2.5 h-1 w-10 rounded-full bg-border" aria-hidden="true"></div>
+        <div class="lg-bar flex flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-2 sm:px-8 md:px-10">
+          <p class="hidden font-display text-xl md:block">Casa Altamarea</p>
+          <div role="tablist" aria-label="Legal" class="lg-tabs flex gap-1 rounded-full border border-border text-sm">
+            <button type="button" role="tab" data-legal-tab="privacy" aria-controls="legalBody" class="lg-tab rounded-full px-4"><span class="roll"><span class="roll-a">Privacy notice</span><span class="roll-b" aria-hidden="true">Privacy notice</span></span></button>
+            <button type="button" role="tab" data-legal-tab="terms" aria-controls="legalBody" class="lg-tab rounded-full px-4"><span class="roll"><span class="roll-a">Terms of stay</span><span class="roll-b" aria-hidden="true">Terms of stay</span></span></button>
+          </div>
+          <button type="button" data-close-legal aria-label="Close" class="lg-close flex h-11 items-center gap-3 rounded-full px-4"><span class="lg-close-txt">Close</span><span aria-hidden="true" class="relative block h-4 w-4"><span class="absolute top-1/2 left-0 h-px w-full rotate-45 bg-current"></span><span class="absolute top-1/2 left-0 h-px w-full -rotate-45 bg-current"></span></span></button>
+        </div>
+      </div>
+      <article id="legalBody" role="tabpanel" class="lg-body mx-auto px-5 sm:px-8"></article>
+    </div>
+  </dialog>
+
   <!-- 03 What's here -->
   <section id="amenities" aria-labelledby="h-amen" class="bg-background py-16 text-foreground sm:py-24 md:py-36 px-5 sm:px-8 md:px-12">
     <div class="mx-auto max-w-7xl">
@@ -353,6 +411,7 @@ function phSeq(img, key) { phImg(img, `${key} frame 0001`, 1920, 1080); }
         <div class="mt-6" data-reveal="rise"><span class="block "><span lang="it" class="font-display text-2xl italic">Buonasera</span></span></div>
         <h2 class="mt-1" data-reveal="rise" data-delay="80"><span class="block "><span id="h-stay" class="block max-w-[11ch] text-[clamp(3rem,7vw,6.25rem)] leading-[0.95] font-[340]">Stay until sundown.</span></span></h2>
         <p class="mt-6 max-w-[38ch] text-lg">Send us your dates. We answer within a day with availability and the exact price.</p>
+        <div id="replaySlot"></div>
       </div>
       <div>
         <div class="rounded-[1.75rem]" data-reveal="open"><span class="block ">
@@ -371,7 +430,7 @@ function phSeq(img, key) { phImg(img, `${key} frame 0001`, 1920, 1080); }
                 <label class="grid gap-1.5 text-sm font-medium">Email<input type="email" required autocomplete="email" inputmode="email" class="h-12 w-full rounded-xl border border-input bg-background px-4 text-foreground transition-colors placeholder:text-muted-foreground focus:border-ring focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-ring/30" name="email"></label>
               </div>
               <label class="grid gap-1.5 text-sm font-medium">Anything we should know? (optional)<textarea name="message" rows="2" class="h-12 w-full rounded-xl border border-input bg-background px-4 text-foreground transition-colors placeholder:text-muted-foreground focus:border-ring focus:outline-none focus-visible:outline-none focus:ring-2 focus:ring-ring/30 h-auto py-3"></textarea></label>
-              <label class="flex items-start gap-3 text-sm leading-snug text-muted-foreground"><input type="checkbox" required class="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-primary)]" name="consent"><span>I agree that my details may be used to answer this request. <a href="#questions" class="text-foreground underline underline-offset-4">Privacy notice</a></span></label>
+              <label class="flex items-start gap-3 text-sm leading-snug text-muted-foreground"><input type="checkbox" required class="mt-0.5 h-5 w-5 shrink-0 accent-[var(--color-primary)]" name="consent"><span>I agree that my details may be used to answer this request. <a href="#privacy" data-open-legal="privacy" class="lg-link text-foreground underline underline-offset-4">Privacy notice</a></span></label>
               <button type="submit" class="flex h-14 items-center justify-center gap-2 rounded-xl bg-primary text-lg font-medium text-primary-foreground transition-[filter,transform] duration-300 hover:brightness-110 active:scale-[0.99] disabled:opacity-60">Request to book<svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
               <p class="text-center text-sm text-muted-foreground">Nothing is charged yet.</p>
               <div id="estimate" aria-live="polite" class="grid transition-[grid-template-rows] duration-500 [transition-timing-function:var(--ease-door)]" style="grid-template-rows:0fr"><div class="overflow-hidden"></div></div>
@@ -423,7 +482,8 @@ function phSeq(img, key) { phImg(img, `${key} frame 0001`, 1920, 1080); }
     </div>
     <div class="foot-right flex flex-wrap items-center gap-x-6 gap-y-3">
       <span class="tnum">CIN IT065000C000000000</span>
-      <a href="#questions" class="relative after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-500 after:[transition-timing-function:var(--ease-door)] hover:after:scale-x-100 focus-visible:after:scale-x-100">Privacy notice</a>
+      <a href="#privacy" data-open-legal="privacy" class="relative after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-500 after:[transition-timing-function:var(--ease-door)] hover:after:scale-x-100 focus-visible:after:scale-x-100">Privacy notice</a>
+      <a href="#terms" data-open-legal="terms" class="relative after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-500 after:[transition-timing-function:var(--ease-door)] hover:after:scale-x-100 focus-visible:after:scale-x-100">Terms of stay</a>
       <a href="web-design.html" class="footer-credit" aria-label="Crafted with love by VardWeb">
           <span class="fc-small" aria-hidden="true">Crafted with</span>
           <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
@@ -513,6 +573,36 @@ const COPY = {
     { q: 'Can we bring a dog?', a: 'Small and medium dogs are welcome, just let us know when you book.' },
     { q: 'What is the best way to get there?', a: 'A car is simplest, and there is private parking for three. We can also book a transfer from Naples airport or the nearest train station.' },
   ],
+  legal: {
+    updated: 'Last updated 1 March 2026',
+    privacy: {
+      italian: 'Informativa sulla privacy', title: 'Privacy notice',
+      lead: 'How we look after the details you send us when you ask about a stay at Casa Altamarea.',
+      clauses: [
+        ['Who we are', 'Casa Altamarea is a privately owned holiday home at Via del Faro 7, Marina di Sorello, registered under CIN IT065000C000000000. The owners decide how your details are used, and you can reach them at <a href="mailto:ciao@altamarea.example.com" class="lg-link underline underline-offset-4">ciao@altamarea.example.com</a>.'],
+        ['What we collect', 'When you send a booking request we receive your name, email address, the dates you chose, the number of guests and anything you write in your message. We do not collect payment details through this website.'],
+        ['Why we use it', 'Only to answer your request, confirm availability and price, and arrange your stay. We never sell your details or use them for advertising, and we only write to you about your own booking.'],
+        ['Guest registration', 'Italian law asks every holiday home to register its guests with the local police within 24 hours of arrival. For confirmed stays we ask for an identity document for each guest on arrival and pass on only what that law requires.'],
+        ['How long we keep it', 'Requests that do not become a stay are deleted after 12 months. Booking records are kept for the period Italian tax law requires, usually 10 years, and then deleted.'],
+        ['Your rights', 'Under the GDPR you can ask to see, correct or delete your details, or object to how we use them, at any time. Just write to us. You can also complain to the Italian data protection authority, the Garante per la protezione dei dati personali.'],
+        ['Cookies', 'This website sets no tracking or advertising cookies. Your day or night choice is remembered on your own device only.'],
+      ],
+    },
+    terms: {
+      italian: 'Condizioni di soggiorno', title: 'Terms of stay',
+      lead: 'The simple rules of the house. We confirm them again, with your dates and price, before anything is booked.',
+      clauses: [
+        ['Requests and confirmation', 'Sending the form is a request, not a booking. Your stay is confirmed once we have replied in writing with the dates and total price and received your deposit.'],
+        ['Deposit and balance', 'A deposit of 30% secures your dates. The balance is due 30 days before arrival. For stays booked within 30 days of arrival, the full amount is due on confirmation.'],
+        ['Cancellations', 'Cancel 60 days or more before arrival and we refund your deposit in full. Between 59 and 30 days we keep the deposit. Within 30 days the full amount is due, unless we are able to rebook the same dates.'],
+        ['Arrival and departure', 'Check-in opens at 4 pm and checkout is by 10 am. Minimum stays are three nights from October to June and seven nights in July and August.'],
+        ['Guests and house rules', 'The house sleeps up to 8 guests. Please keep quiet hours from 11 pm to 8 am, do not hold parties or events, and look after the terrace, garden and pool as you would your own. Small and medium dogs are welcome when agreed in advance.'],
+        ['Tourist tax', 'The town charges a tourist tax per person per night, paid on arrival. We confirm the exact amount in our reply.'],
+        ['Security deposit', 'A refundable security deposit of €500 is held on arrival and returned within 7 days of checkout, less the cost of any damage beyond normal wear.'],
+        ['Our responsibility', 'We keep the house safe, clean and as described. We are not responsible for loss of personal belongings or for events outside our control, such as severe weather or local travel strikes, though we will always help where we can.'],
+      ],
+    },
+  },
   price: 720, currency: 'EUR', minNights: 3, email: 'ciao@altamarea.example.com', site: 'Casa Altamarea',
 };
 
@@ -578,7 +668,7 @@ function runCounters() {
 /* ---------- Render repeated content ---------- */
 function render() {
   // Menu
-  $('#menuList').innerHTML = COPY.nav.map((n, i) => `<li class="overflow-hidden"><a href="${n.href}" data-i="${i}" data-close-menu class="flex items-baseline gap-4 font-display text-[clamp(2.6rem,6.5vw,5.75rem)] leading-[1.08] transition-[transform,color] duration-700 [transition-timing-function:var(--ease-door)] ${i ? 'text-screen-foreground/70' : 'text-screen-foreground'}" style="transform:translateY(110%);transition-delay:0ms"><span class="tnum font-sans text-sm text-screen-foreground/70">0${i + 1}</span>${roll(n.label)}</a></li>`).join('');
+  $('#menuList').innerHTML = COPY.nav.map((n, i) => `<li class="menu-li overflow-hidden"><a href="${n.href}" data-i="${i}" data-close-menu class="flex items-baseline gap-4 font-display text-[clamp(2.6rem,6.5vw,5.75rem)] leading-[1.08] transition-[transform,color] duration-700 [transition-timing-function:var(--ease-door)] ${i ? 'text-screen-foreground/70' : 'text-screen-foreground'}" style="transform:translateY(110%);transition-delay:0ms"><span class="tnum font-sans text-sm text-screen-foreground/70">0${i + 1}</span>${roll(n.label)}</a></li>`).join('');
   $('#menuStills').innerHTML = COPY.nav.map((n, i) => `<img data-slot="photo-${n.still}" src="${portraitSrc(n.still)}" onerror="phImg(this,'photo: ${n.still}',800,1000)" alt="" width="614" height="768" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-[600ms,1200ms] [transition-timing-function:ease,var(--ease-door)]" style="opacity:${i ? 0 : 1};transform:scale(${i ? 1.06 : 1})">`).join('');
 
   // Single photo slots in markup
@@ -790,13 +880,48 @@ function lightbox() {
   const dlg = $('#photos'), panel = $('#photosPanel'), grid = $('#photoGrid');
   const show = () => {
     if (dlg.open) return;
-    grid.innerHTML = MEDIA.photos.map((p, a) => `<li class="${a % 5 === 0 ? 'sm:col-span-2' : ''}"><div class="overflow-hidden rounded-xl">${photoTag(p.name, 'scroll-zoom aspect-[16/10] h-full w-full object-cover', a % 5 === 0 ? '(min-width: 1024px) 66vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw', p.alt)}</div></li>`).join('');
+    grid.innerHTML = MEDIA.photos.map((p, a) => `<li class="${a === 0 ? 'sm:col-span-2 ph-big' : a === 6 ? 'ph-big' : ''}"><div class="h-full overflow-hidden rounded-xl">${photoTag(p.name, 'scroll-zoom aspect-[16/10] h-full w-full object-cover', a === 0 || a === 6 ? '(min-width: 1024px) 66vw, 100vw' : '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw', p.alt)}</div></li>`).join('');
     dlg.showModal(); requestAnimationFrame(() => { panel.style.transform = 'translateY(0)'; });
   };
   const hide = () => { if (!dlg.open) return; panel.style.transform = 'translateY(105%)'; setTimeout(() => { dlg.close(); grid.innerHTML = ''; }, 700); };
   $$('[data-open-photos]').forEach(b => b.addEventListener('click', show));
   dlg.addEventListener('cancel', e => { e.preventDefault(); hide(); });
   dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close-photos]')) hide(); });
+}
+
+/* ---------- Privacy notice + Terms of stay sheet ---------- */
+function legal() {
+  const dlg = $('#legal'), panel = $('#legalPanel'), body = $('#legalBody'), tabs = $$('[data-legal-tab]');
+  const paint = key => {
+    const d = COPY.legal[key];
+    tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.legalTab === key));
+    body.innerHTML = `<p lang="it" class="font-display text-2xl italic text-muted-foreground">${d.italian}</p>
+      <h2 id="legalTitle" class="lg-title mt-1">${d.title}</h2>
+      <p class="lg-lead mt-6 text-lg text-muted-foreground">${d.lead}</p>
+      <p class="tnum mt-4 text-sm text-muted-foreground">${COPY.legal.updated}</p>
+      <ol class="lg-list grid border-t border-border">${d.clauses.map(([h, t], i) => `<li class="lg-clause grid">
+        <h3 class="flex items-center gap-3 font-sans text-sm font-medium"><span class="tnum text-muted-foreground">${String(i + 1).padStart(2, '0')}</span><span aria-hidden="true" class="rule h-px w-6 shrink-0 bg-current"></span><span>${h}</span></h3>
+        <p class="text-muted-foreground">${t}</p></li>`).join('')}</ol>
+      <p class="mt-14 border-t border-border pt-6 text-sm text-muted-foreground">Demo template. All names, numbers and details are placeholders.</p>`;
+    panel.scrollTop = 0;
+  };
+  const show = key => {
+    paint(key);
+    if (dlg.open) return;
+    dlg.showModal(); requestAnimationFrame(() => { panel.style.transform = 'translateY(0)'; });
+  };
+  const hide = () => {
+    if (!dlg.open) return;
+    panel.style.transform = 'translateY(105%)';
+    if (/^#(privacy|terms)$/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+    setTimeout(() => dlg.close(), 700);
+  };
+  $$('[data-open-legal]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); history.replaceState(null, '', '#' + a.dataset.openLegal); show(a.dataset.openLegal); }));
+  tabs.forEach(t => t.addEventListener('click', () => { history.replaceState(null, '', '#' + t.dataset.legalTab); paint(t.dataset.legalTab); }));
+  dlg.addEventListener('cancel', e => { e.preventDefault(); hide(); });
+  dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close-legal]')) hide(); });
+  const fromHash = () => { const k = location.hash.slice(1); if (k === 'privacy' || k === 'terms') show(k); };
+  addEventListener('hashchange', fromHash); fromHash();
 }
 
 /* ---------- Reviews pause ---------- */
@@ -840,12 +965,20 @@ function sunset() {
     video.addEventListener('ended', () => { ended = true; showReplay(); });
     wrap.insertBefore(video, wrap.children[1]);
   };
+  // Desktop: in flow under the booking sentence, so it never moves. Phones: top right of the clip, as before.
+  const wide = mq('(min-width: 768px)');
+  const BASE = 'replay-btn z-10 h-10 rounded-full border border-screen-foreground/50 px-4 text-sm text-screen-foreground';
+  const place = () => {
+    if (!replay) return;
+    replay.className = BASE + (wide.matches ? ' mt-6' : ' absolute top-24 right-5');
+    (wide.matches ? $('#replaySlot') : wrap).appendChild(replay);
+  };
+  wide.addEventListener('change', place);
   const showReplay = () => {
     if (replay) return;
     replay = document.createElement('button'); replay.type = 'button'; replay.textContent = 'Play again';
-    replay.className = 'replay-btn absolute top-24 right-5 z-10 h-10 rounded-full border border-screen-foreground/50 px-4 text-sm transition-colors hover:bg-screen-foreground hover:text-screen sm:right-8 md:right-12';
     replay.addEventListener('click', () => { video.currentTime = 0; ended = false; replay.remove(); replay = null; video.play().catch(() => {}); });
-    wrap.appendChild(replay);
+    place();
   };
   const ioMount = new IntersectionObserver(([e]) => { if (e.isIntersecting) { ioMount.disconnect(); mount(); } }, { rootMargin: '100% 0px' });
   ioMount.observe(wrap);
@@ -911,7 +1044,7 @@ sequence($('#inside'), MEDIA.walk, { steps: COPY.rooms, onStep: (i) => {
   caps().forEach((c, k) => { c.setAttribute('aria-hidden', k !== a); setReveal(c.firstElementChild, k === a); });
 } });
 inView($('#bigMark'), () => { $('#bigMark').style.clipPath = 'inset(0 0 -0.1em 0)'; }, '0px 0px -5% 0px');
-runCounters(); header(); theme(); menu(); lightbox(); reviewsPause(); sunset(); booking(); faq();
+runCounters(); header(); theme(); menu(); lightbox(); legal(); reviewsPause(); sunset(); booking(); faq();
 </script>
 </body>
 </html>
