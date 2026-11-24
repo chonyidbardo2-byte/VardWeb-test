@@ -52,6 +52,16 @@
     .tlink:hover { opacity: .6; }
     .tlink:active { opacity: .4; }
 
+    /* Official VardWeb footer credit (light-footer variant of the main site's .footer-credit) */
+    @keyframes footer-heartbeat { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,45,120,0.5)); } 15%,45% { transform: scale(1.2); filter: drop-shadow(0 0 10px rgba(255,45,120,0.8)); } 30% { transform: scale(1); } }
+    .animate-footer-heartbeat { animation: footer-heartbeat 2s cubic-bezier(0.25,1,0.5,1) infinite; }
+    .footer-credit { display: inline-flex; align-items: center; white-space: nowrap; gap: 8px; padding: 11px 22px; border-radius: 9999px; background: linear-gradient(145deg, rgba(10,10,10,0.05) 0%, rgba(10,10,10,0.02) 100%); border: 1px solid rgba(10,10,10,0.12); box-shadow: 0 10px 30px -12px rgba(10,10,10,0.25), inset 0 1px 1px rgba(255,255,255,0.5), inset 0 -1px 2px rgba(10,10,10,0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); transition: background 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.35s var(--spring); }
+    .footer-credit:hover, .footer-credit:focus-visible { border-color: rgba(10,10,10,0.25); background: linear-gradient(145deg, rgba(10,10,10,0.08) 0%, rgba(10,10,10,0.03) 100%); }
+    .footer-credit:active { transform: scale(0.97); }
+    .footer-credit .fc-small { color: rgba(10,10,10,0.55); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .footer-credit .fc-name { color: #0a0a0a; font-weight: 900; font-size: 12px; margin-left: 2px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    @media (prefers-reduced-motion: reduce) { .animate-footer-heartbeat { animation: none; } }
+
     /* Image zoom inside a card */
     .zoom img { transform: translateZ(0) scale(1); backface-visibility: hidden; transition: transform .7s var(--ease); }
     .zoom:hover img { transform: translateZ(0) scale(1.04); }
@@ -419,9 +429,17 @@
     <div class="border-t border-line">
       <div class="mx-auto flex max-w-[1280px] flex-col gap-3 px-6 py-5 text-[13px] text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>&copy; 2026 Your Store. All rights reserved.</p>
-        <div class="flex gap-4">
-          <a href="#/privacy" class="tlink">Privacy Policy</a>
-          <a href="#/terms" class="tlink">Terms of Service</a>
+        <div class="flex flex-col items-start gap-3 lg:flex-row lg:items-center lg:gap-4">
+          <div class="flex gap-4">
+            <a href="#/privacy" class="tlink">Privacy Policy</a>
+            <a href="#/terms" class="tlink">Terms of Service</a>
+          </div>
+          <a href="ecommerce.html" class="footer-credit" aria-label="Crafted with love by VardWeb">
+            <span class="fc-small" aria-hidden="true">Crafted with</span>
+            <span class="animate-footer-heartbeat" style="display:inline-block;line-height:0;vertical-align:middle;" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="#FF2D78" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/></svg></span>
+            <span class="fc-small" aria-hidden="true">by</span>
+            <span class="fc-name" aria-hidden="true">VardWeb</span>
+          </a>
         </div>
       </div>
     </div>
