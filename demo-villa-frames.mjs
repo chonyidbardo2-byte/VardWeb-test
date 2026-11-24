@@ -5,18 +5,19 @@
 //   brand_assets/demo-villa/src/walk-a.mp4, walk-b.mp4, walk-c.mp4 (Seedance, K2 -> K3 -> K4 -> K5)
 //   brand_assets/demo-villa/src/sunset.mp4                       (Seedance, K6 -> end)
 //   brand_assets/demo-villa/src/photos/<name>.png|jpg|webp       (9 stills)
+//   brand_assets/demo-villa/src/photos/<name>-portrait.png|jpg   (optional native 4:5 stills, Portraits tab; used instead of cropping)
 //
 // Run:  node demo-villa-frames.mjs            (everything)
-//       node demo-villa-frames.mjs photos     (one part: keys | photos | arrival | walk | sunset)
+//       node demo-villa-frames.mjs photos     (one part: photos | card | arrival | walk | sunset)
 //
 // Output (what the page reads):
 //   arrival/d1920/0001..0064.webp  arrival/m/0001..0064.webp   (1920x1080, and the 606x1080 centre crop scaled to 540x960)
 //   walk/d1920/0001..0192.webp     walk/m/0001..0192.webp
 //   sunset/desktop.mp4 mobile.mp4 poster-desktop.webp poster-mobile.webp end-desktop.webp end-mobile.webp
 //   sunset/desktop.webm mobile.webm (VP9, main) + the mp4s (fallback)
-//   photos/<name>-1600.webp (1600x900) and photos/<name>-800.webp (800x450), plus photos/<name>-portrait.webp (4:5, full source height) for the tall slots
-//   src/keys/k1..k7.webp (archive copies, not used by the page)
-// Scroll frames are WebP quality 75 (tested: no visible loss, ~11 MB lighter); photos, posters and keys are quality 85.
+//   photos/<name>-1600.webp (1600x900) and photos/<name>-800.webp (800x450), plus photos/<name>-portrait.webp (4:5) for the tall slots
+//   photos/arrival-card.webp (1200x900, first arrival frame) for the web-design.html bento card
+// Scroll frames are WebP quality 75 (tested: no visible loss, ~11 MB lighter); photos and posters are quality 85.
 
 import fs from 'fs';
 import path from 'path';
@@ -81,6 +82,8 @@ function sunset() {
 }
 
 const PORTRAIT = ['terrazza', 'ingresso', 'soggiorno', 'cucina', 'camera', 'tramonto'];
+// Where the 4:5 crop sits across a wide source (0 = left edge, 0.5 = centre, 1 = right edge). Only used when there is no native portrait.
+const PORTRAIT_X = { tramonto: 0.66 };
 function photos() {
   fs.mkdirSync(`${ROOT}/photos`, { recursive: true });
   for (const name of PHOTOS) {
@@ -90,24 +93,28 @@ function photos() {
       const h = Math.round(w * 9 / 16);
       ff(['-i', src, '-vf', `scale=${w}:${h}:force_original_aspect_ratio=increase:flags=lanczos,crop=${w}:${h}`, '-quality', '85', `${ROOT}/photos/${name}-${w}.webp`]);
     }
-    // Tall 4:5 slots (the house photo, the menu stills) get their own crop at the source's full height, so they are never a blown-up slice of the wide file.
-    if (PORTRAIT.includes(name)) ff(['-i', src, '-vf', 'crop=trunc(ih*4/5/2)*2:ih', '-quality', '85', `${ROOT}/photos/${name}-portrait.webp`]);
+    // Tall 4:5 slots (the house photo, the menu stills): a native portrait source wins (1024x1280, sharp at 2x in the 515x643 slot);
+    // otherwise a crop at the wide source's full height, so they are never a blown-up slice of the wide file.
+    if (PORTRAIT.includes(name)) {
+      const tall = ['png', 'jpg', 'jpeg', 'webp'].map(e => `${SRC}/photos/${name}-portrait.${e}`).find(f => fs.existsSync(f));
+      const vf = tall ? 'scale=1024:1280:force_original_aspect_ratio=increase:flags=lanczos,crop=1024:1280'
+        : `crop=trunc(ih*4/5/2)*2:ih:(iw-ow)*${PORTRAIT_X[name] ?? 0.5}:0`;
+      ff(['-i', tall || src, '-vf', vf, '-quality', '85', `${ROOT}/photos/${name}-portrait.webp`]);
+    }
     console.log(`photos: ${name} ok`);
   }
 }
 
-function keys() {
-  // Quality 85 WebP copies of the keyframes, beside the originals (the page does not load these).
-  for (let n = 1; n <= 7; n++) {
-    const src = ['png', 'jpg', 'jpeg'].map(e => `${SRC}/keys/k${n}.${e}`).find(f => fs.existsSync(f));
-    if (!src) { console.warn(`keys: skipped k${n} (no source)`); continue; }
-    ff(['-i', src, '-quality', '85', `${SRC}/keys/k${n}.webp`]);
-  }
-  console.log('keys: webp copies ok');
+function card() {
+  // The web-design.html bento card: the first arrival frame, 4:3 centre crop, 1200x900.
+  const src = `${ROOT}/arrival/d1920/0001.webp`;
+  if (!fs.existsSync(src)) { console.warn('card: skipped (run arrival first)'); return; }
+  ff(['-i', src, '-vf', 'crop=1440:1080,scale=1200:900:flags=lanczos', '-quality', '80', `${ROOT}/photos/arrival-card.webp`]);
+  console.log('card: arrival-card.webp ok');
 }
 
 const only = process.argv[2];
-const jobs = { keys, photos, arrival: () => sequence('arrival'), walk: () => sequence('walk'), sunset };
+const jobs = { photos, arrival: () => sequence('arrival'), walk: () => sequence('walk'), sunset, card };
 for (const [k, run] of Object.entries(jobs)) {
   if (only && only !== k) continue;
   try { run(); } catch (e) { console.warn(`${k}: ${e.message}`); }
