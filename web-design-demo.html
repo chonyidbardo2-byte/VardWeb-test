@@ -623,7 +623,7 @@ const nights = n => `${n} ${n === 1 ? 'night' : 'nights'}`;
 const photoSrc = (n, w) => `${MEDIA.base}/photos/${n}-${w}.webp`;
 const portraitSrc = n => `${MEDIA.base}/photos/${n}-portrait.webp`;
 function portraitTag(name, cls, alt = '', extra = '') {
-  return `<img data-slot="photo-${name}" src="${portraitSrc(name)}" alt="${esc(alt)}" width="614" height="768" loading="lazy" decoding="async" class="${cls}" ${extra} onerror="phImg(this,'photo: ${name}',800,1000)">`;
+  return `<img data-slot="photo-${name}" src="${portraitSrc(name)}" alt="${esc(alt)}" width="1024" height="1280" loading="lazy" decoding="async" class="${cls}" ${extra} onerror="phImg(this,'photo: ${name}',800,1000)">`;
 }
 function photoTag(name, cls, sizes, alt = '', extra = '') {
   return `<img data-slot="photo-${name}" src="${photoSrc(name, 1600)}" srcset="${photoSrc(name, 800)} 800w, ${photoSrc(name, 1600)} 1600w" sizes="${sizes}" alt="${esc(alt)}" width="1600" height="900" loading="lazy" decoding="async" class="${cls}" ${extra} onerror="phImg(this,'photo: ${name}')">`;
@@ -669,7 +669,7 @@ function runCounters() {
 function render() {
   // Menu
   $('#menuList').innerHTML = COPY.nav.map((n, i) => `<li class="menu-li overflow-hidden"><a href="${n.href}" data-i="${i}" data-close-menu class="flex items-baseline gap-4 font-display text-[clamp(2.6rem,6.5vw,5.75rem)] leading-[1.08] transition-[transform,color] duration-700 [transition-timing-function:var(--ease-door)] ${i ? 'text-screen-foreground/70' : 'text-screen-foreground'}" style="transform:translateY(110%);transition-delay:0ms"><span class="tnum font-sans text-sm text-screen-foreground/70">0${i + 1}</span>${roll(n.label)}</a></li>`).join('');
-  $('#menuStills').innerHTML = COPY.nav.map((n, i) => `<img data-slot="photo-${n.still}" src="${portraitSrc(n.still)}" onerror="phImg(this,'photo: ${n.still}',800,1000)" alt="" width="614" height="768" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-[600ms,1200ms] [transition-timing-function:ease,var(--ease-door)]" style="opacity:${i ? 0 : 1};transform:scale(${i ? 1.06 : 1})">`).join('');
+  $('#menuStills').innerHTML = COPY.nav.map((n, i) => `<img data-slot="photo-${n.still}" src="${portraitSrc(n.still)}" onerror="phImg(this,'photo: ${n.still}',800,1000)" alt="" width="1024" height="1280" loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-[opacity,transform] duration-[600ms,1200ms] [transition-timing-function:ease,var(--ease-door)]" style="opacity:${i ? 0 : 1};transform:scale(${i ? 1.06 : 1})">`).join('');
 
   // Single photo slots in markup
   $$('[data-photo]').forEach(el => { const n = el.dataset.photo; const alt = (MEDIA.photos.find(p => p.name === n) || {}).alt; el.innerHTML = 'portrait' in el.dataset ? portraitTag(n, el.dataset.cls, alt) : photoTag(n, el.dataset.cls, el.dataset.sizes, alt); });
