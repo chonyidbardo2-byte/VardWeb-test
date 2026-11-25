@@ -1816,6 +1816,13 @@
     .wd-bento-s3 .wd-bento-num { font-size: 3rem; font-weight: 900; line-height: 1; }
     .wd-bento-s3 .wd-bento-label { color: #ffe4e6; }
 
+    /* scroll reveal: JS adds .wd-pre, then swaps it for .wd-in as each piece enters view */
+    .wd-bento-head.wd-pre, .wd-bento-card.wd-pre { opacity: 0; transform: translateY(32px) scale(.97) translateZ(0); }
+    .wd-bento-head.wd-in, .wd-bento-card.wd-in { transition: opacity .7s ease, transform .9s var(--bento-ease); }
+    .wd-bento-head.wd-pre { transform: translateY(20px); }
+    .wd-pre .wd-bento-hero-img { transform: scale(1.12); }
+    .wd-in .wd-bento-hero-img { transition: transform 1.4s cubic-bezier(.22,1,.36,1); }
+
     @media (max-width: 600px) {
       .wd-bento-hero { padding: 28px; }
       .wd-bento-card { padding: 28px; }
@@ -2631,10 +2638,10 @@
 ══════════════════════════════════════ -->
 <section id="wd-bento" class="wd-bento" style="padding:80px 28px;" aria-label="How it works">
   <div style="max-width:1200px;margin:0 auto;">
-    <div style="text-align:center;max-width:600px;margin:0 auto 52px;">
+    <div class="wd-bento-head" style="text-align:center;max-width:600px;margin:0 auto 52px;">
       <p class="sec-tag">// How It Works</p>
       <h2 style="font-size:clamp(1.7rem,3.5vw,2.4rem);font-weight:800;line-height:1.15;color:var(--text-1);">
-        Evolve and Improve.<br><span class="grad-cyan-purple">Month over Month.</span>
+        Adapt and Advance.<br><span class="grad-cyan-purple">Repeat Monthly.</span>
       </h2>
     </div>
     <div class="wd-bento-grid">
@@ -2656,7 +2663,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
           </div>
           <h4 class="wd-bento-num">1–3</h4>
-          <p>Revision requests every month, by&nbsp;tier</p>
+          <p>Revision requests, by&nbsp;tier</p>
         </div>
       </div>
 
@@ -2682,8 +2689,8 @@
         <div class="wd-bento-s2-glow" aria-hidden="true"></div>
         <span class="wd-bento-ping" aria-hidden="true"><span></span><span></span></span>
         <div>
-          <span class="wd-bento-num">+67%</span>
-          <p class="wd-bento-label">More Leads, Updated Monthly</p>
+          <span class="wd-bento-num" data-wd-count="67">+67%</span>
+          <p class="wd-bento-label">More Leads, Gaps Filled</p>
         </div>
       </div>
 
@@ -2698,6 +2705,40 @@
     </div>
   </div>
 </section>
+
+<script>
+/* How It Works bento: each piece fades and rises in as it enters view, staggered 90ms; +67% counts up */
+(function () {
+  var sec = document.getElementById('wd-bento');
+  if (!sec || !window.PerfUtils || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var items = [].slice.call(sec.querySelectorAll('.wd-bento-head, .wd-bento-card'));
+  var obs = window.__sharedObs15 = window.__sharedObs15 || PerfUtils.sharedObserver(0.15);
+  var next = 0;
+  function count(el) {
+    var to = +el.getAttribute('data-wd-count'), t0 = performance.now();
+    (function step(t) {
+      var k = Math.min(1, (t - t0) / 1200);
+      el.textContent = '+' + Math.round(to * (1 - Math.pow(1 - k, 3))) + '%';
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
+  items.forEach(function (el) {
+    el.classList.add('wd-pre');
+    obs.watch(el, function () {
+      var now = performance.now(), at = Math.max(now, next);
+      next = at + 90;
+      setTimeout(function () {
+        el.classList.add('wd-in');
+        el.classList.remove('wd-pre');
+        var n = el.querySelector('[data-wd-count]');
+        if (n) count(n);
+        /* hand transform back to the hover styles once the entrance is done */
+        setTimeout(function () { el.classList.remove('wd-in'); }, 1500);
+      }, at - now);
+    }, { once: true });
+  });
+})();
+</script>
 
 <div class="divider"></div>
 
