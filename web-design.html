@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Web Design Services — VardWeb</title>
-  <meta name="description" content="Custom web design services by VardWeb. Hand-coded, pixel-precise, conversion-focused. Bronze, Silver, Gold, and Custom tiers." />
+  <meta name="description" content="Custom web design services by VardWeb. Hand-coded, pixel-precise, conversion-focused. Bronze, Silver, Gold, Platinum, and Custom tiers." />
   <link href="fonts/fonts.css" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -714,7 +714,57 @@
     .pricing-grid.is-aligning { visibility: hidden; }
     @media (max-width: 860px) { .pricing-card { --li-pad-y: 7px !important; } }
     @media (max-width: 860px) { .pricing-features { margin-bottom: 0; } }
-    @media (max-width: 860px) { [data-tier="custom"] .pricing-features li span { display: inline; } }
+    /* Custom: a thin full-width card under the 2x2 grid (header + description + CTA only) */
+    .pricing-card.pricing-card--wide { grid-column: 1 / -1; }
+    @media (min-width: 861px) {
+      .pricing-card.pricing-card--wide {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr);
+        grid-template-rows: auto auto auto auto auto 1fr;
+        column-gap: 48px;
+        padding-right: 200px;
+      }
+      .pricing-card--wide > .tier-badge,
+      .pricing-card--wide > h3,
+      .pricing-card--wide > .pricing-from,
+      .pricing-card--wide > .pricing-flat,
+      .pricing-card--wide > .pricing-price,
+      .pricing-card--wide > .pricing-pages { grid-column: 1; }
+      .pricing-card--wide > .pricing-pages { margin-bottom: 0; }
+      .pricing-card--wide > .tier-badge { justify-self: start; }
+      .pricing-card--wide > .pricing-desc {
+        grid-column: 2; grid-row: 1 / 5; align-self: center;
+        margin: 0; padding: 0 0 0 48px;
+        border-bottom: none; border-left: 1px solid rgba(255,255,255,0.07);
+      }
+      .pricing-card--wide > .pricing-cta {
+        grid-column: 2; grid-row: 5 / 7; align-self: end;
+        margin: 20px 0 0 48px; width: calc(100% - 48px);
+      }
+    }
+
+    /* Bronze Handoff: what the monthly tiers add, so the shorter card reads as a choice, not a gap */
+    .handoff-upgrade {
+      border-radius: 14px;
+      border: 1px dashed rgba(194,208,232,0.22);
+      background: rgba(194,208,232,0.03);
+      padding: 18px 20px;
+      margin: 0 0 28px;
+    }
+    .handoff-upgrade-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #C2D0E8;
+      margin-bottom: 10px;
+    }
+    .handoff-upgrade ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 7px; }
+    .handoff-upgrade li {
+      display: flex; gap: 10px; align-items: baseline;
+      font-size: 13px; line-height: 1.55; color: rgba(200,212,232,0.6);
+    }
+    .handoff-upgrade li::before { content: '+'; font-family: 'JetBrains Mono', monospace; color: #C2D0E8; flex-shrink: 0; }
+    .handoff-upgrade-note { font-size: 12.5px; line-height: 1.6; color: rgba(200,212,232,0.45); margin-top: 12px; }
 
     .pricing-card {
       position: relative;
@@ -3214,7 +3264,7 @@
           <li><strong>Card payments</strong><br>Every Stripe method</li>
           <li><strong>Apple Pay &amp; Google Pay</strong><br>One-tap mobile checkout</li>
           <li><strong>PayPal &amp; Klarna/Afterpay/Affirm</strong><br>As familiar options</li>
-          <li><strong>Local &amp; multi-currency</strong><br>True multi-currency on Gold</li>
+          <li><strong>Local &amp; multi-currency</strong><br>True multi-currency on Platinum</li>
           <li><strong>B2B / wholesale invoicing</strong><br>On Custom builds</li>
         </ul>
       </div>
@@ -3734,6 +3784,86 @@
           <span class="tier-dot"></span>
           <span class="tier-name">Bronze</span>
         </div>
+        <h3>Handoff</h3>
+        <p class="pricing-from">Starting from</p>
+        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$2,500</span><span class="cheaper-pill">50% Cheaper</span></p>
+        <div class="pricing-price" data-monthly="C$100" data-yearly="C$100" data-fixed>
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$100</span></span></span>
+          <span class="price-suffix">/hr + tax</span>
+        </div>
+        <p class="pricing-pages">1–5 pages · ~1-2 week delivery</p>
+        <p class="pricing-desc">
+          No monthly fee, ever. We build your site, set up every account in your name, then hand you the keys, the code and a recorded walkthrough. Need a change later? Book us by the hour.
+        </p>
+        <ul class="pricing-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Brand new website, built from <span class="compute-nowrap">scratch<button type="button" class="tt-icon-trigger" data-tooltip="**You read that right.**&#10;&#10;No templates, no shortcuts, no apologies. Every line is written for your business, starting from a blank file." aria-label="More about: Brand new website, built from scratch">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Mobile-first responsive <span class="compute-nowrap">design<button type="button" class="tt-icon-trigger" data-tooltip="**Every screen, every size.**&#10;&#10;Pixel-perfect on phones, tablets and ultrawide monitors, and yes, that one client with a weird resolution too." aria-label="More about: Mobile-first responsive design">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Card, Apple Pay &amp; Google Pay <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**Paid on the spot.**&#10;&#10;Take deposits, bookings or one-off payments with whatever is already in your customer&#8217;s wallet." aria-label="More about: Card, Apple Pay &amp; Google Pay checkout">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Custom SEO + Google Setup: GA4 &amp; <span class="compute-nowrap">GSC<button type="button" class="tt-icon-trigger" data-tooltip="**Found from day one.**&#10;&#10;Meta tags, schema and a sitemap built in, with Analytics and Search Console set up so you can see who finds you and how." aria-label="More about: Custom SEO + Google Setup: GA4 &amp; GSC">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Contact form with a backup email &amp; phone right <span class="compute-nowrap">beside it<button type="button" class="tt-icon-trigger" data-tooltip="**No lead left hanging.**&#10;&#10;If the form ever hiccups, visitors see a clear message with your email and number, so they can still reach you." aria-label="More about: Contact form with a backup email &amp; phone right beside it">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Every account set up in your <span class="compute-nowrap">name<button type="button" class="tt-icon-trigger" data-tooltip="**Your keys, your house.**&#10;&#10;Domain, hosting and form email all live in accounts you own. We do the setup, so day one is just launch day." aria-label="More about: Every account set up in your name">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Keys to the House packet: account map, billing alerts &amp; do-not-touch <span class="compute-nowrap">list<button type="button" class="tt-icon-trigger" data-tooltip="**One page, zero guesswork.**&#10;&#10;Where everything lives, which bills keep it running, and the few settings to leave alone." aria-label="More about: Keys to the House packet: account map, billing alerts &amp; do-not-touch list">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Recorded video walkthrough of your exact <span class="compute-nowrap">setup<button type="button" class="tt-icon-trigger" data-tooltip="**Rewatch any time.**&#10;&#10;A short video showing how to check your site is live, where form messages land and how to reach us." aria-label="More about: Recorded video walkthrough of your exact setup">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Your code is yours on final <span class="compute-nowrap">payment<button type="button" class="tt-icon-trigger" data-tooltip="**Yours outright.**&#10;&#10;The code written for your site is signed over to you in writing once the final invoice is paid. Our Terms have the details." aria-label="More about: Your code is yours on final payment">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">30-day bug-fix window after <span class="compute-nowrap">launch<button type="button" class="tt-icon-trigger" data-tooltip="**We stand behind it.**&#10;&#10;If something we built misbehaves in the first 30 days, we fix it free. Changes made by you or anyone else aren&#8217;t covered." aria-label="More about: 30-day bug-fix window after launch">?</button></span></span>
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+            <span class="compute-label">Help at C$100/hr, 1-hour monthly <span class="compute-nowrap">minimum<button type="button" class="tt-icon-trigger" data-tooltip="**Only pay when you need us.**&#10;&#10;No subscription. Ask for a change and we bill the time in 15-minute steps, with a 1-hour minimum in any month you use us. Bigger jobs get a quote first." aria-label="More about: Help at C$100/hr, 1-hour monthly minimum">?</button></span></span>
+          </li>
+        </ul>
+        <div class="handoff-upgrade">
+          <p class="handoff-upgrade-label">Silver and up adds</p>
+          <ul>
+            <li>Custom CRM, CMS and TCI, so you edit without code</li>
+            <li>Client dashboard with team seats</li>
+            <li>Hosting, daily backups and security watched for you</li>
+            <li>Monthly revisions and emergency fixes within hours</li>
+            <li>Customer accounts, marketing automation and add-ons</li>
+          </ul>
+          <p class="handoff-upgrade-note">Outgrow Handoff? Move to a monthly plan any time and we bring your site across.</p>
+        </div>
+        <a href="contact.html?type=Web%20Design" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
+      </div>
+
+      <!-- ── SILVER ── -->
+      <div class="pricing-card" data-tier="silver" style="--tier-color:#C2D0E8;--tier-border:rgba(194,208,232,0.40);--tier-glow:rgba(194,208,232,0.12);--tier-shadow:rgba(194,208,232,0.22);--tier-bg:rgba(194,208,232,0.08);--tier-btn-bg1:rgba(194,208,232,0.16);--tier-btn-bg2:rgba(194,208,232,0.09);--tier-btn-hover1:rgba(194,208,232,0.28);--tier-btn-hover2:rgba(194,208,232,0.15);--li-pad-y:9px;">
+        <div class="pricing-img-wrap">
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-silver.webp" alt="" aria-hidden="true" loading="lazy"/>
+        </div>
+        <div class="tier-badge">
+          <span class="tier-dot"></span>
+          <span class="tier-name">Silver</span>
+        </div>
         <h3>Essential</h3>
         <p class="pricing-from">Starting from</p>
         <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$1,000</span><span class="cheaper-pill">80% Cheaper</span></p>
@@ -3829,357 +3959,6 @@
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <span class="compute-label"><span class="block md:inline">Custom Email (Up to 1)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Look the part.**&#10;&#10;A professional address on your own domain, not a free inbox." aria-label="More about: Custom Email (Up to 1) (xyz@yourcompany.com)">?</button></span></span></span></span>
-          </li>
-          <li class="compute-row">
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <div class="compute-feature">
-              <div class="compute-head">
-                <span class="compute-label">Passion <span class="compute-nowrap">Compute<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
-                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-bronze" aria-label="Show Passion Compute details">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-              </div>
-            </div>
-            <div class="addon-sem-panel" id="compute-free-bronze">
-              <div>
-                <ul class="compute-list compute-list--feat">
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited API requests</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>50,000 monthly active users</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>500 MB database size</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Shared CPU • 500 MB RAM</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB egress</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>5 GB cached egress</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>1 GB file storage</li>
-                  <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Limited backups</li>
-                </ul>
-              </div>
-            </div>
-          </li>
-        </ul>
-        <div class="pricing-addons">
-          <p class="pricing-addons-label">Available Add-ons</p>
-          <ul class="pricing-addons-list">
-            <li>
-              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-bronze" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">SEM (Search Engine <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SEM&quot;?**&#10;&#10;Paid ads that put you in front of people already searching for what you sell, across Google Search, Shopping, YouTube and Amazon. Pick a service and tier; we build, tune and report on every campaign." aria-label="What is SEM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-bronze" aria-label="Show SEM options">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </li>
-            <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="sem-panel-bronze">
-                <div>
-                  <div class="sem-panel-inner">
-                    <p class="sem-panel-heading">Choose a service</p>
-                    <div class="sem-chip-row">
-                      <button type="button" class="sem-chip" data-service="Google Search Ads">Google Search Ads</button>
-                      <button type="button" class="sem-chip" data-service="Performance Max">Performance Max</button>
-                      <button type="button" class="sem-chip" data-service="Google Shopping Ads">Google Shopping Ads</button>
-                      <button type="button" class="sem-chip" data-service="Video &amp; YouTube Ads">Video &amp; YouTube Ads</button>
-                      <button type="button" class="sem-chip" data-service="Local Service Ads">Local Service Ads</button>
-                      <button type="button" class="sem-chip" data-service="Google Ad Sense">Google Ad Sense</button>
-                      <button type="button" class="sem-chip" data-service="Amazon Sponsored Products">Amazon Sponsored Products</button>
-                    </div>
-                    <p class="sem-panel-heading">Choose a tier</p>
-                    <div class="sem-chip-row">
-                      <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
-                      <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
-                      <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
-                      <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
-                      <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-bronze" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">SMM (Social Media <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SMM&quot;?**&#10;&#10;Turn social into a sales channel: a live social feed on your site, a ready-to-post brand kit, or managed Meta &amp; Instagram ad campaigns that turn scrollers into leads." aria-label="What is SMM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-bronze" aria-label="Show SMM options">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </li>
-            <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="smm-panel-bronze">
-                <div>
-                  <div class="sem-panel-inner">
-                    <p class="sem-panel-heading">Choose a service</p>
-                    <div class="sem-chip-row">
-                      <button type="button" class="sem-chip" data-service="Live Social Feed Widget">Live Social Feed Widget</button>
-                      <button type="button" class="sem-chip" data-service="Social Brand Kit">Social Brand Kit</button>
-                      <button type="button" class="sem-chip" data-service="Meta &amp; Instagram Ads">Meta &amp; Instagram Ads</button>
-                    </div>
-                    <div class="sem-chip-row-group" data-for-service="Social Brand Kit" data-tier-suffix="" hidden>
-                      <p class="sem-panel-heading">Choose a kit</p>
-                      <div class="sem-chip-row">
-                        <button type="button" class="sem-chip" data-tier="essentials" style="--tier-color:#F472B6">Essentials</button>
-                        <button type="button" class="sem-chip" data-tier="full-kit" style="--tier-color:#FFD700">Full Kit</button>
-                      </div>
-                    </div>
-                    <div class="sem-chip-row-group" data-for-service="Meta &amp; Instagram Ads" hidden>
-                      <p class="sem-panel-heading">Choose a tier</p>
-                      <div class="sem-chip-row">
-                        <button type="button" class="sem-chip" data-tier="jack" style="--tier-color:#00E5FF">Jack</button>
-                        <button type="button" class="sem-chip" data-tier="queen" style="--tier-color:#A855F7">Queen</button>
-                        <button type="button" class="sem-chip" data-tier="king" style="--tier-color:#FFD700">King</button>
-                        <button type="button" class="sem-chip" data-tier="ace" style="--tier-color:#FF3B3B">Ace</button>
-                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-bronze" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">CM (Content <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;CM&quot;?**&#10;&#10;Search-optimized blog posts and in-depth pillar guides written for your audience. Buy one piece, or keep a monthly retainer that builds authority and keeps your site ranking." aria-label="What is CM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-bronze" aria-label="Show CM options">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </li>
-            <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="cm-panel-bronze">
-                <div>
-                  <div class="sem-panel-inner">
-                    <p class="sem-panel-heading">Choose a service</p>
-                    <div class="sem-chip-row">
-                      <button type="button" class="sem-chip" data-service="Single Post">Single Post</button>
-                      <button type="button" class="sem-chip" data-service="Single Pillar">Single Pillar</button>
-                      <button type="button" class="sem-chip" data-service="Post Retainer">Post Retainer</button>
-                      <button type="button" class="sem-chip" data-service="Pillar Retainer">Pillar Retainer</button>
-                    </div>
-                    <div class="sem-chip-row-group" data-for-service="Post Retainer" hidden>
-                      <p class="sem-panel-heading">Choose a tier</p>
-                      <div class="sem-chip-row">
-                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
-                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
-                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
-                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
-                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
-                      </div>
-                    </div>
-                    <div class="sem-chip-row-group" data-for-service="Pillar Retainer" hidden>
-                      <p class="sem-panel-heading">Choose a tier</p>
-                      <div class="sem-chip-row">
-                        <button type="button" class="sem-chip" data-tier="sprouting" style="--tier-color:#D8F3DC">Sprouting</button>
-                        <button type="button" class="sem-chip" data-tier="growth" style="--tier-color:#74C69D">Growth</button>
-                        <button type="button" class="sem-chip" data-tier="flowering" style="--tier-color:#CEB4DD">Flowering</button>
-                        <button type="button" class="sem-chip" data-tier="ripening" style="--tier-color:#AE2012">Ripening</button>
-                        <button type="button" class="sem-chip" data-tier="custom" style="--tier-color:#F472B6">Custom</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle addon-compute-trigger" data-add-mo="25" data-addon-label="SM (SMS Marketing)" aria-expanded="false" aria-controls="sms-panel-bronze" aria-pressed="false" aria-label="Toggle SM (SMS Marketing) add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">SM (SMS <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SM&quot;?**&#10;&#10;Texts straight to your customers&#39; phones: cart reminders, order updates and promos. No setup fee, no contract, you only pay per text sent." aria-label="What is SM?">?</button></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sms-panel-bronze" aria-label="Show SMS details">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </li>
-            <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="sms-panel-bronze">
-                <div>
-                  <div class="compute-panel-inner">
-                    <ul class="compute-list compute-list--addon">
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">No setup fee,</span> and no contract</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">C$25/mo minimum,</span> spent on texts</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">C$0.035 per text,</span> to Canada</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">C$0.025 per text,</span> to the US</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">C$0.07 per MMS,</span> picture message</span></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle" data-add-flat="900" data-add-mo="25" data-bundle-add-flat="500" data-addon-label="PWA (C$900 + C$25/mo)" data-bundle-alt-label="PWA (C$500 with store bundle)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed. C$900 + C$25/mo, or C$500 one-time when added to the store bundle." aria-label="What is a PWA?">?</button></span><span class="addon-price addon-price--bundle" hidden><s>C$900 + C$25/mo</s>C$500 with both stores</span></span>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle" data-add-flat="2000" data-add-mo="75" data-bundle-flat="3750" data-bundle-mo="150" data-addon-label="Google Play App (C$2,000 + C$75/mo)" data-bundle="stores" data-bundle-label="Google Play + App Store bundle (C$3,750 + C$150/mo)" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">Google Play <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;Google Play Application&quot;?**&#10;&#10;Your business as an Android app on the Google Play Store, so customers can find you, install you and come back in one tap. C$2,000 + C$75/mo, or both stores for C$3,750 + C$150/mo." aria-label="What is a Google Play Application?">?</button></span></span>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle" data-add-flat="2500" data-add-mo="100" data-bundle-flat="3750" data-bundle-mo="150" data-addon-label="App Store App (C$2,500 + C$100/mo)" data-bundle="stores" data-bundle-label="Google Play + App Store bundle (C$3,750 + C$150/mo)" aria-pressed="false" aria-label="Toggle App Store Application add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">App Store <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is an &quot;App Store Application&quot;?**&#10;&#10;Your business as an iPhone and iPad app on Apple&#39;s App Store, where iOS users already discover, buy from and stay loyal to brands. C$2,500 + C$100/mo, or both stores for C$3,750 + C$150/mo." aria-label="What is an App Store Application?">?</button></span></span>
-            </li>
-            <li>
-              <button type="button" class="addon-toggle addon-compute-trigger" data-add-mo="75" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-bronze" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
-                <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-              </button>
-              <span class="compute-label">Pro Compute <span class="compute-nowrap">(C$75/mo)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-bronze" aria-label="Show Pro Compute details">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
-              </button>
-            </li>
-            <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="compute-pro-bronze">
-                <div>
-                  <div class="compute-panel-inner">
-                    <ul class="compute-list compute-list--addon">
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Unlimited API requests,</span> forever</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100,000 monthly active users,</span> then C$0.00975 per MAU</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">8 GB disk size per project,</span> then C$0.375 per GB</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Shared &amp; Dedicated Compute,</span> from 1 GB to 256 GB per GB</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB egress,</span> then C$0.27 per GB</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">250 GB cached egress,</span> then C$0.09 per GB</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">100 GB file storage,</span> then C$0.064 per GB</span></li>
-                      <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span><span><span class="compute-lead">Daily backups,</span> every 24h and 7 day retention</span></li>
-                    </ul>
-                    <div class="cpu-picker">
-                  <p class="cpu-picker-label">Compute size <span>Memory (GB)</span></p>
-                  <div class="cpu-track">
-                    <input type="range" class="cpu-range" min="0" max="9" step="1" value="0" aria-label="Database compute size (memory in GB)" aria-valuetext="Micro, 1 GB, included" />
-                    <div class="cpu-ticks" aria-hidden="true"><span style="left:calc(9px + (100% - 18px) * 0.0000)" class="is-active">1</span><span style="left:calc(9px + (100% - 18px) * 0.1111)">2</span><span style="left:calc(9px + (100% - 18px) * 0.2222)">4</span><span style="left:calc(9px + (100% - 18px) * 0.3333)">8</span><span style="left:calc(9px + (100% - 18px) * 0.4444)">16</span><span style="left:calc(9px + (100% - 18px) * 0.5556)">32</span><span style="left:calc(9px + (100% - 18px) * 0.6667)">64</span><span style="left:calc(9px + (100% - 18px) * 0.7778)">128</span><span style="left:calc(9px + (100% - 18px) * 0.8889)">192</span><span style="left:calc(9px + (100% - 18px) * 1.0000)">256</span></div>
-                  </div>
-                  <dl class="cpu-spec" aria-live="polite">
-                    <dt>Compute Size</dt><dd data-cpu="size">Micro</dd>
-                    <dt>Price (CAD)</dt><dd data-cpu="price" class="cpu-price">Included</dd>
-                    <dt>Compute</dt><dd data-cpu="cpu">Shared CPU</dd>
-                    <dt>Memory</dt><dd data-cpu="mem">1 GB</dd>
-                    <dt>Connections: Direct</dt><dd data-cpu="direct">60</dd>
-                    <dt>Connections: Pooler</dt><dd data-cpu="pooler">200</dd>
-                  </dl>
-                  <p class="cpu-note">Micro is included with Pro Compute. Larger sizes are added to the C$75/mo; prices are per month, plus tax.</p>
-                </div>
-                  </div>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <a href="contact.html?type=Web%20Design" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
-      </div>
-
-      <!-- ── SILVER ── -->
-      <div class="pricing-card" data-tier="silver" style="--tier-color:#C2D0E8;--tier-border:rgba(194,208,232,0.40);--tier-glow:rgba(194,208,232,0.12);--tier-shadow:rgba(194,208,232,0.22);--tier-bg:rgba(194,208,232,0.08);--tier-btn-bg1:rgba(194,208,232,0.16);--tier-btn-bg2:rgba(194,208,232,0.09);--tier-btn-hover1:rgba(194,208,232,0.28);--tier-btn-hover2:rgba(194,208,232,0.15);--li-pad-y:8px;">
-        <div class="pricing-img-wrap">
-          <img class="pricing-img" src="brand_assets/icons/wd-pricing-silver.webp" alt="" aria-hidden="true" loading="lazy"/>
-        </div>
-        <div class="tier-badge">
-          <span class="tier-dot"></span>
-          <span class="tier-name">Silver</span>
-        </div>
-        <h3>Advanced</h3>
-        <p class="pricing-from">Starting from</p>
-        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$2,000</span><span class="cheaper-pill">60% Cheaper</span></p>
-        <div class="pricing-price" data-monthly="C$250" data-yearly="C$3,000">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$250</span></span></span>
-          <span class="price-suffix">/mo + tax</span>
-        </div>
-        <p class="pricing-pages">10-20 pages · ~1-3 week delivery</p>
-        <p class="pricing-desc">
-          For businesses that have outgrown the starter site and have the opinions to prove it. More pages, more imagery and twice the revisions, so "almost there" is never the final answer.
-        </p>
-        <ul class="pricing-features">
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Brand new website, built from <span class="compute-nowrap">scratch<button type="button" class="tt-icon-trigger" data-tooltip="**You read that right.**&#10;&#10;No templates, no shortcuts, no apologies. Every line is written for your business, starting from a blank file." aria-label="More about: Brand new website, built from scratch">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Mobile-first responsive <span class="compute-nowrap">design<button type="button" class="tt-icon-trigger" data-tooltip="**Every screen, every size.**&#10;&#10;Pixel-perfect on phones, tablets and ultrawide monitors, and yes, that one client with a weird resolution too." aria-label="More about: Mobile-first responsive design">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe payment method: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + local-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Customers pay with whatever’s already in their wallet, from a tap of the phone to “pay in 4”, and overseas buyers can pay in their own currency at checkout." aria-label="More about: Every Stripe payment method: Cards, Apple Pay &amp; Google Pay, PayPal, Klarna/Afterpay/Affirm + local-currency checkout">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom SEO, CRM, TCI and</span> <span class="block md:inline">CMS <span class="compute-nowrap">built-in<button type="button" class="tt-icon-trigger" data-tooltip="**The full acronym arsenal.**&#10;&#10;All of it built in and deployed from day one, not bolted on later." aria-label="More about: Custom SEO, CRM, TCI and Whitelist-CMS built-in">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block">Google Setup: GA4, GSC, GBP, GMC, GAds, <span class="compute-nowrap">GAS<button type="button" class="tt-icon-trigger" data-tooltip="**Fully wired.**&#10;&#10;GA4: Google Analytics 4. GSC: Search Console. GBP: Business Profile. GMC: Merchant Center, including Shopping listings and Product Ratings. GAds: Google Ads conversion tracking with Enhanced Conversions. GAS: AdSense, for sites that earn from their own content. Every dashboard connected, every signal captured." aria-label="More about: Google Setup: GA4, GSC, GBP, GMC, GAds, GAS">?</button></span></span><span class="block">Meta Setup: MP + CAPI <span class="compute-nowrap">(on request)<button type="button" class="tt-icon-trigger" data-tooltip="**On request.**&#10;&#10;MP: Meta Pixel. CAPI: Conversions API, which sends the same events from our server so ad blockers and iPhone privacy settings can’t hide them. Set up when you run Facebook or Instagram ads." aria-label="More about: Meta Setup: MP + CAPI">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">AI Search Visibility & Conversion <span class="compute-nowrap">optimization<button type="button" class="tt-icon-trigger" data-tooltip="**Rank where people ask.**&#10;&#10;Because showing up on Google AND ChatGPT matters now." aria-label="More about: AI Search Visibility & Conversion optimization">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">CTA (Calls-to-action) Contact or Lead Capture <span class="compute-nowrap">Form<button type="button" class="tt-icon-trigger" data-tooltip="**Built to convert.**&#10;&#10;Every CTA, form and lead funnel is engineered to convert, not just look nice." aria-label="More about: CTA (Calls-to-action) Contact or Lead Capture Form">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Dedicated thank-you or confirmation <span class="compute-nowrap">page<button type="button" class="tt-icon-trigger" data-tooltip="**The full treatment.**&#10;&#10;Even the post-conversion experience gets the same care as your homepage." aria-label="More about: Dedicated thank-you or confirmation page">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Domain hosting & <span class="compute-nowrap">delegation<button type="button" class="tt-icon-trigger" data-tooltip="**Never your problem.**&#10;&#10;Hosting and full DNS delegation, handled and managed for you." aria-label="More about: Domain hosting & delegation">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Marketing automation: Transactional emails + 3 lifecycle <span class="compute-nowrap">flows<button type="button" class="tt-icon-trigger" data-tooltip="**Emails that earn the send.**&#10;&#10;Welcome, win-back and check-in emails mapped to how your customers actually engage, not a generic drip." aria-label="More about: Marketing automation: Transactional emails + 3 lifecycle flows">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Customer accounts with order history &amp; discount <span class="compute-nowrap">codes<button type="button" class="tt-icon-trigger" data-tooltip="**Regulars, rewarded.**&#10;&#10;Returning customers pick up where they left off in a couple of clicks, and your best customers get a thank-you code of their own." aria-label="More about: Customer accounts with order history &amp; discount codes">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">GDPR/CCPA-ready tooling &amp; daily <span class="compute-nowrap">backups<button type="button" class="tt-icon-trigger" data-tooltip="**Privacy handled, data safe.**&#10;&#10;Consent, data requests and deletions are built in, and yesterday’s site is always one restore away." aria-label="More about: GDPR/CCPA-ready tooling &amp; daily backups">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Client management dashboard, up to 5 team <span class="compute-nowrap">seats<button type="button" class="tt-icon-trigger" data-tooltip="**Everything in one place.**&#10;&#10;Leads, sales and reports on a single screen, so nobody digs through emails to find out what’s working." aria-label="More about: Client dashboard, up to 5 team seats">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Sales &amp; funnel reporting dashboard;</span> <span>CSV + accounting-ready <span class="compute-nowrap">exports<button type="button" class="tt-icon-trigger" data-tooltip="**Numbers that answer questions.**&#10;&#10;See where visitors drop off and what actually converts, and hand your accountant files they open without sighing." aria-label="More about: Sales &amp; funnel reporting dashboard; CSV + accounting-ready exports">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Emergency technical fixes within 8 hours;</span> <span>general support requests within 24 <span class="compute-nowrap">hours<button type="button" class="tt-icon-trigger" data-tooltip="**Always on.**&#10;&#10;We don’t sleep, so your site doesn’t have to either." aria-label="More about: Emergency technical fixes within 8 hours; general support requests within 24 hours">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Includes 2 Revision Requests a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each <span class="compute-nowrap">request<button type="button" class="tt-icon-trigger" data-tooltip="**Room to adjust.**&#10;&#10;Two change requests every month, each handled in under an hour of work." aria-label="More about: Includes 2 Revision Requests a Month; Limited to under 1 hour of execution time each request">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Active Growth & Optimization <span class="compute-nowrap">Partnership<button type="button" class="tt-icon-trigger" data-tooltip="**Beyond launch day.**&#10;&#10;We’re not just building your site, we’re growing it." aria-label="More about: Active Growth & Optimization Partnership">?</button></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to <span class="compute-nowrap">6)<button type="button" class="tt-icon-trigger" data-tooltip="**Picked, not pulled.**&#10;&#10;Premium, vibrant, aesthetically pleasing imagery, chosen to fit your brand." aria-label="More about: Curated Stock Images (Up to 6)">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Unique Business Logo</span> <span class="block md:inline">(Up to <span class="compute-nowrap">2)<button type="button" class="tt-icon-trigger" data-tooltip="**Made for you.**&#10;&#10;Elegant, modern and authentic concepts, designed around your brand." aria-label="More about: Curated Business Logo (Up to 2)">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Distinctive Website Favicon</span> <span class="block md:inline">(Up to <span class="compute-nowrap">1)<button type="button" class="tt-icon-trigger" data-tooltip="**Easy to spot.**&#10;&#10;Your visitors will be glad to pick your tab out of the 45 they have open." aria-label="More about: Curated Website Favicon (Up to 1)">?</button></span></span></span>
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to two professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4428,7 +4207,7 @@
       </div>
 
       <!-- ── GOLD ── -->
-      <div class="pricing-card" data-tier="gold" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);--li-pad-y:9px;">
+      <div class="pricing-card" data-tier="gold" style="--tier-color:#FFD700;--tier-border:rgba(255,215,0,0.28);--tier-glow:rgba(255,215,0,0.07);--tier-shadow:rgba(255,215,0,0.14);--tier-bg:rgba(255,215,0,0.04);--tier-btn-bg1:rgba(255,215,0,0.12);--tier-btn-bg2:rgba(255,215,0,0.06);--tier-btn-hover1:rgba(255,215,0,0.2);--tier-btn-hover2:rgba(255,215,0,0.1);--li-pad-y:8px;">
         <div class="pricing-img-wrap">
           <img class="pricing-img" src="brand_assets/icons/wd-pricing-gold.webp" alt="" aria-hidden="true" loading="lazy"/>
         </div>
@@ -4436,16 +4215,16 @@
           <span class="tier-dot"></span>
           <span class="tier-name">Gold</span>
         </div>
-        <h3>Ultimate</h3>
+        <h3>Advanced</h3>
         <p class="pricing-from">Starting from</p>
-        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$3,000</span><span class="cheaper-pill">40% Cheaper</span></p>
-        <div class="pricing-price" data-monthly="C$350" data-yearly="C$4,200">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$350</span></span></span>
+        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$2,000</span><span class="cheaper-pill">60% Cheaper</span></p>
+        <div class="pricing-price" data-monthly="C$250" data-yearly="C$3,000">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$250</span></span></span>
           <span class="price-suffix">/mo + tax</span>
         </div>
-        <p class="pricing-pages">20-30 pages · ~1-4 week delivery</p>
+        <p class="pricing-pages">10-20 pages · ~1-3 week delivery</p>
         <p class="pricing-desc">
-          The full toolkit for businesses with serious ambitions and a sitemap to match. Our fastest fixes and the most revisions, ready for every launch, rebrand and "quick idea" you throw at us.
+          For businesses that have outgrown the starter site and have the opinions to prove it. More pages, more imagery and twice the revisions, so "almost there" is never the final answer.
         </p>
         <ul class="pricing-features">
           <li>
@@ -4458,7 +4237,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe payment method: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + true multi-currency <span class="compute-nowrap">pricing<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Customers pay with whatever’s already in their wallet, and international clients pay in their own currency, no mental math required." aria-label="More about: Every Stripe payment method: Cards, Apple Pay &amp; Google Pay, PayPal, Klarna/Afterpay/Affirm + true multi-currency pricing">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Every Stripe payment method: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + local-currency <span class="compute-nowrap">checkout<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Customers pay with whatever’s already in their wallet, from a tap of the phone to “pay in 4”, and overseas buyers can pay in their own currency at checkout." aria-label="More about: Every Stripe payment method: Cards, Apple Pay &amp; Google Pay, PayPal, Klarna/Afterpay/Affirm + local-currency checkout">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4486,7 +4265,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Marketing automation: Transactional emails + 10 lifecycle flows</span> <span>(Optional loyalty/rewards <span class="compute-nowrap">program)<button type="button" class="tt-icon-trigger" data-tooltip="**Emails that earn the send.**&#10;&#10;Welcome, win-back and check-in emails mapped to how your customers actually engage, not a generic drip." aria-label="More about: Marketing automation: Transactional emails + 10 lifecycle flows (Optional loyalty/rewards program)">?</button></span></span></span>
+            <span class="compute-label">Marketing automation: Transactional emails + 3 lifecycle <span class="compute-nowrap">flows<button type="button" class="tt-icon-trigger" data-tooltip="**Emails that earn the send.**&#10;&#10;Welcome, win-back and check-in emails mapped to how your customers actually engage, not a generic drip." aria-label="More about: Marketing automation: Transactional emails + 3 lifecycle flows">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4498,7 +4277,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Client management dashboard;</span> <span>unlimited team seats with role-based <span class="compute-nowrap">permissions<button type="button" class="tt-icon-trigger" data-tooltip="**Right keys, right people.**&#10;&#10;Sales works the leads, finance sees the revenue, and the intern sees neither." aria-label="More about: Client dashboard; unlimited team seats with role-based permissions">?</button></span></span></span>
+            <span class="compute-label">Client management dashboard, up to 5 team <span class="compute-nowrap">seats<button type="button" class="tt-icon-trigger" data-tooltip="**Everything in one place.**&#10;&#10;Leads, sales and reports on a single screen, so nobody digs through emails to find out what’s working." aria-label="More about: Client dashboard, up to 5 team seats">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4506,11 +4285,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Emergency technical fixes within 4 hours;</span> <span>general support requests within 24 <span class="compute-nowrap">hours<button type="button" class="tt-icon-trigger" data-tooltip="**Always on.**&#10;&#10;We don’t sleep, so your site doesn’t have to either." aria-label="More about: Emergency technical fixes within 4 hours; general support requests within 24 hours">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Emergency technical fixes within 8 hours;</span> <span>general support requests within 24 <span class="compute-nowrap">hours<button type="button" class="tt-icon-trigger" data-tooltip="**Always on.**&#10;&#10;We don’t sleep, so your site doesn’t have to either." aria-label="More about: Emergency technical fixes within 8 hours; general support requests within 24 hours">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Includes 3 Revision Requests a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each <span class="compute-nowrap">request<button type="button" class="tt-icon-trigger" data-tooltip="**Room to adjust.**&#10;&#10;Three change requests every month, each handled in under an hour of work." aria-label="More about: Includes 3 Revision Requests a Month; Limited to under 1 hour of execution time each request">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Includes 2 Revision Requests a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each <span class="compute-nowrap">request<button type="button" class="tt-icon-trigger" data-tooltip="**Room to adjust.**&#10;&#10;Two change requests every month, each handled in under an hour of work." aria-label="More about: Includes 2 Revision Requests a Month; Limited to under 1 hour of execution time each request">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4518,11 +4297,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to <span class="compute-nowrap">9)<button type="button" class="tt-icon-trigger" data-tooltip="**Picked, not pulled.**&#10;&#10;Premium, vibrant, aesthetically pleasing imagery, chosen to fit your brand." aria-label="More about: Curated Stock Images (Up to 9)">?</button></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to <span class="compute-nowrap">6)<button type="button" class="tt-icon-trigger" data-tooltip="**Picked, not pulled.**&#10;&#10;Premium, vibrant, aesthetically pleasing imagery, chosen to fit your brand." aria-label="More about: Curated Stock Images (Up to 6)">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Unique Business Logo</span> <span class="block md:inline">(Up to <span class="compute-nowrap">3)<button type="button" class="tt-icon-trigger" data-tooltip="**Made for you.**&#10;&#10;Elegant, modern and authentic concepts, designed around your brand." aria-label="More about: Curated Business Logo (Up to 3)">?</button></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Unique Business Logo</span> <span class="block md:inline">(Up to <span class="compute-nowrap">2)<button type="button" class="tt-icon-trigger" data-tooltip="**Made for you.**&#10;&#10;Elegant, modern and authentic concepts, designed around your brand." aria-label="More about: Curated Business Logo (Up to 2)">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4530,7 +4309,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to three professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 2)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to two professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 2) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4709,11 +4488,11 @@
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-add-flat="500" data-addon-label="PWA (C$500 one-time)" data-bundle-alt-label="PWA (C$500 one-time)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+              <button type="button" class="addon-toggle" data-add-flat="900" data-add-mo="25" data-bundle-add-flat="500" data-addon-label="PWA (C$900 + C$25/mo)" data-bundle-alt-label="PWA (C$500 with store bundle)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed. On this tier: C$500 one-time, no monthly fee." aria-label="What is a PWA?">?</button></span><span class="addon-price"><s>C$900 + C$25/mo</s>C$500 one-time</span></span>
+              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed. C$900 + C$25/mo, or C$500 one-time when added to the store bundle." aria-label="What is a PWA?">?</button></span><span class="addon-price addon-price--bundle" hidden><s>C$900 + C$25/mo</s>C$500 with both stores</span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-add-flat="2000" data-add-mo="75" data-bundle-flat="3750" data-bundle-mo="150" data-addon-label="Google Play App (C$2,000 + C$75/mo)" data-bundle="stores" data-bundle-label="Google Play + App Store bundle (C$3,750 + C$150/mo)" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
@@ -4778,24 +4557,25 @@
         <a href="contact.html?type=Web%20Design" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
 
-      <!-- ── CUSTOM ── -->
-      <div class="pricing-card" data-tier="custom" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);--tier-shadow:rgba(168,85,247,0.14);--tier-bg:rgba(168,85,247,0.04);--tier-btn-bg1:rgba(168,85,247,0.12);--tier-btn-bg2:rgba(168,85,247,0.06);--tier-btn-hover1:rgba(168,85,247,0.2);--tier-btn-hover2:rgba(168,85,247,0.1);--li-pad-y:9px;">
+      <!-- ── PLATINUM ── -->
+      <div class="pricing-card" data-tier="platinum" style="--tier-color:#E6EEF6;--tier-border:rgba(230,238,246,0.34);--tier-glow:rgba(230,238,246,0.10);--tier-shadow:rgba(230,238,246,0.18);--tier-bg:rgba(230,238,246,0.06);--tier-btn-bg1:rgba(230,238,246,0.14);--tier-btn-bg2:rgba(230,238,246,0.08);--tier-btn-hover1:rgba(230,238,246,0.24);--tier-btn-hover2:rgba(230,238,246,0.13);--li-pad-y:9px;">
         <div class="pricing-img-wrap">
-          <img class="pricing-img" src="brand_assets/icons/wd-pricing-custom.webp" alt="" aria-hidden="true" loading="lazy"/>
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-platinum.webp" alt="" aria-hidden="true" loading="lazy"/>
         </div>
         <div class="tier-badge">
           <span class="tier-dot"></span>
-          <span class="tier-name">Custom</span>
+          <span class="tier-name">Platinum</span>
         </div>
-        <h3>Custom</h3>
-        <p class="pricing-from">Contact for pricing</p>
-        <p class="pricing-flat">Scope: <span class="pricing-flat-amt">Bespoke</span></p>
-        <div class="pricing-price" data-monthly="Bespoke" data-yearly="Bespoke">
-          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">Bespoke</span></span></span>
+        <h3>Ultimate</h3>
+        <p class="pricing-from">Starting from</p>
+        <p class="pricing-flat">Flat Rate <span class="pricing-flat-amt">C$3,000</span><span class="cheaper-pill">40% Cheaper</span></p>
+        <div class="pricing-price" data-monthly="C$350" data-yearly="C$4,200">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">C$350</span></span></span>
+          <span class="price-suffix">/mo + tax</span>
         </div>
-        <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
+        <p class="pricing-pages">20-30 pages · ~1-4 week delivery</p>
         <p class="pricing-desc">
-          For briefs that laugh at page limits. We scope it with you, build exactly what you need and skip what you don't. Read the other tiers and thought "close, but..."? This one's yours.
+          The full toolkit for businesses with serious ambitions and a sitemap to match. Our fastest fixes and the most revisions, ready for every launch, rebrand and "quick idea" you throw at us.
         </p>
         <ul class="pricing-features">
           <li>
@@ -4808,11 +4588,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Every Stripe native payment method: Localized-currency,</span> <span>true multi-currency &amp; B2B / Wholesale <span class="compute-nowrap">invoicing<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;International clients pay in prices they understand, and trade buyers get invoices on terms instead of a card form." aria-label="More about: Every Stripe native payment method: Localized-currency, true multi-currency &amp; B2B / Wholesale invoicing">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Every Stripe payment method: Cards, Apple Pay &amp; Google Pay,</span> <span>PayPal, Klarna/Afterpay/Affirm + true multi-currency <span class="compute-nowrap">pricing<button type="button" class="tt-icon-trigger" data-tooltip="**No sale lost at the till.**&#10;&#10;Customers pay with whatever’s already in their wallet, and international clients pay in their own currency, no mental math required." aria-label="More about: Every Stripe payment method: Cards, Apple Pay &amp; Google Pay, PayPal, Klarna/Afterpay/Affirm + true multi-currency pricing">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Custom SEO, CRM, TCI and CMS <span class="compute-nowrap">built-in<button type="button" class="tt-icon-trigger" data-tooltip="**The full acronym arsenal.**&#10;&#10;All of it built in and deployed from day one, not bolted on later." aria-label="More about: Custom SEO, CRM, TCI and CMS built-in">?</button></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom SEO, CRM, TCI and</span> <span class="block md:inline">CMS <span class="compute-nowrap">built-in<button type="button" class="tt-icon-trigger" data-tooltip="**The full acronym arsenal.**&#10;&#10;All of it built in and deployed from day one, not bolted on later." aria-label="More about: Custom SEO, CRM, TCI and Whitelist-CMS built-in">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4820,7 +4600,7 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">AI Search Visibility &amp; Conversion <span class="compute-nowrap">optimization<button type="button" class="tt-icon-trigger" data-tooltip="**Rank where people ask.**&#10;&#10;Because showing up on Google AND ChatGPT matters now." aria-label="More about: AI Search Visibility &amp; Conversion optimization">?</button></span></span>
+            <span class="compute-label">AI Search Visibility & Conversion <span class="compute-nowrap">optimization<button type="button" class="tt-icon-trigger" data-tooltip="**Rank where people ask.**&#10;&#10;Because showing up on Google AND ChatGPT matters now." aria-label="More about: AI Search Visibility & Conversion optimization">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4832,11 +4612,11 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Domain hosting &amp; <span class="compute-nowrap">delegation<button type="button" class="tt-icon-trigger" data-tooltip="**Never your problem.**&#10;&#10;Hosting and full DNS delegation, handled and managed for you." aria-label="More about: Domain hosting &amp; delegation">?</button></span></span>
+            <span class="compute-label">Domain hosting & <span class="compute-nowrap">delegation<button type="button" class="tt-icon-trigger" data-tooltip="**Never your problem.**&#10;&#10;Hosting and full DNS delegation, handled and managed for you." aria-label="More about: Domain hosting & delegation">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Marketing automation: Transactional emails + Bespoke lifecycle flows</span> <span>(Optional loyalty/rewards <span class="compute-nowrap">program)<button type="button" class="tt-icon-trigger" data-tooltip="**Emails that earn the send.**&#10;&#10;Welcome, win-back and check-in emails mapped to how your customers actually engage, not a generic drip." aria-label="More about: Marketing automation: Transactional emails + Bespoke lifecycle flows (Optional loyalty/rewards program)">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Marketing automation: Transactional emails + 10 lifecycle flows</span> <span>(Optional loyalty/rewards <span class="compute-nowrap">program)<button type="button" class="tt-icon-trigger" data-tooltip="**Emails that earn the send.**&#10;&#10;Welcome, win-back and check-in emails mapped to how your customers actually engage, not a generic drip." aria-label="More about: Marketing automation: Transactional emails + 10 lifecycle flows (Optional loyalty/rewards program)">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
@@ -4856,43 +4636,43 @@
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Emergency technical fixes within 4, 8 or 12 hours;</span> <span>general support requests within 24 <span class="compute-nowrap">hours<button type="button" class="tt-icon-trigger" data-tooltip="**Always on.**&#10;&#10;We don’t sleep, so your site doesn’t have to either." aria-label="More about: Emergency technical fixes within 4, 8 or 12 hours; general support requests within 24 hours">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Emergency technical fixes within 4 hours;</span> <span>general support requests within 24 <span class="compute-nowrap">hours<button type="button" class="tt-icon-trigger" data-tooltip="**Always on.**&#10;&#10;We don’t sleep, so your site doesn’t have to either." aria-label="More about: Emergency technical fixes within 4 hours; general support requests within 24 hours">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label"><span class="md:block">Revision requests negotiated at scope;</span> <span>Limited to under 1 hour of execution time each <span class="compute-nowrap">request<button type="button" class="tt-icon-trigger" data-tooltip="**Sized to you.**&#10;&#10;How many revisions you get each month is agreed during discovery, based on how often your site needs to change." aria-label="More about: Revision requests negotiated at scope; Limited to under 1 hour of execution time each request">?</button></span></span></span>
+            <span class="compute-label"><span class="md:block">Includes 3 Revision Requests a Month;</span> <span>Limited to under 1 hour of execution</span> <span>time each <span class="compute-nowrap">request<button type="button" class="tt-icon-trigger" data-tooltip="**Room to adjust.**&#10;&#10;Three change requests every month, each handled in under an hour of work." aria-label="More about: Includes 3 Revision Requests a Month; Limited to under 1 hour of execution time each request">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Active Growth &amp; Optimization <span class="compute-nowrap">Partnership<button type="button" class="tt-icon-trigger" data-tooltip="**Beyond launch day.**&#10;&#10;We’re not just building your site, we’re growing it." aria-label="More about: Active Growth &amp; Optimization Partnership">?</button></span></span>
+            <span class="compute-label">Active Growth & Optimization <span class="compute-nowrap">Partnership<button type="button" class="tt-icon-trigger" data-tooltip="**Beyond launch day.**&#10;&#10;We’re not just building your site, we’re growing it." aria-label="More about: Active Growth & Optimization Partnership">?</button></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Curated Stock <span class="compute-nowrap">Images<button type="button" class="tt-icon-trigger" data-tooltip="**Picked, not pulled.**&#10;&#10;Premium, vibrant, aesthetically pleasing imagery, chosen to fit your brand." aria-label="More about: Curated Stock Images">?</button></span></span>
+            <span class="compute-label"><span class="block md:inline">Curated Stock Images</span> <span class="block md:inline">(Up to <span class="compute-nowrap">9)<button type="button" class="tt-icon-trigger" data-tooltip="**Picked, not pulled.**&#10;&#10;Premium, vibrant, aesthetically pleasing imagery, chosen to fit your brand." aria-label="More about: Curated Stock Images (Up to 9)">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Unique Business Logo <span class="compute-nowrap">Concepts<button type="button" class="tt-icon-trigger" data-tooltip="**Made for you.**&#10;&#10;Elegant, modern and authentic concepts, designed around your brand." aria-label="More about: Unique Business Logo Concepts">?</button></span></span>
+            <span class="compute-label"><span class="block md:inline">Unique Business Logo</span> <span class="block md:inline">(Up to <span class="compute-nowrap">3)<button type="button" class="tt-icon-trigger" data-tooltip="**Made for you.**&#10;&#10;Elegant, modern and authentic concepts, designed around your brand." aria-label="More about: Curated Business Logo (Up to 3)">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Distinctive Website <span class="compute-nowrap">Favicon<button type="button" class="tt-icon-trigger" data-tooltip="**Easy to spot.**&#10;&#10;Your visitors will be glad to pick your tab out of the 45 they have open." aria-label="More about: Curated Website Favicon">?</button></span></span>
+            <span class="compute-label"><span class="block md:inline">Distinctive Website Favicon</span> <span class="block md:inline">(Up to <span class="compute-nowrap">1)<button type="button" class="tt-icon-trigger" data-tooltip="**Easy to spot.**&#10;&#10;Your visitors will be glad to pick your tab out of the 45 they have open." aria-label="More about: Curated Website Favicon (Up to 1)">?</button></span></span></span>
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
-            <span class="compute-label">Custom Email <span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**One for everyone.**&#10;&#10;Addresses for every person, every department and every alias." aria-label="More about: Custom Email (xyz@yourcompany.com)">?</button></span></span></span>
+            <span class="compute-label"><span class="block md:inline">Custom Email (Up to 3)</span> <span class="block md:inline"><span class="compute-nowrap">(xyz@your<wbr><span class="compute-tail">company.com)<button type="button" class="tt-icon-trigger" data-tooltip="**Room for the team.**&#10;&#10;Up to three professional addresses on your own domain, not free inboxes." aria-label="More about: Custom Email (Up to 3) (xyz@yourcompany.com)">?</button></span></span></span></span>
           </li>
           <li class="compute-row">
             <svg class="feat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
             <div class="compute-feature">
               <div class="compute-head">
                 <span class="compute-label">Passion <span class="compute-nowrap">Compute<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
-                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-custom" aria-label="Show Passion Compute details">
+                <button type="button" class="compute-expand" aria-expanded="false" aria-controls="compute-free-platinum" aria-label="Show Passion Compute details">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
               </div>
             </div>
-            <div class="addon-sem-panel" id="compute-free-custom">
+            <div class="addon-sem-panel" id="compute-free-platinum">
               <div>
                 <ul class="compute-list compute-list--feat">
                   <li><span class="compute-check-slot"><svg class="compute-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited API requests</li>
@@ -4912,17 +4692,17 @@
           <p class="pricing-addons-label">Available Add-ons</p>
           <ul class="pricing-addons-list">
             <li>
-              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-custom" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
+              <button type="button" class="addon-toggle addon-sem-trigger" aria-expanded="false" aria-controls="sem-panel-platinum" aria-pressed="false" aria-label="Toggle SEM (Search Engine Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
               <span class="compute-label">SEM (Search Engine <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SEM&quot;?**&#10;&#10;Paid ads that put you in front of people already searching for what you sell, across Google Search, Shopping, YouTube and Amazon. Pick a service and tier; we build, tune and report on every campaign." aria-label="What is SEM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-custom" aria-label="Show SEM options">
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sem-panel-platinum" aria-label="Show SEM options">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </li>
             <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="sem-panel-custom">
+              <div class="addon-sem-panel" id="sem-panel-platinum">
                 <div>
                   <div class="sem-panel-inner">
                     <p class="sem-panel-heading">Choose a service</p>
@@ -4948,17 +4728,17 @@
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-custom" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
+              <button type="button" class="addon-toggle addon-smm-trigger" data-addon-variable data-addon-base-label="SMM (Social Media Marketing)" aria-expanded="false" aria-controls="smm-panel-platinum" aria-pressed="false" aria-label="Toggle SMM (Social Media Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
               <span class="compute-label">SMM (Social Media <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SMM&quot;?**&#10;&#10;Turn social into a sales channel: a live social feed on your site, a ready-to-post brand kit, or managed Meta &amp; Instagram ad campaigns that turn scrollers into leads." aria-label="What is SMM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-custom" aria-label="Show SMM options">
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="smm-panel-platinum" aria-label="Show SMM options">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </li>
             <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="smm-panel-custom">
+              <div class="addon-sem-panel" id="smm-panel-platinum">
                 <div>
                   <div class="sem-panel-inner">
                     <p class="sem-panel-heading">Choose a service</p>
@@ -4989,17 +4769,17 @@
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-custom" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
+              <button type="button" class="addon-toggle addon-cm-trigger" data-addon-variable data-addon-base-label="CM (Content Marketing)" aria-expanded="false" aria-controls="cm-panel-platinum" aria-pressed="false" aria-label="Toggle CM (Content Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
               <span class="compute-label">CM (Content <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;CM&quot;?**&#10;&#10;Search-optimized blog posts and in-depth pillar guides written for your audience. Buy one piece, or keep a monthly retainer that builds authority and keeps your site ranking." aria-label="What is CM?">?</button></span><span class="addon-sem-summary" hidden></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-custom" aria-label="Show CM options">
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="cm-panel-platinum" aria-label="Show CM options">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </li>
             <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="cm-panel-custom">
+              <div class="addon-sem-panel" id="cm-panel-platinum">
                 <div>
                   <div class="sem-panel-inner">
                     <p class="sem-panel-heading">Choose a service</p>
@@ -5034,17 +4814,17 @@
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle addon-compute-trigger" data-add-mo="25" data-addon-label="SM (SMS Marketing)" aria-expanded="false" aria-controls="sms-panel-custom" aria-pressed="false" aria-label="Toggle SM (SMS Marketing) add-on">
+              <button type="button" class="addon-toggle addon-compute-trigger" data-add-mo="25" data-addon-label="SM (SMS Marketing)" aria-expanded="false" aria-controls="sms-panel-platinum" aria-pressed="false" aria-label="Toggle SM (SMS Marketing) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
               <span class="compute-label">SM (SMS <span class="compute-nowrap">Marketing)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;SM&quot;?**&#10;&#10;Texts straight to your customers&#39; phones: cart reminders, order updates and promos. No setup fee, no contract, you only pay per text sent." aria-label="What is SM?">?</button></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sms-panel-custom" aria-label="Show SMS details">
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="sms-panel-platinum" aria-label="Show SMS details">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </li>
             <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="sms-panel-custom">
+              <div class="addon-sem-panel" id="sms-panel-platinum">
                 <div>
                   <div class="compute-panel-inner">
                     <ul class="compute-list compute-list--addon">
@@ -5059,11 +4839,11 @@
               </div>
             </li>
             <li>
-              <button type="button" class="addon-toggle" data-addon-label="PWA (quoted)" data-bundle-alt-label="PWA (quoted)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
+              <button type="button" class="addon-toggle" data-add-flat="500" data-addon-label="PWA (C$500 one-time)" data-bundle-alt-label="PWA (C$500 one-time)" aria-pressed="false" aria-label="Toggle PWA (Progressive Web App) add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
-              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed. Quoted with your custom scope." aria-label="What is a PWA?">?</button></span></span>
+              <span class="compute-label"><span class="block md:inline">PWA (Progressive Web</span> <span class="block md:inline compute-nowrap">App)<button type="button" class="tt-icon-trigger" data-tooltip="**What is a &quot;PWA&quot;?**&#10;&#10;Your website, installable like an app. Visitors add it to their home screen, and it loads instantly, works offline and can send push notifications, with no app store needed. On this tier: C$500 one-time, no monthly fee." aria-label="What is a PWA?">?</button></span><span class="addon-price"><s>C$900 + C$25/mo</s>C$500 one-time</span></span>
             </li>
             <li>
               <button type="button" class="addon-toggle" data-add-flat="2000" data-add-mo="75" data-bundle-flat="3750" data-bundle-mo="150" data-addon-label="Google Play App (C$2,000 + C$75/mo)" data-bundle="stores" data-bundle-label="Google Play + App Store bundle (C$3,750 + C$150/mo)" aria-pressed="false" aria-label="Toggle Google Play Application add-on">
@@ -5080,17 +4860,17 @@
               <span class="compute-label">App Store <span class="compute-nowrap">Application<button type="button" class="tt-icon-trigger" data-tooltip="**What is an &quot;App Store Application&quot;?**&#10;&#10;Your business as an iPhone and iPad app on Apple&#39;s App Store, where iOS users already discover, buy from and stay loyal to brands. C$2,500 + C$100/mo, or both stores for C$3,750 + C$150/mo." aria-label="What is an App Store Application?">?</button></span></span>
             </li>
             <li>
-              <button type="button" class="addon-toggle addon-compute-trigger" data-add-mo="75" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-custom" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
+              <button type="button" class="addon-toggle addon-compute-trigger" data-add-mo="75" data-addon-label="Pro Compute (C$75/mo)" aria-expanded="false" aria-controls="compute-pro-platinum" aria-pressed="false" aria-label="Toggle Pro Compute add-on">
                 <svg class="addon-icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <svg class="addon-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
               </button>
               <span class="compute-label">Pro Compute <span class="compute-nowrap">(C$75/mo)<button type="button" class="tt-icon-trigger" data-tooltip="**What is &quot;compute&quot;?**&#10;&#10;Think of compute as the computer your database runs on. As your app grows, you scale CPU and memory to handle more traffic and data." aria-label="What is compute?">?</button></span></span>
-              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-custom" aria-label="Show Pro Compute details">
+              <button type="button" class="compute-expand compute-expand--end" aria-expanded="false" aria-controls="compute-pro-platinum" aria-label="Show Pro Compute details">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
               </button>
             </li>
             <li class="addon-sem-panel-row">
-              <div class="addon-sem-panel" id="compute-pro-custom">
+              <div class="addon-sem-panel" id="compute-pro-platinum">
                 <div>
                   <div class="compute-panel-inner">
                     <ul class="compute-list compute-list--addon">
@@ -5128,6 +4908,28 @@
         <a href="contact.html?type=Web%20Design" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
       </div>
 
+      <!-- ── CUSTOM ── -->
+      <div class="pricing-card pricing-card--wide" data-tier="custom" style="--tier-color:#A855F7;--tier-border:rgba(168,85,247,0.28);--tier-glow:rgba(168,85,247,0.07);--tier-shadow:rgba(168,85,247,0.14);--tier-bg:rgba(168,85,247,0.04);--tier-btn-bg1:rgba(168,85,247,0.12);--tier-btn-bg2:rgba(168,85,247,0.06);--tier-btn-hover1:rgba(168,85,247,0.2);--tier-btn-hover2:rgba(168,85,247,0.1);--li-pad-y:9px;">
+        <div class="pricing-img-wrap">
+          <img class="pricing-img" src="brand_assets/icons/wd-pricing-custom.webp" alt="" aria-hidden="true" loading="lazy"/>
+        </div>
+        <div class="tier-badge">
+          <span class="tier-dot"></span>
+          <span class="tier-name">Custom</span>
+        </div>
+        <h3>Custom</h3>
+        <p class="pricing-from">Contact for pricing</p>
+        <p class="pricing-flat">Scope: <span class="pricing-flat-amt">Bespoke</span></p>
+        <div class="pricing-price" data-monthly="Bespoke" data-yearly="Bespoke">
+          <span class="price-slot"><span class="price-slot-track"><span class="price-slot-val">Bespoke</span></span></span>
+        </div>
+        <p class="pricing-pages">Unlimited scope · Timeline agreed at discovery</p>
+        <p class="pricing-desc">
+          For briefs that laugh at page limits. We scope it with you, build exactly what you need and skip what you don't. Read the other tiers and thought "close, but..."? This one's yours.
+        </p>
+        <a href="contact.html?type=Web%20Design" class="pricing-cta">Let's Talk <span aria-hidden="true">→</span></a>
+      </div>
+
     </div>
     <noscript><style>.pricing-grid.is-aligning { visibility: visible; }</style></noscript>
     <script>
@@ -5142,7 +4944,7 @@
       var grid = document.currentScript.previousElementSibling;
       if (!grid || !grid.classList.contains('pricing-grid')) grid = document.querySelector('.pricing-grid');
       if (!grid) return;
-      var cards = grid.querySelectorAll('.pricing-card');
+      var cards = grid.querySelectorAll('.pricing-card:not(.pricing-card--wide)');
       if (cards.length < 4) { grid.classList.remove('is-aligning'); return; }
 
       /* Height with every expandable panel removed (open, opening or still
@@ -5220,7 +5022,7 @@
         if (panelActive()) { remember(); return; }
         resetAlignments();
         if (window.innerWidth >= DESKTOP_BP) {
-          /* Pair 0+1 (Bronze|Silver), Pair 2+3 (Gold|Custom) */
+          /* Pair 0+1 (Bronze|Silver), Pair 2+3 (Gold|Platinum); the wide Custom card sits below */
           alignPair(cards[0], cards[1]);
           alignPair(cards[2], cards[3]);
         }
@@ -5282,7 +5084,7 @@
             <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">You own your domain and everything your site generates: your content, every lead, every customer record. It's all exportable whenever you ask. VardWeb owns and maintains the underlying code, which is what your monthly rate covers: the hosting, the updates, and the support. Unlike site builders that refuse to export your site, you're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">never locked</code> out of your own business data.</div></div>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">You own your domain and everything your site generates: your content, every lead, every customer record. It's all exportable whenever you ask. VardWeb owns and maintains the underlying code, which is what your monthly rate covers: the hosting, the updates, and the support. The one exception is our Bronze Handoff plan: once it's paid in full, the code written for your site is signed over to you and runs in accounts you own. Unlike site builders that refuse to export your site, you're <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">never locked</code> out of your own business data.</div></div>
       </div>
       <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
         <button type="button" class="wd-faq-trigger" aria-expanded="false">
@@ -5293,7 +5095,7 @@
             <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Timeline depends on page count and tier. A Bronze site (1–10 pages) typically launches in about 1–2 weeks, Silver (10–20 pages) in 1–3 weeks, and Gold (20–30 pages) in 1–4 weeks. Custom builds are scheduled at discovery. We'll give you a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">firm timeline</code> after a short discovery call. Need to launch by a specific date? Ask about our Expedited Launch add-on above.</div></div>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Timeline depends on page count and tier. Bronze (1–5 pages) and Silver (1–10 pages) sites typically launch in about 1–2 weeks, Gold (10–20 pages) in 1–3 weeks, and Platinum (20–30 pages) in 1–4 weeks. Custom builds are scheduled at discovery. We'll give you a <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">firm timeline</code> after a short discovery call. Need to launch by a specific date? Ask about our Expedited Launch add-on above.</div></div>
       </div>
       <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
         <button type="button" class="wd-faq-trigger" aria-expanded="false">
@@ -5326,7 +5128,7 @@
             <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Yes. Every site includes our custom CMS, a visual dashboard where you can edit text, swap images, and publish videos <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">without waiting</code> on a developer. For bigger changes, each tier includes monthly revision requests: 1 on Bronze, 2 on Silver, and 3 on Gold, each under an hour of execution time. Custom plans set revisions at scope.</div></div>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Yes. Every Silver, Gold and Platinum site includes our custom CMS, a visual dashboard where you can edit text, swap images, and publish videos <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">without waiting</code> on a developer. For bigger changes, those tiers include monthly revision requests: 1 on Silver, 2 on Gold, and 3 on Platinum, each under an hour of execution time. Custom plans set revisions at scope. On Bronze Handoff the code is yours to edit, or we make changes for you at C$100/hr.</div></div>
       </div>
       <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
         <button type="button" class="wd-faq-trigger" aria-expanded="false">
@@ -5337,7 +5139,7 @@
             <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Change it any time, up or down. Every tier runs on the same platform, so moving from Silver to Gold, for example, isn't <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">a rebuild.</code> It's a capacity increase: more pages, more revisions, and faster emergency response. There's no ceiling that forces you to start over.</div></div>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Change it any time, up or down. Silver, Gold and Platinum run on the same platform, so moving from Gold to Platinum, for example, isn't <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">a rebuild.</code> It's a capacity increase: more pages, more revisions, and faster emergency response. There's no ceiling that forces you to start over. On Bronze Handoff, you can move to a monthly plan whenever you like, and we bring your existing site across rather than starting from scratch.</div></div>
       </div>
       <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
         <button type="button" class="wd-faq-trigger" aria-expanded="false">
@@ -5348,7 +5150,7 @@
             <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Every tier includes custom SEO, a full Google setup (GA4, Search Console, Merchant Center and more), and AI search visibility so tools like ChatGPT and Gemini can find and cite your business. Organic rankings build over weeks and months, <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">not overnight.</code> If you need visibility from day one, pair your site with our SEM add-on.</div></div>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Every tier includes custom SEO, a Google setup (GA4 and Search Console on Bronze; Merchant Center and more from Silver up), and AI search visibility so tools like ChatGPT and Gemini can find and cite your business. Organic rankings build over weeks and months, <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">not overnight.</code> If you need visibility from day one, pair your site with our SEM add-on.</div></div>
       </div>
       <div class="wd-faq-item" style="opacity:0;transform:translateY(32px);">
         <button type="button" class="wd-faq-trigger" aria-expanded="false">
@@ -5359,7 +5161,7 @@
             <svg class="wd-faq-minus" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
           </div>
         </button>
-        <div class="wd-faq-content"><div class="wd-faq-content-inner">Each tier above shows a flat build rate plus a monthly rate, both as <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">starting points.</code> Final scope, and the final price, is confirmed during a short discovery call based on your pages, features, and add-ons. Custom builds are quoted individually. <a href="faq.html" class="wd-faq-more">See more general FAQs →</a></div></div>
+        <div class="wd-faq-content"><div class="wd-faq-content-inner">Each tier above shows a flat build rate plus a monthly rate (Bronze Handoff swaps the monthly rate for hourly help), both as <code style="background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.14);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);white-space:nowrap;">starting points.</code> Final scope, and the final price, is confirmed during a short discovery call based on your pages, features, and add-ons. Custom builds are quoted individually. <a href="faq.html" class="wd-faq-more">See more general FAQs →</a></div></div>
       </div>
     </div>
   </div>
@@ -5657,7 +5459,7 @@
     btnY.setAttribute('aria-pressed', String(mode === 'yearly'));
 
     /* Roll all prices */
-    document.querySelectorAll('.pricing-price[data-monthly]').forEach(function (el) {
+    document.querySelectorAll('.pricing-price[data-monthly]:not([data-fixed])').forEach(function (el) {
       var val = mode === 'monthly' ? el.dataset.monthly : el.dataset.yearly;
       var suf = el.querySelector('.price-suffix');
       var sufEl = (suf && el.dataset.monthly !== 'Bespoke') ? suf : null;
